@@ -38,14 +38,34 @@ Lake (or another oracle) lives in the implementation that *uses* the kernel.
 
 ## Skills
 
-Grok skills live in `.grok/skills/` (canonical). LRA keeps thin `lra-*` redirects.
+Grok skills live in `skills/` (canonical). LRA keeps thin `lra-*` redirects.
 
 | Skill | Module |
 | --- | --- |
+| `jevops-hooks` | `jevops.hooks` |
 | `jevops-kernel` | `jevops.kernel` |
+| `jevops-nca` | `jevops.nca` |
+| `jevops-tape` | `jevops.tape` / `tape_tools` |
+| `jevops-stack` | `jevops.stack` |
+| `jevops-skill-tree` | `jevops.skill_tree` |
+| `jevops-walk` / `jevops-compose` | `jevops.walk` |
+| `jevops-intent` | `jevops.jev` / `pick` / `walk` |
+| `jevops-pick` | `jevops.pick` |
+| `jevops-jev` / `jevops-redact` | `jevops.jev` |
+| `jevops-oracle` | `jevops.oracle` |
+| `jevops-outer` | `jevops.outer` |
+| `jevops-memory` | `jevops.memory` |
+| `jevops-repair` / `jevops-indent` | `jevops.repair` |
+| `jevops-program` | `jevops.program` |
+| `jevops-tools` | `jevops.tools` |
+| `jevops-board` | `jevops.board` |
+| `jevops-jsonld` | `jevops.jsonld` |
 | `jevops-random-forest` / `jevops-bayes-time` / `jevops-mcmc` / `jevops-svd` / `jevops-ridge` / `jevops-thompson` | `jevops.rankers` |
 | `jevops-int-rankers` / `jevops-pca` | `jevops.int_rankers` |
 | `jevops-more-rankers` | `jevops.more_rankers` |
+| `jevops-mask` / `jevops-mca` / `jevops-spans` | `jevops.mask` |
+| `jevops-search` / `jevops-fills` | `jevops.search` / `jevops.mask` |
+| `jevops-ast-rewrite` | `jevops.nca` |
 | `jevops-autoencoder` | `jevops.autoencoder` |
 | `jevops-graph` | `jevops.graph` |
 | `jevops-temporal` | `jevops.temporal` |

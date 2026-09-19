@@ -54,10 +54,31 @@ def call_mask(memory: dict[str, Any], *, tactics: str = "") -> dict[str, Any]:
 
     find_holes = hooks.resolve("find_holes", "mca_mask_replace", "find_holes")
     mask_skeleton = hooks.resolve("mask_skeleton", "mca_mask_replace", "mask_skeleton")
+    body = tactics or ""
     if find_holes is None:
-        return {"ok": False, "reason": "no_mask_impl", "kind": "port_mask", "writes_lean": False, "integer": True}
-    holes = find_holes(tactics or "")
-    skeleton = mask_skeleton(tactics or "", holes) if holes and mask_skeleton else tactics
+        from jevops.mask import mask_skeleton as kernel_skeleton
+        from jevops.mask import span_windows
+
+        holes = span_windows(body, 1)
+        skeleton = kernel_skeleton(body, holes)
+        memory.setdefault("nca", {})["mask"] = {
+            "n_holes": len(holes),
+            "families": [h.get("kind") for h in holes],
+            "integer": True,
+            "kernel": True,
+        }
+        return {
+            "ok": True,
+            "kind": "port_mask",
+            "n_holes": len(holes),
+            "families": [h.get("kind") for h in holes],
+            "skeleton_len": len(skeleton or ""),
+            "writes_lean": False,
+            "integer": True,
+            "wraps": "jevops.mask",
+        }
+    holes = find_holes(body)
+    skeleton = mask_skeleton(body, holes) if holes and mask_skeleton else body
     memory.setdefault("nca", {})["mask"] = {
         "n_holes": len(holes),
         "families": [h.family for h in holes],
@@ -103,10 +124,37 @@ def call_diffuse(memory: dict[str, Any], *, tactics: str = "") -> dict[str, Any]
 
     find_holes = hooks.resolve("find_symbol_holes", "symbol_diffuse", "find_symbol_holes")
     closed = hooks.resolve("closed_candidates", "symbol_diffuse", "closed_candidates")
+    body = tactics or ""
     if find_holes is None:
-        return {"ok": False, "reason": "no_diffuse_impl", "kind": "port_diffuse", "writes_lean": False, "integer": True}
-    holes = find_holes(tactics or "")
-    cands = closed(tactics or "", max_candidates=16) if tactics and closed else []
+        from jevops.mask import default_token_fills
+        from jevops.mask import shorter_fills
+        from jevops.mask import span_windows
+
+        holes = span_windows(body, 1)
+        cands = shorter_fills(
+            body,
+            holes,
+            fills_fn=default_token_fills,
+            token_fn=lambda text: len(str(text).split()),
+            max_candidates=16,
+        )
+        kinds = [str(row.get("kind") or "") for row in cands[:8]]
+        memory.setdefault("nca", {})["diffuse"] = {
+            "n_holes": len(holes),
+            "n_cands": len(cands),
+            "integer": True,
+            "kernel": True,
+        }
+        return _bias(
+            memory,
+            [k for k in kinds if k],
+            kind="port_diffuse",
+            n_holes=len(holes),
+            n_cands=len(cands),
+            wraps="jevops.mask",
+        )
+    holes = find_holes(body)
+    cands = closed(body, max_candidates=16) if body and closed else []
     cuts = sorted(cands, key=lambda row: int(row.get("token_count") or 10**9))
     kinds = [str(row.get("kind") or row.get("hole_id") or "") for row in cuts[:8]]
     memory.setdefault("nca", {})["diffuse"] = {"n_holes": len(holes), "n_cands": len(cands), "integer": True}

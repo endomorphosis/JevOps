@@ -16,6 +16,326 @@ CONFIDENT = 0.55
 UNCERTAIN = 0.60
 
 
+def hole_rows(
+    holes: Sequence[Any],
+    *,
+    token_fn: Any,
+    used_fn: Optional[Any] = None,
+    safe_fn: Optional[Any] = None,
+    head: int = 80,
+) -> list[dict[str, Any]]:
+    """Project hole objects into compact rows. token/used/safe fns injected."""
+
+    rows: list[dict[str, Any]] = []
+    for hole in holes or ():
+        original = getattr(hole, "original", "")
+        start = getattr(hole, "start", 0)
+        end = getattr(hole, "end", 0)
+        row: dict[str, Any] = {
+            "id": getattr(hole, "hole_id", None),
+            "family": getattr(hole, "family", None),
+            "n_tokens": int(token_fn(original)),
+            "head": str(original).strip()[: int(head)],
+        }
+        if used_fn is not None:
+            row["used_binders"] = used_fn(start, end, original)
+        if safe_fn is not None:
+            row["safe_to_drop"] = bool(safe_fn(start, end, original))
+        rows.append(row)
+    return rows
+
+
+def analysis_row(
+    record: Mapping[str, Any],
+    *,
+    n_tokens: int,
+    counts: Mapping[str, Any],
+    families: Sequence[Any] = (),
+    holes: Sequence[Mapping[str, Any]] = (),
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Compact proof analysis for Jev/rankers. No Lean."""
+
+    out: dict[str, Any] = {
+        "name": record.get("name"),
+        "source": record.get("source"),
+        "n_tokens": int(n_tokens),
+        "n_lines": int((counts or {}).get("n_lines") or 0),
+        "counts": {str(k): int(v) for k, v in dict(counts or {}).items()},
+        "families": list(families or []),
+        "mca_holes": list(holes or []),
+        "n_mca_holes": len(holes or []),
+    }
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def count_prefix_lines(
+    text: str,
+    matchers: Mapping[str, Any],
+    *,
+    extra: Optional[Mapping[str, float]] = None,
+) -> dict[str, float]:
+    """Count lines. matchers[name] is a callable(stripped)->bool or prefix tuple."""
+
+    counts = {str(name): 0.0 for name in matchers}
+    for line in str(text or "").splitlines():
+        stripped = line.strip()
+        for name, rule in matchers.items():
+            if callable(rule):
+                hit = bool(rule(stripped))
+            else:
+                hit = any(stripped == p or stripped.startswith(p) for p in rule)
+            if hit:
+                counts[str(name)] += 1.0
+    if extra:
+        counts.update({str(k): float(v) for k, v in extra.items()})
+    return counts
+
+
+def line_stats(text: str) -> dict[str, float]:
+    lines = str(text or "").splitlines()
+    return {
+        "n_lines": float(len(lines)),
+        "n_blank": float(sum(1 for line in lines if not line.strip())),
+        "max_indent": float(max((len(line) - len(line.lstrip()) for line in lines), default=0)),
+    }
+
+
+def shot_stats(
+    name: Any,
+    before: str,
+    after: str,
+    *,
+    token_fn: Any,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    from jevops.search import token_ratio
+
+    ref = int(token_fn(before))
+    filled = int(token_fn(after))
+    out = {
+        "name": name,
+        "ref_tokens": ref,
+        "filled_tokens": filled,
+        "ratio": token_ratio(filled, ref),
+    }
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def keep_if_contains(
+    seen: set[str],
+    out: list[tuple[str, str]],
+    name: str,
+    body: Optional[str],
+    required: Sequence[str] = (),
+) -> None:
+    """Append (name, body) if new, non-empty, and required lines are still present."""
+
+    if not body:
+        return
+    text = str(body).strip("\n")
+    if not text or text in seen:
+        return
+    present = {line.strip() for line in text.splitlines()}
+    if any(str(req).strip() not in present for req in required):
+        return
+    seen.add(text)
+    out.append((str(name), text))
+
+
+def keep_token(
+    name: str,
+    *,
+    stopwords: Sequence[str] = (),
+    min_len: int = 2,
+) -> bool:
+    text = str(name or "")
+    if not text or text == "_" or set(text) <= {"_"}:
+        return False
+    if len(text) < int(min_len):
+        return False
+    banned = {str(w).lower() for w in stopwords}
+    head = text.split(".", 1)[0]
+    if head.lower() in banned or text.lower() in banned:
+        return False
+    return True
+
+
+def unique_first(
+    items: Sequence[Any],
+    *,
+    key_fn: Any,
+    keep_fn: Optional[Any] = None,
+    cap: Optional[int] = None,
+) -> tuple[list[Any], int]:
+    """First-occurrence unique by key_fn. Returns (capped, uncapped_count)."""
+
+    seen: set[Any] = set()
+    out: list[Any] = []
+    for item in items:
+        key = key_fn(item)
+        if keep_fn is not None and not keep_fn(key):
+            continue
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(item)
+    uncapped = len(out)
+    if cap is not None:
+        out = out[: max(0, int(cap))]
+    return out, uncapped
+
+
+def unique_transforms(
+    text: str,
+    items: Sequence[Any],
+    *,
+    apply_fn: Any,
+) -> list[tuple[Any, str]]:
+    """Apply each item to text; keep first new non-empty results."""
+
+    current = str(text or "").strip("\n")
+    seen = {current}
+    out: list[tuple[Any, str]] = []
+    for item in items:
+        nxt = str(apply_fn(item, current) or "").strip("\n")
+        if nxt and nxt not in seen:
+            seen.add(nxt)
+            out.append((item, nxt))
+    return out
+
+
+def keep_shorter(old: str, new: str, *, token_fn: Any) -> str:
+    """Return new only if token_fn says it is strictly shorter."""
+
+    nxt = str(new or "")
+    prev = str(old or "")
+    if not nxt or nxt == prev:
+        return prev
+    if int(token_fn(nxt)) >= int(token_fn(prev)):
+        return prev
+    return nxt
+
+
+def rank_by_prob(
+    probabilities: Mapping[str, Any],
+    *,
+    k: int = 8,
+) -> list[tuple[str, float]]:
+    """(id, p) sorted desc, cap k."""
+
+    ranked = sorted(
+        ((str(key), float(value)) for key, value in dict(probabilities or {}).items()),
+        key=lambda item: item[1],
+        reverse=True,
+    )
+    return ranked[: max(0, int(k))]
+
+
+def attach_ranked(
+    ranked: Sequence[tuple[str, float]],
+    by_id: Mapping[str, Any],
+    fields: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    """Join ranked (id, p) with objects. field values are attr names or callables."""
+
+    rows: list[dict[str, Any]] = []
+    for ident, probability in ranked or ():
+        item = by_id.get(ident)
+        row: dict[str, Any] = {"id": ident, "probability": probability}
+        for dest, src in dict(fields).items():
+            if item is None:
+                row[str(dest)] = None
+            elif callable(src):
+                row[str(dest)] = src(item)
+            else:
+                row[str(dest)] = getattr(item, str(src), None)
+        rows.append(row)
+    return rows
+
+
+def present_families(
+    analysis: Mapping[str, Any],
+    *,
+    extra: Sequence[str] = ("dead_code", "search_space", "pca_keep"),
+) -> set[str]:
+    present = {str(item.get("family")) for item in analysis.get("families") or []}
+    present.update(str(x) for x in extra)
+    present.discard("")
+    return present
+
+
+def safe_holes(holes: Sequence[Mapping[str, Any]] = ()) -> list[Mapping[str, Any]]:
+    return [h for h in holes or () if h.get("safe_to_drop")]
+
+
+def pick_state(
+    record: Mapping[str, Any],
+    analysis: Mapping[str, Any],
+    *,
+    drafts: Sequence[Mapping[str, Any]] = (),
+    memory: Optional[Mapping[str, Any]] = None,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Compact pick/Jev state: drafts, holes, named memory. No Lean."""
+
+    from jevops.memory import named_success_kinds
+
+    name = str(record.get("name") or "")
+    state: dict[str, Any] = {
+        "problem": {"name": record.get("name"), "source": record.get("source")},
+        "n_tokens": analysis.get("n_tokens"),
+        "n_mca_holes": analysis.get("n_mca_holes"),
+        "counts": analysis.get("counts"),
+        "holes": analysis.get("mca_holes"),
+        "families": analysis.get("families"),
+        "drafts": draft_heads(drafts),
+        "memory": {
+            "success_kinds": named_success_kinds(memory or {}, name, limit=12),
+            "blacklist": named_keys((memory or {}).get("blacklist") or [], name),
+        },
+    }
+    if extra:
+        state.update(dict(extra))
+    return state
+
+
+def draft_heads(drafts: Sequence[Mapping[str, Any]], *, limit: int = 16) -> list[dict[str, Any]]:
+    """Compact draft rows for Jev state. No Lean."""
+
+    return [
+        {"kind": item.get("kind"), "family": item.get("family"), "tokens": item.get("token_count")}
+        for item in list(drafts)[: int(limit)]
+    ]
+
+
+def leaf_choice_questions(
+    tree: Mapping[str, Any],
+    *,
+    ctor: Any,
+    skip_single: bool = True,
+    focus: str = "Prefer closed folds over random spans.",
+) -> dict[str, Any]:
+    """One Choice per family with more than one leaf."""
+
+    questions: dict[str, Any] = {}
+    for fam, kids in dict(tree or {}).items():
+        if skip_single and len(kids or {}) == 1:
+            continue
+        questions[f"leaf_{fam}"] = ctor(
+            instructions={
+                "question": f"Inside `{fam}`, which leaf is most likely to lake-compile AND cut tokens?",
+                "focus": focus,
+            },
+            criteria=dict(kids),
+        )
+    return questions
+
+
 def sample_records(
     records: Sequence[Mapping[str, Any]],
     *,
@@ -377,12 +697,14 @@ def rank_from_answers(
     )
 
 
-def geo_mean(probs: Sequence[float]) -> float:
-    live = [max(float(p), EPSILON) for p in probs]
+def geo_mean(probs: Sequence[float], *, epsilon: float = EPSILON) -> float:
+    live = [max(float(p), float(epsilon)) for p in probs if p is not None]
+    if not live:
+        return 0.0
     prod = 1.0
     for item in live:
         prod *= item
-    return prod ** (1.0 / max(1, len(live)))
+    return prod ** (1.0 / len(live))
 
 
 def rank_paths(
@@ -896,3 +1218,113 @@ def rank_leftover(
             except Exception:
                 pass
     return sort_keyed(scored)
+
+
+def live_tree(
+    family_tree: Mapping[str, Mapping[str, str]],
+    available: Mapping[str, Any],
+    *,
+    keep_key: str = "keep",
+) -> dict[str, dict[str, str]]:
+    """Restrict a family→leaf catalog to leaves present in available."""
+
+    tree: dict[str, dict[str, str]] = {}
+    for fam, kids in dict(family_tree or {}).items():
+        live = {str(leaf): str(desc) for leaf, desc in dict(kids or {}).items() if leaf in available}
+        if live:
+            tree[str(fam)] = live
+    if keep_key not in tree and keep_key in (family_tree or {}):
+        tree = {str(keep_key): dict(family_tree[keep_key]), **tree}
+    return tree
+
+
+def classification_from_answers(
+    tree: Mapping[str, Mapping[str, Any]],
+    choices: Mapping[str, Any],
+    *,
+    beam_k: int = BEAM_K,
+    confident: float = CONFIDENT,
+    epsilon: float = EPSILON,
+) -> dict[str, Any]:
+    """Family Choice + per-family leaf Choices → geo-mean paths. Jev did not write Lean."""
+
+    fam_ans = (choices or {}).get("family")
+    fam_probs = {
+        str(fam): float(dict(getattr(fam_ans, "probabilities", None) or {}).get(fam) or 0.0)
+        for fam in tree
+    }
+    family_conf = float(getattr(fam_ans, "confidence", None) or 0.0)
+    family = {
+        "choice": getattr(fam_ans, "choice", None),
+        "confidence": family_conf,
+        "probabilities": fam_probs,
+    }
+    leaf_qs = leaf_qs_from_choices(tree, choices or {}, family_conf=family_conf)
+    paths = rank_paths(tree, fam_probs, leaf_qs, beam_k=beam_k)
+    top = paths[0]["path_score"] if paths else 0.0
+    second = paths[1]["path_score"] if len(paths) > 1 else float(epsilon)
+    fam_rank = sorted(tree, key=lambda fam: float(fam_probs.get(fam) or 0.0), reverse=True)
+    return {
+        "family": family,
+        "leaves": leaf_qs,
+        "paths": paths,
+        "beam_fams": fam_rank[: max(1, int(beam_k))],
+        "separation": top / max(second, float(epsilon)),
+        "abstain": family_conf < float(confident),
+    }
+
+
+def padded_id(index: int, *, prefix: str = "d", width: int = 3) -> str:
+    return f"{prefix}{int(index):0{max(1, int(width))}d}"
+
+
+def unique_capped(cap: int) -> tuple[Any, list[Any]]:
+    """push(key, factory(index)) appends unique keys up to cap."""
+
+    seen: set[str] = set()
+    rows: list[Any] = []
+
+    def push(key: str, factory: Any) -> bool:
+        text = str(key or "")
+        if not text or text in seen or len(rows) >= max(0, int(cap)):
+            return False
+        seen.add(text)
+        rows.append(factory(len(rows)))
+        return True
+
+    return push, rows
+
+
+def unique_push(
+    items: list[Any],
+    seen: set[str],
+    key: str,
+    factory: Any,
+    *,
+    cap: int,
+) -> bool:
+    """Append factory(index, stripped_key) when key is new and under cap."""
+
+    text = str(key or "").strip("\n")
+    if not text or text in seen or len(items) >= max(0, int(cap)):
+        return False
+    seen.add(text)
+    items.append(factory(len(items), text))
+    return True
+
+
+def project_items(items: Sequence[Any], fields: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Project objects/mappings. values are attr names, mapping keys, or callables."""
+
+    out: list[dict[str, Any]] = []
+    for item in items or ():
+        row: dict[str, Any] = {}
+        for dest, src in dict(fields).items():
+            if callable(src):
+                row[str(dest)] = src(item)
+            elif isinstance(item, Mapping):
+                row[str(dest)] = item.get(src)
+            else:
+                row[str(dest)] = getattr(item, str(src), None)
+        out.append(row)
+    return out

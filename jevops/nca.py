@@ -777,6 +777,29 @@ def allowed_path(
     return resolved
 
 
+def first_existing_file(
+    candidates: Sequence[Any],
+    *,
+    roots: Sequence[Path] = (),
+) -> Optional[Path]:
+    """First existing file, optionally confined to allowed roots."""
+
+    for cand in candidates:
+        try:
+            resolved = Path(cand).resolve()
+        except OSError:
+            continue
+        if not resolved.is_file():
+            continue
+        if roots:
+            allowed = allowed_path(resolved, roots=tuple(Path(root) for root in roots))
+            if allowed is None:
+                continue
+            return allowed
+        return resolved
+    return None
+
+
 def inspect_python(
     path: str | Path,
     *,
@@ -850,4 +873,382 @@ def walk_python(
         "n_fold_fns": sum(len(row.get("fold_fns") or []) for row in rows),
         "files": [{"path": row.get("path"), "ok": row.get("ok"), "n_functions": row.get("n_functions")} for row in rows],
         "called_docker0": False,
+    }
+
+
+def function_call_map(
+    source: str,
+    *,
+    qualify_fn: Optional[Any] = None,
+) -> tuple[list[str], dict[str, list[str]]]:
+    """Python AST: short function names in order, and id → unique callees.
+
+    qualify_fn(name) keys the call map (default: the short name). No source bodies.
+    """
+
+    qualify = qualify_fn or (lambda name: name)
+    tree = ast.parse(str(source or ""))
+    defs: list[str] = []
+    calls_by: dict[str, list[str]] = {}
+    current = ""
+
+    class Visitor(ast.NodeVisitor):
+        def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+            nonlocal current
+            ident = str(qualify(node.name))
+            defs.append(node.name)
+            prev, current = current, ident
+            calls_by.setdefault(ident, [])
+            self.generic_visit(node)
+            current = prev
+
+        visit_AsyncFunctionDef = visit_FunctionDef
+
+        def visit_Call(self, node: ast.Call) -> None:
+            func = node.func
+            called = ""
+            if isinstance(func, ast.Name):
+                called = func.id
+            elif isinstance(func, ast.Attribute):
+                called = func.attr
+            if current and called:
+                bucket = calls_by.setdefault(current, [])
+                if called not in bucket:
+                    bucket.append(called)
+            self.generic_visit(node)
+
+    Visitor().visit(tree)
+    return defs, calls_by
+
+
+def top_level_symbols(source: str, *, cap: int = 80) -> list[str]:
+    """Module-body function/class names. No source bodies."""
+
+    tree = ast.parse(str(source or ""))
+    names = [
+        node.name
+        for node in tree.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+    ]
+    return names[: max(0, int(cap))]
+
+
+def matching_top_level(
+    root: Any,
+    query: str,
+    *,
+    glob: str = "*.py",
+    cap_files: int = 80,
+    cap_hits: int = 24,
+) -> list[dict[str, Any]]:
+    """Top-level function/class names in globbed files whose names contain query."""
+
+    base = Path(root)
+    needle = str(query or "").casefold()
+    hits: list[dict[str, Any]] = []
+    try:
+        paths = sorted(base.glob(glob))[: max(0, int(cap_files))]
+    except OSError:
+        return []
+    for path in paths:
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+        except (OSError, SyntaxError):
+            continue
+        for node in tree.body:
+            if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                continue
+            name = node.name
+            if needle and needle not in name.casefold():
+                continue
+            hits.append(
+                {
+                    "name": name,
+                    "path": path.name,
+                    "lineno": int(getattr(node, "lineno", 0) or 0),
+                }
+            )
+            if len(hits) >= max(0, int(cap_hits)):
+                return hits
+    return hits
+
+
+def sidecar_files(
+    paths: Sequence[Path],
+    *,
+    cap_files: int = 80,
+    cap_symbols: int = 80,
+) -> list[dict[str, Any]]:
+    """AST sidecar rows: path name + top-level symbols."""
+
+    rows: list[dict[str, Any]] = []
+    for path in list(paths or ())[: max(0, int(cap_files))]:
+        target = Path(path)
+        try:
+            symbols = top_level_symbols(target.read_text(encoding="utf-8"), cap=cap_symbols)
+        except (OSError, SyntaxError):
+            continue
+        rows.append({"path": target.name, "symbols": symbols, "n_symbols": len(symbols)})
+    return rows
+
+
+def query_sidecar_symbols(
+    files: Sequence[Mapping[str, Any]],
+    query: str,
+    *,
+    limit: int = 24,
+    source: str = "sidecar",
+) -> list[dict[str, Any]]:
+    """Case-insensitive substring hits on sidecar symbol names. Empty query → []."""
+
+    needle = str(query or "").casefold()
+    hits: list[dict[str, Any]] = []
+    if not needle:
+        return hits
+    for row in files or ():
+        for symbol in row.get("symbols") or []:
+            if needle in str(symbol).casefold():
+                hits.append({"symbol": symbol, "path": row.get("path"), "source": source})
+            if len(hits) >= max(0, int(limit)):
+                return hits
+    return hits
+
+
+def resolve_unique_callees(
+    defs: Mapping[str, Sequence[str]],
+    calls: Mapping[str, Sequence[str]],
+    *,
+    cap: int = 12,
+) -> dict[str, list[str]]:
+    """If a callee short-name has exactly one qualified def, use it."""
+
+    resolved: dict[str, list[str]] = {}
+    for qname, raw in dict(calls or {}).items():
+        out: list[str] = []
+        for callee in raw:
+            targets = list(defs.get(callee) or [])
+            out.append(str(targets[0]) if len(targets) == 1 else str(callee))
+        resolved[str(qname)] = out[: max(0, int(cap))]
+    return resolved
+
+
+def call_graph_from_paths(
+    paths: Sequence[Any],
+    *,
+    cap_files: int = 80,
+    cap_neighbors: int = 12,
+) -> dict[str, Any]:
+    """Qualified defs + unique callees over Python files. No source bodies."""
+
+    defs: dict[str, list[str]] = {}
+    calls: dict[str, list[str]] = {}
+    for path in list(paths or ())[: max(0, int(cap_files))]:
+        target = Path(path)
+        module = target.stem
+        try:
+            _short, mapped = function_call_map(
+                target.read_text(encoding="utf-8"),
+                qualify_fn=lambda name, mod=module: f"{mod}:{name}",
+            )
+        except (OSError, SyntaxError):
+            continue
+        for qname, callees in mapped.items():
+            short = str(qname).rsplit(":", 1)[-1]
+            bucket = defs.setdefault(short, [])
+            if qname not in bucket:
+                bucket.append(str(qname))
+            dest = calls.setdefault(str(qname), [])
+            for callee in callees:
+                if callee not in dest:
+                    dest.append(str(callee))
+    resolved = resolve_unique_callees(defs, calls, cap=int(cap_neighbors))
+    return {
+        "defs": defs,
+        "calls": resolved,
+        "n_defs": sum(len(items) for items in defs.values()),
+    }
+
+
+def first_matching_symbol(
+    hits: Sequence[Mapping[str, Any]],
+    name: str,
+    *,
+    key: str = "symbol",
+) -> str:
+    """First hit whose symbol contains name or ends with :bare. Else hits[0]."""
+
+    raw = str(name or "")
+    bare = raw.rsplit(":", 1)[-1]
+    for hit in hits or ():
+        symbol = str(hit.get(key) or "")
+        if raw and raw in symbol:
+            return symbol
+        if bare and symbol.endswith(":" + bare):
+            return symbol
+    if hits:
+        return str(hits[0].get(key) or "")
+    return ""
+
+
+def pick_qualified(
+    name: str,
+    defs: Mapping[str, Sequence[str]],
+    calls: Mapping[str, Sequence[str]],
+    *,
+    strip_prefixes: Sequence[str] = (),
+    ptr_prefix: str = "ptr://codepath/",
+) -> str:
+    """Resolve a codepath name to a qualified def. First unique-or-any match."""
+
+    symbol = str(name or "")
+    if ptr_prefix and symbol.startswith(ptr_prefix):
+        symbol = symbol[len(ptr_prefix) :]
+    if ":" not in symbol and "." in symbol:
+        for prefix in strip_prefixes:
+            if symbol.startswith(prefix):
+                symbol = symbol[len(prefix) :]
+                break
+        if ":" not in symbol:
+            parts = symbol.replace("/", ".").rsplit(".", 1)
+            if len(parts) == 2:
+                symbol = f"{parts[0]}:{parts[1]}"
+    if symbol in dict(calls or {}):
+        return symbol
+    bare = symbol.rsplit(":", 1)[-1]
+    matches = list((defs or {}).get(bare) or [])
+    return str(matches[0]) if matches else ""
+
+
+def append_board_edges(
+    memory: dict[str, Any],
+    pairs: Sequence[Sequence[str]],
+    *,
+    prefix: str = "ptr://codepath/",
+    limit: int = 48,
+) -> int:
+    edges = memory.setdefault("nca", {}).setdefault("board_edges", [])
+    added = 0
+    for raw in list(pairs or ())[: max(0, int(limit))]:
+        if len(raw) < 2:
+            continue
+        src = str(raw[0])
+        dst = str(raw[1])
+        if prefix and not src.startswith("ptr://"):
+            src = prefix + src
+        if prefix and not dst.startswith("ptr://"):
+            dst = prefix + dst
+        pair = [src, dst]
+        if pair in edges:
+            continue
+        edges.append(pair)
+        added += 1
+    return added
+
+
+_LEAN_MARKERS = ("simp_all", "intros ", "theorem ", "\nby\n", "exact ⟨", "induction ", "have :=")
+
+
+def looks_like_lean(text: str) -> bool:
+    blob = str(text or "")
+    return any(marker in blob for marker in _LEAN_MARKERS)
+
+
+def replace_function_def(source: str, name: str, new_def: str) -> str:
+    """Replace a top-level or nested function by name. Returns unparsed Python."""
+
+    tree = ast.parse(source)
+    parsed = ast.parse(new_def)
+    if not parsed.body or not isinstance(parsed.body[0], (ast.FunctionDef, ast.AsyncFunctionDef)):
+        raise ValueError("new_def must be a function definition")
+    new_fn = parsed.body[0]
+
+    class _Swap(ast.NodeTransformer):
+        def visit_FunctionDef(self, node: ast.FunctionDef) -> Any:
+            if node.name == name:
+                return ast.copy_location(new_fn, node)
+            return self.generic_visit(node)
+
+        def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> Any:
+            if node.name == name:
+                return ast.copy_location(new_fn, node)
+            return self.generic_visit(node)
+
+    nxt = _Swap().visit(tree)
+    ast.fix_missing_locations(nxt)
+    return ast.unparse(nxt) + "\n"
+
+
+def rewrite_python(
+    path: str | Path,
+    *,
+    roots: Sequence[Path],
+    transform_fn: Any,
+    base: Optional[Path] = None,
+    accept_fn: Optional[Any] = None,
+    diagnose_fn: Optional[Any] = None,
+    write: bool = True,
+) -> dict[str, Any]:
+    """Sandboxed Python AST rewrite. Never writes Lean. Fail closed outside roots.
+
+    transform_fn(tree, source) → ast.AST or str. Write only if accept/diagnose pass.
+    """
+
+    target = allowed_path(path, roots=roots, base=base)
+    if target is None or not target.is_file():
+        return {"ok": False, "reason": "path_not_allowed", "path": str(path), "wrote": False}
+    old = target.read_text(encoding="utf-8")
+    try:
+        tree = ast.parse(old)
+    except SyntaxError as exc:
+        return {"ok": False, "reason": "syntax", "error": str(exc)[:160], "path": str(target), "wrote": False}
+    produced = transform_fn(tree, old)
+    try:
+        if isinstance(produced, ast.AST):
+            ast.fix_missing_locations(produced)
+            new = ast.unparse(produced) + "\n"
+        else:
+            new = str(produced or "")
+            if looks_like_lean(new):
+                return {
+                    "ok": False,
+                    "reason": "looks_like_lean",
+                    "path": str(target),
+                    "wrote": False,
+                    "jev_writes_lean": False,
+                }
+            ast.parse(new)
+    except SyntaxError as exc:
+        return {"ok": False, "reason": "syntax_after", "error": str(exc)[:160], "wrote": False}
+    if looks_like_lean(new):
+        return {
+            "ok": False,
+            "reason": "looks_like_lean",
+            "path": str(target),
+            "wrote": False,
+            "jev_writes_lean": False,
+        }
+    if new == old:
+        return {"ok": True, "reason": "unchanged", "path": str(target), "wrote": False}
+    if diagnose_fn is not None:
+        before = list(diagnose_fn(old) or [])
+        after = list(diagnose_fn(new) or [])
+        if len(after) > len(before):
+            return {
+                "ok": False,
+                "reason": "diagnostics_worse",
+                "before": len(before),
+                "after": len(after),
+                "wrote": False,
+            }
+    if accept_fn is not None and not accept_fn(old, new):
+        return {"ok": False, "reason": "rejected", "path": str(target), "wrote": False}
+    if write:
+        target.write_text(new, encoding="utf-8")
+    return {
+        "ok": True,
+        "path": str(target),
+        "wrote": bool(write),
+        "n_chars": len(new),
+        "called_docker0": False,
+        "jev_writes_lean": False,
     }

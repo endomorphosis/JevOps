@@ -398,7 +398,34 @@ def diffuse_closed(tactics: str) -> dict[str, Any]:
     token_count = hooks.resolve("token_count", "run_warmup", "token_count")
     lra_sym = hooks.try_import("symbol_diffuse")
     if lra_sym is None:
-        return {"n_drafts": 0, "drafts": [], "llm": "off", "called_docker0": False, "reason": "no_diffuse"}
+        from jevops.mask import default_token_fills
+        from jevops.mask import shorter_fills
+        from jevops.mask import span_windows
+
+        body = str(tactics or "").strip("\n")
+        holes = span_windows(body, 1)
+        rows = shorter_fills(
+            body,
+            holes,
+            fills_fn=default_token_fills,
+            token_fn=token_count if token_count else (lambda text: len(str(text).split())),
+            max_candidates=8,
+        )
+        return {
+            "n_drafts": len(rows),
+            "drafts": [
+                {
+                    "kind": item.get("kind"),
+                    "token_count": item.get("token_count"),
+                    "n_masks": 1,
+                    "span": 1,
+                }
+                for item in rows
+            ],
+            "llm": "off",
+            "called_docker0": False,
+            "kernel": True,
+        }
 
     body = str(tactics or "").strip("\n")
     rows = []

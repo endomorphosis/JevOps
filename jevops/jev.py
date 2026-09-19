@@ -17,6 +17,43 @@ class JevError(ValueError):
     """Malformed Choice / Score / Noul payload."""
 
 
+_KEEP_USAGE = (
+    "input_tokens",
+    "output_tokens",
+    "total_tokens",
+    "completion_tokens",
+    "prompt_tokens",
+)
+
+
+def redact(
+    payload: Any,
+    *,
+    substrings: Sequence[str] = ("api_key",),
+    exact: Sequence[str] = ("authorization", "token"),
+    keep: Sequence[str] = _KEEP_USAGE,
+    prefixes: Sequence[str] = ("apikey_",),
+) -> Any:
+    """Recursively redact secrets. Never a generated proof."""
+
+    if isinstance(payload, Mapping):
+        out: dict[Any, Any] = {}
+        keep_set = set(keep)
+        exact_set = set(exact)
+        for key, value in payload.items():
+            name = str(key).lower()
+            if any(s in name for s in substrings) or (name in exact_set and name not in keep_set):
+                out[key] = "[redacted]" if value else value
+            else:
+                out[key] = redact(value, substrings=substrings, exact=exact, keep=keep, prefixes=prefixes)
+        return out
+    if isinstance(payload, list):
+        return [redact(item, substrings=substrings, exact=exact, keep=keep, prefixes=prefixes) for item in payload]
+    if isinstance(payload, str) and any(payload.startswith(p) for p in prefixes):
+        return "[redacted]"
+    return payload
+
+
 def usage_tokens(usage: Mapping[str, Any], *, default_in: int = 200) -> tuple[int, int]:
     inn = int(usage.get("input_tokens") or usage.get("prompt_tokens") or default_in)
     out = int(usage.get("output_tokens") or usage.get("completion_tokens") or 0)
@@ -39,6 +76,74 @@ def record_usage(
     return inn, out
 
 
+def intent_state(
+    record: Mapping[str, Any],
+    analysis: Mapping[str, Any],
+    *,
+    residuals: Optional[Mapping[str, Any]] = None,
+    memory_view: Optional[Mapping[str, Any]] = None,
+    window: Optional[Mapping[str, Any]] = None,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Compact AutoResearch/intent state. Does not generate Lean."""
+
+    from jevops.pick import safe_holes
+
+    state: dict[str, Any] = {
+        "problem": {"name": record.get("name"), "source": record.get("source")},
+        "n_tokens": analysis.get("n_tokens"),
+        "counts": analysis.get("counts"),
+        "n_mca_holes": analysis.get("n_mca_holes"),
+        "safe_holes": safe_holes(analysis.get("mca_holes") or ()),
+        "residuals": dict(residuals or {}),
+        "memory": dict(memory_view or {}),
+    }
+    if window:
+        state.update(dict(window))
+    if extra:
+        state.update(dict(extra))
+    return state
+
+
+def distill_row(
+    *,
+    schema: str,
+    mode: str,
+    problem: Mapping[str, Any],
+    answers: Any,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Log (features, Jev answers). Never includes generated Lean."""
+
+    out = {
+        "schema": schema,
+        "mode": mode,
+        "features": {
+            "name": problem.get("name"),
+            "source": problem.get("source"),
+            "n_toolchains": problem.get("n_toolchains"),
+            "proof_length": problem.get("proof_length"),
+            "num_lines": problem.get("num_lines"),
+            "has_repo": problem.get("has_repo"),
+        },
+        "answers": answers,
+        "jev_generated_lean": False,
+        "score_is_rubric_index": True,
+        "arena_score": None,
+    }
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def skipped(reason: str, **extra: Any) -> dict[str, Any]:
+    """Fail-closed Jev skip payload. Never a generated proof."""
+
+    out = {"skipped": True, "reason": str(reason)}
+    out.update(extra)
+    return out
+
+
 def skip_reason(
     *,
     enabled: bool,
@@ -57,6 +162,41 @@ def skip_reason(
     if not using_fixture and not available:
         return "typesafe_inference_missing"
     return ""
+
+
+def stringify_legend_keys(
+    payload: Mapping[str, Any],
+    keys: Sequence[str] = ("likely_shorter_legend", "elab_risk_legend"),
+) -> dict[str, Any]:
+    """JSON-safe legend maps (int keys → str). No Lean."""
+
+    out = dict(payload)
+    for key in keys:
+        legend = out.get(key)
+        if isinstance(legend, dict):
+            out[key] = {str(k): v for k, v in legend.items()}
+    return out
+
+
+def catalog_kinds(questions: Mapping[str, Any]) -> dict[str, str]:
+    """name → question kind for a catalog/plan view."""
+
+    out: dict[str, str] = {}
+    for name, question in dict(questions or {}).items():
+        kind = getattr(question, "kind", None)
+        if not kind:
+            try:
+                kind = question_kind(question)
+            except Exception:
+                kind = ""
+        if kind:
+            out[str(name)] = str(kind)
+    return out
+
+
+def keys_by_type(spec: Mapping[str, Mapping[str, Any]], kind: str) -> tuple[str, ...]:
+    want = str(kind or "")
+    return tuple(name for name, item in spec.items() if str((item or {}).get("type") or "") == want)
 
 
 def deny_lean_keys(payload: Mapping[str, Any]) -> dict[str, Any]:
@@ -374,6 +514,22 @@ def truncate_middle(
     digest = hashlib.sha256(middle).hexdigest()
     skipped = len(lines) - head_lines - tail_lines
     return f"{head}\n\n{marker} sha256:{digest} lines={skipped}\n\n{tail}"
+
+
+def noul_attr(nouls: Mapping[str, Any], key: str) -> float:
+    return float(getattr((nouls or {}).get(key), "noul", 0.0) or 0.0)
+
+
+def choice_head(choices: Mapping[str, Any], key: str) -> tuple[Any, dict[str, float], float, Any]:
+    """(answer, probabilities, confidence, choice). Missing key is empty."""
+
+    ans = (choices or {}).get(key)
+    return (
+        ans,
+        dict(getattr(ans, "probabilities", None) or {}),
+        float(getattr(ans, "confidence", None) or 0.0),
+        getattr(ans, "choice", None),
+    )
 
 
 def unpack_response(response: Any) -> tuple[Any, Any, Any, dict[str, Any]]:

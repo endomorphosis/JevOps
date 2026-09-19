@@ -83,6 +83,164 @@ RIDGE_L2 = 1.0
 SVD_RANK = 3
 
 
+def residual_feature_scores(
+    counts: Mapping[str, Any],
+    mean: Sequence[Any],
+    std: Sequence[Any],
+    components: Sequence[Mapping[str, Any]],
+    feature_names: Sequence[str],
+    *,
+    loadings_key: str = "loadings",
+) -> dict[str, float]:
+    """Z-score a count row against SVD mean/std, then sum |loading × z| on minor components.
+
+    Pure Python. numpy is not required. Feature names stay with the consumer.
+    """
+
+    names = [str(name) for name in feature_names]
+    zscore: list[float] = []
+    for index, name in enumerate(names):
+        scale = float(std[index]) if index < len(std) else 1.0
+        center = float(mean[index]) if index < len(mean) else 0.0
+        value = float(counts.get(name) or 0.0)
+        zscore.append((value - center) / scale if scale else 0.0)
+    scores = {name: 0.0 for name in names}
+    for component in components or ():
+        loadings = (component or {}).get(loadings_key) or {}
+        for index, name in enumerate(names):
+            scores[name] += abs(float(loadings.get(name) or 0.0) * zscore[index])
+    return scores
+
+
+def rank_present_families(
+    counts: Mapping[str, Any],
+    scores: Mapping[str, Any],
+    family_features: Mapping[str, Sequence[str]],
+    *,
+    top_k: int = 5,
+    score_key: str = "mca_score",
+) -> list[dict[str, Any]]:
+    """Families whose features are present, ranked by summed scores. No numpy."""
+
+    families: list[dict[str, Any]] = []
+    for family, features in dict(family_features or {}).items():
+        hit = [name for name in features if float(counts.get(name) or 0) > 0]
+        if not hit:
+            continue
+        families.append(
+            {
+                "family": family,
+                "features": hit,
+                score_key: float(sum(float(scores.get(name) or 0.0) for name in hit)),
+                "present": {name: counts[name] for name in hit},
+            }
+        )
+    families.sort(key=lambda item: float(item.get(score_key) or 0.0), reverse=True)
+    return families[: max(0, int(top_k))]
+
+
+def update_feature_weights(
+    rows: Sequence[Mapping[str, Any]],
+    weights: Mapping[str, float],
+    *,
+    features: Sequence[str],
+    penalty: Sequence[str] = (),
+    lr: float = 0.3,
+    floor: float = 0.05,
+    ok_key: str = "ok",
+    features_key: str = "features",
+) -> dict[str, float]:
+    """Nudge weights from ok vs fail feature means. One AutoResearch step."""
+
+    ok = [row for row in rows if row.get(ok_key)]
+    bad = [row for row in rows if row.get(ok_key) is False]
+    if not ok or not bad:
+        return dict(weights)
+    banned = set(penalty)
+    updated = dict(weights)
+    for name in features:
+        mean_ok = sum(float((r.get(features_key) or {}).get(name) or 0.0) for r in ok) / len(ok)
+        mean_bad = sum(float((r.get(features_key) or {}).get(name) or 0.0) for r in bad) / len(bad)
+        gap = (mean_bad - mean_ok) if name in banned else (mean_ok - mean_bad)
+        updated[name] = max(float(floor), float(updated.get(name) or 0.5) + float(lr) * gap)
+    return updated
+
+
+def zscore_svd(
+    rows: Sequence[Sequence[float]],
+    *,
+    n_principal: int = 3,
+    n_minor: int = 3,
+    feature_names: Sequence[str] = (),
+) -> dict[str, Any]:
+    """Z-score rows then SVD. numpy is imported lazily. Not a lake admit."""
+
+    from jevops.outer import try_import
+
+    np = try_import("numpy")
+    if np is None:
+        raise RuntimeError("numpy is required for zscore_svd")
+    matrix = np.asarray([list(row) for row in rows], dtype=float)
+    mean = matrix.mean(axis=0)
+    std = matrix.std(axis=0)
+    std[std == 0] = 1.0
+    zscore = (matrix - mean) / std
+    _, singular, vt = np.linalg.svd(zscore, full_matrices=False)
+    n_comp = int(vt.shape[0])
+    n_principal = max(1, min(int(n_principal), n_comp))
+    n_minor = max(1, min(int(n_minor), n_comp))
+    names = [str(name) for name in feature_names] or [str(i) for i in range(int(matrix.shape[1]))]
+    explained = singular ** 2
+    total = float(explained.sum())
+    explained = explained / total if total else explained
+    principal = vt[:n_principal]
+    minor = vt[-n_minor:]
+    return {
+        "n_rows": int(matrix.shape[0]),
+        "n_features": int(matrix.shape[1]),
+        "feature_names": names,
+        "mean": mean.tolist(),
+        "std": std.tolist(),
+        "singular_values": singular.tolist(),
+        "explained_ratio": explained.tolist(),
+        "principal": [
+            {
+                "index": index,
+                "explained": float(explained[index]),
+                "loadings": dict(zip(names, component.tolist())),
+            }
+            for index, component in enumerate(principal)
+        ],
+        "minor": [
+            {
+                "index": n_comp - n_minor + index,
+                "explained": float(explained[n_comp - n_minor + index]),
+                "loadings": dict(zip(names, component.tolist())),
+            }
+            for index, component in enumerate(minor)
+        ],
+        "zscore": zscore,
+        "vt": vt,
+    }
+
+
+def signed_dot(
+    features: Mapping[str, float],
+    weights: Mapping[str, float],
+    *,
+    penalty: Sequence[str] = (),
+    default_w: float = 0.5,
+) -> float:
+    """Weighted sum; names in penalty subtract. Missing weight → default_w."""
+
+    banned = {str(name) for name in penalty}
+    score = 0.0
+    for name, val in dict(features or {}).items():
+        weight = float(weights.get(name) or default_w)
+        score += (-weight if str(name) in banned else weight) * float(val)
+    return score
+
+
 def is_ranker_stem(stem: str) -> bool:
     text = str(stem or "").lower().replace("port_", "")
     return any(tag in text for tag in RANKER_STEMS)

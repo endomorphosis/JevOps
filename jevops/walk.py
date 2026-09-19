@@ -1334,6 +1334,24 @@ def nest_criteria(
     return out
 
 
+def extra_payload(
+    compose: str,
+    *,
+    nest_child: str = "",
+    tool_name: str = "",
+    fork: Optional[Mapping[str, Any]] = None,
+    default_hook: str = "",
+) -> dict[str, Any]:
+    """Closed extra kwargs for nest/spawn/hook. No Lean."""
+
+    kind = str(compose or "")
+    if kind == "fork":
+        return dict(fork or {})
+    if kind == "hook":
+        return {"path": nest_child or tool_name or default_hook}
+    return {}
+
+
 def pack_canary(
     walked: Mapping[str, Any],
     *,

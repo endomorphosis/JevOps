@@ -221,6 +221,28 @@ def remember_research(
     memory["research"] = keep_named_tail(list(memory.get("research") or []), name, keep=8)
 
 
+def remember_intent(
+    memory: dict[str, Any],
+    *,
+    name: str,
+    tactics: str,
+    intent: Mapping[str, Any],
+    residual_fn: Optional[Any] = None,
+) -> None:
+    """Store AutoResearch residuals/unsafe/help from an intent payload. No Lean."""
+
+    residuals = residual_fn(tactics) if residual_fn is not None else {}
+    remember_research(
+        memory,
+        name=name,
+        residuals=residuals or {},
+        unsafe=intent.get("residual_unsafe") or {},
+        help_scores=intent.get("residual_help") or {},
+        skill=str(intent.get("skill") or "keep"),
+        compose=str(intent.get("compose") or "single"),
+    )
+
+
 def named_success_kinds(memory: Mapping[str, Any], name: str, *, limit: int = 8) -> list[str]:
     return sorted(
         {
