@@ -544,8 +544,9 @@ def classify_text(
     rules: Sequence[tuple[str, Sequence[str]]],
     *,
     default: str = "other",
+    all_of: Sequence[tuple[str, Sequence[str]]] = (),
 ) -> str:
-    """First matching needle wins. Case-insensitive. No Lean."""
+    """First matching needle wins. Optional all-of rules after. No Lean."""
 
     hay = str(blob or "")
     low = hay.lower()
@@ -553,6 +554,9 @@ def classify_text(
         for needle in needles:
             if needle.lower() in low:
                 return str(label)
+    for label, needles in all_of:
+        if needles and all(str(needle).lower() in low for needle in needles):
+            return str(label)
     return str(default)
 
 
@@ -582,6 +586,23 @@ def insert_missing_line(draft: str, reference: str, missing_line: str) -> str:
                 draft_lines.insert(insert_at, missing_line)
                 return "\n".join(draft_lines)
     return missing_line + "\n" + draft
+
+
+def restore_bound_lines(
+    draft: str,
+    reference: str,
+    idents: Sequence[str],
+    *,
+    bound_fn: Any,
+) -> str:
+    """Restore reference lines that bound missing identifiers. bound_fn is injected."""
+
+    out = draft
+    for ident in idents:
+        bound = bound_fn(reference, ident) if bound_fn is not None else None
+        if bound:
+            out = insert_missing_line(out, reference, bound)
+    return str(out).strip("\n")
 
 
 def imported_names(source: str) -> set[str]:

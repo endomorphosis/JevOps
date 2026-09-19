@@ -9,6 +9,41 @@ from __future__ import annotations
 from typing import Any, Callable, Mapping, Optional, Sequence
 
 
+def closed(reason: str, name: Any, **extra: Any) -> dict[str, Any]:
+    """Fail-closed oracle payload. Never a lake admit."""
+
+    out = {"ok": False, "reason": str(reason), "name": name, "theorem_ok": False}
+    out.update(extra)
+    return out
+
+
+def require_named(
+    records: Sequence[Mapping[str, Any]],
+    name: str,
+    *,
+    cap: Optional[int] = None,
+    token_key: str = "n_tokens",
+) -> tuple[Optional[Mapping[str, Any]], Optional[dict[str, Any]]]:
+    """Lookup a named record. Fail closed if missing or over cap."""
+
+    from jevops.outer import lookup_named
+
+    match = lookup_named(records, name)
+    if not match:
+        return None, closed("not_small_or_unknown", name)
+    n_tok = int(match.get(token_key) or 0)
+    if cap is not None and n_tok > int(cap):
+        return None, closed("not_small_or_unknown", name, tokens=n_tok)
+    return match, None
+
+
+def lake_budget(n_tokens: Any, *, cap: int, top: int = 3) -> tuple[bool, int]:
+    """too_big scripts get a 1-slot budget; else lake_top."""
+
+    too_big = int(n_tokens or 0) > int(cap)
+    return too_big, (1 if too_big else max(1, int(top or 3)))
+
+
 def preferred_kinds(memory: Mapping[str, Any]) -> list[str]:
     seen: set[str] = set()
     out: list[str] = []

@@ -446,6 +446,45 @@ def gap_report(
     return rows
 
 
+def expand_keep_notes(
+    memory: dict[str, Any],
+    *,
+    name: str,
+    tactics: str = "",
+    keep_mints: Optional[Mapping[str, Sequence[str]]] = None,
+    residual_fn: Optional[Any] = None,
+    keep_stems: Sequence[str] = (),
+    residual_map: Optional[Mapping[str, str]] = None,
+    unsafe_cut: float = 0.45,
+) -> list[dict[str, Any]]:
+    """Record keep-structure mints when AutoResearch says do not cut. No Lean."""
+
+    prop = propose_skill_from_research(
+        memory, name, keep_mints=keep_mints, unsafe_cut=unsafe_cut
+    )
+    notes: list[dict[str, Any]] = []
+    if prop.get("keep_structure") and prop.get("mint"):
+        notes.append({**prop, "name": name, "action": "keep_structure"})
+    if tactics and residual_fn is not None:
+        residuals = dict(residual_fn(tactics) or {})
+        mapping = dict(residual_map or {})
+        for stem in keep_stems:
+            residual = mapping.get(stem, stem)
+            if residuals.get(residual):
+                notes.append(
+                    {
+                        "name": name,
+                        "action": "keep_structure",
+                        "residual": residual,
+                        "mint": [stem],
+                        "present": residuals.get(residual),
+                    }
+                )
+    if notes:
+        record_named_notes(memory, "expanded", name, notes, keep=8)
+    return notes
+
+
 def kind_stem(kind: str, *, extra: Sequence[str] = ("drop_unused_binders", "collapse_simp_at")) -> str:
     """port_foo_pipeline_a → foo; named extra kinds keep their name."""
 
@@ -504,6 +543,22 @@ def research_help(
     if name:
         return research_help(memory, stem, name="", residual_map=residual_map)
     return 0.0
+
+
+def first_fold(
+    tactics: str,
+    skills: Sequence[Mapping[str, Any]],
+    *,
+    fold_fn: Any,
+) -> Optional[dict[str, Any]]:
+    """First memory skill that actually shortens tactics. fold_fn is injected."""
+
+    body = str(tactics or "")
+    for spec in skills or ():
+        nxt = fold_fn(body, spec)
+        if nxt and str(nxt) != body:
+            return {"stem": spec.get("stem"), "tactics": nxt}
+    return None
 
 
 def apply_literal_fold(

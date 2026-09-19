@@ -568,7 +568,50 @@ def live_status(memory: Mapping[str, Any]) -> dict[str, Any]:
     return halt
 
 
-def dispatch_tool(name: str, **kwargs: Any) -> dict[str, Any]:
+def credit_skill(
+    memory: dict[str, Any],
+    kind: Any,
+    *,
+    ok: bool,
+    tokens: int = 0,
+) -> None:
+    """Upsert a skill cell from a lake row. Fail closed. No Lean."""
+
+    try:
+        upsert_from_event(
+            memory,
+            ptr=str(kind),
+            kind="skill",
+            energy=0.7 if ok else 0.25,
+            theorem_ok=bool(ok),
+            tokens=int(tokens or 0),
+        )
+    except Exception:
+        pass
+
+
+def feed_with_overlays(
+    memory: dict[str, Any],
+    *,
+    tactics: str = "",
+    problem: str = "",
+    counts: Optional[Mapping[str, Any]] = None,
+    inverse: Optional[Mapping[str, Sequence[str]]] = None,
+    tree: Optional[Mapping[str, Any]] = None,
+    heal: bool = True,
+) -> dict[str, Any]:
+    """feed_memory plus optional residual/tree overlays. No Lean."""
+
+    fed = feed_memory(memory, tactics=tactics, problem=problem, heal=heal)
+    if counts:
+        overlay_counts(memory, counts, inverse=inverse)
+    if tree:
+        overlay_tree(memory, tree)
+    grid = _grid(memory)
+    return {"n_cells": len(grid), "grid": grid, **{k: v for k, v in fed.items() if k not in {"n_cells", "grid"}}}
+
+
+def dispatch_tool(name: str, *, extras: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> dict[str, Any]:
     """Closed NCA tool names. Implementations register extra keys via hooks."""
 
     from jevops import hooks
@@ -577,6 +620,8 @@ def dispatch_tool(name: str, **kwargs: Any) -> dict[str, Any]:
     memory = kwargs.get("memory") if isinstance(kwargs.get("memory"), dict) else {}
     tactics = str(kwargs.get("tactics") or "")
     problem = str(kwargs.get("problem") or "")
+    if extras and key in extras:
+        return dict(extras[key](**kwargs) or {})
     if key == "nca_tick":
         return tick(memory, tactics=tactics, problem=problem)
     if key == "nca_fork":

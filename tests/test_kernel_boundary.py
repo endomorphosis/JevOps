@@ -731,6 +731,102 @@ class KernelBoundaryTests(unittest.TestCase):
         led = _Led()
         self.assertEqual(record_usage(led, {"input_tokens": 2, "output_tokens": 1}, model="jev"), (2, 1))
         self.assertEqual(led.calls[0][0], "jev")
+        import json
+        from jevops.jev import invoke_system_one, list_field
+        from jevops.outer import file_stem, load_json_object, merge_keep_best, read_shortest_glob
+        from jevops.pick import compose_steps
+        from jevops.memory import expand_keep_notes
+        from jevops.walk import pack_canary
+
+        self.assertEqual(list_field({"version_info": '["a","b"]'}, "version_info"), ["a", "b"])
+        self.assertEqual(file_stem("Foo/Bar"), "Foo_Bar")
+
+        class _Client:
+            def system_one(self, state, questions):
+                return {"ok": True, "state": state, "n": len(questions)}
+
+        resp, wall = invoke_system_one(_Client(), {"p": 1}, {"q": 1})
+        self.assertTrue(resp["ok"])
+        self.assertGreaterEqual(wall, 0.0)
+        body, applied = compose_steps(
+            "aa",
+            (("x", lambda t: t.replace("aa", "b")), ("y", lambda t: t + "c")),
+        )
+        self.assertEqual(body, "bc")
+        self.assertEqual(applied, ["x", "y"])
+        skipped = pack_canary({"analysis": {"name": "P", "tactics": "simp"}}, skipped="no_clone", name="P")
+        self.assertEqual(skipped["ranked"]["reason"], "no_clone")
+        self.assertNotIn("tactics", skipped["analysis"])
+        notes = expand_keep_notes(
+            {"research": [{"name": "P", "help": {"have": 0.9}, "unsafe": {"have": 0.8}}]},
+            name="P",
+            keep_mints={"have": ("comma",)},
+        )
+        self.assertTrue(notes[0].get("keep_structure"))
+        with tempfile.TemporaryDirectory() as tmp:
+            from pathlib import Path
+
+            root = Path(tmp)
+            (root / "latest.json").write_text(
+                json.dumps({"canaries": [{"analysis": {"name": "P", "n_tokens": 9}}]})
+            )
+            (root / "random-best-P-4.lean").write_text("simp\n")
+            merged = merge_keep_best(root, ["P"], latest_json="latest.json")
+            self.assertEqual(merged["P"], 4)
+            self.assertEqual(read_shortest_glob(root, "random-best-P-*.lean"), "simp")
+            self.assertEqual(load_json_object(root / "missing.json"), {})
+            from jevops.oracle import closed, lake_budget, require_named
+            from jevops.outer import arg_value, starting_body
+            from jevops.jev import instantiate_questions
+            from jevops.nca import credit_skill, dispatch_tool, feed_with_overlays
+            from jevops.repair import restore_bound_lines
+
+            self.assertEqual(closed("no_clone", "P")["reason"], "no_clone")
+            too_big, budget = lake_budget(900, cap=700, top=3)
+            self.assertTrue(too_big)
+            self.assertEqual(budget, 1)
+            rec, fail = require_named([{"name": "P", "n_tokens": 4}], "P", cap=700)
+            self.assertIsNone(fail)
+            self.assertEqual(rec["name"], "P")
+            _, over = require_named([{"name": "P", "n_tokens": 900}], "P", cap=700)
+            self.assertEqual(over["reason"], "not_small_or_unknown")
+            self.assertEqual(arg_value(type("A", (), {"timeout": None})(), "timeout", 180.0, cast=float), 180.0)
+            (root / "cascade-best-139.lean").write_text("intro\n")
+            self.assertEqual(
+                starting_body("fallback", root, "Core.InitsUpdatesComm", extras={"Core.InitsUpdatesComm": "cascade-best-139.lean"}),
+                "intro",
+            )
+            qs = instantiate_questions(
+                {"neighbor_style_match": {"type": "choice", "instructions": "n", "criteria": {"none": "x"}}},
+                neighbor_names=["Q"],
+            )
+            self.assertIn("Q", qs["neighbor_style_match"].criteria)
+            restored = restore_bound_lines("exact Hin", "have x := 1\nexact Hin", ["x"], bound_fn=lambda ref, ident: "have x := 1")
+            self.assertIn("have x := 1", restored)
+            mem: dict = {"nca": {"grid": {}}}
+            credit_skill(mem, "port_a", ok=True, tokens=3)
+            fed = feed_with_overlays(mem, counts={"have": 2}, tree={"dead_code": ["port_a"]})
+            self.assertGreater(fed["n_cells"], 0)
+            walked = dispatch_tool("nca_walk", extras={"nca_walk": lambda **_k: {"ok": True, "walked": True}})
+            self.assertTrue(walked["walked"])
+            from jevops.jev import deny_lean_keys, skip_reason
+            from jevops.memory import first_fold
+            from jevops.outer import namespace
+            from jevops.repair import classify_text
+
+            self.assertEqual(skip_reason(enabled=False, official=True), "official_track2_off")
+            self.assertEqual(skip_reason(enabled=True, key_ok=False, require_key=True), "no_key")
+            self.assertEqual(skip_reason(enabled=True, key_ok=True, available=True), "")
+            self.assertIsNone(deny_lean_keys({"family": "x"})["tactics"])
+            self.assertEqual(
+                classify_text("tactic failed with unsolved", (), all_of=(("unsolved_goals", ("tactic", "unsolved")),)),
+                "unsolved_goals",
+            )
+            folded = first_fold("aaaa", [{"stem": "x", "old": "aa", "new": "b"}], fold_fn=lambda t, s: t.replace(s["old"], s["new"], 1))
+            self.assertEqual(folded["tactics"], "baa")
+            ns = namespace(live=True, k=3)
+            self.assertTrue(ns.live)
+            self.assertEqual(ns.k, 3)
 
 
 if __name__ == "__main__":

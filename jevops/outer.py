@@ -193,6 +193,129 @@ def lookup_named(records: Sequence[Mapping[str, Any]], name: str) -> Optional[Ma
     return next((item for item in records if str(item.get("name") or "") == want), None)
 
 
+def namespace(**kwargs: Any) -> Any:
+    """Closed attribute bag (argparse-compatible). No Lean."""
+
+    from types import SimpleNamespace
+
+    return SimpleNamespace(**kwargs)
+
+
+def arg_value(args: Any, key: str, default: Any, *, cast: Any = None) -> Any:
+    """getattr with None→default, optional cast. No Lean."""
+
+    raw = default
+    if args is not None:
+        raw = getattr(args, key, default)
+    if raw is None:
+        raw = default
+    return cast(raw) if cast is not None else raw
+
+
+def safe_call(fn: Any, *args: Any, default: Any = None, **kwargs: Any) -> Any:
+    try:
+        return fn(*args, **kwargs)
+    except Exception:
+        return default
+
+
+def starting_body(
+    fallback: str,
+    directory: Any,
+    name: str,
+    *,
+    glob_fmt: str = "random-best-{safe}-*.lean",
+    extras: Optional[Mapping[str, str]] = None,
+) -> str:
+    """Keep-best glob, then a named extra file, else fallback. Does not generate Lean."""
+
+    if directory is None:
+        return fallback
+    out = Path(directory)
+    body = read_shortest_glob(out, glob_fmt.format(safe=file_stem(name or "canary"), name=name))
+    if body is not None:
+        return body
+    fname = dict(extras or {}).get(str(name or ""))
+    if fname:
+        path = out / fname
+        if path.is_file():
+            return path.read_text(encoding="utf-8").strip("\n")
+    return fallback
+
+
+def file_stem(name: str, *, limit: int = 80, empty: str = "canary") -> str:
+    """Filesystem-safe stem from a theorem/problem name."""
+
+    return str(name or empty).replace("/", "_")[: int(limit)]
+
+
+def load_json_object(path: Path) -> dict[str, Any]:
+    """Fail closed to {}. No Lean."""
+
+    target = Path(path)
+    if not target.is_file():
+        return {}
+    try:
+        payload = json.loads(target.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+    return dict(payload) if isinstance(payload, dict) else {}
+
+
+def read_shortest_glob(directory: Path, pattern: str, *, encoding: str = "utf-8") -> Optional[str]:
+    """Read the shortest glob_stem_int hit. None if missing."""
+
+    bests = glob_stem_int(directory, pattern)
+    if not bests:
+        return None
+    return bests[0][1].read_text(encoding=encoding).strip("\n")
+
+
+def merge_keep_best(
+    directory: Path,
+    names: Sequence[str],
+    *,
+    latest_json: str = "",
+    glob_fmt: str = "random-best-{safe}-*.lean",
+    extras: Optional[Mapping[str, tuple[str, int]]] = None,
+) -> dict[str, int]:
+    """JSON canary tokens, then glob files, then optional named extras."""
+
+    out = Path(directory)
+    board: dict[str, int] = {}
+    if latest_json:
+        board.update(tokens_from_canaries(load_json_object(out / latest_json), names=names))
+    extra = dict(extras or {})
+    for name in names:
+        safe = file_stem(name)
+        bests = glob_stem_int(out, glob_fmt.format(safe=safe, name=name))
+        if bests:
+            file_tok = int(bests[0][0])
+            board[name] = min(int(board.get(name) or file_tok), file_tok)
+            continue
+        if name in extra:
+            fname, tok = extra[name]
+            if (out / fname).is_file():
+                board[name] = min(int(board.get(name) or int(tok)), int(tok))
+    return board
+
+
+def write_best_body(
+    directory: Path,
+    name: str,
+    tokens: int,
+    body: str,
+    *,
+    prefix: str = "random-best",
+    suffix: str = ".lean",
+) -> Path:
+    """Write a keep-best body next to other evidence. Does not generate Lean."""
+
+    path = Path(directory) / f"{prefix}-{file_stem(name)}-{int(tokens)}{suffix}"
+    path.write_text(str(body) + "\n", encoding="utf-8")
+    return path
+
+
 def tokens_from_canaries(
     payload: Mapping[str, Any],
     *,

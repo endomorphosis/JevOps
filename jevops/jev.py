@@ -7,6 +7,8 @@ Implementations own question catalogs and hosted HTTP.
 from __future__ import annotations
 
 import hashlib
+import json
+import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, Mapping, Optional, Sequence
 
@@ -35,6 +37,62 @@ def record_usage(
     if ledger is not None and hasattr(ledger, "record"):
         ledger.record(kind, input_tokens=inn, output_tokens=out, model=model)
     return inn, out
+
+
+def skip_reason(
+    *,
+    enabled: bool,
+    official: bool = False,
+    key_ok: bool = True,
+    available: bool = True,
+    using_fixture: bool = False,
+    require_key: bool = True,
+) -> str:
+    """Why a Jev client should no-op. Empty string means call."""
+
+    if not enabled:
+        return "official_track2_off" if official else "typesafe_off"
+    if require_key and not key_ok and not using_fixture:
+        return "no_key"
+    if not using_fixture and not available:
+        return "typesafe_inference_missing"
+    return ""
+
+
+def deny_lean_keys(payload: Mapping[str, Any]) -> dict[str, Any]:
+    """Projectors never emit Lean text or Arena scores."""
+
+    out = dict(payload)
+    out.update({"lean_text": None, "tactics": None, "proof_text": None, "arena_score": None})
+    return out
+
+
+def list_field(record: Mapping[str, Any], key: str) -> list[Any]:
+    """JSON-or-list record field. Fail closed to []."""
+
+    raw = record.get(key)
+    if isinstance(raw, str):
+        try:
+            raw = json.loads(raw)
+        except json.JSONDecodeError:
+            return []
+    return list(raw) if isinstance(raw, list) else []
+
+
+def invoke_system_one(
+    client: Any,
+    state: Mapping[str, Any],
+    questions: Mapping[str, Any],
+) -> tuple[Any, float]:
+    """Call client.system_one, honoring context managers. Returns (response, wall_ms)."""
+
+    started = time.perf_counter()
+    if hasattr(client, "__enter__"):
+        with client as opened:
+            response = opened.system_one(state, questions)
+    else:
+        response = client.system_one(state, questions)
+    return response, (time.perf_counter() - started) * 1000.0
 
 
 def env_truthy(value: Optional[str]) -> bool:
@@ -239,14 +297,22 @@ def instantiate_questions(
     choice: Optional[Callable[..., Any]] = None,
     noul: Optional[Callable[..., Any]] = None,
     score: Optional[Callable[..., Any]] = None,
+    neighbor_names: Sequence[str] = (),
+    neighbor_key: str = "neighbor_style_match",
 ) -> dict[str, Any]:
     """Build a question dict from a type/instructions/criteria spec."""
 
+    packed: dict[str, Mapping[str, Any]] = dict(spec)
+    if neighbor_names and neighbor_key in packed:
+        neighbor_criteria = {"none": "Do not imitate a neighbor"}
+        for neighbor in neighbor_names:
+            neighbor_criteria[str(neighbor)] = f"Imitate neighbor {neighbor}"
+        packed[neighbor_key] = {**dict(packed[neighbor_key]), "criteria": neighbor_criteria}
     choice_ctor = choice or (lambda **kwargs: CatalogQuestion(kind="choice", **kwargs))
     noul_ctor = noul or (lambda **kwargs: CatalogQuestion(kind="noul", **kwargs))
     score_ctor = score or (lambda **kwargs: CatalogQuestion(kind="score", **kwargs))
     questions: dict[str, Any] = {}
-    for name, item in spec.items():
+    for name, item in packed.items():
         kind = str(item["type"])
         instructions = str(item["instructions"])
         criteria = item.get("criteria")

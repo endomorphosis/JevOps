@@ -1344,12 +1344,17 @@ def pack_canary(
     """Compact inner-walk result for an outer canary row. No Lean."""
 
     if skipped:
+        analysis = dict((walked or {}).get("analysis") or {})
+        packed_analysis = (
+            {k: analysis[k] for k in analysis if k != "tactics"} if analysis else {"name": name}
+        )
+        row_name = packed_analysis.get("name") or name
         return {
-            "analysis": {"name": name},
+            "analysis": packed_analysis,
             "n_drafts": 0,
             "draft_kinds": [],
             "ranked": {"skipped": True, "reason": skipped},
-            "lake": [{"name": name, "skipped": skipped}],
+            "lake": [{"name": row_name, "skipped": skipped}],
             "trace": [{"action": skipped}],
             "clone_exists": False,
             "n_steps": 0,

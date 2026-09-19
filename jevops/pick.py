@@ -830,6 +830,28 @@ def filter_unsafe_drafts(
     return out
 
 
+def compose_steps(
+    body: str,
+    items: Sequence[tuple[str, Any]],
+    *,
+    skip: Optional[set[str]] = None,
+    prefix: str = "port_",
+) -> tuple[str, list[str]]:
+    """Apply ordered (stem, fn) transforms. Skip blocked stems. No Lean."""
+
+    blocked = set(skip or ())
+    text = str(body or "").strip("\n")
+    applied: list[str] = []
+    for stem, fn in items:
+        if stem in blocked or f"{prefix}{stem}" in blocked:
+            continue
+        nxt = str(fn(text) or "").strip("\n")
+        if nxt and nxt != text:
+            text = nxt
+            applied.append(str(stem))
+    return text, applied
+
+
 def rank_leftover(
     records: Sequence[Mapping[str, Any]],
     *,

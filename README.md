@@ -36,6 +36,22 @@ Lake (or another oracle) lives in the implementation that *uses* the kernel.
 | `jevops.turing` | TM step/run + decision-transformer window |
 | `jevops.tape_tools` | Tape editor CALLs (`port_tape_*`) |
 
+## Skills
+
+Grok skills live in `.grok/skills/` (canonical). LRA keeps thin `lra-*` redirects.
+
+| Skill | Module |
+| --- | --- |
+| `jevops-kernel` | `jevops.kernel` |
+| `jevops-random-forest` / `jevops-bayes-time` / `jevops-mcmc` / `jevops-svd` / `jevops-ridge` / `jevops-thompson` | `jevops.rankers` |
+| `jevops-int-rankers` / `jevops-pca` | `jevops.int_rankers` |
+| `jevops-more-rankers` | `jevops.more_rankers` |
+| `jevops-autoencoder` | `jevops.autoencoder` |
+| `jevops-graph` | `jevops.graph` |
+| `jevops-temporal` | `jevops.temporal` |
+| `jevops-turing` | `jevops.turing` / `tape` / `tape_tools` |
+| `jevops-plan` | `jevops.plan` |
+
 ## Consumers
 
 Lean Refactor Arena harness re-exports these as `nca_kernel`, `nca_plan`, `typesafe_nca` cell helpers, etc.
