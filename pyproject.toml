@@ -1,0 +1,13 @@
+[project]
+name = "jevops"
+version = "0.1.0"
+description = "TypeSafe/Jev kernel (cache, tape, JSON-LD, plan, milles rankers). Implementations live elsewhere."
+requires-python = ">=3.11"
+readme = "README.md"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["jevops*"]
