@@ -974,6 +974,159 @@ class KernelBoundaryTests(unittest.TestCase):
         )
         self.assertFalse(failed.admission_accepted)
         self.assertFalse(failed.to_dict()["valid"])
+        cand = lean.make_candidate(
+            kind="reference",
+            tactics="  trivial\n",
+            source_text="theorem t : True := by\n  trivial\n",
+            admission_accepted=True,
+            admission_code="",
+            admission_reason="ok",
+            generator="deterministic",
+            token_count=2,
+        )
+        dummy_rec = type("R", (), {"error": "boom", "hardware_class": ""})()
+        lean.attach_compile(cand, [dummy_rec], hardware_class="spark_gb10", elab_fn=lambda _rows: 1.5)
+        self.assertEqual(cand.error, "boom")
+        self.assertEqual(cand.elab_ms, 1.5)
+        row = lean.failure_row(cand, hardware_class="spark_gb10", failing_tags=[{"lean_tag": "v4.26.0"}])
+        self.assertEqual(row["kind"], "reference")
+        pin = lean.VersionPin(lean_tag="v4.26.0", git_commit="abc")
+        seeded = lean.init_compile_receipt({"name": "P", "source": "strata", "url": "u"}, pin, timeout=120.0, relpath="A.lean")
+        self.assertEqual(seeded.lean_tag, "v4.26.0")
+        self.assertFalse(seeded.independent_kernel_verifier_used)
+        allowed, reason, _cost = lra_outer.authorize_spend(
+            "jev",
+            counts={"jev": 2},
+            limits={"jev": 2},
+            spent=0,
+            cost=0,
+            budget=1,
+            zero=0,
+        )
+        self.assertFalse(allowed)
+        self.assertEqual(reason, "max_jev_calls")
+        hits, notes = lra_search.collect_source_hits(
+            (("jsonld", lambda: [{"symbol": "a"}]), ("duckdb", lambda: ([], "no_duckdb_index")))
+        )
+        self.assertEqual(notes["jsonld"], "ok")
+        self.assertEqual(notes["duckdb"], "no_duckdb_index")
+        self.assertEqual(hits[0]["symbol"], "a")
+        mem_hits: dict = {"nca": {"grid": {"ptr://theorem/P": {"kind": "theorem"}}}}
+        n = lra_search.credit_search_hits(mem_hits, [{"symbol": "port_foo", "score": 1.0, "ptr": "ptr://skill/port_foo"}])
+        self.assertEqual(n, 1)
+        self.assertIn("ptr://skill/port_foo", mem_hits["nca"]["grid"])
+        qs = lra_jev.tree_choice_questions(
+            {"drop": {"drop_a": "a", "drop_b": "b"}},
+            Choice=lambda **kw: {"kind": "choice", **kw},
+            family_instructions="pick family",
+        )
+        self.assertEqual(qs["family"]["kind"], "choice")
+        self.assertIn("leaf_drop", qs)
+        packed_beam = lra_search.pack_beam_search(
+            {"local_calls": 1, "finals": [], "trace": []},
+            prefix="  intro",
+            vocab_n=2,
+            mode="greedy",
+            beam=1,
+            temperature=0.0,
+            max_steps=1,
+        )
+        self.assertEqual(packed_beam["mode"], "greedy")
+        self.assertFalse(packed_beam["jev_generated_lean"])
+        try_receipt = lean.init_try_receipt(
+            {"name": "P", "source": "s", "url": ""},
+            pin,
+            relpath="A.lean",
+            template_digest="d" * 64,
+            prefix_bound=True,
+            aesop=False,
+            considered=["rfl"],
+            timeout=120.0,
+        )
+        self.assertFalse(try_receipt.hammer_006_lra_ready)
+        self.assertFalse(try_receipt.uses_snapshot_goal)
+        self.assertEqual(try_receipt.tactics_considered, ["rfl"])
+        pin_reference_scores = lean.pin_reference_scores
+        rec.elab_ms = 12.0
+        pin_reference_scores(rec, composite_fn=lambda a, b: a + b)
+        self.assertEqual(rec.elab_ratio, 1.0)
+        files, compiled = lean.compile_receipt_files(
+            type("K", (), {"compile_receipts": [type("C", (), {"to_dict": lambda self: {"lean_tag": "v4.26.0", "ok": True}, "lean_tag": "v4.26.0"})()]})(),
+            hardware_class="spark_gb10",
+        )
+        self.assertIn("v4.26.0.json", files)
+        self.assertIsNone(compiled[0]["arena_score"])
+        hammered, grok_ok, body, errs = lra_search.compile_then_hammer(
+            [{"kind": "mca", "tactics": "  sorry\n"}],
+            compile_fn=lambda _b: {"theorem_ok": False, "errors": [{"data": "unsolved"}]},
+            row_fn=lambda item, compiled: {"kind": item["kind"], **compiled},
+            hammer_fn=lambda kind, item, compiled: ([{"kind": f"{kind}_hammer", "theorem_ok": True}], "  rfl\n", [], True),
+            needs_hammer_fn=lambda kind: True,
+        )
+        self.assertTrue(hammered[-1]["theorem_ok"])
+        self.assertFalse(grok_ok)
+        chat = lra_outer.chat_request_payload("hi", model="labs-leanstral-1-5", max_tokens=8, n=2)
+        self.assertEqual(chat["n"], 2)
+        self.assertGreater(chat["temperature"], 0)
+        packed_chat = lra_outer.pack_chat_response(
+            {"choices": [{"message": {"content": "simp"}, "finish_reason": "stop"}], "usage": {"prompt_tokens": 1, "completion_tokens": 1}, "model": "m", "id": "x"},
+            status=200,
+            url="https://api.mistral.ai/v1/chat/completions",
+            wall_ms=1.0,
+            model="labs-leanstral-1-5",
+        )
+        self.assertEqual(packed_chat["url_host"], "api.mistral.ai")
+        self.assertEqual(packed_chat["text"], "simp")
+        state = lra_jev.proposal_rank_state({"name": "P"}, "  simp\n", {"p0": "drop"}, tokens=2)
+        self.assertEqual(state["current_tokens"], 2)
+        fake = type(
+            "R",
+            (),
+            {
+                "choices": {"next_edit": type("C", (), {"choice": "p0", "confidence": 0.9, "probabilities": {"p0": 1.0}})()},
+                "nouls": {"likely_compiles": type("N", (), {"noul": 0.8})()},
+                "scores": {"likely_shorter": type("S", (), {"score": 1.0})()},
+                "usage": {},
+                "model": "jev",
+            },
+        )()
+        ranked = lra_jev.pack_ranked_pick(fake, choice_key="next_edit", n=1)
+        self.assertEqual(ranked["pick"], "p0")
+        self.assertEqual(ranked["order"], [0])
+        persisted = lean.persist_receipt(
+            type("PR", (), {"body_digest": "a", "candidate_cid": "", "key_digest": "k", "filesystem_path": ""})(),
+            root="/tmp",
+            duckdb_path=None,
+            finalize_fn=lambda receipt, body=None: receipt,
+            write_cas_fn=lambda *_a: "a",
+            write_fs_fn=lambda *_a: "/tmp/r.json",
+            connect_fn=lambda *_a: (None, "none"),
+            install_fn=lambda *_a: None,
+            insert_fn=lambda *_a: True,
+            insert_edge_fn=lambda *_a: True,
+            try_import_fn=lambda: None,
+        )
+        self.assertFalse(persisted.duckdb_used)
+        class _Led:
+            def authorize(self, *_a, **_k):
+                return True, "ok", 0
+            def record(self, *_a, **k):
+                return type("L", (), {"skipped": False, "reason": "recorded"})()
+        text, ident, _line = lra_outer.ledger_generate(
+            _Led(),
+            "mistral",
+            estimated_in=1,
+            estimated_out=1,
+            model="labs",
+            fixture=True,
+            fixture_text="simp_all",
+            live_fn=lambda: ("", {}, (0, 0)),
+            identity_fn=lambda **_k: {"resolved_model": "labs", "url_host": "api.mistral.ai"},
+            error_cls=RuntimeError,
+            estimate_fn=lambda text: len(text),
+        )
+        self.assertEqual(text, "simp_all")
+        self.assertEqual(ident["url_host"], "api.mistral.ai")
 
     def test_tick_and_cold_seed_halt(self) -> None:
         from jevops import nca

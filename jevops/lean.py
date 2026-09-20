@@ -390,6 +390,38 @@ class CompileReceipt:
         return payload
 
 
+def init_compile_receipt(
+    record: Mapping[str, Any],
+    pin: Any,
+    *,
+    timeout: float,
+    relpath: str,
+    schema: str = "lake-compile-receipt/v1",
+    max_heartbeats: int = 400000,
+    header_cap: Optional[int] = None,
+    lean_num_threads: int = 1,
+    kernel_command_template: str = "{lake} env {lean} --json {source_file}",
+    hardware_class: str = "unscored-dev",
+) -> CompileReceipt:
+    """Seed a lake receipt. IndependentKernelVerifier is unused."""
+
+    return CompileReceipt(
+        schema=schema,
+        name=str(record.get("name") or ""),
+        source=str(record.get("source") or ""),
+        file_path=relpath,
+        url=str(record.get("url") or ""),
+        lean_tag=str(getattr(pin, "lean_tag", "") or ""),
+        git_commit=str(getattr(pin, "git_commit", "") or ""),
+        timeout_seconds=float(timeout),
+        measurement_maxHeartbeats=int(max_heartbeats),
+        header_maxHeartbeats=header_cap,
+        lean_num_threads=int(lean_num_threads),
+        kernel_command_template=kernel_command_template,
+        hardware_class=hardware_class,
+    )
+
+
 @dataclass
 class TacticAttempt:
     """One ``lake env lean`` invocation for a single tactic (or the sorry hole)."""
@@ -656,6 +688,142 @@ class TacticTryReceipt:
         payload["path_b_implemented"] = False
         payload["generator"] = "lake_native"
         return payload
+
+
+def init_try_receipt(
+    record: Mapping[str, Any],
+    pin: Any,
+    *,
+    relpath: str,
+    template_digest: str,
+    prefix_bound: bool,
+    aesop: bool,
+    considered: Sequence[str],
+    timeout: float,
+    schema: str = "lake-native-try/v1",
+    loop: str = "v2",
+    path: str = "A",
+    pr: str = "",
+    lrah: str = "",
+    generator: str = "lake_native",
+    kernel_command_template: str = "{lake} env {lean} --json {source_file}",
+    measurement_argv_template: str = "",
+) -> TacticTryReceipt:
+    """Seed a Path A try receipt. HAMMER/snapshot flags stay false."""
+
+    return TacticTryReceipt(
+        schema=schema,
+        name=str(record.get("name") or ""),
+        source=str(record.get("source") or ""),
+        file_path=relpath,
+        url=str(record.get("url") or ""),
+        lean_tag=str(getattr(pin, "lean_tag", "") or ""),
+        git_commit=str(getattr(pin, "git_commit", "") or ""),
+        sorry_template_digest=str(template_digest or ""),
+        sorry_template_prefix_bound=bool(prefix_bound),
+        aesop_imported=bool(aesop),
+        tactics_considered=list(considered or ()),
+        timeout_seconds=float(timeout),
+        loop=loop,
+        path=path,
+        pr=pr,
+        lrah=lrah,
+        generator=generator,
+        kernel_command_template=kernel_command_template,
+        measurement_argv_template=measurement_argv_template,
+    )
+
+
+def pin_reference_scores(candidate: Any, *, composite_fn: Callable[[float, float], float]) -> Any:
+    """Reference elab is the unit baseline when lake returned a positive wall."""
+
+    if float(getattr(candidate, "elab_ms", 0) or 0) > 0:
+        candidate.elab_ratio = 1.0
+        candidate.composite = composite_fn(1.0, 1.0)
+    return candidate
+
+
+def compile_receipt_files(
+    kept: Any,
+    *,
+    hardware_class: str,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Kept compile receipts as files. Arena scores stay None."""
+
+    files: dict[str, Any] = {}
+    compile_records: list[dict[str, Any]] = []
+    if kept is None:
+        return files, compile_records
+    for item in getattr(kept, "compile_receipts", ()) or ():
+        payload = item.to_dict() if hasattr(item, "to_dict") else dict(item)
+        payload["arena_score"] = None
+        payload["score"] = None
+        payload["hardware_class"] = hardware_class
+        compile_records.append(payload)
+        tag = str(payload.get("lean_tag") or getattr(item, "lean_tag", "") or "unknown")
+        files[f"{tag}.json"] = payload
+    return files, compile_records
+
+
+def persist_receipt(
+    receipt: Any,
+    *,
+    root: Any,
+    body: Optional[str] = None,
+    duckdb_path: Any = None,
+    parent_digest: Optional[str] = None,
+    require_duckdb: bool = False,
+    control_plane: bool = False,
+    finalize_fn: Callable[..., Any],
+    write_cas_fn: Callable[..., str],
+    write_fs_fn: Callable[..., Any],
+    connect_fn: Callable[..., tuple[Any, str]],
+    install_fn: Callable[[Any], None],
+    insert_fn: Callable[..., bool],
+    insert_edge_fn: Callable[..., Any],
+    try_import_fn: Callable[[], Any],
+    error_cls: Any = ValueError,
+    control_msg: str = "receipt store must not be the control plane",
+    duckdb_missing: str = "duckdb package is required for this write but is not installed",
+    digest_drift: str = "body_digest drifted from CAS write",
+) -> Any:
+    """Filesystem receipt first, then optional INSERT. DuckDB is never required."""
+
+    if control_plane:
+        raise error_cls(control_msg)
+    receipt = finalize_fn(receipt, body=body)
+    if body is not None:
+        receipt.candidate_cid = write_cas_fn(root, body)
+        if receipt.body_digest != receipt.candidate_cid:
+            raise error_cls(digest_drift)
+    path = write_fs_fn(root, receipt)
+    receipt.filesystem_path = str(path)
+    if duckdb_path is None:
+        receipt.duckdb_used = False
+        receipt.inserted = False
+        return receipt
+    module = try_import_fn()
+    if require_duckdb and module is None:
+        raise error_cls(duckdb_missing)
+    conn, engine = connect_fn(duckdb_path, module)
+    try:
+        install_fn(conn)
+        inserted = insert_fn(conn, receipt)
+        if parent_digest:
+            insert_edge_fn(conn, parent_digest, receipt.key_digest)
+        commit = getattr(getattr(conn, "_raw", None), "commit", None)
+        if callable(commit):
+            commit()
+    finally:
+        close = getattr(conn, "close", None)
+        if callable(close):
+            close()
+    receipt.duckdb_used = engine == "duckdb"
+    receipt.inserted = inserted
+    receipt.skipped_duplicate = not inserted
+    path = write_fs_fn(root, receipt)
+    receipt.filesystem_path = str(path)
+    return receipt
 
 
 @dataclass(frozen=True)
@@ -1372,6 +1540,82 @@ def failed_candidate(
         hardware_class=hardware_class,
         arena_score=None,
     )
+
+
+def make_candidate(
+    *,
+    kind: str,
+    tactics: str,
+    source_text: str,
+    admission_accepted: bool,
+    admission_code: str,
+    admission_reason: str,
+    generator: str,
+    token_count: int,
+    hardware_class: str = "unscored-dev",
+    called_leanstral: bool = False,
+    skipped_generate: bool = False,
+    error: str = "",
+) -> CandidateRecord:
+    """Build a candidate before lake. Admission is lexical, not a lake admit."""
+
+    return CandidateRecord(
+        kind=kind,
+        tactics=tactics,
+        source_text=source_text,
+        admission_accepted=bool(admission_accepted),
+        admission_code=str(admission_code),
+        admission_reason=str(admission_reason),
+        generator=generator,
+        called_leanstral=called_leanstral,
+        skipped_generate=skipped_generate,
+        error=error,
+        token_count=int(token_count),
+        hardware_class=hardware_class,
+        arena_score=None,
+    )
+
+
+def attach_compile(
+    candidate: CandidateRecord,
+    receipts: Sequence[Any],
+    *,
+    hardware_class: str,
+    elab_fn: Callable[[Sequence[Any]], float],
+) -> CandidateRecord:
+    """Attach lake receipts. Lake is the oracle."""
+
+    from jevops.outer import first_where
+
+    rows = list(receipts or ())
+    for item in rows:
+        if hasattr(item, "hardware_class"):
+            item.hardware_class = hardware_class
+    candidate.compile_receipts = rows
+    candidate.elab_ms = float(elab_fn(rows) or 0.0)
+    hit = first_where(rows, lambda item: bool(getattr(item, "error", None)))
+    if hit is not None and not candidate.error:
+        candidate.error = str(hit.error)
+    return candidate
+
+
+def failure_row(
+    candidate: Any,
+    *,
+    hardware_class: str,
+    failing_tags: Sequence[Mapping[str, Any]] = (),
+) -> dict[str, Any]:
+    return {
+        "admission_accepted": getattr(candidate, "admission_accepted", None),
+        "admission_code": getattr(candidate, "admission_code", None),
+        "arena_score": None,
+        "error": getattr(candidate, "error", None),
+        "failing_tags": list(failing_tags or ()),
+        "generator": getattr(candidate, "generator", None),
+        "hardware_class": hardware_class,
+        "kind": getattr(candidate, "kind", None),
+        "valid": getattr(candidate, "valid", None),
+    }
 
 
 @dataclass

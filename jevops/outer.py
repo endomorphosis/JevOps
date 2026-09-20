@@ -3719,6 +3719,147 @@ def spend_for(
     return money_fn(raw) if money_fn is not None else raw
 
 
+def authorize_spend(
+    kind: str,
+    *,
+    official: bool = False,
+    counts: Optional[Mapping[str, int]] = None,
+    limits: Optional[Mapping[str, int]] = None,
+    spent: Any = 0,
+    cost: Any = 0,
+    budget: Any = 0,
+    zero: Any = 0,
+    official_reason: str = "official_track2_off",
+    hard_reason: str = "hard_stop",
+) -> tuple[bool, str, Any]:
+    """Fail-closed spend gate. Call-count limits then budget. No HTTP."""
+
+    if official:
+        return False, official_reason, zero
+    kind_key = str(kind or "").strip().lower()
+    count = (counts or {}).get(kind_key)
+    limit = (limits or {}).get(kind_key)
+    if count is not None and limit is not None and int(count) >= int(limit):
+        return False, f"max_{kind_key}_calls", zero
+    if spent + cost > budget:
+        return False, hard_reason, cost
+    return True, "ok", cost
+
+
+def chat_request_payload(
+    prompt: str,
+    *,
+    model: str,
+    max_tokens: int,
+    temperature: float = 0.0,
+    n: int = 1,
+    stop: Optional[Sequence[str]] = None,
+    min_n_temperature: float = 0.3,
+) -> dict[str, Any]:
+    """Closed chat/completions body. Does not POST."""
+
+    payload: dict[str, Any] = {
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": float(temperature),
+        "top_p": 1,
+        "max_tokens": int(max_tokens),
+    }
+    if int(n) > 1:
+        payload["n"] = int(n)
+        if float(payload["temperature"]) <= 0.0:
+            payload["temperature"] = float(min_n_temperature)
+    if stop:
+        payload["stop"] = nonempty_strs(stop)
+    return payload
+
+
+def pack_chat_response(
+    data: Mapping[str, Any],
+    *,
+    status: Any,
+    url: str,
+    wall_ms: float,
+    model: str,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    from urllib.parse import urlparse
+
+    text, _texts, usage = chat_choice_texts(data)
+    inn, out = usage_tokens(usage)
+    choices = data.get("choices") if isinstance(data.get("choices"), list) else []
+    finish = str(field_of(choices[0] if choices else {}, "finish_reason") or "")
+    packed: dict[str, Any] = {
+        "text": text,
+        "model": str(data.get("model") or model),
+        "id": str(data.get("id") or ""),
+        "object": str(data.get("object") or ""),
+        "status": status,
+        "url_host": urlparse(url).hostname,
+        "input_tokens": inn,
+        "output_tokens": out,
+        "finish_reason": finish,
+        "wall_ms": wall_ms,
+    }
+    if extra:
+        packed.update(dict(extra))
+    return packed
+
+
+def ledger_generate(
+    ledger: Any,
+    kind: str,
+    *,
+    estimated_in: int,
+    estimated_out: int,
+    model: str,
+    fixture: bool,
+    fixture_text: str,
+    live_fn: Callable[[], tuple[str, Mapping[str, Any], tuple[int, int]]],
+    identity_fn: Callable[..., Mapping[str, Any]],
+    error_cls: Any,
+    estimate_fn: Optional[Callable[[str], int]] = None,
+    refuse_fmt: str = "{kind} call refused: {reason}",
+    after_fmt: str = "{kind} spend refused after call: {reason}",
+) -> tuple[str, Mapping[str, Any], Any]:
+    """Authorize, optional fixture, else live_fn. live_fn returns (text, extra, (in, out))."""
+
+    allowed, reason, _cost = ledger.authorize(kind, estimated_in, estimated_out)
+    if not allowed:
+        line = ledger.record(
+            kind,
+            input_tokens=estimated_in,
+            output_tokens=estimated_out,
+            fixture=fixture,
+            model=model,
+        )
+        raise error_cls(refuse_fmt.format(kind=kind, reason=reason))
+    if fixture:
+        identity = identity_fn(model=model, fixture=True)
+        out_n = int(estimate_fn(fixture_text) if estimate_fn is not None else estimated_out)
+        line = ledger.record(
+            kind,
+            input_tokens=estimated_in,
+            output_tokens=out_n,
+            fixture=True,
+            model=model,
+        )
+        return str(fixture_text), dict(identity), line
+    text, extra, usage = live_fn()
+    inn, out = usage
+    identity = identity_fn(model=model, fixture=False, extra=extra, text=text)
+    line = ledger.record(
+        kind,
+        input_tokens=int(inn),
+        output_tokens=int(out),
+        fixture=False,
+        model=str(identity.get("resolved_model") or model),
+    )
+    if getattr(line, "skipped", False):
+        raise error_cls(after_fmt.format(kind=kind, reason=getattr(line, "reason", "")))
+    return str(text), dict(identity), line
+
+
 class InsertOnlyConnection:
     """Wrap a DB connection. SQL is guarded to INSERT/SELECT/CREATE IF NOT EXISTS."""
 

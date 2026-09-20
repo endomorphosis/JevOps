@@ -1461,3 +1461,149 @@ def unique_pin_cap(
         prefer = [item for item in rows if key_fn(item) == pick]
         rows = pin_front(rows, prefer, n=1)
     return unique_rows(rows, key_fn=key_fn)[: max(0, int(cap))]
+
+
+def first_ident(text: str, ident_re: Any) -> str:
+    found = ident_re.findall(str(text or "")) if ident_re is not None else []
+    return str(found[0]) if found else ""
+
+
+def collect_source_hits(
+    steps: Sequence[tuple[str, Any]],
+    *,
+    fail_notes: Optional[Mapping[str, str]] = None,
+) -> tuple[list[dict[str, Any]], dict[str, str]]:
+    """Run named search steps. Each fn returns hits or (hits, note). JSON-LD first."""
+
+    from jevops.outer import exc_name
+
+    notes = dict(fail_notes or {})
+    sources: dict[str, str] = {}
+    hits: list[dict[str, Any]] = []
+    for name, fn in steps or ():
+        try:
+            out = fn()
+            if isinstance(out, tuple) and len(out) == 2 and isinstance(out[1], str):
+                rows, note = out
+                sources[str(name)] = str(note)
+                hits.extend(list(rows or ()))
+            else:
+                hits.extend(list(out or ()))
+                sources[str(name)] = "ok"
+        except Exception as exc:  # noqa: BLE001 — search sources fail closed
+            sources[str(name)] = str(notes.get(name) or exc_name(exc))
+    return hits, sources
+
+
+def credit_search_hits(
+    memory: Optional[dict[str, Any]],
+    ranked: Sequence[Mapping[str, Any]],
+    *,
+    n: int = 8,
+    boost: float = 0.05,
+) -> int:
+    """Promote ranked hits onto the NCA grid. Cache hits never admit Lean."""
+
+    if not isinstance(memory, dict) or not ranked:
+        return 0
+    from jevops.outer import head_seq
+
+    grid = memory.setdefault("nca", {}).setdefault("grid", {})
+    edges = memory.setdefault("nca", {}).setdefault("board_edges", [])
+    promoted = 0
+    for hit in head_seq(ranked, n):
+        cid = str(hit.get("ptr") or "")
+        if not cid.startswith("ptr://"):
+            symbol = str(hit.get("symbol") or "hit")
+            cid = f"ptr://skill/{symbol}" if symbol.startswith("port_") else f"ptr://codepath/{symbol}"
+        cell = grid.setdefault(
+            cid,
+            {
+                "id": cid,
+                "kind": "codepath" if "codepath" in cid else "skill",
+                "energy": 0.4,
+                "wins": 0,
+                "losses": 0,
+                "tick": 0,
+            },
+        )
+        cell["energy"] = min(1.0, float(cell.get("energy") or 0.4) + float(boost) * float(hit.get("score") or 0.0))
+        cell["path"] = hit.get("path")
+        owners = [
+            key
+            for key in grid
+            if str(key).startswith("ptr://task/") or str(key).startswith("ptr://theorem/")
+        ]
+        if owners:
+            pair = [str(owners[0]), cid]
+            if pair not in edges:
+                edges.append(pair)
+        promoted += 1
+    return promoted
+
+
+def pack_beam_search(
+    out: Mapping[str, Any],
+    *,
+    prefix: str,
+    vocab_n: int,
+    mode: str,
+    beam: int,
+    temperature: float,
+    max_steps: int,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    packed: dict[str, Any] = {
+        "pca_prefix": prefix,
+        "vocab_n": int(vocab_n),
+        "mode": mode,
+        "beam": int(beam),
+        "temperature": float(temperature),
+        "max_steps": int(max_steps),
+        "local_calls": out.get("local_calls"),
+        "finals": out.get("finals"),
+        "trace": out.get("trace"),
+        "called_hosted_mistral": False,
+        "arena_score": None,
+        "jev_generated_lean": False,
+    }
+    if extra:
+        packed.update(dict(extra))
+    return packed
+
+
+def compile_then_hammer(
+    candidates: Sequence[Mapping[str, Any]],
+    *,
+    compile_fn: Callable[[str], Mapping[str, Any]],
+    row_fn: Callable[[Mapping[str, Any], Mapping[str, Any]], Mapping[str, Any]],
+    hammer_fn: Callable[..., tuple[list[dict[str, Any]], str, list[Any], bool]],
+    needs_hammer_fn: Callable[[str], bool],
+    grok_prefix: str = "grok",
+) -> tuple[list[dict[str, Any]], bool, str, list[Any]]:
+    """Compile labeled drafts, then hammer lake-invalid ones. Lake is the oracle."""
+
+    rows: list[dict[str, Any]] = []
+    grok_ok = False
+    grok_tactics = ""
+    grok_errors: list[Any] = []
+    for item in candidates or ():
+        compiled = dict(compile_fn(str(item.get("tactics") or "")) or {})
+        rows.append(dict(row_fn(item, compiled)))
+        kind = str(item.get("kind") or "")
+        if kind.startswith(grok_prefix):
+            if compiled.get("theorem_ok"):
+                grok_ok = True
+            else:
+                grok_tactics = str(item.get("tactics") or "")
+                grok_errors = list(compiled.get("errors") or [])
+        if needs_hammer_fn(kind) and not compiled.get("theorem_ok"):
+            hammer_rows, current, current_errors, hammer_ok = hammer_fn(kind, item, compiled)
+            rows.extend(list(hammer_rows or ()))
+            if kind.startswith(grok_prefix):
+                grok_tactics = current
+                grok_errors = list(current_errors or [])
+                grok_ok = grok_ok or bool(hammer_ok)
+            elif compiled.get("errors"):
+                grok_errors = grok_errors or list(compiled.get("errors") or [])
+    return rows, grok_ok, grok_tactics, grok_errors

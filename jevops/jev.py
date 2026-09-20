@@ -713,6 +713,34 @@ class FixtureClient:
         )
 
 
+def tree_choice_questions(
+    tree: Mapping[str, Mapping[str, str]],
+    *,
+    Choice: Any,
+    family_instructions: str,
+    leaf_instructions: str = (
+        "Inside the {fam} family, which leaf edit is most likely to lake-compile "
+        "and use fewer tokens? Do not write Lean."
+    ),
+) -> dict[str, Any]:
+    """Family Choice plus a leaf Choice per sibling set. Does not write Lean."""
+
+    questions: dict[str, Any] = {
+        "family": Choice(
+            instructions=family_instructions,
+            criteria={fam: "Edit family: " + "; ".join(kids) for fam, kids in dict(tree or {}).items()},
+        )
+    }
+    for fam, kids in dict(tree or {}).items():
+        if len(kids) <= 1:
+            continue
+        questions[f"leaf_{fam}"] = Choice(
+            instructions=str(leaf_instructions).format(fam=fam),
+            criteria=dict(kids),
+        )
+    return questions
+
+
 def require_choice_cap(
     n: int,
     cap: int,
@@ -861,3 +889,44 @@ def pack_choice_round(
     if wall_ms is not None:
         out["wall_ms"] = wall_ms
     return out
+
+
+def proposal_rank_state(
+    record: Mapping[str, Any],
+    current: str,
+    criteria: Mapping[str, str],
+    *,
+    tokens: int,
+    head_n: int = 400,
+    goal: str = "Pick the MCMC proposal most likely to lake-compile AND use fewer tokens. Do not write Lean.",
+) -> dict[str, Any]:
+    from jevops.outer import head_chars
+
+    return {
+        "problem": record.get("name"),
+        "current_tokens": int(tokens),
+        "current_head": head_chars(current, head_n),
+        "goal": goal,
+        "proposals": [{"id": key, "desc": val} for key, val in dict(criteria).items()],
+    }
+
+
+def pack_ranked_pick(
+    result: Any,
+    *,
+    choice_key: str,
+    n: int,
+    prefix: str = "p",
+    noul_key: str = "likely_compiles",
+    score_key: str = "likely_shorter",
+    pick_default: str = "p0",
+) -> dict[str, Any]:
+    """Project a numbered Choice plus order. Never includes generated Lean."""
+
+    from jevops.search import index_order
+
+    packed = pack_choice_round(result, choice_key=choice_key, noul_key=noul_key, score_key=score_key)
+    pick = str(packed.get("choice") or pick_default)
+    packed["pick"] = pick
+    packed["order"] = index_order(int(n), packed.get("probabilities") or {}, prefix=prefix, pick=pick)
+    return packed
