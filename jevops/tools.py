@@ -173,6 +173,8 @@ def spawn_subloop(name: str, **kwargs: Any) -> dict[str, Any]:
 def skill_knowledge_graph(memory: Optional[Mapping[str, Any]] = None) -> dict[str, Any]:
     """Nodes = problems/skills/residuals; edges = success/fail/research/mint."""
 
+    from jevops.outer import head_seq, tail_seq
+
     mem = dict(memory or {})
     nodes: dict[str, dict[str, Any]] = {}
     edges: list[dict[str, Any]] = []
@@ -224,8 +226,8 @@ def skill_knowledge_graph(memory: Optional[Mapping[str, Any]] = None) -> dict[st
     return {
         "n_nodes": len(nodes),
         "n_edges": len(edges),
-        "nodes": list(nodes.values())[:80],
-        "edges": edges[-80:],
+        "nodes": head_seq(list(nodes.values()), 80),
+        "edges": tail_seq(edges, 80),
         "called_docker0": False,
     }
 
@@ -234,6 +236,7 @@ def harness_ast(*, modules: Optional[list[str]] = None) -> dict[str, Any]:
     """Function/class names from harness skill modules (navigate, do not exec)."""
 
     from jevops import hooks
+    from jevops.outer import head_seq
 
     extra = hooks.get("tool:ast_harness")
     if extra is not None:
@@ -256,7 +259,9 @@ def harness_ast(*, modules: Optional[list[str]] = None) -> dict[str, Any]:
         try:
             tree = ast.parse(path.read_text(encoding="utf-8"))
         except SyntaxError as exc:
-            files.append({"file": name, "error": str(exc)[:120]})
+            from jevops.outer import exc_head
+
+            files.append({"file": name, "error": exc_head(exc, 120)})
             continue
         functions = [node.name for node in tree.body if isinstance(node, ast.FunctionDef)]
         classes = [node.name for node in tree.body if isinstance(node, ast.ClassDef)]
@@ -269,7 +274,7 @@ def harness_ast(*, modules: Optional[list[str]] = None) -> dict[str, Any]:
         files.append(
             {
                 "file": name,
-                "functions": functions[:60],
+                "functions": head_seq(functions, 60),
                 "classes": classes,
                 "fold_fns": [fn for fn in functions if fn.startswith("fold_")],
                 "assigns": assigns,
@@ -280,6 +285,8 @@ def harness_ast(*, modules: Optional[list[str]] = None) -> dict[str, Any]:
 
 def harness_exports() -> dict[str, Any]:
     """Public callables on harness modules TypeSafe can navigate."""
+
+    from jevops.outer import head_seq
 
     mods = (
         "portable_rewrites",
@@ -300,7 +307,7 @@ def harness_exports() -> dict[str, Any]:
             for name in dir(module)
             if not name.startswith("_") and callable(getattr(module, name, None))
         ]
-        exported[mod_name] = names[:80]
+        exported[mod_name] = head_seq(names, 80)
     return {"modules": exported, "called_docker0": False}
 
 
@@ -309,6 +316,7 @@ def mcp_catalog() -> dict[str, Any]:
 
     extra: list[dict[str, Any]] = []
     from jevops import hooks
+    from jevops.outer import head_seq
 
     catalog_raw = hooks.const("mcp_catalog_path")
     catalog_path = Path(catalog_raw) if catalog_raw else Path()
@@ -329,7 +337,7 @@ def mcp_catalog() -> dict[str, Any]:
     return {
         "server": "lra-typesafe-local",
         "n_tools": len(tools),
-        "tools": tools[:40],
+        "tools": head_seq(tools, 40),
         "live_grok_mcp": False,
         "called_docker0": False,
     }
@@ -429,7 +437,9 @@ def diffuse_closed(tactics: str) -> dict[str, Any]:
 
     body = str(tactics or "").strip("\n")
     rows = []
-    for item in lra_sym.one_hole_closed_rows(body, max_pos=2)[:8]:
+    from jevops.outer import head_seq
+
+    for item in head_seq(lra_sym.one_hole_closed_rows(body, max_pos=2), 8):
         nxt = str(item.get("tactics") or "")
         rows.append(
             {
@@ -534,6 +544,7 @@ def run_tool(
 
     key = str(name or "").strip()
     from jevops import hooks
+    from jevops.outer import head_chars
 
     extra = hooks.get(f"tool:{key}")
     if extra is not None:
@@ -589,7 +600,7 @@ def run_tool(
     elif key == "symbol_search":
         search = hooks.resolve("symbol_search", "symbol_search", "search_symbols")
         payload = (
-            search(problem or tactics[:80], memory=memory, tactics=tactics)
+            search(problem or head_chars(tactics, 80), memory=memory, tactics=tactics)
             if search
             else {"ok": False, "reason": "no_search"}
         )

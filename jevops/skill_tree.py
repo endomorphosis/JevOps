@@ -178,13 +178,15 @@ def search_with_forest(
     ranked = [leaf for _s, leaf in scored]
     paths = [leaf["path"] for leaf in ranked]
     bias = [leaf["stem"] for leaf in ranked]
+    from jevops.outer import head_seq
+
     memory.setdefault("nca", {})["skill_tree"] = {
         "n_leaves": len(leaves),
-        "ranked_paths": paths[:24],
+        "ranked_paths": head_seq(paths, 24),
         "n_trees": trained.get("n_trees"),
     }
     if bias:
-        memory["nca"]["pipeline_bias"] = bias[:16]
+        memory["nca"]["pipeline_bias"] = head_seq(bias, 16)
     try:
         doc = to_jsonld(tree)
         from jevops import jsonld as lra_ld
@@ -197,8 +199,8 @@ def search_with_forest(
         "kind": "port_skill_tree",
         "n_leaves": len(leaves),
         "n_trees": trained.get("n_trees") or 0,
-        "ranked_paths": paths[:24],
-        "ranked": bias[:16],
+        "ranked_paths": head_seq(paths, 24),
+        "ranked": head_seq(bias, 16),
         "families": sorted(tree),
         "writes_lean": False,
         "called_docker0": False,

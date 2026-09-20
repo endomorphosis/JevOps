@@ -31,6 +31,21 @@ def bracket_inner(text: str, open_end: int, *, open_ch: str = "[", close_ch: str
     return blob[int(open_end) : index - 1]
 
 
+def merge_matches(text: str, *named: tuple[str, Any]) -> list[tuple[int, str, Any]]:
+    """Collect (start, kind, match) from finditer patterns, sorted by start."""
+
+    events: list[tuple[int, str, Any]] = []
+    blob = str(text or "")
+    for kind, pattern in named:
+        finder = getattr(pattern, "finditer", None)
+        if finder is None:
+            continue
+        for match in finder(blob):
+            events.append((match.start(), str(kind), match))
+    events.sort(key=lambda item: item[0])
+    return events
+
+
 def word_tokens(text: str) -> list[Any]:
     """Whitespace tokens with .start/.end/.group like re.Match."""
 
@@ -385,6 +400,16 @@ def drop_index(text: str, index: int) -> str:
     if index < 0 or index >= len(lines):
         return str(text or "")
     del lines[index]
+    return "\n".join(lines)
+
+
+def drop_indices(text: str, indices: Sequence[int]) -> str:
+    """Delete line indices from the right. Out-of-range indices are skipped."""
+
+    lines = str(text or "").splitlines()
+    for index in sorted({int(i) for i in indices or ()}, reverse=True):
+        if 0 <= index < len(lines):
+            del lines[index]
     return "\n".join(lines)
 
 
@@ -859,6 +884,8 @@ def shorter_fills(
 ) -> list[dict[str, Any]]:
     """One-hole closed fills that are strictly shorter. fills_fn/token_fn injected."""
 
+    from jevops.outer import head_chars
+
     body = str(text or "")
     current = int(token_fn(body))
     rows: list[dict[str, Any]] = []
@@ -874,7 +901,7 @@ def shorter_fills(
             seen.add(nxt)
             rows.append(
                 {
-                    "kind": f"{item.get('hole_id')}_{item.get('kind')}_{str(fill)[:24] or 'drop'}",
+                    "kind": f"{item.get('hole_id')}_{item.get('kind')}_{head_chars(fill, 24) or 'drop'}",
                     "hole_id": item.get("hole_id"),
                     "hole_kind": item.get("kind"),
                     "original": item.get("original"),
@@ -941,6 +968,58 @@ def starts_any(
     return any(key.startswith(str(prefix)) for prefix in prefixes)
 
 
+def lstrip_core(text: str, chars: str = "·. ") -> str:
+    return str(text or "").lstrip(chars).strip()
+
+
+def line_at(text: str, pos: int) -> str:
+    """The line that contains offset ``pos`` (no trailing newline)."""
+
+    blob = str(text or "")
+    index = max(0, min(len(blob), int(pos)))
+    start = blob.rfind("\n", 0, index) + 1
+    end = blob.find("\n", index)
+    if end < 0:
+        end = len(blob)
+    return blob[start:end]
+
+
+def pick_scored(
+    windows: Sequence[Mapping[str, Any]],
+    *,
+    n: int,
+    score_fn: Any,
+    reindex: bool = True,
+    id_prefix: str = "SYM_",
+) -> list[dict[str, Any]]:
+    """Highest score_fn first, then start; skip overlapping windows."""
+
+    rows = [dict(item) for item in windows or ()]
+    want = max(1, int(n))
+    ranked = sorted(
+        rows,
+        key=lambda row: (-float(score_fn(row)), int(row.get("start") or 0)),
+    )
+    picked: list[dict[str, Any]] = []
+    occupied: list[tuple[int, int]] = []
+    for window in ranked:
+        start, end = int(window.get("start") or 0), int(window.get("end") or 0)
+        if not _free(start, end, occupied):
+            continue
+        occupied.append((start, end))
+        picked.append(window)
+        if len(picked) >= want:
+            break
+    if not reindex:
+        return picked
+    out: list[dict[str, Any]] = []
+    for index, item in enumerate(picked):
+        row = dict(item)
+        row["hole_id"] = f"{id_prefix}{index}"
+        out.append(row)
+    return out
+
+
 def fold_following(
     text: str,
     marker_pred: Any,
@@ -977,6 +1056,150 @@ def fold_following(
     return None
 
 
+def around_lines(text: str, index: int, *, radius: int = 4) -> str:
+    """Lines around ``index`` (inclusive), clipped to the text."""
+
+    lines = str(text or "").splitlines()
+    if not lines:
+        return ""
+    cursor = max(0, min(len(lines) - 1, int(index)))
+    start = max(0, cursor - int(radius))
+    end = min(len(lines), cursor + int(radius) + 1)
+    return "\n".join(lines[start:end])
+
+
+def map_span_bodies(
+    text: str,
+    spans: Sequence[Any],
+    transform: Any,
+    *,
+    indent_key: str = "indent",
+    header_end_key: str = "header_end",
+    end_key: str = "end",
+    top_only: bool = True,
+) -> list[tuple[Any, str]]:
+    """Apply transform(body, span). Returns (span, rewritten_text) when the body changes."""
+
+    blob = str(text or "")
+    rows = list(spans or ())
+    if not rows:
+        return []
+    if top_only:
+        top = min(int(_span_get(span, indent_key)) for span in rows)
+        rows = [span for span in rows if int(_span_get(span, indent_key)) == top]
+    out: list[tuple[Any, str]] = []
+    for span in rows:
+        start = int(_span_get(span, header_end_key))
+        end = int(_span_get(span, end_key))
+        body = blob[start:end]
+        nxt = transform(body, span)
+        if nxt is None or nxt == body:
+            continue
+        out.append((span, blob[:start] + str(nxt) + blob[end:]))
+    return out
+
+
+def prepend_absent(text: str, line: str) -> str:
+    """Prepend ``line`` when its stripped form is not already present."""
+
+    pick = str(line or "")
+    body = str(text or "")
+    if not pick.strip():
+        return body
+    present = {row.strip() for row in body.splitlines()}
+    if pick.strip() in present:
+        return body
+    return pick + "\n" + body
+
+
+def lines_containing(text: str, needle: str, *, token: bool = False) -> list[str]:
+    """Lines that contain ``needle``, optionally as a whitespace token."""
+
+    want = str(needle or "")
+    out: list[str] = []
+    for line in str(text or "").splitlines():
+        if token:
+            if want in line.split():
+                out.append(line)
+        elif want in line:
+            out.append(line)
+    return out
+
+
+def any_line(text: str, pred: Any) -> bool:
+    return any(pred(line) for line in str(text or "").splitlines())
+
+
+def split_top_level(
+    text: str,
+    *,
+    sep: str = ",",
+    opens: str = "([{",
+    closes: str = ")]}",
+) -> list[str]:
+    """Split on sep at depth 0. Nested ([{ }]) stay inside a part. Skip empty."""
+
+    parts: list[str] = []
+    buf: list[str] = []
+    depth = 0
+    for char in str(text or ""):
+        if char in opens:
+            depth += 1
+            buf.append(char)
+        elif char in closes:
+            depth = max(0, depth - 1)
+            buf.append(char)
+        elif char == sep and depth == 0:
+            item = "".join(buf).strip()
+            if item:
+                parts.append(item)
+            buf = []
+        else:
+            buf.append(char)
+    item = "".join(buf).strip()
+    if item:
+        parts.append(item)
+    return parts
+
+
+def drop_spans(text: str, spans: Sequence[Any], *, eat_newline: bool = False) -> str:
+    """Delete [start:end] spans from the right. Optional trailing newline after each."""
+
+    blob = str(text or "")
+    bounds: list[tuple[int, int]] = []
+    for span in spans or ():
+        if isinstance(span, Mapping) or hasattr(span, "start"):
+            start, end = int(_span_get(span, "start")), int(_span_get(span, "end"))
+        else:
+            start, end = int(span[0]), int(span[1])
+        bounds.append((start, end))
+    out = blob
+    for start, end in sorted(bounds, reverse=True):
+        if eat_newline and end < len(out) and out[end] == "\n":
+            end += 1
+        out = out[:start] + out[end:]
+    return out
+
+
+def splice_from(dst: str, src: str, dst_span: Any, src_span: Any) -> str:
+    """Replace dst[dst_span] with src[src_span]. Missing span → dst unchanged."""
+
+    if dst_span is None or src_span is None:
+        return str(dst or "")
+    d0, d1 = int(_span_get(dst_span, "start")), int(_span_get(dst_span, "end"))
+    s0, s1 = int(_span_get(src_span, "start")), int(_span_get(src_span, "end"))
+    return str(dst or "")[:d0] + str(src or "")[s0:s1] + str(dst or "")[d1:]
+
+
+def pop_trailing(text: str, pred: Any) -> str:
+    """Drop trailing lines while pred(line) is true."""
+
+    lines = str(text or "").splitlines()
+    while lines and pred(lines[-1]):
+        lines.pop()
+    return "\n".join(lines)
+
+
 def rewrite_matching_lines(text: str, pred: Any, replacement: Any) -> str:
     """replacement(indent, stripped, line)->str|None. None drops the line."""
 
@@ -992,6 +1215,47 @@ def rewrite_matching_lines(text: str, pred: Any, replacement: Any) -> str:
             continue
         out.append(line)
     return "\n".join(out)
+
+
+def subn_changed(text: str, pattern: Any, repl: Any, *, count: int = 0) -> str:
+    """re.subn / Pattern.subn. Unchanged text when n==0."""
+
+    blob = str(text or "")
+    if hasattr(pattern, "subn"):
+        nxt, n = pattern.subn(repl, blob, count)
+    else:
+        nxt, n = re.subn(pattern, repl, blob, count=count)
+    return nxt if n else blob
+
+
+def peek_next_stripped(lines: Sequence[str], index: int) -> str:
+    """Next non-empty stripped line after index, else ''."""
+
+    cursor = int(index) + 1
+    while cursor < len(lines) and not str(lines[cursor]).strip():
+        cursor += 1
+    if cursor >= len(lines):
+        return ""
+    return str(lines[cursor]).strip()
+
+
+def map_lines(text: str, fn: Any, *, changed_only: bool = True) -> str:
+    """fn(index, line, lines)->Optional[str]. None keeps the original line."""
+
+    blob = str(text or "")
+    lines = blob.splitlines()
+    out: list[str] = []
+    changed = False
+    for index, line in enumerate(lines):
+        nxt = fn(index, line, lines)
+        if nxt is None:
+            out.append(line)
+            continue
+        if nxt != line:
+            changed = True
+        out.append(str(nxt))
+    joined = "\n".join(out)
+    return joined if (changed or not changed_only) else blob
 
 
 def default_token_fills(item: Mapping[str, Any], text: str, *, limit: int = 8) -> list[str]:

@@ -166,6 +166,8 @@ def child_call_args(
 ) -> dict[str, Any]:
     """Closed argument bag a parent frame passes to a child CALL. No secrets."""
 
+    from jevops.outer import head_seq
+
     parent = dict(parent_locals or {})
     body = str(tactics or parent.get("tactics") or "")
     args: dict[str, Any] = {
@@ -175,7 +177,7 @@ def child_call_args(
         "tactics": body,
         "problem": str(problem or parent.get("problem") or ""),
         "parent_frame_id": parent_frame_id,
-        "tape_window": list(tape_window or parent.get("tape_window") or [])[:16],
+        "tape_window": head_seq(tape_window or parent.get("tape_window"), 16),
         "node": str(resolved.get("name") or parent.get("node") or ""),
     }
     kind = str(resolved.get("kind") or "")

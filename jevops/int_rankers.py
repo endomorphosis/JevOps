@@ -293,8 +293,9 @@ def call_pca(memory: dict[str, Any], *, tactics: str = "", rng: Optional[random.
             families = []
     try:
         from jevops.nca import upsert_from_event
+        from jevops.outer import head_seq
 
-        for fam in families[:6]:
+        for fam in head_seq(families, 6):
             upsert_from_event(memory, ptr=f"ptr://family/{fam}", kind="family", energy=0.55)
     except Exception:
         pass
@@ -452,7 +453,9 @@ def call_knn(memory: dict[str, Any], *, k: int = 3, tactics: str = "", problem: 
     leftover = len(drafts)
     scored: list[tuple[int, str]] = []
     kk = max(1, min(int(k), len(rows)))
-    for item in drafts or [{"kind": it.get("kind"), "token_count": it.get("tokens")} for it in (memory.get("successes") or [])[:8]]:
+    from jevops.outer import head_seq
+
+    for item in drafts or [{"kind": it.get("kind"), "token_count": it.get("tokens")} for it in head_seq(memory.get("successes"), 8)]:
         q = feature_milles(
             kind=str(item.get("kind") or ""),
             tokens=int(item.get("token_count") or item.get("tokens") or 0),

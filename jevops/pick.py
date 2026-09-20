@@ -585,6 +585,8 @@ def pack_beam(
 ) -> dict[str, Any]:
     """Closed pick payload. Jev did not write Lean."""
 
+    from jevops.outer import head_seq
+
     top = paths[0]["path_score"] if paths else 0.0
     second = paths[1]["path_score"] if len(paths) > 1 else epsilon
     return {
@@ -596,7 +598,7 @@ def pack_beam(
         "draft_confidence": paths[0]["leaf_confidence"] if paths else None,
         "draft_probabilities": ((leaf_qs or {}).get(str(greedy_fam)) or {}).get("probabilities") or {},
         "likely_token_cut": cut_score,
-        "beam_kinds": list(beam_kinds)[:8],
+        "beam_kinds": head_seq(beam_kinds, 8),
         "path_score": top,
         "separation": top / max(second, epsilon),
         "abstain": abstain,
@@ -1293,6 +1295,59 @@ def unique_capped(cap: int) -> tuple[Any, list[Any]]:
         return True
 
     return push, rows
+
+
+def numbered_criteria(
+    items: Sequence[Any],
+    *,
+    prefix: str = "c",
+    fmt: Any = None,
+) -> dict[str, Any]:
+    """Map items to ``{prefix}{i}`` keys. fmt(index, item) optional."""
+
+    out: dict[str, Any] = {}
+    for index, item in enumerate(items or ()):
+        key = f"{prefix}{index}"
+        out[key] = fmt(index, item) if fmt is not None else item
+    return out
+
+
+def tree_from_items(
+    items: Sequence[Any],
+    *,
+    family_fn: Any,
+    kind_fn: Any,
+    note_fn: Any,
+    keep: Optional[Mapping[str, Mapping[str, str]]] = None,
+) -> dict[str, dict[str, str]]:
+    """Build family→{kind: note} from items. ``keep`` seeds empty families."""
+
+    tree: dict[str, dict[str, str]] = {str(key): dict(val) for key, val in dict(keep or {}).items()}
+    for item in items or ():
+        fam = str(family_fn(item) or "")
+        kind = str(kind_fn(item) or "")
+        if not fam or not kind:
+            continue
+        tree.setdefault(fam, {})[kind] = str(note_fn(item) or "")
+    return tree
+
+
+def first_apply(
+    items: Sequence[Any],
+    kind: str,
+    text: str,
+    *,
+    kind_fn: Any,
+    apply_fn: Any,
+) -> str:
+    """Apply the first item whose kind_fn matches. Else strip the body."""
+
+    want = str(kind or "")
+    body = str(text or "").strip("\n")
+    for item in items or ():
+        if str(kind_fn(item) or "") == want:
+            return str(apply_fn(item, body) or "").strip("\n")
+    return body
 
 
 def unique_push(

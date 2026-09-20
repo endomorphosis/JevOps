@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""More NCA CALLs: wrap SGD/mask/diffuse; milles Markov, isotonic, AdaBoost,
+"""More NCA CALLs: wrap SGD/mask/diffuse/GAN; milles Markov, isotonic, AdaBoost,
 quantile, PageRank, contrastive.
 
 Jev does not write Lean. Lake is the oracle. Never docker0. Not Arena scores.
@@ -12,13 +12,14 @@ from __future__ import annotations
 
 import random
 import re
-from typing import Any, Mapping, Optional, Sequence
+from typing import Any, Callable, Mapping, Optional, Sequence
 
 MILLE = 1000
 MORE_STEMS = (
     "sgd",
     "mask",
     "diffuse",
+    "gan",
     "markov",
     "hmm",
     "isotonic",
@@ -105,13 +106,16 @@ def call_sgd(memory: dict[str, Any], *, tactics: str = "") -> dict[str, Any]:
         return {"ok": False, "reason": "no_mask_impl", "kind": "port_sgd", "writes_lean": False, "integer": True}
     holes = find_holes(tactics or "")
     ranked = sorted(holes, key=lambda hole: -(hole.end - hole.start))
+    from jevops.outer import head_seq
+
     ids = [hole.hole_id for hole in ranked]
-    memory.setdefault("nca", {})["sgd"] = {"minibatch": ids[:2], "n_holes": len(holes), "integer": True}
+    minibatch = head_seq(ids, 2)
+    memory.setdefault("nca", {})["sgd"] = {"minibatch": minibatch, "n_holes": len(holes), "integer": True}
     return {
         "ok": True,
         "kind": "port_sgd",
         "n_holes": len(holes),
-        "minibatch": ids[:2],
+        "minibatch": minibatch,
         "wraps": "sgd_fanout.jev_round/drop_subset",
         "writes_lean": False,
         "integer": True,
@@ -138,7 +142,9 @@ def call_diffuse(memory: dict[str, Any], *, tactics: str = "") -> dict[str, Any]
             token_fn=lambda text: len(str(text).split()),
             max_candidates=16,
         )
-        kinds = [str(row.get("kind") or "") for row in cands[:8]]
+        from jevops.outer import head_seq
+
+        kinds = [str(row.get("kind") or "") for row in head_seq(cands, 8)]
         memory.setdefault("nca", {})["diffuse"] = {
             "n_holes": len(holes),
             "n_cands": len(cands),
@@ -156,7 +162,9 @@ def call_diffuse(memory: dict[str, Any], *, tactics: str = "") -> dict[str, Any]
     holes = find_holes(body)
     cands = closed(body, max_candidates=16) if body and closed else []
     cuts = sorted(cands, key=lambda row: int(row.get("token_count") or 10**9))
-    kinds = [str(row.get("kind") or row.get("hole_id") or "") for row in cuts[:8]]
+    from jevops.outer import head_seq
+
+    kinds = [str(row.get("kind") or row.get("hole_id") or "") for row in head_seq(cuts, 8)]
     memory.setdefault("nca", {})["diffuse"] = {"n_holes": len(holes), "n_cands": len(cands), "integer": True}
     return _bias(
         memory,
@@ -165,6 +173,152 @@ def call_diffuse(memory: dict[str, Any], *, tactics: str = "") -> dict[str, Any]
         n_holes=len(holes),
         n_cands=len(cands),
         wraps="symbol_diffuse.closed_candidates",
+    )
+
+
+def _gan_realness_m(row: Mapping[str, Any]) -> int:
+    """Milles discriminator fallback: cosine − CE (+500). Higher = more real-like."""
+
+    return _clip(int(row.get("cosine_m") or 0) - int(row.get("ce_m") or 0) + 500)
+
+
+def call_gan(
+    memory: dict[str, Any],
+    *,
+    tactics: str = "",
+    problem: str = "",
+    jev_fn: Optional[Callable[..., Mapping[str, Any]]] = None,
+    rng: Optional[random.Random] = None,
+) -> dict[str, Any]:
+    """Text GAN: generate like diffusion, TypeSafe Jev discriminates real vs fake.
+
+    Generator perturbs Lean IR (functional ``True := by`` closers) and optional
+    closed fills. Discriminator is Jev (gold). Milles fallback is
+    ``cosine_m - ce_m``. Never writes Lean. Lake is the admit. Not legal-IR
+    families.
+    """
+
+    from jevops import autoencoder as lra_ae
+    from jevops.outer import head_chars, head_seq
+
+    rng = rng or random.Random(0)
+    source = str(tactics or problem or "")
+    real = lra_ae.roundtrip_once(source, memory=memory, rng=rng, force_ir=True)
+    real["role"] = "real"
+    fakes: list[dict[str, Any]] = []
+    base_ir = lra_ae.encode_lean_ir(source)
+    for i in range(4):
+        packed = lra_ae.perturb_lean_ir(base_ir, rng)
+        row = lra_ae.roundtrip_once(source, memory=memory, rng=rng, ir=packed, force_ir=True)
+        row["role"] = "fake"
+        row["variation"] = i
+        row["from"] = "lean_ir"
+        fakes.append(row)
+    try:
+        from jevops.mask import default_token_fills
+        from jevops.mask import shorter_fills
+        from jevops.mask import span_windows
+
+        holes = span_windows(source, 1)
+        cands = shorter_fills(
+            source,
+            holes,
+            fills_fn=default_token_fills,
+            token_fn=lambda text: len(str(text).split()),
+            max_candidates=8,
+        )
+        for cand in head_seq(cands, 4):
+            text = str(cand.get("tactics") or "")
+            if not text.strip():
+                continue
+            row = lra_ae.roundtrip_once(text, memory=memory, rng=rng, force_ir=True)
+            row["role"] = "fake"
+            row["from"] = "diffuse"
+            fakes.append(row)
+    except Exception:
+        pass
+    if not fakes:
+        copied = dict(real)
+        copied["role"] = "fake"
+        copied["from"] = "copy"
+        fakes = [copied]
+    used_jev = False
+    choice = ""
+    scores: dict[str, Any] = {}
+    noul = 0.0
+    labeled: list[tuple[str, dict[str, Any]]] = [("r0", real)] + [
+        (f"f{i}", row) for i, row in enumerate(fakes)
+    ]
+    if jev_fn is not None:
+        variations = []
+        for vid, row in labeled:
+            variations.append(
+                {
+                    "id": vid,
+                    "role": str(row.get("role") or ""),
+                    "n_tokens": int(row.get("n_tokens") or 0),
+                    "cosine_m": int(row.get("cosine_m") or 0),
+                    "ce_m": int(row.get("ce_m") or 0),
+                    "ir_cosine_m": int(row.get("ir_cosine_m") or 0),
+                    "ir_ce_m": int(row.get("ir_ce_m") or 0),
+                    "lean_head": head_chars(row.get("lean"), 80),
+                }
+            )
+        try:
+            result = dict(jev_fn({"task": "gan_real_vs_fake", "variations": variations}) or {})
+            used_jev = True
+            choice = str(result.get("choice") or result.get("best_id") or "")
+            scores = dict(result.get("scores") or {})
+            noul = float(result.get("noul") or result.get("reconstruction_broke") or 0.0)
+        except Exception:
+            used_jev = False
+            choice = ""
+            scores = {}
+    ids = {vid for vid, _row in labeled}
+    if choice in ids:
+        winner_id = choice
+    elif scores:
+        winner_id = max(labeled, key=lambda item: int(scores.get(item[0]) or 0))[0]
+    else:
+        winner_id = max(labeled, key=lambda item: _gan_realness_m(item[1]))[0]
+    winner_is_real = winner_id.startswith("r")
+    d_score_m = MILLE if winner_is_real else 0
+    best_fake = max(fakes, key=_gan_realness_m)
+    g_score_m = _gan_realness_m(best_fake)
+    memory.setdefault("nca", {})["gan"] = {
+        "d_score_m": d_score_m,
+        "g_score_m": g_score_m,
+        "used_jev": used_jev,
+        "n_fake": len(fakes),
+        "integer": True,
+        "legal_ir": False,
+    }
+    ranked = []
+    for row in sorted(fakes, key=lambda item: -_gan_realness_m(item)):
+        tag = str(row.get("from") or "lean_ir")
+        if tag and tag not in ranked:
+            ranked.append(tag)
+    return _bias(
+        memory,
+        ranked,
+        kind="port_gan",
+        n_real=1,
+        n_fake=len(fakes),
+        used_jev=used_jev,
+        choice=choice,
+        d_score_m=d_score_m,
+        g_score_m=g_score_m,
+        cosine_m=int(best_fake.get("cosine_m") or 0),
+        ce_m=int(best_fake.get("ce_m") or 0),
+        ir_cosine_m=int(best_fake.get("ir_cosine_m") or 0),
+        ir_ce_m=int(best_fake.get("ir_ce_m") or 0),
+        lean=best_fake.get("lean"),
+        gold=False,
+        loss_gold="jev",
+        legal_ir=False,
+        functional_lean=True,
+        noul=noul,
+        wraps="jevops.autoencoder+mask",
     )
 
 
@@ -371,7 +525,9 @@ def call_pagerank(memory: dict[str, Any], *, iters: int = 8) -> dict[str, Any]:
         pr = nxt
     ranked = sorted(pr, key=lambda node: (-pr[node], node))
     memory.setdefault("nca", {})["pagerank"] = {"pr": pr, "integer": True}
-    return _bias(memory, ranked[:12], kind="port_pagerank", n_nodes=n)
+    from jevops.outer import head_seq
+
+    return _bias(memory, head_seq(ranked, 12), kind="port_pagerank", n_nodes=n)
 
 
 def call_contrastive(memory: dict[str, Any], *, tactics: str = "", problem: str = "") -> dict[str, Any]:
@@ -422,8 +578,8 @@ def call_more(
     tactics: str = "",
     problem: str = "",
     rng: Optional[random.Random] = None,
+    jev_fn: Optional[Callable[..., Mapping[str, Any]]] = None,
 ) -> dict[str, Any]:
-    _ = rng
     text = str(stem or "").lower()
     if "sgd" in text:
         return call_sgd(memory, tactics=tactics)
@@ -431,6 +587,8 @@ def call_more(
         return call_mask(memory, tactics=tactics)
     if "diffuse" in text:
         return call_diffuse(memory, tactics=tactics)
+    if "gan" in text:
+        return call_gan(memory, tactics=tactics, problem=problem, jev_fn=jev_fn, rng=rng)
     if "hmm" in text:
         return call_markov(memory, tactics=tactics, hmm=True)
     if "markov" in text:

@@ -1315,13 +1315,15 @@ def nest_criteria(
 ) -> dict[str, dict[str, str]]:
     """Choice criteria for nest/spawn children. No Lean."""
 
+    from jevops.outer import head_chars, head_seq
+
     out: dict[str, dict[str, str]] = {
-        fam: {"what": f"Nested TypeSafe loop over {fam}: {', '.join(str(k) for k in kids)[:160]}"}
+        fam: {"what": f"Nested TypeSafe loop over {fam}: {head_chars(', '.join(str(k) for k in kids), 160)}"}
         for fam, kids in (tree or {}).items()
         if kids
     }
     for kids in (tree or {}).values():
-        for kid in list(kids)[:8]:
+        for kid in head_seq(kids, 8):
             out.setdefault(str(kid), {"what": f"Nested TypeSafe loop on skill {kid}"})
     out.setdefault(walk_name, {"what": f"Spawn the TypeSafe {walk_name} subloop and join its return"})
     for tool_name, spec in dict(tools or {}).items():
@@ -1442,11 +1444,14 @@ def run_sampled(
 def intent_window(memory: Optional[Mapping[str, Any]] = None) -> dict[str, Any]:
     """Compact tape/stack/board snapshot for a Jev intent state. No Lean."""
 
+    from jevops.outer import head_seq
+
     mem = dict(memory or {})
+    nca = mem.get("nca") or {}
     return {
-        "tape_window": list(mem.get("_tape_window") or [])[:16],
-        "stack_top": list(mem.get("_stack_top") or [])[:3],
-        "board_window": list(((mem.get("nca") or {}).get("board_window") or []))[:8],
+        "tape_window": head_seq(mem.get("_tape_window"), 16),
+        "stack_top": head_seq(mem.get("_stack_top"), 3),
+        "board_window": head_seq(nca.get("board_window"), 8),
     }
 
 

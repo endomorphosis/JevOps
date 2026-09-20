@@ -111,13 +111,15 @@ def add_thought(
 ) -> dict[str, Any]:
     """Append a graph-of-thoughts node (bounded)."""
 
+    from jevops.outer import head_chars, tail_seq
+
     plan = _plan(memory)
     thoughts = list(plan.get("thoughts") or [])
     tid = f"T{len(thoughts) + 1:04d}"
     node = {
         "id": tid,
         "kind": str(kind or "generate"),
-        "text": str(text or "")[:240],
+        "text": head_chars(text, 240),
         "task_id": str(task_id or ""),
         "subgoal_id": str(subgoal_id or ""),
         "parent_ids": [str(p) for p in (parent_ids or []) if p],
@@ -128,13 +130,13 @@ def add_thought(
         "status": "open",
     }
     thoughts.append(node)
-    plan["thoughts"] = thoughts[-MAX_THOUGHTS:]
+    plan["thoughts"] = tail_seq(thoughts, MAX_THOUGHTS)
     edges = list(plan.get("thought_edges") or [])
     for parent in node["parent_ids"]:
         edges.append([f"ptr://cell/thought/{parent}", node["ptr"]])
     if node["task_id"]:
         edges.append([f"ptr://task/{node['task_id']}", node["ptr"]])
-    plan["thought_edges"] = edges[-128:]
+    plan["thought_edges"] = tail_seq(edges, 128)
     _sync_jsonld(memory)
     return node
 
@@ -151,12 +153,14 @@ def record_jev(
 ) -> dict[str, Any]:
     """Jev Choice/Score/Noul becomes a scored thought on the current task."""
 
+    from jevops.outer import tail_seq
+
     return add_thought(
         memory,
         kind="score",
         text=text or f"jev choice={choice}",
         task_id=task_id,
-        parent_ids=[t["id"] for t in (_plan(memory).get("thoughts") or [])[-1:]],
+        parent_ids=[t["id"] for t in tail_seq(_plan(memory).get("thoughts"), 1)],
         score_m=score_m,
         noul_m=noul_m,
         skill=skill or choice,
@@ -172,12 +176,14 @@ def keep_best_thoughts(memory: dict[str, Any], *, k: int = 4) -> list[dict[str, 
 def plan_window(memory: Mapping[str, Any]) -> dict[str, Any]:
     plan = dict((memory.get("nca") or {}).get("plan") or {})
     tasks = [t for t in plan.get("tasks") or [] if not t.get("blocked")]
-    thoughts = list(plan.get("thoughts") or [])[-6:]
+    from jevops.outer import head_seq, tail_seq
+
+    thoughts = tail_seq(plan.get("thoughts"), 6)
     return {
         "goal": (plan.get("goals") or [{}])[0].get("id"),
         "n_subgoals": len(plan.get("subgoals") or []),
         "n_tasks": len(plan.get("tasks") or []),
-        "ready_tasks": [t.get("id") for t in tasks if str(t.get("status") or "") in {"todo", "ready", ""}][:6],
+        "ready_tasks": head_seq([t.get("id") for t in tasks if str(t.get("status") or "") in {"todo", "ready", ""}], 6),
         "thoughts": [{"id": t.get("id"), "kind": t.get("kind"), "score_m": t.get("score_m"), "skill": t.get("skill")} for t in thoughts],
         "best": [{"id": t.get("id"), "score_m": t.get("score_m")} for t in keep_best_thoughts(dict(memory), k=3)],
     }

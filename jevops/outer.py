@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping, Optional, Sequence
@@ -71,6 +72,66 @@ def head_lines(text: str, n: int) -> str:
     return "\n".join(str(text or "").splitlines()[: max(0, int(n))]).strip("\n")
 
 
+def head_chars(value: Any, n: int) -> str:
+    """First n characters. None is empty. n<=0 is empty."""
+
+    text = "" if value is None else str(value)
+    return text[: max(0, int(n))]
+
+
+def tail_chars(value: Any, n: int) -> str:
+    """Last n characters. None is empty. n<=0 is empty (not the whole string)."""
+
+    text = "" if value is None else str(value)
+    n = max(0, int(n))
+    return text[-n:] if n else ""
+
+
+def head_seq(items: Any, n: int) -> list[Any]:
+    """First n items. None/empty is []. n<=0 is []."""
+
+    return list(items or ())[: max(0, int(n))]
+
+
+def tail_seq(items: Any, n: int) -> list[Any]:
+    """Last n items. None/empty is []. n<=0 is [] (not the whole sequence)."""
+
+    n = max(0, int(n))
+    return list(items or ())[-n:] if n else []
+
+
+def exc_head(exc: Any, n: int = 300) -> str:
+    """str(exc) truncated for receipts/logs. Default 300."""
+
+    return head_chars(exc, n)
+
+
+def head_tail(
+    value: Any,
+    head: int,
+    tail: int,
+    *,
+    sep: str = "\n...\n",
+    limit: Optional[int] = None,
+) -> str:
+    """Keep head+tail chars with a middle marker when the text is long enough.
+
+    ``limit`` defaults to head+tail. Shorter text is returned unchanged.
+    """
+
+    text = "" if value is None else str(value)
+    h = max(0, int(head))
+    t = max(0, int(tail))
+    cap = h + t if limit is None else max(0, int(limit))
+    if len(text) <= cap:
+        return text
+    if t == 0:
+        return text[:h]
+    if h == 0:
+        return text[-t:]
+    return text[:h] + sep + text[-t:]
+
+
 def ensure_sys_path(path: Any) -> None:
     import sys
 
@@ -109,6 +170,39 @@ def unique_names(
     name_key: str = "name",
 ) -> list[str]:
     return [str(row.get(name_key) or "") for row in records]
+
+
+def require_unique_n(
+    records: Sequence[Mapping[str, Any]],
+    n: int,
+    *,
+    name_key: str = "name",
+    error_cls: Any = ValueError,
+    fmt: str = "must contain {n} uniquely named records",
+) -> list[str]:
+    """Require exactly n uniquely named records. Returns names in order."""
+
+    names = unique_names(records, name_key=name_key)
+    want = int(n)
+    if len(names) != want or len(set(names)) != want:
+        raise error_cls(fmt.format(n=want))
+    return names
+
+
+def require_len(
+    items: Any,
+    n: int,
+    *,
+    error_cls: Any = ValueError,
+    fmt: str = "expected {n} items, got {got}",
+) -> Any:
+    """Require ``len(items) == n``. Returns items unchanged."""
+
+    got = len(items)
+    want = int(n)
+    if got != want:
+        raise error_cls(fmt.format(n=want, got=got))
+    return items
 
 
 def digest_hex(data: bytes) -> str:
@@ -239,11 +333,11 @@ def route_next(
             text = text[0]
     except Exception as exc:
         fallback["router"] = "llm_router_error"
-        fallback["error"] = str(exc)[:240]
+        fallback["error"] = exc_head(exc, 240)
         return fallback
     action = parse_action(str(text))
     action["router"] = "llm_router"
-    action["raw_head"] = str(text)[:240]
+    action["raw_head"] = head_chars(text, 240)
     if isinstance(memory, dict):
         try:
             charger = charge_fn
@@ -316,9 +410,287 @@ def board_total(board: Mapping[str, int]) -> int:
     return int(sum(board.values()))
 
 
-def lookup_named(records: Sequence[Mapping[str, Any]], name: str) -> Optional[Mapping[str, Any]]:
+def lookup_named(
+    records: Sequence[Mapping[str, Any]],
+    name: str,
+    *,
+    error_cls: Optional[Any] = None,
+    miss: str = "",
+) -> Optional[Mapping[str, Any]]:
     want = str(name or "")
-    return next((item for item in records if str(item.get("name") or "") == want), None)
+    hit = next((item for item in records if str(item.get("name") or "") == want), None)
+    if hit is None and error_cls is not None:
+        raise error_cls(miss or f"unknown name: {want}")
+    return hit
+
+
+def without_keys(mapping: Mapping[str, Any], keys: Sequence[str]) -> dict[str, Any]:
+    deny = {str(key) for key in keys}
+    return {key: value for key, value in dict(mapping or {}).items() if str(key) not in deny}
+
+
+def unique_extend(dest: list[Any], extra: Sequence[Any], *, key_fn: Any) -> list[Any]:
+    """Append extra items whose key_fn is not already in dest."""
+
+    seen = {key_fn(item) for item in dest}
+    for item in extra or ():
+        key = key_fn(item)
+        if key in seen:
+            continue
+        seen.add(key)
+        dest.append(item)
+    return dest
+
+
+def last_component(text: str, *, sep: str = ".") -> str:
+    blob = str(text or "")
+    return blob.rsplit(sep, 1)[-1] if blob else ""
+
+
+def nonempty_strs(items: Sequence[Any]) -> list[str]:
+    return [str(item) for item in items or () if str(item)]
+
+
+def overlay_str(base: Mapping[str, Any], *overlays: Mapping[str, Any]) -> dict[str, str]:
+    """Stringify base keys; overlays may replace existing keys only."""
+
+    out = {str(key): "" if value is None else str(value) for key, value in dict(base or {}).items()}
+    for overlay in overlays:
+        if not overlay:
+            continue
+        for key, value in dict(overlay).items():
+            if key in out and value is not None:
+                out[str(key)] = str(value)
+    return out
+
+
+def read_bytes_if(path: Any, default: bytes = b"") -> bytes:
+    dest = Path(path)
+    return dest.read_bytes() if dest.is_file() else default
+
+
+def env_copy(
+    extra: Optional[Mapping[str, Any]] = None,
+    *,
+    base: Optional[Mapping[str, str]] = None,
+) -> dict[str, str]:
+    """Copy os.environ (or base) and stringify extra keys."""
+
+    import os
+
+    out = dict(os.environ if base is None else base)
+    for key, value in dict(extra or {}).items():
+        out[str(key)] = str(value)
+    return out
+
+
+def under_or_tmp(root: Any, *parts: str, tmp_name: str = "") -> Path:
+    """root/parts when root is set, else tempfile/tmp_name. Creates the directory."""
+
+    import tempfile
+
+    if root is not None:
+        dest = Path(root).joinpath(*(str(part) for part in parts))
+    else:
+        dest = Path(tempfile.gettempdir()) / str(tmp_name or (parts[-1] if parts else "tmp"))
+    dest.mkdir(parents=True, exist_ok=True)
+    return dest
+
+
+def posix_slash(path: str) -> str:
+    return str(path or "").replace("\\", "/").strip()
+
+
+def path_to_dots(path: str, *, suffix: str = ".py") -> str:
+    text = posix_slash(path)
+    if suffix and text.endswith(suffix):
+        text = text[: -len(suffix)]
+    return text.replace("/", ".")
+
+
+def require_str(
+    value: Any,
+    *,
+    error_cls: Any = ValueError,
+    empty: str = "must be a non-empty string",
+) -> str:
+    if not isinstance(value, str) or not value:
+        raise error_cls(empty)
+    return value
+
+
+def as_str(value: Any, default: str = "") -> str:
+    """Return value when it is a str, else default."""
+
+    return value if isinstance(value, str) else default
+
+
+def nonempty(value: Any) -> bool:
+    """True when str(value) has non-whitespace content."""
+
+    return bool(str(value or "").strip())
+
+
+def require_startswith(
+    text: str,
+    prefix: str,
+    *,
+    error_cls: Any = ValueError,
+    fmt: str = "{name}: does not start with prefix",
+    name: str = "",
+) -> str:
+    """Require text.startswith(prefix). Returns text unchanged."""
+
+    raw = str(text)
+    if not raw.startswith(str(prefix)):
+        raise error_cls(fmt.format(name=name, prefix=prefix))
+    return raw
+
+
+def loads_json(text: Any, *, default: Any = None) -> Any:
+    """json.loads, or ``default`` when text is None/empty."""
+
+    if text in (None, ""):
+        return default
+    return json.loads(text)
+
+
+def read_json(
+    path: Any,
+    *,
+    encoding: str = "utf-8",
+    require_object: bool = True,
+    error_cls: Any = ValueError,
+    not_object: str = "JSON is not an object",
+) -> Any:
+    """Load JSON from a file. Optional dict check. Missing file raises OSError."""
+
+    payload = json.loads(read_text(path, encoding=encoding))
+    if require_object and not isinstance(payload, dict):
+        raise error_cls(not_object)
+    return payload
+
+
+def read_json_if(
+    path: Any,
+    *,
+    default: Any = None,
+    encoding: str = "utf-8",
+    require_object: bool = True,
+    error_cls: Any = ValueError,
+    not_object: str = "JSON is not an object",
+) -> Any:
+    dest = Path(path)
+    if not dest.is_file():
+        return default
+    return read_json(
+        dest,
+        encoding=encoding,
+        require_object=require_object,
+        error_cls=error_cls,
+        not_object=not_object,
+    )
+
+
+def overlay_attr(
+    base: Mapping[str, Any],
+    extra: Mapping[str, Any],
+    *,
+    attr: str = "what",
+) -> dict[str, str]:
+    """Copy base strings; overlay extra[key][attr] when present."""
+
+    out = {str(key): str(value) for key, value in dict(base or {}).items()}
+    for key, spec in dict(extra or {}).items():
+        if isinstance(spec, Mapping):
+            val = spec.get(attr)
+            if val:
+                out[str(key)] = str(val)
+    return out
+
+
+def require_single_token(
+    text: str,
+    *,
+    error_cls: Any = ValueError,
+    empty: str = "must be a nonempty string",
+    multi_fmt: str = "expected a single token, got {text!r}",
+) -> str:
+    if not isinstance(text, str) or not text.strip():
+        raise error_cls(empty)
+    stripped = text.strip()
+    first = stripped.split()[0]
+    if stripped != first:
+        raise error_cls(multi_fmt.format(text=text))
+    return first
+
+
+def exc_name(exc: BaseException) -> str:
+    return type(exc).__name__
+
+
+def exc_text(exc: BaseException, *, sep: str = ": ") -> str:
+    return f"{exc_name(exc)}{sep}{exc}"
+
+
+def tagged_exc(tag: str, exc: BaseException, *, sep: str = ":") -> str:
+    return f"{tag}{sep}{exc_name(exc)}"
+
+
+def closed_fail(error: str, *, arena_score: Any = None, **fields: Any) -> dict[str, Any]:
+    """Fail-closed JSON without an exception. Never an Arena score."""
+
+    out: dict[str, Any] = {"ok": False, "error": str(error), "arena_score": arena_score}
+    out.update(fields)
+    return out
+
+
+def failed_check(exc: BaseException, *, arena_score: Any = None, **fields: Any) -> dict[str, Any]:
+    """Fail-closed JSON payload. Never an Arena score."""
+
+    return closed_fail(str(exc), arena_score=arena_score, error_type=exc_name(exc), **fields)
+
+
+def bullet_lines(
+    items: Sequence[Any],
+    *,
+    prefix: str = "- ",
+    limit: Optional[int] = None,
+    fmt: Any = None,
+    empty: str = "",
+) -> str:
+    seq = list(items or ())
+    if limit is not None:
+        seq = seq[: max(0, int(limit))]
+    render = fmt if fmt is not None else (lambda item: item)
+    lines = [f"{prefix}{render(item)}" for item in seq]
+    return "\n".join(str(line) for line in lines) if lines else empty
+
+
+def mapped_nonempty(items: Sequence[Any], fn: Any) -> set[str]:
+    return {str(value) for value in (fn(item) for item in items or ()) if value}
+
+
+def utc_stamp(*, fmt: Optional[str] = None) -> str:
+    now = datetime.now(timezone.utc)
+    return now.strftime(fmt) if fmt else now.isoformat()
+
+
+def remap_get(
+    pack: Mapping[str, Any],
+    mapping: Mapping[str, str],
+    *,
+    lists: Sequence[str] = (),
+) -> dict[str, Any]:
+    """Copy pack[src] onto dest. Dest names in lists become list(value or [])."""
+
+    list_dests = {str(name) for name in lists}
+    row = dict(pack or {})
+    out: dict[str, Any] = {}
+    for dest, src in dict(mapping or {}).items():
+        val = row.get(src)
+        out[str(dest)] = list(val or []) if str(dest) in list_dests else val
+    return out
 
 
 def closed_evidence(**extra: Any) -> dict[str, Any]:
@@ -551,17 +923,21 @@ def write_json_pair(
     *,
     prefix: str,
     latest: str,
+    refuse: Any = (),
+    error_cls: Any = SystemExit,
+    refuse_msg: str = "refusing to write a receipt that contains an API key",
 ) -> Path:
-    """Write stamped JSON and a latest alias. No Lean."""
+    """Write stamped JSON and a latest alias. Optional substring refuse. No Lean."""
 
     out = Path(directory)
     out.mkdir(parents=True, exist_ok=True)
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    stamp = utc_stamp(fmt="%Y%m%dT%H%M%SZ")
     text = json.dumps(dict(payload), indent=2, sort_keys=True, default=str) + "\n"
-    (out / f"{prefix}-{stamp}.json").write_text(text)
-    latest_path = out / latest
-    latest_path.write_text(text)
-    return latest_path
+    needles = (refuse,) if isinstance(refuse, str) else tuple(refuse or ())
+    if any(needle and needle in text for needle in needles):
+        raise error_cls(refuse_msg)
+    write_text(out / f"{prefix}-{stamp}.json", text)
+    return write_text(out / latest, text)
 
 
 def glob_stem_int(directory: Path, pattern: str) -> list[tuple[int, Path]]:
@@ -831,7 +1207,7 @@ def nca_status(memory: Optional[Mapping[str, Any]] = None) -> dict[str, Any]:
         "budget_dead": bool(halt.get("budget_dead")),
         "budget_energy": halt.get("budget_energy", budget.get("energy")),
         "n_hot_tasks": halt.get("n_hot_tasks"),
-        "board_window": window[:6],
+        "board_window": head_seq(window, 6),
         "plan": plan,
         "kernel": {
             "policy": kern.get("policy") or "arc",
@@ -1257,6 +1633,24 @@ def copy_tree(src: Any, dest: Any) -> None:
             target.write_bytes(entry.read_bytes())
 
 
+def copy_dir_required(
+    src: Any,
+    dest: Any,
+    *,
+    error_cls: Any = FileNotFoundError,
+    miss: str = "expected directory at {src}",
+) -> Path:
+    """Copy a directory tree. Raise if src is missing. Never PATH lookup."""
+
+    source = Path(src)
+    if not source.is_dir():
+        raise error_cls(miss.format(src=source))
+    dest_path = Path(dest)
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    copy_tree(source, dest_path)
+    return dest_path
+
+
 def redact_secret(text: str, secret: str, *, token: str = "[redacted]") -> str:
     if not text:
         return ""
@@ -1419,6 +1813,12 @@ def digest_text(text: str) -> str:
     return digest_hex(str(text).encode("utf-8"))
 
 
+def digest_prefix(text: str, n: int = 12) -> str:
+    """First n hex chars of digest_text. Used for short blacklist keys."""
+
+    return head_chars(digest_text(text), n)
+
+
 def write_executable(path: Any, text: str, *, encoding: str = "utf-8") -> Path:
     import stat
 
@@ -1495,7 +1895,7 @@ def merge_head_row(
         **dict(item),
         **dict(compiled),
         "n_chars": len(body),
-        "tactics_head": body[: max(0, int(head))],
+        "tactics_head": head_chars(body, head),
     }
     for key in drop:
         payload.pop(key, None)
@@ -1558,6 +1958,23 @@ def dir_has_markers(path: Any, markers: Sequence[str]) -> bool:
     return any((target / str(marker)).exists() for marker in markers)
 
 
+def require_marked_dir(
+    path: Any,
+    markers: Sequence[str],
+    *,
+    error_cls: Any = None,
+    miss: str = "",
+) -> Path:
+    """Return path. Raise only when markers are missing and error_cls is set."""
+
+    dest = Path(path)
+    if dir_has_markers(dest, markers):
+        return dest
+    if error_cls is not None:
+        raise error_cls(miss.format(path=dest) if miss else str(dest))
+    return dest
+
+
 def run_process(
     argv: Sequence[str],
     *,
@@ -1618,6 +2035,47 @@ def run_process(
     }
 
 
+def run_pinned_bin(
+    argv: Sequence[Any],
+    *,
+    basename: str,
+    cwd: Any = None,
+    env: Optional[Mapping[str, str]] = None,
+    timeout: Optional[float] = None,
+    error_cls: Any = RuntimeError,
+    miss_cls: Optional[Any] = None,
+    installed: bool = True,
+    miss: str = "not installed",
+    timeout_fmt: str = "timed out: {error}",
+    basename_fmt: str = "expected tag-pinned {name}, got {path!r}",
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Run a basename-pinned argv. Never PATH. Timeout raises error_cls."""
+
+    rows = [str(item) for item in argv]
+    if not installed:
+        raise (miss_cls or error_cls)(miss)
+    if not rows:
+        raise error_cls(basename_fmt.format(name=basename, path=""))
+    require_basename(rows[0], basename, error_cls=error_cls, fmt=basename_fmt)
+    ran = run_process(rows, cwd=cwd, env=env, timeout=timeout)
+    if ran.get("timeout"):
+        raise error_cls(timeout_fmt.format(error=ran.get("error") or "TimeoutExpired"))
+    out: dict[str, Any] = {
+        "argv": rows,
+        "cwd": str(cwd) if cwd is not None else str(ran.get("cwd") or ""),
+        "exit_code": ran.get("exit_code"),
+        "stdout": ran.get("stdout") or "",
+        "stderr": ran.get("stderr") or "",
+        "ok": bool(ran.get("ok")),
+        "timeout": False,
+        "error": ran.get("error") or "",
+    }
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
 def usage_tokens(usage: Mapping[str, Any], *, fallback_in: int = 0) -> tuple[int, int]:
     inn = int(usage.get("input_tokens") or usage.get("prompt_tokens") or fallback_in)
     out = int(usage.get("output_tokens") or usage.get("completion_tokens") or 0)
@@ -1666,9 +2124,9 @@ def guard_sql(
     if not text:
         raise error_cls(empty)
     if forbidden.search(text):
-        raise error_cls(forbidden_fmt.format(sql=text[:120]))
+        raise error_cls(forbidden_fmt.format(sql=head_chars(text, 120)))
     if not allowed_head.match(text):
-        raise error_cls(outside_fmt.format(sql=text[:120]))
+        raise error_cls(outside_fmt.format(sql=head_chars(text, 120)))
     return text
 
 
@@ -1802,6 +2260,101 @@ def git_head(clone: Any) -> str:
     return str(ran.get("stdout") or "").strip()
 
 
+def require_git_bin(
+    git_bin: Any,
+    *,
+    error_cls: Any = FileNotFoundError,
+    fmt: str = "git is not at {bin}",
+) -> str:
+    """Require a file-backed git binary. Never PATH lookup."""
+
+    path = Path(git_bin)
+    if not path.is_file():
+        raise error_cls(fmt.format(bin=path))
+    return str(path)
+
+
+def url_clone_dir(root: Any, url: str, *, folder: str = "clones") -> Path:
+    return join_under(root, folder, url_cache_key(url))
+
+
+def git_checkout(
+    clone: Any,
+    commit: str,
+    *,
+    git_bin: Any = "git",
+    detach: bool = True,
+    error_cls: Any = RuntimeError,
+    miss_cls: Optional[Any] = None,
+    miss_fmt: str = "git is not at {bin}; cannot checkout {commit}",
+    fail_fmt: str = "git checkout {commit} failed: {stderr}",
+    skip_empty: bool = True,
+    skip_missing_git: bool = True,
+) -> dict[str, Any]:
+    """Detach-checkout ``commit`` in ``clone``. Missing commit/repo can skip."""
+
+    dest = Path(clone)
+    cwd = str(dest)
+    if skip_empty and not commit:
+        return {"ok": True, "skipped": True, "commit": commit, "cwd": cwd}
+    if skip_missing_git and not (dest / ".git").exists():
+        return {"ok": True, "skipped": True, "commit": commit, "cwd": cwd}
+    bin_path = require_git_bin(
+        git_bin,
+        error_cls=miss_cls or error_cls,
+        fmt=miss_fmt.format(bin="{bin}", commit=commit),
+    )
+    argv = [bin_path, "-C", cwd, "checkout"]
+    if detach:
+        argv.append("--detach")
+    argv.append(str(commit))
+    ran = run_process(
+        argv,
+        cwd=dest,
+        error_cls=error_cls,
+        fail_fmt=fail_fmt.format(commit=commit, stderr="{stderr}"),
+    )
+    return {
+        "ok": True,
+        "skipped": False,
+        "commit": commit,
+        "cwd": cwd,
+        "exit_code": ran.get("exit_code"),
+    }
+
+
+def git_clone(
+    url: str,
+    dest: Any,
+    *,
+    git_bin: Any = "git",
+    error_cls: Any = RuntimeError,
+    miss_cls: Optional[Any] = None,
+    miss_fmt: str = "git is not at {bin}; cannot clone {url}",
+    fail_fmt: str = "git clone failed for {url}: {stderr}",
+) -> dict[str, Any]:
+    """Clone ``url`` into ``dest``. Never PATH git."""
+
+    dest_path = Path(dest)
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    bin_path = require_git_bin(
+        git_bin,
+        error_cls=miss_cls or error_cls,
+        fmt=miss_fmt.format(bin="{bin}", url=url),
+    )
+    ran = run_process(
+        [bin_path, "clone", "--", str(url), str(dest_path)],
+        error_cls=error_cls,
+        fail_fmt=fail_fmt.format(url=url, stderr="{stderr}"),
+    )
+    return {
+        "ok": True,
+        "url": url,
+        "dest": str(dest_path),
+        "exit_code": ran.get("exit_code"),
+    }
+
+
 def require_basename(
     path: Any,
     name: str,
@@ -1815,12 +2368,37 @@ def require_basename(
     return text
 
 
-def print_json(payload: Any, *, stream: Any = None, indent: int = 2) -> None:
+def print_json(
+    payload: Any,
+    *,
+    stream: Any = None,
+    indent: int = 2,
+    default: Any = None,
+    sort_keys: bool = True,
+) -> None:
     import sys
 
     dest = sys.stdout if stream is None else stream
-    json.dump(payload, dest, indent=indent, sort_keys=True)
+    kwargs: dict[str, Any] = {"indent": indent, "sort_keys": sort_keys}
+    if default is not None:
+        kwargs["default"] = default
+    json.dump(payload, dest, **kwargs)
     dest.write("\n")
+
+
+def print_ok(
+    payload: Mapping[str, Any],
+    *,
+    stream: Any = None,
+    default: Any = None,
+    ok_key: str = "ok",
+    indent: int = 2,
+    sort_keys: bool = True,
+) -> int:
+    """print_json then 0 if payload[ok_key] else 1."""
+
+    print_json(payload, stream=stream, default=default, indent=indent, sort_keys=sort_keys)
+    return 0 if payload.get(ok_key) else 1
 
 
 def with_fields(record: Mapping[str, Any], **fields: Any) -> dict[str, Any]:
@@ -1850,6 +2428,30 @@ def plant_files(root: Any, files: Mapping[str, str], *, encoding: str = "utf-8")
     return dest
 
 
+def write_tree(
+    root: Any,
+    files: Mapping[str, Any],
+    *,
+    encoding: str = "utf-8",
+) -> dict[str, str]:
+    """Write mixed text/JSON/bytes under root. Mapping/list values use write_json."""
+
+    dest = Path(root)
+    dest.mkdir(parents=True, exist_ok=True)
+    out: dict[str, str] = {}
+    for rel, payload in dict(files or {}).items():
+        path = dest / str(rel)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if isinstance(payload, (Mapping, list)):
+            write_json(path, payload)
+        elif isinstance(payload, bytes):
+            path.write_bytes(payload)
+        else:
+            write_text(path, str(payload), encoding=encoding)
+        out[str(rel)] = str(path)
+    return out
+
+
 def plant_git_skeleton(
     clone: Any,
     *,
@@ -1867,6 +2469,12 @@ def plant_git_skeleton(
     return dest
 
 
+def prepend_argv(head: Any, *args: Any) -> list[str]:
+    """``[head, *args]`` as strings."""
+
+    return [str(head), *[str(item) for item in args]]
+
+
 def python_argv(
     *args: Any,
     python: Optional[str] = None,
@@ -1875,7 +2483,7 @@ def python_argv(
     import sys
 
     py = python or sys.executable
-    return [str(py), *[str(flag) for flag in flags], *[str(arg) for arg in args]]
+    return prepend_argv(py, *flags, *args)
 
 
 def state_home_candidates(*, environ: Optional[Any] = None, home: Optional[Any] = None) -> list[Path]:
@@ -1979,6 +2587,32 @@ def refuse_basename(
     return text
 
 
+def pinned_env_argv(
+    driver: str,
+    tool: str,
+    source: str,
+    *,
+    driver_name: str,
+    tool_name: str,
+    subcmd: str = "env",
+    flags: Sequence[str] = (),
+    refuse: Optional[str] = None,
+    error_cls: Any = ValueError,
+    empty: str = "source_file is required",
+    driver_fmt: str = "expected tag-pinned {name}, got {path!r}",
+    tool_fmt: str = "expected tag-pinned {name}, got {path!r}",
+    refuse_fmt: str = "refusing {name}: {path!r}",
+) -> list[str]:
+    """``driver subcmd tool [flags...] source`` with basename pins. Never PATH."""
+
+    driver_path = require_basename(driver, driver_name, error_cls=error_cls, fmt=driver_fmt)
+    tool_path = require_basename(tool, tool_name, error_cls=error_cls, fmt=tool_fmt)
+    source_path = require_str(source, error_cls=error_cls, empty=empty)
+    if refuse:
+        refuse_basename(source_path, refuse, error_cls=error_cls, fmt=refuse_fmt)
+    return [driver_path, str(subcmd), tool_path, *[str(flag) for flag in flags], source_path]
+
+
 def walk_suffix_files(root: Any, suffix: str) -> list[Path]:
     import os
 
@@ -2062,6 +2696,43 @@ def nonempty_file(path: Any) -> bool:
         return False
 
 
+def home_config_file(
+    filename: str,
+    *,
+    env_key: str = "",
+    default_dir: str = "",
+    environ: Optional[Any] = None,
+    home: Optional[Any] = None,
+) -> Path:
+    """``$ENV/filename`` or ``<home>/<default_dir>/filename``. Does not read the file."""
+
+    import os
+
+    source = os.environ if environ is None else environ
+    raw = ""
+    if env_key and hasattr(source, "get"):
+        raw = str(source.get(env_key) or "").strip()
+    if raw:
+        base = Path(raw).expanduser()
+    else:
+        base = (Path.home() if home is None else Path(home)) / str(default_dir)
+    return base / str(filename)
+
+
+def require_file(
+    path: Any,
+    *,
+    error_cls: Any = FileNotFoundError,
+    miss: str = "missing {path}",
+) -> Path:
+    """Require a file. Raise if missing. Empty files are still files."""
+
+    dest = Path(path)
+    if not dest.is_file():
+        raise error_cls(miss.format(path=dest))
+    return dest
+
+
 def path_parts_status(
     path: Any,
     *,
@@ -2142,6 +2813,31 @@ def write_text(
     return dest
 
 
+def read_text(
+    path: Any,
+    *,
+    encoding: str = "utf-8",
+    errors: str = "strict",
+    max_chars: Optional[int] = None,
+) -> str:
+    text = Path(path).read_text(encoding=encoding, errors=errors)
+    if max_chars is None:
+        return text
+    return text[: max(0, int(max_chars))]
+
+
+def source_text(source: Optional[str] = None, *, path: Any, encoding: str = "utf-8") -> str:
+    """Use ``source`` when given, else read ``path``."""
+
+    if source is not None:
+        return str(source)
+    return read_text(path, encoding=encoding)
+
+
+def copy_text(src: Any, dest: Any, *, encoding: str = "utf-8") -> Path:
+    return write_text(dest, read_text(src, encoding=encoding), encoding=encoding)
+
+
 def state_root_from_env(
     *,
     override_key: str,
@@ -2178,6 +2874,39 @@ def mkdtemp_under(
     return dest
 
 
+def mkdtemp(*, prefix: str = "tmp-", parent: Optional[Any] = None, files: Optional[Mapping[str, str]] = None) -> Path:
+    """tempfile.mkdtemp as Path. Optional parent uses mkdtemp_under."""
+
+    import tempfile
+
+    if parent is None:
+        dest = Path(tempfile.mkdtemp(prefix=str(prefix)))
+        if files:
+            plant_files(dest, files)
+        return dest
+    return mkdtemp_under(parent, prefix=prefix, files=files)
+
+
+def temp_dir(*, prefix: str = "tmp-", parent: Optional[Any] = None) -> Any:
+    """tempfile.TemporaryDirectory. Use as a context manager."""
+
+    import tempfile
+
+    kwargs: dict[str, Any] = {"prefix": str(prefix)}
+    if parent is not None:
+        kwargs["dir"] = str(parent)
+    return tempfile.TemporaryDirectory(**kwargs)
+
+
+def elapsed_ms(started: float, *, now: Optional[float] = None) -> float:
+    """Milliseconds since ``started`` (perf_counter)."""
+
+    import time
+
+    end = float(now if now is not None else time.perf_counter())
+    return max(0.0, (end - float(started)) * 1000.0)
+
+
 def timed_call(fn: Any, *args: Any, **kwargs: Any) -> tuple[Any, float, float]:
     """Run fn and return (result, wall_ms, child_cpu_ms)."""
 
@@ -2187,7 +2916,7 @@ def timed_call(fn: Any, *args: Any, **kwargs: Any) -> tuple[Any, float, float]:
     before = resource.getrusage(resource.RUSAGE_CHILDREN)
     started = time.perf_counter()
     result = fn(*args, **kwargs)
-    wall_ms = max(0.0, (time.perf_counter() - started) * 1000.0)
+    wall_ms = elapsed_ms(started)
     after = resource.getrusage(resource.RUSAGE_CHILDREN)
     cpu_ms = max(
         0.0,
@@ -2520,12 +3249,37 @@ def without_prefix(text: str, prefix: str) -> str:
     return raw
 
 
+def module_stem(
+    name: str,
+    *,
+    strip_prefix: str = "",
+    split_on: str = ":",
+) -> Optional[str]:
+    """Module path from ``ptr://kind/module:symbol``. Rejects ``..`` and abs paths."""
+
+    raw = str(name or "").strip()
+    if strip_prefix:
+        raw = without_prefix(raw, strip_prefix)
+    if not raw or ".." in raw or raw.startswith("/"):
+        return None
+    if split_on:
+        raw = raw.split(split_on, 1)[0]
+    return raw or None
+
+
 def cut_prefix(text: str, end: int, *, suffix: str = "\n") -> str:
     return str(text or "")[: int(end)].rstrip() + str(suffix)
 
 
 def dumps_compact(value: Any) -> str:
     return json.dumps(value, separators=(",", ":"), sort_keys=True)
+
+
+def dumps_sorted(value: Any, *, indent: Optional[int] = None, newline: bool = False) -> str:
+    """json.dumps with sort_keys. Optional indent and trailing newline."""
+
+    text = json.dumps(value, indent=indent, sort_keys=True)
+    return text + ("\n" if newline else "")
 
 
 def digest_compact(value: Any) -> str:
@@ -2549,6 +3303,24 @@ def env_str(key: str, default: str = "", *, environ: Optional[Any] = None) -> st
     dest = os.environ if environ is None else environ
     raw = dest.get(key) if hasattr(dest, "get") else None
     return str(raw if raw not in (None, "") else default)
+
+
+def env_mapping(env: Optional[Any] = None) -> Any:
+    """Return env if given, else os.environ. Does not copy."""
+
+    import os
+
+    return os.environ if env is None else env
+
+
+def optional_env_path(*names: str, environ: Optional[Any] = None) -> Optional[Path]:
+    """First nonempty env value as Path, else None."""
+
+    for name in names:
+        raw = env_str(name, environ=environ)
+        if raw:
+            return Path(raw)
+    return None
 
 
 def env_int(
@@ -2584,9 +3356,10 @@ def first_matching_line(text: str, pred: Any) -> Optional[str]:
     return None
 
 
-def first_token(text: str) -> str:
+def first_token(text: str, *, strip: str = "") -> str:
     parts = str(text or "").split()
-    return parts[0] if parts else ""
+    token = parts[0] if parts else ""
+    return token.rstrip(strip) if strip else token
 
 
 def result_usage(result: Any, *, fallback_in: int = 0) -> tuple[int, int]:
@@ -2639,6 +3412,32 @@ def client_kwargs(
             timeout=float(timeout),
         )
     return kwargs
+
+
+def after_calls(setup: Sequence[Any], fn: Any, *args: Any, **kwargs: Any) -> Any:
+    """Run setup callables, then ``fn(*args, **kwargs)``."""
+
+    for item in setup or ():
+        item()
+    return fn(*args, **kwargs)
+
+
+def import_names(
+    module: str,
+    names: Sequence[str],
+    *,
+    setup: Sequence[Any] = (),
+) -> tuple[Optional[dict[str, Any]], Optional[BaseException]]:
+    """Import named attrs. Missing module returns (None, ImportError). Never PATH."""
+
+    for item in setup or ():
+        item()
+    wanted = [str(name) for name in names]
+    try:
+        loaded = __import__(str(module), fromlist=wanted or ["*"])
+    except ImportError as exc:
+        return None, exc
+    return {name: getattr(loaded, name, None) for name in wanted}, None
 
 
 def load_configured(path: Any, spec: str, *, configured: str = "typesafe_configured") -> Any:
@@ -2809,6 +3608,136 @@ def insert_ignore_conflict(
         raise error_cls(fail_fmt.format(exc=exc)) from exc
 
 
+@dataclass(frozen=True)
+class LockInspection:
+    path: str
+    exists: bool
+    held: bool
+    pid: Optional[int]
+    method: str
+    error: str
+    lock_id: str = ""
+    lock_ex_taken_by_client: bool = False
+
+
+@dataclass(frozen=True)
+class OwnerExec:
+    attempted: bool
+    executed: bool
+    argv: list[str]
+    argv_relative: list[str]
+    pid: Optional[int]
+    returncode: Optional[int]
+    started_llama_server: bool
+    error: str = ""
+
+
+def pack_owner_exec(
+    *,
+    attempted: bool,
+    executed: bool,
+    argv: Sequence[str],
+    argv_relative: Sequence[str],
+    pid: Optional[int] = None,
+    returncode: Optional[int] = None,
+    error: str = "",
+    started_llama_server: bool = False,
+) -> OwnerExec:
+    """Client-side owner-exec receipt. Never starts llama-server here."""
+
+    return OwnerExec(
+        attempted=bool(attempted),
+        executed=bool(executed),
+        argv=list(argv or ()),
+        argv_relative=list(argv_relative or ()),
+        pid=pid,
+        returncode=returncode,
+        started_llama_server=bool(started_llama_server),
+        error=str(error or ""),
+    )
+
+
+@dataclass(frozen=True)
+class ClientSession:
+    action: str
+    health: dict[str, Any]
+    lock: dict[str, Any]
+    autostart: str
+    lock_ex_taken_by_client: bool
+    llama_server_started: bool
+    owner_exec: dict[str, Any]
+    skipped: bool
+    reason: str
+
+
+@dataclass(frozen=True)
+class UsageLine:
+    kind: str
+    input_tokens: int
+    output_tokens: int
+    milles: int
+    call_index: int
+    fixture: bool
+    model: str
+    skipped: bool = False
+    reason: str = "recorded"
+    usd: float = 0.0
+
+    def as_dict(self) -> dict[str, Any]:
+        from dataclasses import asdict as _asdict
+
+        return _asdict(self)
+
+
+def spend_for(
+    kind: str,
+    input_tokens: int,
+    output_tokens: int,
+    rates: Mapping[str, tuple[Any, Any]],
+    *,
+    scale: Any = 1_000_000,
+    money_fn: Optional[Any] = None,
+    error_cls: Any = ValueError,
+    unknown_fmt: str = "unknown spend kind {kind!r}",
+) -> Any:
+    """(in*in_rate + out*out_rate) / scale. Integer milles or Decimal USD."""
+
+    kind_key = str(kind or "").strip().lower()
+    inn = max(0, int(input_tokens))
+    out = max(0, int(output_tokens))
+    if kind_key not in rates:
+        raise error_cls(unknown_fmt.format(kind=kind_key))
+    inn_rate, out_rate = rates[kind_key]
+    if isinstance(scale, (int, float)):
+        qty_in: Any = inn
+        qty_out: Any = out
+    else:
+        ctor = type(scale)
+        qty_in = ctor(inn)
+        qty_out = ctor(out)
+    raw = (qty_in / scale) * inn_rate + (qty_out / scale) * out_rate
+    return money_fn(raw) if money_fn is not None else raw
+
+
+class InsertOnlyConnection:
+    """Wrap a DB connection. SQL is guarded to INSERT/SELECT/CREATE IF NOT EXISTS."""
+
+    def __init__(self, raw: Any, *, guard_fn: Any) -> None:
+        self._raw = raw
+        self._guard = guard_fn
+
+    def execute(self, sql: str, params: Optional[Sequence[Any]] = None) -> Any:
+        guarded = self._guard(sql)
+        if params is None:
+            return self._raw.execute(guarded)
+        return self._raw.execute(guarded, list(params))
+
+    def close(self) -> None:
+        close = getattr(self._raw, "close", None)
+        if callable(close):
+            close()
+
+
 def fetch_mapped(result: Any, row_fn: Any) -> list[Any]:
     """Map fetchall/iterable rows. row_fn returning None is dropped."""
 
@@ -2824,3 +3753,265 @@ def fetch_mapped(result: Any, row_fn: Any) -> list[Any]:
         if mapped is not None:
             out.append(mapped)
     return out
+
+
+def dir_marked(path: Any, *, marker: str, suffix: str) -> bool:
+    """True when ``marker`` exists and at least one ``suffix`` file is present."""
+
+    dest = Path(path)
+    return (dest / str(marker)).is_file() and bool(walk_suffix_files(dest, suffix))
+
+
+def http_json(
+    url: str,
+    payload: Any,
+    *,
+    timeout: float,
+    headers: Optional[Mapping[str, str]] = None,
+    error_cls: Any = ValueError,
+    redact_fn: Any = None,
+    transport_fmt: str = "{error}",
+    http_fmt: str = "HTTP {status}: {body}",
+    json_fmt: str = "invalid JSON: {exc}",
+    not_object: str = "non-object JSON payload",
+) -> tuple[Optional[int], dict[str, Any], str]:
+    """POST JSON. Returns (status, object, final_url). Never docker0."""
+
+    def _raise(message: str) -> None:
+        text = str(redact_fn(message) if redact_fn is not None else message)
+        raise error_cls(text)
+
+    status, raw, final_url, error = http_post(
+        url,
+        json.dumps(payload).encode("utf-8"),
+        timeout=float(timeout),
+        headers=headers,
+    )
+    if error:
+        _raise(transport_fmt.format(error=error))
+    if status is None or int(status) >= 400:
+        _raise(http_fmt.format(status=status, body=head_chars(raw, 400)))
+    try:
+        data = json.loads(raw)
+    except Exception as exc:
+        _raise(json_fmt.format(exc=exc))
+    if not isinstance(data, dict):
+        _raise(not_object)
+    return status, data, final_url
+
+
+def hit_or_miss(
+    present: bool,
+    *,
+    deny: bool = False,
+    error_cls: Any = ValueError,
+    deny_msg: str = "missing under deny",
+    hit: Any = None,
+    miss: Any = None,
+) -> Any:
+    """Return hit if present, raise when deny, otherwise miss."""
+
+    if present:
+        return hit
+    if deny:
+        raise error_cls(deny_msg)
+    return miss
+
+
+def unique_rows(items: Sequence[Any], *, key_fn: Any) -> list[Any]:
+    """Keep first item per key_fn(item)."""
+
+    seen: set[Any] = set()
+    out: list[Any] = []
+    for item in items or ():
+        key = key_fn(item)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(item)
+    return out
+
+
+def append_line(text: str, line: str) -> str:
+    return str(text or "").rstrip() + "\n" + str(line)
+
+
+def exec_many(con: Any, statements: Sequence[Any]) -> None:
+    """Run SQL strings or (sql, params) tuples on an open connection."""
+
+    for item in statements or ():
+        if isinstance(item, str):
+            con.execute(item)
+            continue
+        sql = item[0]
+        params = item[1] if len(item) > 1 else ()
+        con.execute(str(sql), list(params) if params is not None else [])
+
+
+def table_count(con: Any, table: str) -> int:
+    name = str(table or "")
+    if not re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", name):
+        return 0
+    row = con.execute(f"SELECT COUNT(*) FROM {name}").fetchone()
+    return int(row_cell(row, 0, default=0) or 0)
+
+
+def ensure_digest(
+    value: Any,
+    *,
+    data: Any = None,
+    digest_fn: Any = None,
+    error_cls: Any = ValueError,
+    empty: str = "digest required",
+    n: int = 64,
+) -> str:
+    """Keep a hex digest, or hash ``data`` with digest_fn. Else raise."""
+
+    text = str(value or "")
+    if is_hex_digest(text, n=n):
+        return text
+    if data is not None and digest_fn is not None:
+        return str(digest_fn(data))
+    raise error_cls(empty)
+
+
+def path_safe(name: str, *, empty: str = "unnamed") -> str:
+    text = str(name or "").replace("/", "_")
+    return text or empty
+
+
+def matching_nodes(
+    nodes: Sequence[Mapping[str, Any]],
+    query: str,
+    *,
+    id_key: str = "id",
+    cap: int = 24,
+) -> list[Mapping[str, Any]]:
+    """Casefold substring hits on node[id_key]. Empty query → []."""
+
+    needle = str(query or "").casefold()
+    hits: list[Mapping[str, Any]] = []
+    if not needle:
+        return hits
+    for node in nodes or ():
+        nid = str(node.get(id_key) or "")
+        if needle in nid.casefold():
+            hits.append(node)
+        if len(hits) >= max(0, int(cap)):
+            break
+    return hits
+
+
+def query_first_engine(
+    paths: Sequence[Any],
+    table_sql: Mapping[str, str],
+    params: Sequence[Any] = (),
+    *,
+    refuse_names: Sequence[str] = (),
+    row_fn: Any = None,
+    skip_empty: bool = True,
+) -> tuple[list[Any], str]:
+    """Open each DuckDB path read-only until a matching table yields rows."""
+
+    last = "no_index"
+    for path in paths or ():
+        if path is None:
+            continue
+        dest = Path(path)
+        if path_refused(dest, names=refuse_names) or not dest.is_file():
+            continue
+        con, note = open_readonly(dest, refuse_names=refuse_names)
+        if con is None:
+            if note == "unavailable":
+                return [], "unavailable"
+            continue
+        try:
+            sql = first_table_sql(engine_tables(con), table_sql)
+            if not sql:
+                last = "no_matching_table"
+                continue
+            rows = con.execute(str(sql), list(params)).fetchall()
+            last = str(dest)
+            hits: list[Any] = []
+            for row in rows or ():
+                mapped = row_fn(row) if row_fn is not None else row
+                if mapped is not None:
+                    hits.append(mapped)
+            if hits or not skip_empty:
+                return hits, last
+        except Exception:
+            last = "query_failed"
+            continue
+        finally:
+            try:
+                con.close()
+            except Exception:
+                pass
+    return [], last
+
+
+def split_csv(text: Any, *, sep: str = ",", cast: Any = None) -> list[Any]:
+    """Split a comma list, strip, drop empties. Optional cast (int, Path, ...)."""
+
+    parts = [item.strip() for item in str(text or "").split(sep) if item.strip()]
+    if cast is None:
+        return parts
+    return [cast(item) for item in parts]
+
+
+def first_csv(text: Any, *, sep: str = ",", default: str = "") -> str:
+    """First CSV field, stripped. Empty text → default."""
+
+    parts = str(text or "").split(sep)
+    if not parts:
+        return default
+    return parts[0].strip() or default
+
+
+def first_or_head(items: Sequence[Any], pred: Optional[Any] = None, *, default: Any = "") -> Any:
+    """First item matching pred, else the head, else default. Not last."""
+
+    rows = list(items or ())
+    if pred is not None:
+        for item in rows:
+            if pred(item):
+                return item
+    return rows[0] if rows else default
+
+
+def group_get(groups: dict[Any, Any], key: Any, *, factory: Optional[Any] = None) -> Any:
+    """setdefault a group dict. factory() only runs when the key is missing."""
+
+    group = groups.get(key)
+    if group is None:
+        group = factory() if factory is not None else {}
+        groups[key] = group
+    return group
+
+
+def group_append(
+    groups: dict[Any, Any],
+    key: Any,
+    item: Any,
+    *,
+    list_key: str = "names",
+    factory: Optional[Any] = None,
+) -> Any:
+    """setdefault a group dict and append item to group[list_key]."""
+
+    group = group_get(
+        groups,
+        key,
+        factory=factory if factory is not None else (lambda: {list_key: []}),
+    )
+    group.setdefault(list_key, []).append(item)
+    return group
+
+
+def unique_append(seq: list[Any], item: Any) -> bool:
+    """Append item if it is not already in seq."""
+
+    if item in seq:
+        return False
+    seq.append(item)
+    return True

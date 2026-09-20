@@ -23,5 +23,8 @@ Module: `jevops.search`.
 - `index_order` — rank 0..n-1 by `{prefix}{i}` probs and pin Choice.
 - `name_match_score` / `hit_row` / `rank_hits` — unique scored hits (weights injected).
 - `search_rg` — ripgrep over globs; ident regex and hit_fn injected. Never docker0.
+- `expand_beam` / `beam_until` — keep stopped items, expand the rest, cap; loop until all stopped. Propose/prune/stop fns injected.
+- `pick_min_tiers` — first non-empty pred, then min by key_fn.
+- `pin_front` — prefer[:n] first, then the rest of order.
 - LRA `sgd_fanout` / `constrained_beam` still own lake loops and Lean vocab.
 - Not neural SGD. Never docker0.

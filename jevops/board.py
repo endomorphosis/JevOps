@@ -22,6 +22,8 @@ def board_from_payload(
 ) -> dict[str, Any]:
     """Normalize a tasks.json-like payload into a kernel board dict."""
 
+    from jevops.outer import head_chars
+
     banned = {str(item) for item in blocked}
     subgoals = [
         {
@@ -55,7 +57,7 @@ def board_from_payload(
         )
     return {
         "root": root,
-        "goal_title": str(data.get("goal") or data.get("goal_title") or "")[:240],
+        "goal_title": head_chars(data.get("goal") or data.get("goal_title") or "", 240),
         "subgoals": subgoals,
         "tasks": tasks,
         "n_subgoals": len(subgoals),
@@ -374,7 +376,9 @@ def refresh_board_window(memory: dict[str, Any], *, root_goal: str = "") -> list
         and int(cell.get("remaining_cut") or 0) > 0
     ]
     cuts.sort(key=lambda row: int(row.get("remaining_cut") or 0), reverse=True)
-    window.extend(cuts[:3])
+    from jevops.outer import head_seq
+
+    window.extend(head_seq(cuts, 3))
     subs = [
         {
             "id": str(cid).rsplit("/", 1)[-1],
@@ -386,7 +390,7 @@ def refresh_board_window(memory: dict[str, Any], *, root_goal: str = "") -> list
         if isinstance(cell, dict) and cell.get("kind") == "subgoal"
     ]
     subs.sort(key=lambda row: float(row.get("energy") or 0), reverse=True)
-    window.extend(subs[:6])
+    window.extend(head_seq(subs, 6))
     ready = [
         {
             "id": str(cid).rsplit("/", 1)[-1],
@@ -402,8 +406,8 @@ def refresh_board_window(memory: dict[str, Any], *, root_goal: str = "") -> list
         and str(cell.get("status") or "") in {"ready", "todo", "needed", ""}
     ]
     ready.sort(key=lambda row: (0 if row.get("status") == "ready" else 1, -float(row.get("energy") or 0)))
-    window.extend(ready[:6])
-    nca["board_window"] = window[:12]
+    window.extend(head_seq(ready, 6))
+    nca["board_window"] = head_seq(window, 12)
     return window
 
 
@@ -484,7 +488,9 @@ def link_entity(
 
 
 def board_window(memory: Mapping[str, Any]) -> list[dict[str, Any]]:
-    return list(((memory.get("nca") or {}).get("board_window")) or [])[:8]
+    from jevops.outer import head_seq
+
+    return head_seq(((memory.get("nca") or {}).get("board_window")) or [], 8)
 
 
 def seed_grid_from_board(

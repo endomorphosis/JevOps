@@ -39,6 +39,8 @@ RANKER_STEMS = (
     "kalman",
     "autoencoder",
     "vae",
+    "lean_ir",
+    "gan",
     "sgd",
     "mask",
     "diffuse",
@@ -540,6 +542,8 @@ def metropolis_hastings(
 ) -> dict[str, Any]:
     """Generic MH. `accept` is a hard constraint (lake / closed fold). No Lean write."""
 
+    from jevops.outer import head_seq
+
     rng = rng or random.Random(0)
     current = state
     cur_e = float(energy(current))
@@ -576,7 +580,7 @@ def metropolis_hastings(
         "best_energy": best_e,
         "n_accept": n_acc,
         "n_steps": max(1, int(steps)),
-        "trace": trace[:32],
+        "trace": head_seq(trace, 32),
         "writes_lean": False,
         "called_docker0": False,
     }
@@ -784,8 +788,9 @@ def call_pca(
             families = []
     try:
         from jevops.nca import upsert_from_event
+        from jevops.outer import head_seq
 
-        for fam in families[:6]:
+        for fam in head_seq(families, 6):
             name = str(fam.get("family") or "")
             if name:
                 upsert_from_event(
@@ -922,7 +927,7 @@ def call_ranker(
     compile_fn: Optional[Callable[..., Mapping[str, Any]]] = None,
     jev_fn: Optional[Callable[..., Mapping[str, Any]]] = None,
 ) -> dict[str, Any]:
-    """Dispatch CALL ptr://skill/port_{random_forest,...,autoencoder,vae}."""
+    """Dispatch CALL ptr://skill/port_{random_forest,...,autoencoder,vae,lean_ir,gan}."""
 
     rng = rng or random.Random(0)
     text = str(stem or "").lower()
@@ -948,7 +953,7 @@ def call_ranker(
             return lra_tm.call_tm(stem, memory=memory, tactics=tactics, problem=name)
     except Exception:
         pass
-    if "autoencoder" in text or "vae" in text:
+    if "autoencoder" in text or "vae" in text or "lean_ir" in text:
         from jevops import autoencoder as lra_ae
 
         return lra_ae.call_autoencoder(
@@ -988,7 +993,7 @@ def call_ranker(
 
         if lra_more.is_more_stem(stem):
             return lra_more.call_more(
-                stem, memory=memory, tactics=tactics, problem=name, rng=rng
+                stem, memory=memory, tactics=tactics, problem=name, rng=rng, jev_fn=jev_fn
             )
     except Exception:
         pass

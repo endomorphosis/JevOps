@@ -75,10 +75,12 @@ def compile_local_ir(memory: Mapping[str, Any], *, problem: str = "") -> dict[st
         and not str(cid).endswith(_root_goal())
         and "/goal/" not in str(cid)
     ]
-    seeds = (preferred + rest)[:8]
+    from jevops.outer import head_seq
+
+    seeds = head_seq(preferred + rest, 8)
     if not seeds:
-        seeds = [cid for cid in ranked if not (grid[cid] or {}).get("do_not_fork")][:8]
-    edges = list(((memory.get("nca") or {}).get("board_edges")) or [])[:24]
+        seeds = head_seq([cid for cid in ranked if not (grid[cid] or {}).get("do_not_fork")], 8)
+    edges = head_seq(((memory.get("nca") or {}).get("board_edges")) or [], 24)
     ops = [
         {"op": "SeedEntities", "entity_ids": seeds, "problem": problem},
         {"op": "Expand", "relationship_types": ["board", "skill"], "direction": "both"},
@@ -130,7 +132,9 @@ def decompile_ir(ir: Mapping[str, Any]) -> dict[str, Any]:
     for op in ops:
         name = str(op.get("op") or "")
         if name == "SeedEntities":
-            lines.append("inspect cells " + ", ".join(str(x) for x in (op.get("entity_ids") or [])[:6]))
+            from jevops.outer import head_seq
+
+            lines.append("inspect cells " + ", ".join(str(x) for x in head_seq(op.get("entity_ids"), 6)))
         elif name == "Expand":
             lines.append("walk neighbors on the board and skill graph")
         elif name == "CALL":
@@ -158,7 +162,9 @@ def autoencoder_hints(memory: Mapping[str, Any]) -> dict[str, Any]:
         from ipfs_datasets_py.optimizers.logic import synthesis_hints_from_autoencoder_introspection
     except Exception as exc:
         return {"ok": False, "source": "autoencoder", "reason": type(exc).__name__, "called_docker0": False}
-    window = list(((memory.get("nca") or {}).get("board_window")) or [])[:8]
+    from jevops.outer import head_seq
+
+    window = head_seq(((memory.get("nca") or {}).get("board_window")) or [], 8)
     fake = {
         "synthesis_focus": tuple(str(row.get("id") or "") for row in window if row.get("id")),
         "ranked_guidance_features": (),
@@ -179,6 +185,8 @@ def ir_to_work_ops(
 ) -> list[dict[str, Any]]:
     """Map compiled IR to closed NCA work: current theorem and unvisited tasks first."""
 
+    from jevops.outer import head_chars, head_seq
+
     ops: list[dict[str, Any]] = []
     if problem:
         ops.append({"op": "CALL", "ptr": f"ptr://theorem/{problem}"})
@@ -197,7 +205,7 @@ def ir_to_work_ops(
     ops.append({"op": "TICK"})
     ops.append({"op": "KEEP"})
     if decompiled and decompiled.get("instructions"):
-        ops.insert(0, {"op": "SEARCH", "query": str(decompiled["instructions"])[:80]})
+        ops.insert(0, {"op": "SEARCH", "query": head_chars(decompiled["instructions"], 80)})
     seen_ptr: set[str] = set()
     out: list[dict[str, Any]] = []
     for op in ops:
@@ -209,7 +217,7 @@ def ir_to_work_ops(
                 continue
             seen_ptr.add(ptr)
         out.append(op)
-    return out[:12]
+    return head_seq(out, 12)
 
 
 def compile_program(
@@ -222,6 +230,8 @@ def compile_program(
     datasets = compile_datasets_ir(memory)
     decoded = decompile_ir(local)
     hints = autoencoder_hints(memory)
+    from jevops.outer import head_chars
+
     work = ir_to_work_ops(
         local if not datasets.get("ok") else {**local, **{k: datasets.get(k) for k in ("seeds",) if datasets.get(k)}},
         decompiled=decoded,
@@ -234,7 +244,7 @@ def compile_program(
         "decompiled": decoded,
         "autoencoder": hints,
         "work_ops": work,
-        "tactics_head": str(tactics or "")[:120],
+        "tactics_head": head_chars(tactics or "", 120),
         "called_docker0": False,
         "used_prototype_endpoint": False,
         "hardware_class": "nca_local_ir",
@@ -242,6 +252,8 @@ def compile_program(
 
 
 def parse_work_ops(text: str) -> list[dict[str, Any]]:
+    from jevops.outer import head_chars, head_seq
+
     blob = str(text or "")
     match = _JSON_OBJ.search(blob)
     if not match:
@@ -269,9 +281,9 @@ def parse_work_ops(text: str) -> list[dict[str, Any]]:
         if item.get("ptr"):
             row["ptr"] = str(item["ptr"])
         if item.get("query"):
-            row["query"] = str(item["query"])[:80]
+            row["query"] = head_chars(item["query"], 80)
         out.append(row)
-    return out[:12]
+    return head_seq(out, 12)
 
 
 def leanstral_instruct(
@@ -328,6 +340,8 @@ def leanstral_instruct(
         max_new_tokens=192,
         fixture=False,
     )
+    from jevops.outer import head_chars
+
     if identity.get("used_prototype_endpoint") or identity.get("url_host") in {"172.17.0.1", "127.0.0.1"}:
         if err_cls is not None:
             raise err_cls("leanstral_instruct refused docker0")
@@ -342,7 +356,7 @@ def leanstral_instruct(
         "hardware_class": identity.get("hardware_class") or getattr(mistral, "HARDWARE_CLASS", "nca_local_ir"),
         "called_docker0": False,
         "used_prototype_endpoint": False,
-        "raw_head": str(text)[:240],
+        "raw_head": head_chars(text, 240),
     }
 
 
@@ -415,7 +429,9 @@ def execute_program_ops(
                 src = str(detail.get("symbol") or "portable_rewrites:fold_hoist_repeated_simp")
                 src_ptr = src if src.startswith("ptr://") else f"ptr://codepath/{src}"
                 edges = memory.setdefault("nca", {}).setdefault("board_edges", [])
-                for callee in (detail.get("callees") or [])[:12]:
+                from jevops.outer import head_seq
+
+                for callee in head_seq(detail.get("callees"), 12):
                     dst = str(callee)
                     dst_ptr = dst if dst.startswith("ptr://") else f"ptr://codepath/{dst}"
                     pair = [src_ptr, dst_ptr]

@@ -15,29 +15,81 @@ Module: `jevops.outer`.
 - `fill_template` / `version_sort_key` / `mean_nonneg` / `listed_all_ok` / `flatten_version_tags`.
 - `load_module_from_path` — file-backed import (TypeSafe module load).
 - `http_get` / `require_positive_above` / `first_group_int` / `first_nonempty` / `contains_flags`.
-- `load_env_file(strip_quotes=)` / `first_env_path` / `allow_or_deny` / `is_executable` / `url_cache_key` / `normalize_tag` / `copy_tree`.
+- `load_env_file(strip_quotes=)` / `first_env_path` / `allow_or_deny` / `is_executable` / `url_cache_key` / `normalize_tag` / `copy_tree` / `copy_dir_required`.
 - `redact_secret` / `require_host` / `estimate_tokens_chars` / `canonical_bytes`.
 - `first_match` / `poll_until` / `sanitize_ident` / `write_cas` / `dump_tiny` / `keyed_pair` / `stat_dev_ino` / `object_fields`.
-- `digest_file` / `digest_text` / `write_executable` / `write_json` / `first_where` / `after_named` / `unique_keep` / `merge_head_row`.
-- `http_post` / `xdg_runtime_dir` / `try_import` / `dir_has_markers` / `run_process` / `usage_tokens` / `chat_choice_texts` / `integrity_conflict` / `guard_sql`.
+- `digest_file` / `digest_text` / `digest_prefix` / `write_executable` / `write_json` / `first_where` / `after_named` / `unique_keep` / `require_unique_n` / `require_len` / `merge_head_row`.
+- `require_unique_n` — exactly n uniquely named records; names in order.
+- `require_len` — `len(items) == n`; returns items unchanged.
+- `digest_prefix` — first n hex chars of `digest_text` (default 12).
+- `http_post` / `xdg_runtime_dir` / `try_import` / `dir_has_markers` / `require_marked_dir` / `run_process` / `usage_tokens` / `chat_choice_texts` / `integrity_conflict` / `guard_sql`.
 - `contains_any` / `replace_once` / `mapping_line_in_span` / `jsonl_pred_in_span` / `proc_exclusive_holder` / `shared_lock_busy` / `git_head` / `require_basename`.
-- `print_json` / `with_field` / `with_fields` / `join_under` / `plant_files` / `plant_git_skeleton`.
-- `python_argv` / `state_home_candidates` / `exec_capable_dir` / `inspect_lock`.
+- `require_git_bin` / `url_clone_dir` / `git_checkout` / `git_clone` — file-backed git only, never PATH. Checkout can skip empty commit / missing `.git`.
+- `print_json` / `print_ok` / `with_field` / `with_fields` / `join_under` / `plant_files` / `write_tree` / `plant_git_skeleton`.
+- `print_json(..., default=)` — optional JSON default (use `str` for Path).
+- `print_ok` — `print_json` then exit 0 if `payload["ok"]` else 1.
+- `elapsed_ms(started)` — wall milliseconds since a `perf_counter` stamp.
+- `python_argv` / `prepend_argv` / `state_home_candidates` / `exec_capable_dir` / `inspect_lock`.
 - `run_process` accepts `env=` and `timeout=`; timeout returns `timeout=True` without taking exclusive locks.
+- `run_pinned_bin` — basename-pinned argv; missing install uses `miss_cls`; timeout raises `error_cls`. Never PATH.
+- `after_calls` — run setup callables, then `fn(*args, **kwargs)`.
+- `import_names` — import named attrs; missing module returns `(None, ImportError)`.
+- `write_tree` — mixed text/JSON/bytes under a folder; mappings/lists use `write_json`.
 - `refuse_basename` / `walk_suffix_files` / `existing_files` / `write_blobs` / `plant_executables` / `pinned_bin_paths`.
-- `nonempty_file` / `path_parts_status` / `first_json_dict` / `http_ok` / `name_fallback_used`.
-- `write_text` / `state_root_from_env` / `mkdtemp_under`.
+- `nonempty_file` / `home_config_file` / `require_file` / `path_parts_status` / `first_json_dict` / `http_ok` / `name_fallback_used`.
+- `home_config_file` — `$ENV/filename` or `<home>/<default_dir>/filename`. Does not read the file.
+- `write_text` / `read_text` / `source_text` / `copy_text` — utf-8 file IO; `read_text` accepts `errors=` / `max_chars=`; `source_text` prefers an injected string over a path.
+- `loads_json` / `read_json_if` — json.loads with empty default; file JSON when present, else default.
+- `head_lines` / `head_chars` / `tail_chars` — first n lines; first/last n chars. None is empty. `tail_chars(..., 0)` is empty, not the whole string.
+- `head_seq` / `tail_seq` — first/last n items. `tail_seq(..., 0)` is `[]`, not the whole sequence.
+- `exc_head` — `str(exc)` truncated for receipts (default 300).
+- `head_tail` — keep head+tail chars with a middle marker when longer than `limit` (default head+tail).
+- `state_root_from_env` / `mkdtemp_under`.
 - `timed_call` / `process_exit_code` / `write_named_jsons` / `which_bin` / `any_search`.
 - `glob_after` / `first_file_text` / `is_stub_text`.
 - `collect_until` / `first_or_last` / `require_exact_keys` / `reject_present_keys`.
 - `quoted_strings` / `is_hex_digest`.
 - `pin_env` / `require_env_eq` / `argv_layout`.
-- `first_group` / `token_family` / `row_dict` / `row_cell` / `path_refused` / `without_prefix` / `cut_prefix`.
-- `dumps_compact` / `digest_compact` / `connect_engine` (DuckDB if present, else sqlite3).
-- `env_str` / `env_int` / `partition` / `map_partition` / `first_matching_line`.
+- `first_group` / `token_family` / `row_dict` / `row_cell` / `path_refused` / `without_prefix` / `module_stem` / `cut_prefix`.
+- `dumps_compact` / `dumps_sorted` / `digest_compact` / `connect_engine` (DuckDB if present, else sqlite3).
+- `pinned_env_argv` — `driver subcmd tool [flags...] source` with basename pins. Never PATH.
+- `env_str` / `env_mapping` / `optional_env_path` / `env_int` / `partition` / `map_partition` / `first_matching_line`.
+- `optional_env_path` — first nonempty env value as Path, else None.
+- `env_mapping` — env if given, else os.environ. Does not copy.
+- `as_str` — value when it is a str, else default.
+- `temp_dir` / `mkdtemp` — TemporaryDirectory context; mkdtemp Path (optional parent).
 - `first_token` / `result_usage` / `attr_map` / `client_kwargs` / `load_configured` / `unique_kind_bodies`.
 - `iter_tag_commit_pins` — `{tag: commit}` maps to pin objects (`normalize_fn` / `pin_fn` injected).
 - `field_of` / `filter_map` — getattr/mapping first-nonempty and pred+map with skip_exc.
 - `open_readonly` / `query_engine` / `engine_tables` / `first_table_sql` — optional DuckDB SELECT. Missing/refused/unavailable → []. Never campaign writes. Never docker0.
 - `insert_ignore_conflict` — INSERT that returns False on unique/integrity conflicts.
 - `fetch_mapped` — map fetchall rows; None drops.
+- `dir_marked` — marker file plus at least one suffix file (olean cache).
+- `http_json` — POST JSON object; `redact_fn` / `error_cls` injected. Never docker0.
+- `hit_or_miss` — return hit if present, raise when deny, otherwise miss.
+- `unique_rows` / `append_line` — first-per-key rows; rstrip+newline append.
+- `exec_many` / `table_count` — SQL strings or (sql, params); COUNT(*) on an ident table.
+- `ensure_digest` — keep hex digest or hash data with digest_fn.
+- `path_safe` — slash-to-underscore folder names.
+- `matching_nodes` — casefold substring hits on graph node ids.
+- `query_first_engine` — first DuckDB path whose matching table yields rows.
+- `split_csv` / `first_csv` — comma lists (strip, drop empties; optional `cast`). First field only does not skip a leading empty.
+- `first_or_head` — first pred match, else the head, else default. Not `first_or_last`.
+- `group_get` / `group_append` / `unique_append` — setdefault a group dict; append to a list key; skip duplicates.
+- `lookup_named` — optional `error_cls` when the name is missing.
+- `without_keys` / `unique_extend` — drop mapping keys; append extra by key_fn.
+- `write_json_pair` — stamped JSON plus a latest alias; optional `refuse` substrings.
+- `last_component` / `require_single_token` — rsplit tail; reject multi-word tokens.
+- `nonempty_strs` / `overlay_str` — keep nonempty strings; overlay existing string keys only.
+- `read_bytes_if` / `env_copy` / `under_or_tmp` — optional file bytes; stringify env overlay; root-or-temp dir.
+- `posix_slash` / `path_to_dots` — normalize slashes; drop suffix and map `/` to `.`.
+- `require_str` / `as_str` / `nonempty` / `require_startswith` / `read_json` / `overlay_attr` — nonempty str; str-or-default; whitespace check; prefix gate; file JSON object; overlay nested attr.
+- `module_stem` — module path from ``ptr://kind/module:symbol``. Rejects ``..`` and abs paths.
+- `exc_name` / `exc_text` / `tagged_exc` — exception class name; `Type: msg`; `tag:Type`.
+- `failed_check` — fail-closed `{ok, error, error_type, arena_score}` plus extra fields. Never an Arena score.
+- `closed_fail` — same without an exception (`error` string only).
+- `utc_stamp` — UTC ISO-8601, or `strftime` when `fmt=` is set.
+- `remap_get` — copy mapping keys; dest names in `lists=` become `list(value or [])`.
+- `bullet_lines` — prefix/limit/fmt join; empty fallback. Injected `fmt`.
+- `mapped_nonempty` — `{fn(item)}` dropping empties.
+- `first_token(..., strip=)` — first whitespace token; optional rstrip chars.

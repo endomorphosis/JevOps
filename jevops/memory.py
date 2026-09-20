@@ -58,7 +58,9 @@ def is_ephemeral_kind(
 
 def blacklist_key(name: str, kind: str, tactics: str = "") -> str:
     if is_ephemeral_kind(kind):
-        digest = hashlib.sha256((tactics or "").strip("\n").encode("utf-8")).hexdigest()[:12]
+        from jevops.outer import digest_prefix
+
+        digest = digest_prefix((tactics or "").strip("\n"))
         text = str(kind)
         if "_MCA_" in text:
             family = text.rsplit("_MCA_", 1)[0]
@@ -321,7 +323,9 @@ def remember_failure(
     if key not in blacklist:
         blacklist.append(key)
     if tactics:
-        digest = hashlib.sha256(tactics.strip("\n").encode("utf-8")).hexdigest()[:12]
+        from jevops.outer import digest_prefix
+
+        digest = digest_prefix(tactics.strip("\n"))
         body_key = f"{name}::body::{digest}"
         if body_key not in blacklist:
             blacklist.append(body_key)
@@ -334,7 +338,9 @@ def is_blacklisted(memory: Mapping[str, Any], name: str, kind: str, tactics: str
     if not is_ephemeral_kind(kind) and f"{name}::{kind}" in keys:
         return True
     if tactics:
-        digest = hashlib.sha256(tactics.strip("\n").encode("utf-8")).hexdigest()[:12]
+        from jevops.outer import digest_prefix
+
+        digest = digest_prefix(tactics.strip("\n"))
         if any(str(key).endswith(f"::{digest}") for key in keys):
             return True
     return False
@@ -423,6 +429,8 @@ def gap_report(
 ) -> list[dict[str, Any]]:
     """Per-name next-skill notes from AutoResearch snapshots + bans. No Lean."""
 
+    from jevops.outer import head_seq
+
     rows: list[dict[str, Any]] = []
     names: list[str] = []
     for snap in memory.get("research") or []:
@@ -461,7 +469,7 @@ def gap_report(
                         "unsafe": round(float(unsafe.get(key) or 0.0), 3),
                         "do_not_cut": float(unsafe.get(key) or 0.0) >= unsafe_cut,
                     }
-                    for key in ranked_residuals[:4]
+                    for key in head_seq(ranked_residuals, 4)
                 ],
             }
         )

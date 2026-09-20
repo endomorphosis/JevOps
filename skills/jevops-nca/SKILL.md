@@ -12,7 +12,7 @@ Module: `jevops.nca`. PYTHONPATH must include JevOps.
 - `dispatch_tool` closed names; consumers pass `extras=` for walk/hook/mutate.
 - `function_call_map` — Python AST defs + callees (optional qualify_fn). No source bodies.
 - `call_graph_from_paths` / `append_board_edges` — qualified call graphs and NCA board edges.
-- `pick_qualified` / `first_matching_symbol` — resolve a codepath name to a qualified def; first DuckDB/AST hit.
+- `pick_qualified` / `first_matching_symbol` / `focus_symbol` — resolve a codepath name to a qualified def; first DuckDB/AST hit.
 - `top_level_symbols` / `sidecar_files` / `query_sidecar_symbols` / `resolve_unique_callees`.
 - `allowed_path` / `first_existing_file` — first on-disk file inside allowed roots.
 - `matching_top_level` — glob Python files for function/class names containing a query.

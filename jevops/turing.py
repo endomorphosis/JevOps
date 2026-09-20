@@ -291,7 +291,9 @@ def dt_context(memory: dict[str, Any]) -> dict[str, Any]:
     }
     ranked = [str(row.get("action") or "") for row in reversed(tokens) if row.get("action")]
     if ranked:
-        memory["nca"]["pipeline_bias"] = ranked[:8]
+        from jevops.outer import head_seq
+
+        memory["nca"]["pipeline_bias"] = head_seq(ranked, 8)
     return {
         "ok": True,
         "kind": "port_decision_transformer",

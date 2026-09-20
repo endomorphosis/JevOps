@@ -97,6 +97,8 @@ class Tape:
     ) -> dict[str, Any]:
         """Inject a child evaluation onto the parent tape."""
 
+        from jevops.outer import head_chars
+
         energy = float(payload.get("energy") or 0.5)
         if payload.get("theorem_ok") is True:
             energy = max(energy, 0.7)
@@ -106,7 +108,7 @@ class Tape:
             "return",
             {
                 "observations": payload.get("observations") or {},
-                "tactics_head": str(payload.get("tactics") or "")[:240],
+                "tactics_head": head_chars(payload.get("tactics") or "", 240),
                 "n_steps": payload.get("n_steps"),
                 "ok": payload.get("ok", True),
             },
@@ -357,6 +359,8 @@ class Tape:
     ) -> dict[str, Any]:
         """Write the current stack frame's args onto the tape for TypeSafe."""
 
+        from jevops.outer import head_seq
+
         frame = stack.top() if stack is not None and hasattr(stack, "top") else None
         locals_ = dict((frame or {}).get("locals") or {})
         if tactics:
@@ -366,8 +370,8 @@ class Tape:
         cell = self.write(
             "args",
             {
-                "locals": {k: locals_[k] for k in list(locals_)[:12]},
-                "observations_keys": sorted((observations or {}).keys())[:16],
+                "locals": {k: locals_[k] for k in head_seq(list(locals_), 12)},
+                "observations_keys": head_seq(sorted((observations or {}).keys()), 16),
             },
             ptr=ptr or str((frame or {}).get("ptr") or ""),
             parent_frame=str((frame or {}).get("frame_id") or ""),

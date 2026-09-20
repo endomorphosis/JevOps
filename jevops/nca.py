@@ -472,11 +472,13 @@ def tick(memory: dict[str, Any], *, tactics: str = "", problem: str = "", focus:
     nca["tick"] = int(nca.get("tick") or 0) + 1
     journal_event(memory, event="tick", op="TICK", extra={"n_cells": len(nxt), "focus": focus})
     ranked = sorted(nxt, key=lambda key: float(nxt[key].get("energy") or 0.0), reverse=True)
+    from jevops.outer import head_seq
+
     return {
         "ok": True,
         "tick": nca["tick"],
         "n_cells": len(nxt),
-        "top": [{"id": key, "energy": nxt[key]["energy"], "kind": nxt[key].get("kind")} for key in ranked[:8]],
+        "top": [{"id": key, "energy": nxt[key]["energy"], "kind": nxt[key].get("kind")} for key in head_seq(ranked, 8)],
         "called_docker0": False,
     }
 
@@ -494,8 +496,10 @@ def mutate_energy(memory: dict[str, Any], *, problem: str = "", op: str = "auto"
                 continue
             text = cid[len("ptr://skill/") :] if cid.startswith("ptr://skill/") else cid
             order.append(text[len("port_") :] if text.startswith("port_") else text)
-        memory.setdefault("nca", {})["pipeline_bias"] = order[:16]
-        applied = {"op": "reorder", "pipeline_bias": order[:8]}
+        from jevops.outer import head_seq
+
+        memory.setdefault("nca", {})["pipeline_bias"] = head_seq(order, 16)
+        applied = {"op": "reorder", "pipeline_bias": head_seq(order, 8)}
     if op in {"auto", "skip"} and ranked:
         dying = ranked[-1]
         cell = grid.get(dying) or {}
@@ -507,7 +511,9 @@ def mutate_energy(memory: dict[str, Any], *, problem: str = "", op: str = "auto"
             applied = {"op": "skip", "key": key}
     mutations = memory.setdefault("nca", {}).setdefault("mutations", [])
     mutations.append(applied)
-    memory["nca"]["mutations"] = mutations[-32:]
+    from jevops.outer import tail_seq
+
+    memory["nca"]["mutations"] = tail_seq(mutations, 32)
     return {"ok": True, "applied": applied, "writes_lean": False, "called_docker0": False}
 
 
@@ -526,13 +532,20 @@ def fork_cells(
     tick(memory, tactics=tactics, problem=problem)
     grid = _grid(memory)
     if not cell_ids:
-        cell_ids = [
-            key
-            for key in sorted(grid, key=lambda cid: float((grid.get(cid) or {}).get("energy") or 0.0), reverse=True)
-            if not ((grid[key] or {}).get("do_not_fork") or (grid[key] or {}).get("blocked"))
-        ][:FORK_MAX]
+        from jevops.outer import head_seq
+
+        cell_ids = head_seq(
+            [
+                key
+                for key in sorted(grid, key=lambda cid: float((grid.get(cid) or {}).get("energy") or 0.0), reverse=True)
+                if not ((grid[key] or {}).get("do_not_fork") or (grid[key] or {}).get("blocked"))
+            ],
+            FORK_MAX,
+        )
     launched: list[dict[str, Any]] = []
-    for cid in list(cell_ids)[:FORK_MAX]:
+    from jevops.outer import head_seq
+
+    for cid in head_seq(cell_ids, FORK_MAX):
         child = dict(spawn_kwargs)
         child["node"] = cid
         if child.get("record") is not None and "skill_walk" in lra_tools.SUBLOOPS:
@@ -564,7 +577,9 @@ def live_status(memory: Mapping[str, Any]) -> dict[str, Any]:
         halt["board_window"] = []
     nca = (memory.get("nca") or {}) if isinstance(memory.get("nca"), dict) else {}
     halt["n_edges"] = len(nca.get("board_edges") or [])
-    halt["last_ran"] = list(((nca.get("program_state") or {}).get("last_ran")) or [])[:8]
+    from jevops.outer import head_seq
+
+    halt["last_ran"] = head_seq(((nca.get("program_state") or {}).get("last_ran")) or [], 8)
     return halt
 
 
@@ -815,13 +830,15 @@ def inspect_python(
     target = allowed_path(path, roots=roots, base=base)
     if target is None or not target.is_file():
         return {"ok": False, "reason": "path_not_allowed", "path": str(path)}
-    text = target.read_text(encoding="utf-8")
+    from jevops.outer import exc_head, head_seq, read_text
+
+    text = read_text(target)
     functions: list[str] = []
     try:
         tree = ast.parse(text)
         functions = [node.name for node in tree.body if isinstance(node, ast.FunctionDef)]
     except SyntaxError as exc:
-        return {"ok": False, "reason": "syntax", "error": str(exc)[:160], "path": str(target)}
+        return {"ok": False, "reason": "syntax", "error": exc_head(exc, 160), "path": str(target)}
     importable = False
     if import_dir is not None and target.parent == Path(import_dir).resolve() and target.suffix == ".py":
         try:
@@ -832,11 +849,14 @@ def inspect_python(
     tests: list[str] = []
     if test_dir is not None:
         needle = target.stem.replace("typesafe_", "").split("_")[0]
-        tests = [
-            p.name
-            for p in Path(test_dir).glob("test_*.py")
-            if needle in p.read_text(encoding="utf-8")
-        ][:8]
+        tests = head_seq(
+            [
+                p.name
+                for p in Path(test_dir).glob("test_*.py")
+                if needle in read_text(p)
+            ],
+            8,
+        )
     rel = target.name
     if relative_to is not None:
         root = Path(relative_to).resolve()
@@ -1119,6 +1139,18 @@ def pick_qualified(
     return str(matches[0]) if matches else ""
 
 
+def focus_symbol(name: str, defs: Sequence[str], calls: Mapping[str, Sequence[str]]) -> str:
+    """Bare name after ``:`` if it is a def/call, else the first def."""
+
+    symbol = ""
+    raw = str(name or "")
+    if ":" in raw:
+        symbol = raw.rsplit(":", 1)[-1]
+    if symbol in dict(calls or {}) or symbol in list(defs or ()):
+        return symbol
+    return str(defs[0]) if defs else ""
+
+
 def append_board_edges(
     memory: dict[str, Any],
     pairs: Sequence[Sequence[str]],
@@ -1196,11 +1228,15 @@ def rewrite_python(
     target = allowed_path(path, roots=roots, base=base)
     if target is None or not target.is_file():
         return {"ok": False, "reason": "path_not_allowed", "path": str(path), "wrote": False}
-    old = target.read_text(encoding="utf-8")
+    from jevops.outer import read_text
+
+    old = read_text(target)
     try:
         tree = ast.parse(old)
     except SyntaxError as exc:
-        return {"ok": False, "reason": "syntax", "error": str(exc)[:160], "path": str(target), "wrote": False}
+        from jevops.outer import exc_head
+
+        return {"ok": False, "reason": "syntax", "error": exc_head(exc, 160), "path": str(target), "wrote": False}
     produced = transform_fn(tree, old)
     try:
         if isinstance(produced, ast.AST):
@@ -1218,7 +1254,9 @@ def rewrite_python(
                 }
             ast.parse(new)
     except SyntaxError as exc:
-        return {"ok": False, "reason": "syntax_after", "error": str(exc)[:160], "wrote": False}
+        from jevops.outer import exc_head
+
+        return {"ok": False, "reason": "syntax_after", "error": exc_head(exc, 160), "wrote": False}
     if looks_like_lean(new):
         return {
             "ok": False,

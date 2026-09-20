@@ -444,6 +444,8 @@ def guarded_compile(
 ) -> dict[str, Any]:
     """Wrap a lake compile: negative TTL + single-flight. Never admits from cache."""
 
+    from jevops.outer import head_chars
+
     if not isinstance(memory, dict):
         return dict(compile_fn() or {})
     bump_tick(memory)
@@ -474,7 +476,7 @@ def guarded_compile(
             negative_put(memory, key, reason=str(compiled.get("error_class") or "lake_fail"))
             cache_put(
                 memory,
-                {"name": name, "kind": kind, "tactics": str(tactics)[:400]},
+                {"name": name, "kind": kind, "tactics": head_chars(tactics, 400)},
                 kind=str(kind or "compile"),
                 ns="draft",
             )
@@ -536,6 +538,8 @@ def call_kernel(
     tactics: str = "",
     problem: str = "",
 ) -> dict[str, Any]:
+    from jevops.outer import head_chars
+
     text = str(stem or "").lower()
     bump_tick(memory)
     if "cache_arc" in text:
@@ -548,12 +552,12 @@ def call_kernel(
         cid = content_cid({"kind": "context", "body": {"tactics": tactics, "problem": problem}})
         return cache_get(memory, cid)
     if "negative" in text:
-        key = f"{problem}::{tactics[:80]}"
+        key = f"{problem}::{head_chars(tactics, 80)}"
         if negative_hit(memory, key):
             return {"ok": True, "kind": "port_negative_ttl", "hit": True, "key": key, "admit": False}
         return negative_put(memory, key, reason="observe")
     if "flight" in text or "single" in text:
-        key = f"{problem}::{tactics[:80]}"
+        key = f"{problem}::{head_chars(tactics, 80)}"
         begun = flight_begin(memory, key)
         if begun.get("ok"):
             flight_end(memory, key)

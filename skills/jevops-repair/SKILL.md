@@ -9,6 +9,7 @@ Module: `jevops.repair`. TypeSafe ranks which kernel; the validator is the oracl
 
 - Closed repairs: only accept if diagnostics drop.
 - `classify_text` needles plus optional all-of rules.
+- `repair_on_needle` — if an error blob contains a needle, run an injected repair_fn.
 - `restore_bound_lines` injects a binder finder. Never docker0.
 - `call_func_name` / `attr_hits` / `subprocess_invokes` — AST audits, no exec.
 - `keyword_names` / `string_constants` / `function_names`.

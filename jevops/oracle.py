@@ -145,6 +145,72 @@ def pack_eval(compiled: Mapping[str, Any], *, name: Any, tactics: str) -> dict[s
     }
 
 
+def eval_named_or_current(
+    name: str,
+    *,
+    current: Mapping[str, Any],
+    tactics: str,
+    compile_fn: Callable[..., Mapping[str, Any]],
+    memory: Optional[dict[str, Any]] = None,
+    timeout: float = 180.0,
+    load_records_fn: Optional[Callable[[], Sequence[Mapping[str, Any]]]] = None,
+    tactic_block_fn: Optional[Callable[[Mapping[str, Any]], str]] = None,
+    clone_dir_fn: Optional[Callable[[str], Any]] = None,
+    relpath_fn: Optional[Callable[[Mapping[str, Any]], Any]] = None,
+    read_bytes_fn: Optional[Callable[..., Any]] = None,
+    cap: Optional[int] = None,
+    state_root: Any = None,
+    restore: bytes = b"",
+) -> dict[str, Any]:
+    """Lake the current theorem, or a named warmup clone when names differ."""
+
+    from pathlib import Path
+
+    if compile_fn is None:
+        return closed("no_compile_fn", name)
+    target = str(name or current.get("name") or "")
+    rec: Mapping[str, Any] = current
+    body = tactics
+    restore_bytes = restore
+    if target and target != str(current.get("name") or ""):
+        if load_records_fn is None:
+            return closed("warmup_unreadable", target)
+        try:
+            records = list(load_records_fn() or [])
+        except Exception:
+            return closed("warmup_unreadable", target)
+        match, fail = require_named(records, target, cap=cap)
+        if fail:
+            return fail
+        rec = match
+        body = tactic_block_fn(match) if tactic_block_fn is not None else str(match.get("src") or "")
+        if clone_dir_fn is None or relpath_fn is None:
+            return closed("no_clone", target)
+        dest = Path(clone_dir_fn(str(match.get("url") or ""))) / relpath_fn(match)
+        if read_bytes_fn is not None:
+            restore_bytes = read_bytes_fn(dest)
+        if not dest.is_file():
+            return closed("no_clone", target)
+
+    def _compile() -> Mapping[str, Any]:
+        return compile_fn(
+            rec,
+            body,
+            state_root=state_root,
+            timeout=timeout,
+            restore=restore_bytes,
+        )
+
+    compiled = try_kind(
+        memory if isinstance(memory, dict) else None,
+        name=rec.get("name"),
+        kind="eval_theorem",
+        tactics=body,
+        compile_fn=_compile,
+    )
+    return pack_eval(compiled, name=rec.get("name"), tactics=body)
+
+
 def apply_round(
     *,
     memory: Optional[dict[str, Any]],
@@ -225,6 +291,8 @@ def apply_round(
                 }
             )
             continue
+        from jevops.outer import head_seq
+
         err = None
         if not compiled.get("theorem_ok") and error_class_fn is not None:
             err = error_class_fn(compiled.get("errors") or [])
@@ -236,7 +304,7 @@ def apply_round(
             "tokens": compiled.get("token_count"),
             "repaired": False,
             "error_class": err,
-            "errors": (compiled.get("errors") or [])[:1],
+            "errors": head_seq(compiled.get("errors"), 1),
             "depth": tree_node,
         }
         if not row["ok"] and repair_fn is not None:
@@ -262,7 +330,7 @@ def apply_round(
                     "tokens": repaired.get("token_count"),
                     "repaired": True,
                     "error_class": err,
-                    "errors": (repaired.get("errors") or [])[:1],
+                    "errors": head_seq(repaired.get("errors"), 1),
                     "depth": tree_node,
                 }
                 if row["ok"]:

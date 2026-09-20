@@ -311,7 +311,9 @@ def repair_fix_program_ops(memory: dict[str, Any]) -> dict[str, Any]:
                 ptr = coerce_ptr(ptr)
             row["ptr"] = ptr
         if item.get("query"):
-            row["query"] = str(item["query"])[:80]
+            from jevops.outer import head_chars
+
+            row["query"] = head_chars(item.get("query"), 80)
         ops.append(row)
     program["ops"] = ops
     program["called_docker0"] = False
@@ -401,7 +403,9 @@ def typesafe_pick_repair(issues: list[dict[str, Any]], *, ledger: Any = None) ->
 
         t1 = _hooks.try_import("track1_ledger")
 
-        state = {"role": "nca_heal", "issues": [i.get("code") for i in issues[:8]], "kernels": names, "families": families}
+        from jevops.outer import head_seq
+
+        state = {"role": "nca_heal", "issues": [i.get("code") for i in head_seq(issues, 8)], "kernels": names, "families": families}
         questions = {
             "family": Choice(
                 instructions={
@@ -671,6 +675,19 @@ def unique_findall(blob: str, pattern: Any) -> list[str]:
 
 def join_errors(errors: Sequence[Mapping[str, Any]]) -> str:
     return "\n".join(str(item.get("data") or "") for item in errors)
+
+
+def repair_on_needle(
+    tactics: str,
+    errors: Sequence[Mapping[str, Any]],
+    needle: str,
+    repair_fn: Any,
+) -> Optional[str]:
+    """If ``needle`` appears in joined error data, run repair_fn(tactics)."""
+
+    if str(needle or "") not in join_errors(errors):
+        return None
+    return repair_fn(tactics)
 
 
 def classify_text(

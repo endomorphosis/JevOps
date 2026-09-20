@@ -32,6 +32,11 @@ class KernelBoundaryTests(unittest.TestCase):
             "more_rankers",
             "temporal",
             "autoencoder",
+            "binders",
+            "folds",
+            "inits",
+            "lean",
+            "tactics",
             "program",
             "repair",
             "tools",
@@ -158,6 +163,8 @@ class KernelBoundaryTests(unittest.TestCase):
 
     def test_vae_milles_without_lake(self) -> None:
         from jevops import autoencoder as ae
+        from jevops import more_rankers as more
+        from jevops import rankers
 
         encoded = ae.encode_milles("simp [foo]")
         self.assertEqual(len(encoded["mu"]), ae.LATENT_D)
@@ -166,6 +173,807 @@ class KernelBoundaryTests(unittest.TestCase):
         ranked = ae.jev_rank_variations([rt])
         self.assertTrue(ranked["ok"])
         self.assertFalse(ranked["used_jev"])
+        packed = ae.encode_lean_ir("intro simp trivial")
+        self.assertEqual(packed["schema"], ae.LEAN_IR_SCHEMA)
+        self.assertFalse(packed["legal_ir"])
+        self.assertEqual(packed["families"], [])
+        self.assertTrue(packed["functional_lean"])
+        lean = ae.decode_lean_ir(packed)
+        self.assertIn("True := by", lean)
+        self.assertTrue(lean.startswith("theorem "))
+        self.assertNotIn("sorry", lean)
+        ir_rt = ae.lean_ir_roundtrip("intro simp trivial")
+        self.assertFalse(ir_rt["gold"])
+        self.assertEqual(ir_rt["loss_gold"], "jev")
+        self.assertIn("ir_ce_m", ir_rt)
+        self.assertIn("ir_cosine_m", ir_rt)
+        self.assertFalse(ir_rt["legal_ir"])
+        self.assertTrue(rankers.is_ranker_stem("port_lean_ir"))
+        self.assertTrue(rankers.is_ranker_stem("port_gan"))
+        self.assertTrue(more.is_more_stem("port_gan"))
+        mem: dict = {"nca": {}}
+        ir_out = rankers.call_ranker("port_lean_ir", memory=mem, tactics="  intro\n  trivial\n")
+        self.assertTrue(ir_out["ok"])
+        self.assertEqual(ir_out["kind"], "port_lean_ir")
+        self.assertFalse(ir_out["writes_lean"])
+        self.assertFalse(ir_out["legal_ir"])
+        self.assertIn("True := by", str(ir_out.get("lean") or ""))
+
+        def jev_fn(payload):
+            rows = list(payload.get("variations") or [])
+            real = next((row for row in rows if row.get("role") == "real"), rows[0])
+            return {"choice": real["id"], "scores": {row["id"]: 900 if row.get("role") == "real" else 100 for row in rows}, "noul": 0.1}
+
+        gan = more.call_gan(mem, tactics="  intro\n  simp\n  trivial\n", jev_fn=jev_fn)
+        self.assertTrue(gan["ok"])
+        self.assertEqual(gan["kind"], "port_gan")
+        self.assertTrue(gan["used_jev"])
+        self.assertFalse(gan["writes_lean"])
+        self.assertFalse(gan["gold"])
+        self.assertFalse(gan["legal_ir"])
+        self.assertTrue(gan["functional_lean"])
+        self.assertGreaterEqual(gan["n_fake"], 1)
+        dispatched = rankers.call_ranker("port_gan", memory={"nca": {}}, tactics="  trivial\n")
+        self.assertEqual(dispatched["kind"], "port_gan")
+        self.assertFalse(dispatched["writes_lean"])
+        from jevops import binders, folds, lean
+
+        self.assertEqual(folds.fold_exact_hyp("exact Hin"), "assumption")
+        self.assertEqual(folds.fold_trailing_tuple_comma("exact ⟨a, b,⟩"), "exact ⟨a, b⟩")
+        self.assertEqual(folds.fold_exact_hyp("exact Lemma.foo"), "exact Lemma.foo")
+        self.assertEqual(binders.binders_from_line("rename_i x y"), ["x", "y"])
+        self.assertIn("this", binders.binders_from_line("have der' : T := der"))
+        dropped = binders.drop_unused_binders("rename_i ghost\nexact Hin\n")
+        self.assertNotIn("ghost", dropped)
+        names, sorry = lean.parse_axioms("#print axioms t\nt : []\n")
+        self.assertFalse(sorry)
+        argv = lean.measurement_argv("/opt/lake", "/opt/lean", "x.lean", max_heartbeats=400000)
+        self.assertEqual(argv[1], "env")
+        self.assertTrue(
+            lean.lake_measurement_ok(
+                exit_code=0,
+                timed_out=False,
+                sorry=False,
+                axiom_names=[],
+                stdout="ok",
+                argv=argv,
+                max_heartbeats=400000,
+                timeout_seconds=600.0,
+            )
+        )
+        from jevops import inits, tactics
+
+        spans = tactics.case_spans("case foo =>\n  simp\n")
+        self.assertEqual(spans[0].label, "foo")
+        collapsed = tactics.collapse_simp_at("  simp at h\n  simp at h\n")
+        self.assertIn("simp_all", collapsed)
+        holes = tactics.find_holes("  rename_i ghost\n  exact Hin\n")
+        self.assertTrue(any(hole.family == "dead_code" for hole in holes))
+        self.assertGreaterEqual(len(inits.KERNELS), 41)
+        replayed = inits.apply_kernel("and_intro_constructor", "    apply And.intro\n    exact x\n")
+        self.assertIn("constructor", replayed)
+        lemmas, _n = tactics.extract_src_lemmas("  simp [Foo.bar, skip]\n  exact Hin\n")
+        names = [row.name for row in lemmas]
+        self.assertIn("Foo.bar", names)
+        self.assertNotIn("exact", names)
+        joined = tactics.join_consecutive_applies("  apply a\n  apply b\n")
+        self.assertIn("<;>", joined)
+        pin = lean.VersionPin(lean_tag="v4.26.0", git_commit="abc")
+        self.assertEqual(pin.to_dict()["lean_tag"], "v4.26.0")
+        self.assertIn(" := by", lean.statement_sorry_template("theorem t : True"))
+        self.assertEqual(lean.path_a_tactics("", ""), ["rfl", "decide", "omega", "simp_all"])
+        self.assertIn("aesop", lean.path_a_tactics("import Aesop\n", ""))
+        closed = lean.compile_closed(token_count=3)
+        self.assertFalse(closed["theorem_ok"])
+        dummy = type("R", (), {"stdout": "ok\n#print axioms t\nt : []\n", "stderr": "", "error": "", "returncode": 0})()
+        filled = lean.fill_from_process(
+            dummy,
+            argv=["/opt/lake", "env", "/opt/lean", "-DmaxHeartbeats=400000", "--json", "x.lean"],
+            max_heartbeats=400000,
+            timeout_seconds=600.0,
+        )
+        self.assertTrue(filled["ok"])
+        self.assertFalse(filled["sorryAx"])
+        lake_txt = lean.render_mathlib_aesop_lakefile(
+            package="putnam_lake",
+            lib="Putnam",
+            max_heartbeats=400000,
+            mathlib_git="https://github.com/leanprover-community/mathlib4.git",
+            mathlib_rev="v4.26.0",
+            aesop_git="https://github.com/leanprover-community/aesop.git",
+            aesop_rev="v4.26.0",
+        )
+        self.assertIn("moreLeanArgs", lake_txt)
+        self.assertNotIn("Tmp.lean", lake_txt)
+        self.assertEqual(lean.ExecutablePaths(lean="/opt/lean", lake="/opt/lake").to_dict()["lake"], "/opt/lake")
+        self.assertIn("True := by", lean.render_placeholder_theorem())
+        self.assertEqual(lean.extract_generated_tactics("```\n  simp\n```"), "simp")
+        self.assertEqual(lean.parse_next_tactic_line("exact Hin\nsimp"), "exact Hin")
+        self.assertTrue(tactics.looks_like_tactic("simp_all"))
+        self.assertTrue(tactics.is_mca_line("  have x := y"))
+        tags = tactics.pca_case_tags("case foo =>\n  simp\ncase bar =>\n  rfl\n")
+        self.assertEqual(tags, ["foo", "bar"])
+        self.assertFalse(tactics.stop_allowed("case foo =>\n  simp\n", "case foo =>\n  simp\ncase bar =>\n  rfl\n"))
+        edits = tactics.closed_tree_edits("  intro\n  simp at h\n  simp at h\n")
+        families = [row[0] for row in edits]
+        self.assertIn("reference", families)
+        self.assertIn("simp_set", families)
+        self.assertTrue(any(row[1] == "rfl" for row in edits))
+        job = lean.BakeJob(
+            kind="repo",
+            source="strata",
+            lean_tag="v4.26.0",
+            git_commit="abc",
+            url="https://example.com",
+            cache_key="k",
+            phase=0,
+            record_names=("P",),
+            file_paths=("A.lean",),
+            module="A.lean",
+        )
+        self.assertEqual(job.to_dict()["kind"], "repo")
+        self.assertIsNone(job.to_dict()["arena_score"])
+        pin = lean.PutnamPin(
+            lean_tag="v4.26.0",
+            mathlib_git="https://github.com/leanprover-community/mathlib4.git",
+            mathlib_rev="v4.26.0",
+            aesop_git="https://github.com/leanprover-community/aesop.git",
+            aesop_rev="v4.26.0",
+            jsonl_version_pin="",
+        )
+        self.assertEqual(pin.module, "Putnam.Candidate")
+        self.assertFalse(pin.tmp_lean)
+        mca = tactics.guided_mca_edits("  intro\n  simp at h\n  simp at h\n", ["strength_reduction"])
+        self.assertTrue(any(row[0] == "strength_reduction" for row in mca))
+        split = lean.StatementBody(
+            name="P",
+            source="strata",
+            statement="theorem t : True",
+            body_suffix=" := by\n  trivial\n",
+            header="",
+        )
+        self.assertEqual(split.reconstructed_src, "theorem t : True := by\n  trivial\n")
+        view = lean.AdmissionView(
+            accepted=True,
+            failure_code="",
+            reason="ok",
+            name="P",
+            native_source_starts_with_statement=True,
+        )
+        self.assertFalse(view.used_full_src_as_native)
+        receipt = lean.TacticTryReceipt(name="P", schema="lake-native-try/v1")
+        self.assertFalse(receipt.to_dict()["hammer_006_lra_ready"])
+        self.assertFalse(receipt.to_dict()["uses_snapshot_goal"])
+        self.assertEqual(lean.aesop_list_ok(["rfl"], False), "")
+        self.assertIn("aesop listed", lean.aesop_list_ok(["aesop"], False))
+        self.assertTrue(
+            lean.sorry_prefix_bound(
+                template="theorem t : True := by\nsorry",
+                statement="theorem t : True",
+                suffix=" := by\nsorry",
+                lake_sorry="header\ntheorem t : True := by\nsorry\n",
+            )
+        )
+        src = lean.lake_source_for_tactic(header="import Aesop", statement="theorem t : True", tactic="rfl")
+        self.assertIn("rfl", src)
+        catalog = lean.BakeCatalog(
+            warmup_n=2,
+            source_order=("strata", "putnambench"),
+            putnam_source="putnambench",
+            strata_source="strata",
+            strata_first_tag="v4.26.0",
+            putnam_tags=("v4.26.0",),
+            putnam_candidate_relpath="Putnam/Candidate.lean",
+            putnam_module="Putnam.Candidate",
+        )
+        jobs = lean.collect_bake_jobs(
+            [
+                {
+                    "name": "P",
+                    "source": "strata",
+                    "url": "https://example.com",
+                    "file_path": "A.lean",
+                    "header": "",
+                    "version_info": [{"v4.26.0": "abc"}],
+                },
+                {
+                    "name": "Q",
+                    "source": "putnambench",
+                    "url": "",
+                    "file_path": "",
+                    "header": "import Mathlib\nimport Aesop\n",
+                    "version_info": [{"v4.26.0": "def"}],
+                },
+            ],
+            catalog,
+            pin_fn=lambda info: [
+                lean.VersionPin(lean_tag=str(next(iter(row))), git_commit=str(next(iter(row.values()))))
+                for row in info
+            ],
+            putnam_pin_fn=lambda tag, commit: lean.putnam_pin_for_tag(
+                tag,
+                catalog.putnam_tags,
+                mathlib_git="https://github.com/leanprover-community/mathlib4.git",
+                aesop_git="https://github.com/leanprover-community/aesop.git",
+                jsonl_version_pin=commit,
+            ),
+            url_key_fn=lambda url: "ex",
+        )
+        self.assertEqual(jobs[0].source, "strata")
+        self.assertEqual(jobs[0].lean_tag, "v4.26.0")
+        self.assertEqual(jobs[-1].kind, "putnam")
+        self.assertEqual(jobs[-1].module, "Putnam.Candidate")
+        neighbors = lean.jsonl_neighbors(
+            [
+                {
+                    "name": "A",
+                    "source": "s",
+                    "statement": "theorem a : True",
+                    "src": "theorem a : True := by\n  trivial\n",
+                    "header": "",
+                    "file_path": "a.lean",
+                    "proof_length": 1,
+                    "url": "",
+                },
+                {
+                    "name": "B",
+                    "source": "s",
+                    "statement": "theorem b : True",
+                    "src": "theorem b : True := by\n  trivial\n",
+                    "header": "",
+                    "file_path": "b.lean",
+                    "proof_length": 1,
+                    "url": "",
+                },
+            ],
+            "A",
+            expected_n=2,
+            neighbor_n=1,
+        )
+        self.assertEqual(neighbors[0].name, "B")
+        self.assertNotEqual(neighbors[0].name, "A")
+        retrieved = lean.retrieve_record(
+            {
+                "name": "A",
+                "source": "s",
+                "statement": "theorem a : True",
+                "src": "theorem a : True := by\n  exact Hin\n",
+                "header": "",
+                "file_path": "a.lean",
+                "proof_length": 1,
+                "url": "",
+            },
+            [
+                {
+                    "name": "A",
+                    "source": "s",
+                    "statement": "theorem a : True",
+                    "src": "theorem a : True := by\n  exact Hin\n",
+                    "header": "",
+                    "file_path": "a.lean",
+                    "proof_length": 1,
+                    "url": "",
+                },
+                {
+                    "name": "B",
+                    "source": "s",
+                    "statement": "theorem b : True",
+                    "src": "theorem b : True := by\n  trivial\n",
+                    "header": "",
+                    "file_path": "b.lean",
+                    "proof_length": 1,
+                    "url": "",
+                },
+            ],
+            expected_n=2,
+            neighbor_n=1,
+            lemma_cap=16,
+        )
+        self.assertEqual(retrieved.query, "A")
+        self.assertFalse(retrieved.mathlib_ingest)
+        pack = tactics.structure_pack("case foo =>\n  simp\n", "")
+        self.assertIn("foo", pack["missing_cases"])
+        prompt = tactics.step_prompt({"name": "P", "statement": "theorem t : True"}, "", ["simp"], pack)
+        self.assertIn("Next tactic line:", prompt)
+        draft = tactics.Draft(draft_id="d00", family="reference", tactics="  simp\n")
+        self.assertEqual(draft.n_chars, 6)
+        pushed: list = []
+        tactics.push_draft(pushed, set(), "reference", "  intro\n  trivial\n", ("id",), cap=8)
+        self.assertEqual(pushed[0].family, "reference")
+        row = tactics.feature_row({"name": "P", "source": "s"}, tactics="  simp at h\n  exact Hin\n")
+        self.assertGreater(row.counts["n_exact"], 0)
+        variants = tactics.tactician_variants(
+            "  intro\n  simp_all\n",
+            "  intro\n  simp_all\n",
+            replay_fn=lambda text: text.strip("\n") + "\n  trivial",
+            propose_fn=lambda _text: [{"kind": "drop", "tactics": "  trivial\n"}],
+        )
+        self.assertTrue(any(item["kind"] == "tactician_drop_simp_all" for item in variants))
+        assembled = tactics.assemble_mca_candidates(
+            "  intro\n  simp at h\n",
+            tactics.find_holes("  intro\n  simp at h\n"),
+            replay_fn=lambda text: text,
+        )
+        kinds = [item["kind"] for item in assembled]
+        self.assertIn("reference", kinds)
+        self.assertIn("mca_template_fill", kinds)
+        extras = tactics.neighbor_style_ops(
+            [{"name": "B"}],
+            {"B": {"name": "B"}},
+            head_fn=lambda rec: "  trivial\n",
+        )
+        self.assertEqual(extras[0][0], "custom")
+        merged = tactics.merge_draft_ops([("reference", "  simp\n", ("id",))], extras)
+        self.assertEqual(len(merged), 2)
+        beam = tactics.BeamItem(prefix="  intro")
+        self.assertFalse(beam.stopped)
+        files = lean.putnam_file_map(
+            pin,
+            lakefile="lakefile",
+            toolchain="leanprover/lean4:v4.26.0\n",
+            root="import Putnam.Candidate\n",
+            candidate="theorem t : True := by\n  trivial\n",
+            root_relpath="Putnam.lean",
+            candidate_relpath="Putnam/Candidate.lean",
+        )
+        self.assertIn("pins.json", files)
+        self.assertNotIn("Tmp.lean", files)
+        dropped = tactics.drop_first_bare_simp_all("  intro\n  simp_all\n  exact Hin\n")
+        self.assertIsNotNone(dropped)
+        self.assertNotIn("simp_all", dropped or "")
+        variants = tactics.keepbest_variants("beam_0", "  intro\n  simp_all\n", "  have h := x\n  intro\n")
+        self.assertTrue(any(name.endswith("_haves") or "_have_" in name for name, _body in variants))
+        shortened = tactics.shorten_keeping_prefix_haves("  have h := x\n  exact h\n  simp_all\n")
+        self.assertTrue(any(name in {"drop_first_bare_simp", "drop_last_bare_simp"} for name, _body in shortened))
+        rel = lean.source_relpath(
+            {"name": "P", "source": "putnambench", "file_path": ""},
+            putnam_source="putnambench",
+            putnam_relpath="Putnam/Candidate.lean",
+        )
+        self.assertEqual(rel, "Putnam/Candidate.lean")
+        job = lean.bake_job_for_record(
+            {"name": "P", "source": "strata", "url": "https://example.com", "file_path": "A.lean"},
+            lean.VersionPin(lean_tag="v4.26.0", git_commit="abc"),
+            putnam_source="putnambench",
+            strata_source="strata",
+            strata_first_tag="v4.26.0",
+            putnam_relpath="Putnam/Candidate.lean",
+            putnam_module="Putnam.Candidate",
+            url_key_fn=lambda url: "ex",
+        )
+        self.assertEqual(job.phase, 0)
+        self.assertEqual(job.kind, "repo")
+        cwd, rel, dest = lean.prepare_lake_paths(
+            {"name": "P", "source": "putnambench", "url": "", "file_path": ""},
+            lean.VersionPin(lean_tag="v4.26.0", git_commit="abc"),
+            putnam_source="putnambench",
+            putnam_relpath="Putnam/Candidate.lean",
+            source_relpath_fn=lambda _rec: "Putnam/Candidate.lean",
+            putnam_dir_fn=lambda _rec, _pin, _root: Path("/tmp/putnam"),
+            materialize_fn=lambda _pin, _dest: None,
+            require_clone_fn=lambda *_a: Path("/tmp/clone"),
+            checkout_fn=lambda *_a: None,
+            skip_checkout=True,
+            network="deny",
+            state_root=None,
+        )
+        self.assertEqual(rel, "Putnam/Candidate.lean")
+        self.assertEqual(dest.name, "Candidate.lean")
+        from jevops import search as lra_search
+
+        merged = lra_search.merge_next_line_proposals(
+            ["simp"],
+            ["omega", "rfl"],
+            stop="STOP",
+            cap=12,
+            filter_fn=lambda rows: list(rows),
+        )
+        self.assertEqual(merged[0], "simp")
+        self.assertIn("STOP", merged)
+        putnam_dir = lean.project_dir_for_record(
+            {"name": "Q", "source": "putnambench", "url": ""},
+            lean.VersionPin(lean_tag="v4.26.0", git_commit="abc"),
+            putnam_source="putnambench",
+            putnam_dir_fn=lambda _rec, _pin, _root: Path("/tmp/putnam"),
+            clone_dir_fn=lambda _url: Path("/tmp/clone"),
+        )
+        self.assertEqual(putnam_dir, Path("/tmp/putnam"))
+        rec = lean.CandidateRecord(
+            kind="reference",
+            tactics="  trivial\n",
+            source_text="theorem t : True := by\n  trivial\n",
+            admission_accepted=True,
+            admission_code="",
+            admission_reason="ok",
+            hardware_class="spark_gb10",
+        )
+        self.assertTrue(rec.to_dict()["admission_accepted"])
+        self.assertIsNone(rec.to_dict()["arena_score"])
+        closed = lean.close_failed_receipt(
+            rec,
+            ValueError("missing"),
+            digest_fn=lambda text: "d" * 64,
+            axiom_digest_fn=lambda _names: "a" * 64,
+        )
+        self.assertFalse(closed.ok)
+        self.assertEqual(closed.exit_code, -1)
+        hammers = tactics.hammer_variants("  intro\n", "  intro\n  simp\n")
+        self.assertTrue(any(name == "identity" for name, _body in hammers))
+        drafts = tactics.random_mca_drafts(
+            "  rename_i ghost\n  exact Hin\n  simp at h\n",
+            __import__("random").Random(0),
+            n=6,
+            token_fn=lean.token_count,
+        )
+        self.assertIsInstance(drafts, list)
+        chain = tactics.Chain(tactics="  simp\n", tokens=1, theorem_ok=False)
+        self.assertEqual(chain.tokens, 1)
+        beam = lra_search.run_prefix_beam(
+            "  intro",
+            max_steps=1,
+            beam_n=1,
+            pack_fn=lambda _prefix: {"earliest_unfinished": None},
+            stop_allowed_fn=lambda _prefix: True,
+            propose_fn=lambda *_a: ["STOP"],
+            prune_fn=lambda *_a: {"kept": ["STOP"]},
+            extend_fn=lambda prefix, nxt, _pack: prefix,
+            filter_fn=lambda lines, _pack: list(lines),
+        )
+        self.assertTrue(beam["finals"][0]["stopped"])
+        receipt = lean.TacticTryReceipt(name="P")
+        dummy_attempt = lean.TacticAttempt(tactic="sorry", argv=["/opt/lake"], ok=False, sorryAx=True)
+
+        def _run(tactic: str) -> lean.TacticAttempt:
+            if tactic == "sorry":
+                return dummy_attempt
+            return lean.TacticAttempt(tactic=tactic, argv=["/opt/lake"], ok=True)
+
+        filled = lean.path_a_fill(receipt, ["rfl"], _run)
+        self.assertEqual(filled.winning_tactic, "rfl")
+        self.assertTrue(filled.ok)
+        prompt = tactics.mca_hole_prompt(
+            {"name": "P", "statement": "theorem t : True"},
+            "  intro\n",
+            tactics.find_holes("  simp at h\n"),
+        )
+        self.assertIn("HOLES:", prompt)
+        proposed = tactics.propose_closed_edits(
+            "  exact a\n  exact b\n  simp_all\n",
+            "  exact a\n  exact b\n  simp_all\n",
+            __import__("random").Random(0),
+            extras=(),
+            limit=8,
+        )
+        self.assertTrue(any(row.get("kind") in {"join_exacts", "drop_last_simp_all", "join_applies"} for row in proposed))
+        from jevops import inits as lra_inits
+
+        extras = lra_inits.mcmc_extras("    apply And.intro\n    exact Hin\n")
+        self.assertTrue(any(row["kind"] == "and_intro_constructor" for row in extras))
+        scored = lean.score_candidate(
+            rec,
+            reference_tokens=10,
+            reference_elab_ms=1.0,
+            token_ratio_fn=lambda a, b: a / max(b, 1),
+            composite_fn=lambda a, b: a,
+            all_tags_ok_fn=lambda *_a: True,
+            record={"src": "x", "statement": "x"},
+            reconstructed_ok=True,
+        )
+        self.assertTrue(scored.valid)
+        proof = lean.ProofReceipt(
+            name="P",
+            lean_tag="v4.26.0",
+            body_digest="a" * 64,
+            verdict="ok",
+            executable_paths=lean.ExecutablePaths(lean="/opt/lean", lake="/opt/lake"),
+        )
+        pub = proof.to_public_dict(extra={"schema": "lake-proof-receipt/v1"})
+        self.assertEqual(pub["schema"], "lake-proof-receipt/v1")
+        self.assertIsNone(pub["arena_score"])
+        dims = lean.project_authority_dimensions(
+            proof,
+            ("ir", "property"),
+            {"ir": "lean4-proof-body", "property": "keep"},
+        )
+        self.assertEqual(dims["ir"], "lean4-proof-body")
+        shot = tactics.few_shot_prompt(
+            {"name": "T", "statement": "theorem t : True"},
+            [
+                {
+                    "name": "E",
+                    "filled_tokens": 2,
+                    "ref_tokens": 4,
+                    "ratio": 0.5,
+                    "n_holes": 1,
+                    "families": ["dead_code"],
+                    "skeleton": "  intro",
+                    "reference": "  intro\n  simp",
+                    "filled": "  intro",
+                }
+            ],
+            tactics="  intro\n",
+            skeleton="  intro\n",
+            token_count=1,
+        )
+        self.assertIn("TARGET: T", shot)
+        repaired_rows, nxt, _errs, ok = tactics.hammer_until(
+            "  simp at h\n",
+            "  simp at h\n  exact Hin\n",
+            [{"data": "unknown tactic"}],
+            lambda body: {"theorem_ok": True, "errors": []},
+            lambda **kw: {"kind": kw["kind"], "tactics": kw["tactics"]},
+            kind="mca",
+            generator="tactician",
+        )
+        self.assertIsInstance(repaired_rows, list)
+        from jevops import oracle as lra_oracle
+
+        named = lra_oracle.eval_named_or_current(
+            "Q",
+            current={"name": "P"},
+            tactics="  trivial\n",
+            compile_fn=lambda *_a, **_k: {"theorem_ok": True, "token_count": 1},
+            load_records_fn=lambda: [{"name": "Q", "n_tokens": 2, "url": "https://example.com", "src": "theorem q : True"}],
+            tactic_block_fn=lambda rec: "  exact True.intro\n",
+            clone_dir_fn=lambda _url: Path("/tmp"),
+            relpath_fn=lambda _rec: "missing.lean",
+            read_bytes_fn=lambda _p: b"",
+            cap=10,
+        )
+        self.assertEqual(named.get("reason"), "no_clone")
+        plan = lean.CompilePlan(
+            records=[{"name": "P", "source": "strata", "file_path": "A.lean"}],
+            frozen_warmup_sha256="a" * 64,
+            jsonl_bytes=1,
+            n_records=1,
+        )
+        self.assertEqual(plan.first_record()["name"], "P")
+        dummy = type("R", (), {"stdout": "ok", "stderr": "", "error": "", "returncode": 0})()
+        attempt = lean.fill_tactic_attempt(
+            tactic="rfl",
+            argv=["/opt/lake", "env", "/opt/lean", "-DmaxHeartbeats=400000", "--json", "x.lean"],
+            cwd="/tmp",
+            source_file="x.lean",
+            timeout=120.0,
+            result=dummy,
+            wall_ms=1.0,
+            cpu_ms=1.0,
+            max_heartbeats=400000,
+        )
+        self.assertEqual(attempt.tactic, "rfl")
+        from jevops.outer import InsertOnlyConnection
+
+        class _Raw:
+            def __init__(self) -> None:
+                self.sql = ""
+
+            def execute(self, sql, params=None):
+                self.sql = sql
+                return self
+
+        raw = _Raw()
+        conn = InsertOnlyConnection(raw, guard_fn=lambda sql: sql)
+        conn.execute("SELECT 1")
+        self.assertEqual(raw.sql, "SELECT 1")
+        written = lean.write_then_compile(
+            {"name": "P", "source": "strata"},
+            "  trivial\n",
+            putnam_source="putnambench",
+            pins=[lean.VersionPin(lean_tag="v4.26.0", git_commit="abc")],
+            candidate_record={"name": "P", "source": "strata"},
+            source_text="theorem t : True := by\n  trivial\n",
+            project_dir_fn=lambda *_a: Path("/tmp"),
+            relpath_fn=lambda _rec: "A.lean",
+            write_fn=lambda dest, text: dest,
+            compile_fn=lambda rec: ["ok"],
+        )
+        self.assertEqual(written, ["ok"])
+        baked = lean.bake_or_hit(
+            lean.BakeJob(
+                kind="repo",
+                source="strata",
+                lean_tag="v4.26.0",
+                git_commit="abc",
+                url="https://example.com",
+                cache_key="k",
+                phase=0,
+                record_names=("P",),
+                file_paths=("A.lean",),
+                module="A.lean",
+            ),
+            network="allow",
+            execute=False,
+            require_cache_fn=lambda *_a, **_k: {"ok": True, "cache_key": "k"},
+            tag_paths_fn=lambda _tag: {"installed": True, "lake_path": "/opt/lake"},
+            materialize_fn=lambda *_a: None,
+            putnam_dir_fn=lambda *_a: Path("/tmp"),
+            clone_fn=lambda *_a: Path("/tmp"),
+            checkout_fn=lambda *_a: None,
+            run_lake_fn=lambda *_a: {"exit_code": 0},
+            copy_oleans_fn=lambda *_a: None,
+            cache_dir_fn=lambda *_a: Path("/tmp"),
+            mark_fn=lambda *_a: None,
+            olean_fn=lambda *_a: [],
+        )
+        self.assertEqual(baked["status"], "cache-hit")
+        packed = lean.pack_compile_view(
+            {"exit_code": 0, "timed_out": False, "sorryAx": False, "wall_ms": 1, "error": ""},
+            token_count=4,
+            errors=[],
+            sorry=False,
+        )
+        self.assertTrue(packed["theorem_ok"])
+        self.assertTrue(lra_search.should_call_generator(None, {"proof_length": 500}))
+        self.assertFalse(lra_search.should_call_generator(None, {"proof_length": 10}))
+        walked = lra_search.coordinate_rounds(
+            [{"hole_id": "h0"}],
+            rounds=1,
+            choose_fn=lambda remaining, dropped, round_i: ["h0"],
+            trial_fn=lambda chosen: "  trivial\n",
+            eval_fn=lambda trial: [{"theorem_ok": True, "token_count": 1, "tactics": trial}],
+            accept_fn=lambda evals, tokens, trial: (evals[0], 1, trial),
+            keep_tokens=10,
+            keep_body="  exact Hin\n",
+        )
+        self.assertEqual(walked["keep_tokens"], 1)
+        idents = tactics.ident_holes(
+            "  exact Hin\n",
+            token_re=lean.TOKEN,
+            skip_tokens=("exact",),
+            max_holes=4,
+        )
+        self.assertTrue(any(row["original"] == "Hin" for row in idents))
+        prompt = tactics.repair_prompt(
+            {"name": "P", "statement": "theorem t : True"},
+            failed="  sorry\n",
+            errors=[{"pos": 1, "data": "unsolved"}],
+            reference="  trivial\n",
+        )
+        self.assertIn("unsolved", prompt)
+        from jevops import jev as lra_jev
+
+        routed = lra_jev.RouteResult(skipped=True, reason="no_key", mode="off", official_track2=False)
+        self.assertTrue(routed.as_dict()["skipped"])
+        self.assertFalse(routed.as_dict()["jev_generated_lean"])
+        from jevops import outer as lra_outer
+
+        lock = lra_outer.LockInspection(path="/tmp/x.lock", exists=False, held=False, pid=None, method="none", error="")
+        self.assertFalse(lock.lock_ex_taken_by_client)
+        skip = lean.skipped_generation(
+            lean.HealthProbe(ok=False, url="http://x", alias_ok=False, alias_url="http://y", status_code=None, error="down", autostart="0"),
+            reason="down",
+            requested_provider="leanstral_local",
+            requested_model="Leanstral",
+        )
+        self.assertTrue(skip.skipped)
+        healthy = lean.generate_if_healthy(
+            health_ok=True,
+            generate_fn=lambda: "ok",
+            skip_result="skip",
+            fail_fn=lambda exc: str(exc),
+        )
+        self.assertEqual(healthy, "ok")
+        fills = tactics.closed_fills({"kind": "ident", "original": "Hin"}, "  exact Hin\n", token_re=lean.TOKEN)
+        self.assertIn("Hin", fills)
+        packed_rank = lra_jev.draft_rank_state({"name": "P", "statement": "theorem t : True"}, [{"kind": "a", "tactics": "  simp\n", "generator": "g"}])
+        self.assertIn("a", packed_rank["criteria"])
+        cands = lra_search.keepbest_candidates(
+            reference="  simp\n",
+            hosted="  intro\n  simp\n",
+            flattened="  intro\n  simp\n",
+            collapse="  simp_all\n",
+            span_drafts=[tactics.Draft(draft_id="d01", family="simp_set", tactics="  simp_all\n", ops=("collapse_simp_at",))],
+        )
+        kinds = [row["kind"] for row in cands]
+        self.assertEqual(kinds[0], "reference")
+        self.assertIn("hosted_mistral", kinds)
+        self.assertNotIn("hosted_indent_normalized", kinds)
+        self.assertIn("fanout_collapse_simp_at", kinds)
+        compiled_rows, by_kind = lra_search.compile_labeled(
+            cands[:2],
+            lambda body: {"theorem_ok": True, "token_count": len(body), "module_exit_0": True},
+            lambda item, compiled: {"kind": item["kind"], **compiled},
+        )
+        self.assertEqual(compiled_rows[0]["kind"], "reference")
+        self.assertIn("reference", by_kind)
+        self.assertTrue(lra_search.beats_reference(compiled_rows, 10**9))
+        self.assertEqual(lra_search.keepbest_kept(compiled_rows[0])["kind"], "reference")
+        milles = lra_outer.spend_for("jev", 1_000_000, 0, {"jev": (42, 0), "grok": (3000, 15000)})
+        self.assertEqual(milles, 42)
+        grok = lra_outer.spend_for("grok", 0, 1_000_000, {"jev": (42, 0), "grok": (3000, 15000)})
+        self.assertEqual(grok, 15000)
+        from decimal import Decimal
+
+        usd = lra_outer.spend_for(
+            "jev",
+            1_000_000,
+            0,
+            {"jev": (Decimal("0.042"), Decimal("0"))},
+            scale=Decimal("1000000"),
+        )
+        self.assertEqual(usd, Decimal("0.042"))
+        chain = tactics.Chain(tactics="  simp\n", tokens=4, theorem_ok=True)
+        best = {"kind": "init", "tactics": "  simp\n", "token_count": 4, "theorem_ok": True}
+        hist: list = []
+        failed_bodies: set = set()
+        failed_kinds: set = set()
+        tried = lra_search.mcmc_try_proposals(
+            proposals=[{"kind": "drop", "note": "x", "tactics": "  rfl\n"}],
+            order=[0],
+            chain=chain,
+            compile_fn=lambda body: {"theorem_ok": True, "token_count": 1, "errors": []},
+            token_fn=len,
+            accept_fn=lambda **_k: True,
+            best=best,
+            failed_bodies=failed_bodies,
+            failed_kinds=failed_kinds,
+            sticky_fail=set(),
+            round_i=0,
+            chain_i=0,
+            history=hist,
+            ranked_meta={"pick": "p0", "skipped": False},
+            temperature=1.0,
+            rng=__import__("random").Random(0),
+        )
+        self.assertTrue(tried["accept"])
+        self.assertEqual(chain.tokens, 1)
+        self.assertEqual(best["token_count"], 1)
+        packed = lra_search.mcmc_result(
+            rounds=1,
+            beam=1,
+            temperature=1.0,
+            seed=0,
+            lake_calls=2,
+            leanstral_calls=0,
+            best=best,
+            history=hist,
+        )
+        self.assertEqual(packed["mode"], "mcmc_beam")
+        self.assertFalse(packed["jev_generated_lean"])
+        self.assertFalse(packed["called_docker0"])
+        state = lra_jev.fanout_problem_state({"name": "P", "source": "s", "statement": "theorem t : True"})
+        self.assertEqual(state["problem"]["name"], "P")
+        criteria = lra_jev.draft_criteria([tactics.Draft(draft_id="d00", family="dead_code", tactics="  simp\n", ops=("drop",))])
+        self.assertIn("d00", criteria)
+        qs = lra_jev.choice_questions(
+            Choice=lambda **kw: {"kind": "choice", **kw},
+            Noul=lambda **kw: {"kind": "noul", **kw},
+            Score=lambda **kw: {"kind": "score", **kw},
+            criteria=criteria,
+            best_instructions="pick",
+            nouls={"ok": "compiles?"},
+            scores={"cut": ("how much", ["same", "less"])},
+        )
+        self.assertEqual(qs["best_first_draft"]["kind"], "choice")
+        self.assertEqual(qs["ok"]["kind"], "noul")
+        evals = lra_search.compile_variant_evals(
+            [("identity", "  simp\n")],
+            lambda label, body: {"theorem_ok": True, "token_count": 1, "exit_code": 0, "errors": []},
+        )
+        self.assertEqual(evals[0]["hammer"], "identity")
+        sampled = lra_search.sample_next_lines(2, generate_fn=lambda: None, parse_fn=str, empty="STOP")
+        self.assertEqual(sampled, ["STOP", "STOP"])
+        self.assertEqual(lra_search.filter_blacklist([{"kind": "a", "tactics": "x"}], failed_kinds={"a"}), [])
+        self.assertEqual(lra_search.kind_prefix_indices([{"kind": "drop_duplicate_1"}], ("drop_duplicate",)), [0])
+        pinned = lra_search.unique_pin_cap(
+            [{"kind": "b"}, {"kind": "a"}, {"kind": "c"}, {"kind": "a"}],
+            "a",
+            key_fn=lambda item: item["kind"],
+            cap=2,
+        )
+        self.assertEqual([row["kind"] for row in pinned], ["a", "b"])
+        owner = lra_outer.pack_owner_exec(attempted=False, executed=False, argv=["grok"], argv_relative=["grok"])
+        self.assertFalse(owner.started_llama_server)
+        self.assertFalse(owner.executed)
+        failed = lean.failed_candidate(
+            kind="generated",
+            code="empty_generation",
+            reason="empty",
+            generator="leanstral",
+            hardware_class="spark_gb10",
+        )
+        self.assertFalse(failed.admission_accepted)
+        self.assertFalse(failed.to_dict()["valid"])
 
     def test_tick_and_cold_seed_halt(self) -> None:
         from jevops import nca
@@ -610,6 +1418,131 @@ class KernelBoundaryTests(unittest.TestCase):
 
             latest = write_json_pair(Path(tmp), {"ok": True}, prefix="x", latest="x-latest.json")
             self.assertTrue(latest.is_file())
+            with self.assertRaises(SystemExit):
+                write_json_pair(
+                    Path(tmp),
+                    {"k": "apikey_secret"},
+                    prefix="y",
+                    latest="y-latest.json",
+                    refuse="apikey_",
+                )
+            from jevops.outer import last_component, require_single_token
+
+            self.assertEqual(last_component("A.B.C"), "C")
+            self.assertEqual(require_single_token("simp_all"), "simp_all")
+            with self.assertRaises(ValueError):
+                require_single_token("simp all")
+            from jevops.mask import drop_indices
+            from jevops.outer import nonempty_strs, overlay_str
+
+            self.assertEqual(drop_indices("a\nb\nc\nd", (1, 3)), "a\nc")
+            self.assertEqual(nonempty_strs(["a", "", "b"]), ["a", "b"])
+            self.assertEqual(
+                overlay_str({"name": "", "src": "x"}, {"name": "P", "extra": "nope"}, {"src": "y"}),
+                {"name": "P", "src": "y"},
+            )
+            from jevops.outer import env_copy, path_to_dots, posix_slash, read_bytes_if, under_or_tmp
+
+            missing = Path(tmp) / "nope.bin"
+            self.assertEqual(read_bytes_if(missing), b"")
+            hit = Path(tmp) / "hit.bin"
+            hit.write_bytes(b"ab")
+            self.assertEqual(read_bytes_if(hit), b"ab")
+            copied = env_copy({"LEAN_NUM_THREADS": 1}, base={"PATH": "/bin"})
+            self.assertEqual(copied["LEAN_NUM_THREADS"], "1")
+            self.assertEqual(copied["PATH"], "/bin")
+            dest = under_or_tmp(Path(tmp), "process-supervisor", tmp_name="x")
+            self.assertTrue(dest.is_dir())
+            self.assertEqual(posix_slash(r"a\b.py"), "a/b.py")
+            self.assertEqual(path_to_dots("harness/foo.py"), "harness.foo")
+            from jevops.mask import merge_matches
+            from jevops.outer import overlay_attr, read_json, require_str
+
+            self.assertEqual(require_str("x"), "x")
+            with self.assertRaises(ValueError):
+                require_str("")
+            blob = Path(tmp) / "obj.json"
+            blob.write_text('{"a": 1}\n', encoding="utf-8")
+            self.assertEqual(read_json(blob)["a"], 1)
+            self.assertEqual(overlay_attr({"k": "old"}, {"k": {"what": "new"}}), {"k": "new"})
+            import re as _re
+
+            hits = merge_matches("aa bb", ("a", _re.compile("a+")), ("b", _re.compile("b+")))
+            self.assertEqual([kind for _s, kind, _m in hits], ["a", "b"])
+            from jevops.outer import (
+                bullet_lines,
+                exc_name,
+                exc_text,
+                failed_check,
+                first_token,
+                mapped_nonempty,
+                tagged_exc,
+            )
+
+            boom = ValueError("x")
+            self.assertEqual(exc_name(boom), "ValueError")
+            self.assertEqual(exc_text(boom), "ValueError: x")
+            self.assertEqual(tagged_exc("fetch_failed", OSError("nope")), "fetch_failed:OSError")
+            failed = failed_check(boom, score=None, corpus_manifest_ingest=False)
+            self.assertFalse(failed["ok"])
+            self.assertEqual(failed["error_type"], "ValueError")
+            self.assertIsNone(failed["arena_score"])
+            self.assertEqual(bullet_lines(["a", "b"], limit=1), "- a")
+            self.assertEqual(
+                bullet_lines(
+                    [{"id": "h1", "family": "have", "head": "have x"}],
+                    fmt=lambda item: f"{item.get('id')} family={item.get('family')}: {item.get('head')}",
+                    empty="(none)",
+                ),
+                "- h1 family=have: have x",
+            )
+            self.assertEqual(bullet_lines([], empty="(none)"), "(none)")
+            self.assertEqual(mapped_nonempty([" have x", ""], lambda s: s.strip()), {"have x"})
+            self.assertEqual(first_token("simp_all; foo", strip=";"), "simp_all")
+            from jevops.outer import closed_fail, remap_get, utc_stamp
+
+            miss = closed_fail("unknown warm-up problem: P", score=None)
+            self.assertEqual(miss["error"], "unknown warm-up problem: P")
+            self.assertNotIn("error_type", miss)
+            self.assertRegex(utc_stamp(fmt="%Y%m%dT%H%M%SZ"), r"^\d{8}T\d{6}Z$")
+            self.assertIn("T", utc_stamp())
+            self.assertEqual(
+                remap_get(
+                    {"missing_cases": ["a"], "open_case": "x"},
+                    {"missing": "missing_cases", "open": "open_case"},
+                    lists=("missing",),
+                ),
+                {"missing": ["a"], "open": "x"},
+            )
+            from jevops.outer import elapsed_ms, print_json
+            import io as _io
+
+            self.assertGreaterEqual(elapsed_ms(0.0, now=0.25), 250.0)
+            buf = _io.StringIO()
+            print_json({"p": Path(tmp)}, stream=buf, default=str)
+            self.assertIn(str(Path(tmp)), buf.getvalue())
+            from jevops.outer import copy_text, read_text, source_text
+
+            src = Path(tmp) / "a.txt"
+            src.write_text("hello\n", encoding="utf-8")
+            self.assertEqual(read_text(src), "hello\n")
+            self.assertEqual(source_text("injected", path=src), "injected")
+            self.assertEqual(source_text(path=src), "hello\n")
+            dest = Path(tmp) / "b.txt"
+            copy_text(src, dest)
+            self.assertEqual(read_text(dest), "hello\n")
+            self.assertEqual(read_text(src, max_chars=2), "he")
+            from jevops.outer import loads_json, read_json, read_json_if
+
+            obj = Path(tmp) / "obj.json"
+            obj.write_text('{"a": 1}\n', encoding="utf-8")
+            self.assertEqual(read_json(obj)["a"], 1)
+            self.assertEqual(read_json_if(Path(tmp) / "missing.json", default={"z": 2})["z"], 2)
+            arr = Path(tmp) / "arr.json"
+            arr.write_text("[1, 2]\n", encoding="utf-8")
+            self.assertEqual(read_json(arr, require_object=False), [1, 2])
+            self.assertEqual(loads_json(None, default={}), {})
+            self.assertEqual(loads_json('{"k": 3}')["k"], 3)
         from jevops.nca import invert_multimap, overlay_tree
 
         inv = invert_multimap({"a": "x", "b": "x"})
@@ -1128,13 +2061,25 @@ class KernelBoundaryTests(unittest.TestCase):
             issues = scan_constant_uses("x.find(':=' )\n", ":=", methods=("find",), call_fmt="{attr}(c) at {line}")
             self.assertTrue(isinstance(issues, list))
             from jevops.mask import keep_matching_lines
-            from jevops.outer import head_lines
+            from jevops.outer import exc_head, head_chars, head_lines, head_seq, head_tail, tail_chars, tail_seq
             from jevops.repair import uses_attr
             from jevops.search import after_item, filter_used_later
 
             self.assertEqual(after_item(["a", "b", "c"], "b"), ["c"])
             self.assertEqual(keep_matching_lines("a\n  b\nc", lambda l: l.startswith("  "), cap=2), "  b")
             self.assertEqual(head_lines("a\nb\nc", 2), "a\nb")
+            self.assertEqual(head_chars("abcdef", 3), "abc")
+            self.assertEqual(head_chars(None, 4), "")
+            self.assertEqual(head_chars("ab", 0), "")
+            self.assertEqual(tail_chars("abcdef", 3), "def")
+            self.assertEqual(tail_chars("ab", 0), "")
+            self.assertEqual(tail_chars(None, 2), "")
+            self.assertEqual(head_seq([1, 2, 3, 4], 2), [1, 2])
+            self.assertEqual(tail_seq([1, 2, 3, 4], 2), [3, 4])
+            self.assertEqual(tail_seq([1, 2, 3], 0), [])
+            self.assertEqual(exc_head(ValueError("x" * 10), 4), "xxxx")
+            self.assertEqual(head_tail("abcdefghij", 3, 3, limit=8), "abc\n...\nhij")
+            self.assertEqual(head_tail("abcd", 3, 3), "abcd")
             self.assertTrue(uses_attr("x.LOCK_EX", "LOCK_EX") or True)
             kept = filter_used_later(
                 ["have x", "exact x"],
@@ -1462,7 +2407,143 @@ class KernelBoundaryTests(unittest.TestCase):
             self.assertEqual(svd["n_rows"], 3)
             self.assertEqual(svd["feature_names"], ["a", "b"])
             self.assertTrue(isinstance(git_head(root), str))
+            from jevops.outer import git_checkout, git_clone, plant_executables, require_git_bin, url_cache_key, url_clone_dir
+
+            with self.assertRaises(FileNotFoundError):
+                require_git_bin(root / "missing-git")
+            bins = plant_executables(root / "gitbin", {"git": "#!/bin/sh\nexit 0\n"})
+            git = bins / "git"
+            self.assertEqual(require_git_bin(git), str(git))
+            missing = root / "no-repo"
+            skipped = git_checkout(missing, "abc", git_bin=git)
+            self.assertTrue(skipped["skipped"])
+            empty = git_checkout(missing, "", git_bin=git)
+            self.assertTrue(empty["skipped"])
+            repo = root / "repo"
+            (repo / ".git").mkdir(parents=True)
+            checked = git_checkout(repo, "abc", git_bin=git)
+            self.assertFalse(checked["skipped"])
+            cloned = git_clone("https://example.invalid/x.git", root / "cloned", git_bin=git)
+            self.assertEqual(cloned["dest"], str(root / "cloned"))
+            cloned_dir = url_clone_dir(root, "https://example.com/a.git")
+            self.assertEqual(cloned_dir, root / "clones" / "example.com" / "a.git")
+            self.assertEqual(url_cache_key("https://example.com/a.git"), "example.com/a.git")
+            from jevops.outer import dumps_sorted, pinned_env_argv, require_marked_dir
+
+            marked = root / "marked"
+            marked.mkdir()
+            (marked / ".git").write_text("gitdir: .")
+            self.assertEqual(require_marked_dir(marked, (".git",)), marked)
+            with self.assertRaises(ValueError):
+                require_marked_dir(root / "empty-clone", (".git",), error_cls=ValueError, miss="missing {path}")
+            self.assertEqual(require_marked_dir(root / "empty-clone", (".git",)), root / "empty-clone")
+            self.assertEqual(dumps_sorted({"b": 1, "a": 2}), '{"a": 2, "b": 1}')
+            self.assertTrue(dumps_sorted({"a": 1}, indent=2, newline=True).endswith("\n"))
+            argv = pinned_env_argv(
+                "/opt/lake",
+                "/opt/lean",
+                "Foo.lean",
+                driver_name="lake",
+                tool_name="lean",
+                flags=("-DmaxHeartbeats=1", "--json"),
+            )
+            self.assertEqual(argv, ["/opt/lake", "env", "/opt/lean", "-DmaxHeartbeats=1", "--json", "Foo.lean"])
+            with self.assertRaises(ValueError):
+                pinned_env_argv("/opt/lake", "/opt/lean", "Tmp.lean", driver_name="lake", tool_name="lean", refuse="Tmp.lean")
+            from jevops.outer import after_calls, copy_dir_required, run_pinned_bin
+
+            seen: list[str] = []
+            self.assertEqual(after_calls((lambda: seen.append("a"), lambda: seen.append("b")), lambda x: x + 1, 2), 3)
+            self.assertEqual(seen, ["a", "b"])
+            src_copy = root / "copy_src"
+            src_copy.mkdir()
+            (src_copy / "blob").write_text("hi")
+            dest_copy = root / "copy_dest" / "tree"
+            copy_dir_required(src_copy, dest_copy)
+            self.assertEqual((dest_copy / "blob").read_text(), "hi")
+            with self.assertRaises(FileNotFoundError):
+                copy_dir_required(root / "missing-dir", dest_copy)
+            bins = plant_executables(root / "pinbin", {"lake": "#!/bin/sh\necho pinned\n"})
+            ran = run_pinned_bin([str(bins / "lake"), "build"], basename="lake", cwd=root)
+            self.assertTrue(ran["ok"])
+            self.assertIn("pinned", ran["stdout"])
+            with self.assertRaises(RuntimeError):
+                run_pinned_bin(["/opt/lake"], basename="lake", installed=False, miss="missing toolchain")
+            from jevops.outer import prepend_argv, require_file
+
+            self.assertEqual(prepend_argv("/opt/lake", "build", "--json"), ["/opt/lake", "build", "--json"])
+            present = root / "present.txt"
+            present.write_text("ok")
+            self.assertEqual(require_file(present), present)
+            with self.assertRaises(FileNotFoundError):
+                require_file(root / "missing.txt")
+            from jevops.outer import import_names, write_tree
+
+            attrs, err = import_names("json", ("dumps", "loads"))
+            self.assertIsNone(err)
+            self.assertTrue(callable((attrs or {})["dumps"]))
+            missing, miss_err = import_names("no_such_jevops_module_xyz", ("x",))
+            self.assertIsNone(missing)
+            self.assertIsInstance(miss_err, ImportError)
+            tree_paths = write_tree(root / "written", {"a.txt": "hi", "b.json": {"z": 1}})
+            self.assertEqual(Path(tree_paths["a.txt"]).read_text(encoding="utf-8"), "hi")
+            self.assertIn('"z"', Path(tree_paths["b.json"]).read_text(encoding="utf-8"))
             from io import StringIO
+            from jevops.outer import as_str, digest_prefix, env_mapping, home_config_file, mkdtemp, module_stem, nonempty, optional_env_path, print_ok, require_len, require_startswith, require_unique_n, temp_dir
+
+            rows = [{"name": "a"}, {"name": "b"}]
+            self.assertEqual(require_unique_n(rows, 2), ["a", "b"])
+            with self.assertRaises(ValueError):
+                require_unique_n(rows, 3)
+            with self.assertRaises(ValueError):
+                require_unique_n([{"name": "a"}, {"name": "a"}], 2)
+            self.assertEqual(require_len([1, 2, 3], 3), [1, 2, 3])
+            with self.assertRaises(ValueError):
+                require_len([1], 2)
+            self.assertEqual(len(digest_prefix("hi")), 12)
+            self.assertEqual(digest_prefix("hi"), digest_prefix("hi"))
+            auth = home_config_file(
+                "auth.json",
+                env_key="GROK_HOME",
+                default_dir=".grok",
+                environ={"GROK_HOME": "/tmp/grok-home"},
+                home="/home/u",
+            )
+            self.assertEqual(auth, Path("/tmp/grok-home/auth.json"))
+            fallback = home_config_file(
+                "auth.json",
+                env_key="GROK_HOME",
+                default_dir=".grok",
+                environ={},
+                home="/home/u",
+            )
+            self.assertEqual(fallback, Path("/home/u/.grok/auth.json"))
+            self.assertEqual(
+                optional_env_path("LRA_DUCKDB_AST_INDEX", environ={"LRA_DUCKDB_AST_INDEX": "/tmp/idx.duckdb"}),
+                Path("/tmp/idx.duckdb"),
+            )
+            self.assertIsNone(optional_env_path("LRA_DUCKDB_AST_INDEX", environ={}))
+            self.assertEqual(as_str("ok"), "ok")
+            self.assertEqual(as_str(None), "")
+            self.assertEqual(as_str(1, default="x"), "x")
+            self.assertEqual(env_mapping({"A": "1"}).get("A"), "1")
+            with temp_dir(prefix="jevops-tmp-") as tmp:
+                self.assertTrue(Path(tmp).is_dir())
+            scratch = mkdtemp(prefix="jevops-mkd-")
+            self.assertTrue(scratch.is_dir())
+            scratch.rmdir()
+            self.assertTrue(nonempty(" x "))
+            self.assertFalse(nonempty("  "))
+            self.assertEqual(require_startswith("abcde", "abc"), "abcde")
+            with self.assertRaises(ValueError):
+                require_startswith("abc", "z")
+            self.assertEqual(module_stem("ptr://codepath/harness.foo:bar", strip_prefix="ptr://codepath/"), "harness.foo")
+            self.assertIsNone(module_stem("../etc/passwd"))
+            ok_buf = StringIO()
+            self.assertEqual(print_ok({"ok": True, "n": 1}, stream=ok_buf), 0)
+            self.assertIn('"ok": true', ok_buf.getvalue())
+            bad_buf = StringIO()
+            self.assertEqual(print_ok({"ok": False}, stream=bad_buf), 1)
             from jevops.nca import first_existing_file
             from jevops.outer import (
                 exec_capable_dir,
@@ -1705,6 +2786,7 @@ class KernelBoundaryTests(unittest.TestCase):
             from jevops.pick import attach_ranked
 
             self.assertEqual(first_token("have x := 1"), "have")
+            self.assertEqual(first_token("simp_all; x", strip=";"), "simp_all")
             self.assertEqual(
                 result_usage(type("R", (), {"usage": {"prompt_tokens": 3, "completion_tokens": 1}})()),
                 (3, 1),
@@ -1835,6 +2917,200 @@ class KernelBoundaryTests(unittest.TestCase):
             self.assertEqual(assigned_constants("DEFAULT_MODE = 'off'\n", ("DEFAULT_MODE",))["DEFAULT_MODE"], "off")
             audited2 = audit_source("import json\njson.dumps(1)\n", forbidden_imports=("fcntl",), forbidden_calls=("urlopen",))
             self.assertIn("dumps", audited2["call_names"])
+            from jevops.mask import line_at, lstrip_core, pick_scored
+            from jevops.outer import dir_marked, http_json
+            from jevops.repair import repair_on_needle
+
+            self.assertEqual(lstrip_core("· have x"), "have x")
+            self.assertEqual(line_at("aa\nbb\ncc", 4), "bb")
+            scored = pick_scored(
+                [{"start": 0, "end": 2, "original": "aa"}, {"start": 3, "end": 5, "original": "bb"}],
+                n=1,
+                score_fn=lambda row: 2 if row["original"] == "bb" else 1,
+                reindex=False,
+            )
+            self.assertEqual(scored[0]["original"], "bb")
+            (root / "cache").mkdir()
+            (root / "cache" / "BAKED").write_text("ok\n")
+            (root / "cache" / "x.olean").write_bytes(b"x")
+            self.assertTrue(dir_marked(root / "cache", marker="BAKED", suffix=".olean"))
+            self.assertEqual(
+                repair_on_needle("simp_all", [{"data": "simp_all made no progress"}], "simp_all made no progress", lambda t: t + "x"),
+                "simp_allx",
+            )
+            self.assertIsNone(repair_on_needle("simp_all", [{"data": "ok"}], "simp_all made no progress", lambda t: t))
+            with self.assertRaises(ValueError):
+                http_json("http://127.0.0.1:1", {}, timeout=0.05)
+            from jevops.jev import skipped
+            from jevops.mask import around_lines, map_span_bodies
+            from jevops.nca import focus_symbol
+            from jevops.outer import hit_or_miss
+            from jevops.pick import numbered_criteria
+
+            self.assertEqual(around_lines("a\nb\nc\nd", 1, radius=1), "a\nb\nc")
+            rewritten = map_span_bodies(
+                "H\nbody\nT",
+                [{"indent": 0, "header_end": 2, "end": 6}],
+                lambda body, _s: "X" if body.strip() == "body" else None,
+            )
+            self.assertEqual(rewritten[0][1], "H\nX\nT")
+            self.assertEqual(hit_or_miss(True, hit="hit", miss="miss"), "hit")
+            self.assertEqual(hit_or_miss(False, miss="miss"), "miss")
+            with self.assertRaises(RuntimeError):
+                hit_or_miss(False, deny=True, error_cls=RuntimeError, deny_msg="nope")
+            self.assertEqual(numbered_criteria(["a", "b"], prefix="c")["c1"], "b")
+            self.assertEqual(
+                numbered_criteria(["x"], prefix="p", fmt=lambda i, item: f"{i}:{item}")["p0"],
+                "0:x",
+            )
+            self.assertEqual(focus_symbol("mod:foo", ["foo", "bar"], {"foo": ["x"]}), "foo")
+            self.assertEqual(focus_symbol("mod:missing", ["foo"], {}), "foo")
+            self.assertEqual(skipped("no_key", order=[1])["reason"], "no_key")
+            from jevops.outer import append_line, ensure_digest, exec_many, table_count, unique_rows
+
+            self.assertEqual(append_line("a\n", "  b"), "a\n  b")
+            self.assertEqual(
+                unique_rows([{"t": "x"}, {"t": "x"}, {"t": "y"}], key_fn=lambda row: row["t"]),
+                [{"t": "x"}, {"t": "y"}],
+            )
+            self.assertEqual(ensure_digest("a" * 64), "a" * 64)
+            self.assertEqual(ensure_digest("nope", data=b"x", digest_fn=lambda d: "ok"), "ok")
+            with self.assertRaises(ValueError):
+                ensure_digest("nope")
+
+            class _Con:
+                def __init__(self) -> None:
+                    self.sql: list = []
+
+                def execute(self, sql: str, params: Any = None) -> Any:
+                    self.sql.append((sql, params))
+                    return type("R", (), {"fetchone": lambda inner: (2,)})()
+
+            con = _Con()
+            exec_many(con, ["CREATE TABLE t (x)", ("INSERT INTO t VALUES (?)", [1])])
+            self.assertEqual(con.sql[0][0], "CREATE TABLE t (x)")
+            self.assertEqual(table_count(con, "t"), 2)
+            self.assertEqual(table_count(con, "t; drop"), 0)
+            from jevops.mask import lines_containing, pop_trailing, prepend_absent
+            from jevops.pick import first_apply, tree_from_items
+
+            self.assertEqual(prepend_absent("b\n", "a"), "a\nb\n")
+            self.assertEqual(prepend_absent("a\nb\n", "a"), "a\nb\n")
+            self.assertEqual(lines_containing("have x\nexact x", "x", token=True), ["have x", "exact x"])
+            self.assertEqual(pop_trailing("a\nsimp_all", lambda line: line.strip() == "simp_all"), "a")
+            tree = tree_from_items(
+                [type("K", (), {"family": "drop", "kind": "a", "note": "n"})()],
+                family_fn=lambda item: item.family,
+                kind_fn=lambda item: item.kind,
+                note_fn=lambda item: item.note,
+                keep={"keep": {"keep": "none"}},
+            )
+            self.assertEqual(tree["drop"]["a"], "n")
+            self.assertEqual(tree["keep"]["keep"], "none")
+            self.assertEqual(
+                first_apply(
+                    [type("K", (), {"kind": "a"})()],
+                    "a",
+                    "body",
+                    kind_fn=lambda item: item.kind,
+                    apply_fn=lambda _item, body: body + "x",
+                ),
+                "bodyx",
+            )
+            from jevops.mask import any_line
+            from jevops.outer import matching_nodes, path_safe, query_first_engine
+
+            self.assertTrue(any_line("a\nNot.intro\nb", lambda line: "Not.intro" in line))
+            self.assertEqual(path_safe("A/B"), "A_B")
+            self.assertEqual(path_safe(""), "unnamed")
+            self.assertEqual(
+                [n["id"] for n in matching_nodes([{"id": "ptr://skill/foo"}, {"id": "ptr://task/T1"}], "skill")],
+                ["ptr://skill/foo"],
+            )
+            self.assertEqual(query_first_engine([root / "missing.duckdb"], {"symbols": "SELECT 1"}), ([], "no_index"))
+            from jevops.mask import drop_spans, splice_from, split_top_level
+            from jevops.outer import first_csv, first_or_head, split_csv
+
+            self.assertEqual(split_csv("a, b,,c"), ["a", "b", "c"])
+            self.assertEqual(split_csv("1,2", cast=int), [1, 2])
+            self.assertEqual(first_csv("foo, bar"), "foo")
+            self.assertEqual(first_csv(""), "")
+            self.assertEqual(
+                split_top_level("bar (a, b), baz"),
+                ["bar (a, b)", "baz"],
+            )
+            self.assertEqual(drop_spans("abcdef", [(1, 3), (4, 5)]), "adf")
+            self.assertEqual(
+                splice_from("H\nDST\nT", "H\nSRC\nT", {"start": 2, "end": 5}, {"start": 2, "end": 5}),
+                "H\nSRC\nT",
+            )
+            self.assertEqual(splice_from("keep", "x", None, {"start": 0, "end": 1}), "keep")
+            self.assertEqual(
+                first_or_head(["a", "have x", "c"], lambda line: "have " in line),
+                "have x",
+            )
+            self.assertEqual(first_or_head(["a", "b"], lambda line: "have " in line), "a")
+            self.assertEqual(first_or_head([], default=""), "")
+            from jevops.mask import map_lines, peek_next_stripped, subn_changed
+            from jevops.outer import group_append, group_get, unique_append
+            from jevops.search import beam_until, expand_beam
+
+            self.assertEqual(subn_changed("aa ba", r"a", "x"), "xx bx")
+            self.assertEqual(subn_changed("keep", r"z", "x"), "keep")
+            self.assertEqual(peek_next_stripped(["a", "", "  b"], 0), "b")
+            rewritten = map_lines(
+                "keep\nchange me",
+                lambda _i, line, _lines: "x" if "change" in line else None,
+            )
+            self.assertEqual(rewritten, "keep\nx")
+            bags: dict = {}
+            group_append(bags, "k", "n1", factory=lambda: {"names": [], "files": []})
+            unique_append(bags["k"]["files"], "f")
+            unique_append(bags["k"]["files"], "f")
+            self.assertEqual(bags["k"]["names"], ["n1"])
+            self.assertEqual(bags["k"]["files"], ["f"])
+            got = group_get(bags, "missing", factory=lambda: {"names": []})
+            self.assertEqual(got["names"], [])
+            expanded = expand_beam(
+                [{"id": 0, "stopped": False}, {"id": 1, "stopped": True}],
+                stopped_fn=lambda item: item["stopped"],
+                expand_fn=lambda item: [{"id": item["id"] + 10, "stopped": True}],
+                cap=3,
+            )
+            self.assertEqual([row["id"] for row in expanded], [10, 1])
+            finished = beam_until(
+                [{"n": 0, "stopped": False}],
+                max_steps=4,
+                stopped_fn=lambda item: item["stopped"],
+                round_fn=lambda rows, _step: [{"n": rows[0]["n"] + 1, "stopped": rows[0]["n"] + 1 >= 2}],
+            )
+            self.assertEqual(finished[0]["n"], 2)
+            from jevops.outer import lookup_named, unique_extend, without_keys
+            from jevops.search import pick_min_tiers, pin_front
+
+            self.assertEqual(pin_front([3, 1, 2, 0], [2, 4], n=2), [2, 4, 3, 1, 0])
+            rows = [
+                {"kind": "a", "ok": False, "n": 9},
+                {"kind": "reference", "ok": True, "n": 5},
+                {"kind": "b", "ok": True, "n": 3},
+            ]
+            self.assertEqual(
+                pick_min_tiers(rows, (lambda row: row["ok"],), key_fn=lambda row: row["n"])["kind"],
+                "b",
+            )
+            self.assertEqual(without_keys({"zscore": 1, "keep": 2}, ("zscore",)), {"keep": 2})
+            dest = [{"kind": "a"}]
+            unique_extend(dest, [{"kind": "a"}, {"kind": "b"}], key_fn=lambda item: item["kind"])
+            self.assertEqual([row["kind"] for row in dest], ["a", "b"])
+            with self.assertRaises(RuntimeError):
+                lookup_named([], "missing", error_cls=RuntimeError, miss="nope")
+            from jevops import autoencoder as ae
+            from jevops.rankers import is_ranker_stem
+
+            self.assertTrue(is_ranker_stem("port_gan"))
+            self.assertTrue(is_ranker_stem("port_lean_ir"))
+            self.assertFalse(ae.encode_lean_ir("simp")["legal_ir"])
+            self.assertIn("True := by", ae.decode_lean_ir(ae.encode_lean_ir("simp")))
 
 
 if __name__ == "__main__":

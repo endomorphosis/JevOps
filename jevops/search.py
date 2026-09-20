@@ -8,7 +8,7 @@ from __future__ import annotations
 import math
 import random
 from pathlib import Path
-from typing import Any, Mapping, Optional, Sequence
+from typing import Any, Callable, Mapping, Optional, Sequence
 
 
 def strip_tactics(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
@@ -63,6 +63,25 @@ def pick_min(
         hit = fallback_fn(rows)
         if hit is not None:
             return hit
+    return rows[0] if rows else None
+
+
+def pick_min_tiers(
+    items: Sequence[Any],
+    tiers: Sequence[Any],
+    *,
+    key_fn: Any,
+    fallback_fn: Optional[Any] = None,
+) -> Optional[Any]:
+    """First non-empty pred in tiers, then min by key_fn. Else fallback_fn(items)."""
+
+    rows = list(items or ())
+    for pred in tiers or ():
+        kept = [item for item in rows if pred(item)]
+        if kept:
+            return sorted(kept, key=key_fn)[0]
+    if fallback_fn is not None:
+        return fallback_fn(rows)
     return rows[0] if rows else None
 
 
@@ -125,6 +144,26 @@ def extend_prefix(
     return prefix.rstrip() + "\n" + (" " * indent) + stripped
 
 
+def merge_next_line_proposals(
+    generated: Sequence[str],
+    priority: Sequence[str],
+    *,
+    stop: str = "STOP",
+    cap: int = 12,
+    filter_fn: Optional[Callable[[Sequence[str]], Sequence[str]]] = None,
+) -> list[str]:
+    """Pad generated next-lines with priority extras and STOP. Filter is injected."""
+
+    proposals = list(generated)
+    for extra in list(priority)[: max(0, int(cap) - len(proposals) - 1)]:
+        proposals.append(extra)
+    if filter_fn is not None:
+        proposals = list(filter_fn(proposals) or list(priority)[: int(cap)])
+    if stop not in proposals:
+        proposals.append(stop)
+    return proposals
+
+
 def minibatch_ids(
     remaining: Sequence[str],
     *,
@@ -174,6 +213,134 @@ def metropolis_token_accept(
 
 
 COMPILE_KEYS = ("ok", "theorem_ok", "module_exit_0", "exit_code", "token_count", "errors", "wall_ms")
+
+
+def should_call_generator(
+    answers: Optional[Mapping[str, Any]],
+    rec: Mapping[str, Any],
+    *,
+    long_proof: int = 400,
+    longer_proof: int = 800,
+    family_conf: float = 0.5,
+    tight: float = 0.8,
+    shorter: float = 1.0,
+    hammer: float = 0.7,
+    spend_low: float = 0.4,
+    spend: float = 0.45,
+    calc_keep: float = 0.6,
+    aesop: float = 0.6,
+    physlib: str = "physlib",
+    putnam: str = "putnambench",
+    custom: str = "custom",
+) -> bool:
+    """Whether a generator should run. Loop v1 still keys off docker0 /health."""
+
+    proof = int(rec.get("proof_length") or 0)
+    if answers is None:
+        return proof >= int(long_proof)
+    if float(answers.get("family_confidence") or 0) < family_conf:
+        return proof >= int(longer_proof)
+    if float(answers.get("reference_already_tight") or 0) >= tight and float(answers.get("likely_shorter") or 0) < shorter:
+        return False
+    if float(answers.get("hammer_before_llm") or 0) >= hammer and float(answers.get("spend_llm") or 0) < spend_low:
+        return False
+    source = str(rec.get("source") or "")
+    if source == physlib and float(answers.get("calc_structure_worth_keeping") or 0) >= calc_keep:
+        return True
+    if source == putnam and float(answers.get("putnam_aesop_plausible") or 0) >= aesop:
+        return float(answers.get("spend_llm") or 0) >= spend
+    return float(answers.get("spend_llm") or 0) >= spend or answers.get("family") == custom
+
+
+def coordinate_rounds(
+    holes: Sequence[Any],
+    *,
+    rounds: int,
+    choose_fn: Callable[..., Sequence[str]],
+    trial_fn: Callable[[Sequence[str]], str],
+    eval_fn: Callable[[str], Sequence[Mapping[str, Any]]],
+    accept_fn: Callable[[Sequence[Mapping[str, Any]], int, str], tuple[Optional[Mapping[str, Any]], int, str]],
+    keep_tokens: int,
+    keep_body: str,
+    hole_id_fn: Callable[[Any], str] = lambda hole: str(getattr(hole, "hole_id", hole)),
+    history: Optional[list[dict[str, Any]]] = None,
+) -> dict[str, Any]:
+    """Jev-guided coordinate descent. choose/trial/eval/accept are injected."""
+
+    dropped: set[str] = set()
+    if history is None:
+        history = []
+    rounds_out: list[dict[str, Any]] = []
+    keep = keep_body
+    tokens = int(keep_tokens)
+    for round_i in range(1, max(1, int(rounds)) + 1):
+        remaining = [hole for hole in holes if hole_id_fn(hole) not in dropped]
+        if not remaining:
+            break
+        minibatch = list(choose_fn(remaining, dropped, round_i) or [])
+        if not minibatch:
+            break
+        trial = trial_fn(list(dropped) + minibatch)
+        evals = list(eval_fn(trial) or [])
+        accepted, tokens, body = accept_fn(evals, tokens, trial)
+        if accepted:
+            keep = body
+            dropped.update(minibatch)
+        history.append(
+            {
+                "round": round_i,
+                "minibatch": minibatch,
+                "accepted": bool(accepted),
+                "keep_tokens": tokens,
+            }
+        )
+        rounds_out.append(
+            {
+                "round": round_i,
+                "minibatch": minibatch,
+                "evals": evals,
+                "accepted": accepted,
+                "keep_tokens": tokens,
+            }
+        )
+    return {
+        "keep": keep,
+        "keep_tokens": tokens,
+        "dropped": sorted(dropped),
+        "history": history,
+        "rounds": rounds_out,
+        "arena_score": None,
+    }
+
+
+def compile_variant_rows(
+    pairs: Sequence[tuple[str, str]],
+    compile_fn: Callable[[str], Mapping[str, Any]],
+    *,
+    head_n: int = 240,
+    skip_seen: bool = True,
+) -> list[dict[str, Any]]:
+    """Compile labeled tactic variants. compile_fn is injected. Lake is the oracle."""
+
+    from jevops.outer import head_chars
+
+    rows: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for label, body in pairs:
+        key = str(body or "").strip("\n")
+        if skip_seen and key in seen and label != "reference":
+            continue
+        seen.add(key)
+        compiled = dict(compile_fn(body) or {})
+        rows.append(
+            {
+                "kind": label,
+                "n_chars": len(body),
+                "tactics_head": head_chars(body, head_n),
+                **{k: compiled.get(k) for k in COMPILE_KEYS},
+            }
+        )
+    return rows
 
 
 def first_line(
@@ -309,11 +476,13 @@ def compile_head_row(
     extra: Optional[Mapping[str, Any]] = None,
     keys: Sequence[str] = COMPILE_KEYS,
 ) -> dict[str, Any]:
+    from jevops.outer import head_chars
+
     row = {
         "kind": kind,
         "generator": "deterministic",
         "n_chars": len(body),
-        "tactics_head": body[:240],
+        "tactics_head": head_chars(body, 240),
         **{k: compiled.get(k) for k in keys},
     }
     if extra:
@@ -428,6 +597,13 @@ def pin_then_rank(
         ranked.remove(pick)
         ranked.insert(0, pick)
     return ranked
+
+
+def pin_front(order: Sequence[Any], prefer: Sequence[Any], *, n: Optional[int] = None) -> list[Any]:
+    """Prefer[:n] first, then the rest of order. Membership is ``not in head``."""
+
+    head = list(prefer) if n is None else list(prefer)[: max(0, int(n))]
+    return head + [item for item in order if item not in head]
 
 
 def unique_lines(
@@ -823,13 +999,13 @@ def search_rg(
 ) -> tuple[list[dict[str, Any]], str]:
     import shutil
 
-    from jevops.outer import run_process
+    from jevops.outer import head_chars, run_process
 
     binary = rg or shutil.which("rg")
     if not binary:
         return [], "rg_missing"
     match = ident_re.search(query) if ident_re is not None else None
-    needle = match.group(0) if match else str(query)[:40]
+    needle = match.group(0) if match else head_chars(query, 40)
     if not needle:
         return [], "empty_query"
     argv = [str(binary), "-n"]
@@ -850,7 +1026,438 @@ def search_rg(
         ident = ident_re.search(snippet) if ident_re is not None else None
         symbol = ident.group(0) if ident else needle
         if hit_fn is not None:
-            hits.append(hit_fn(symbol, path=path, snippet=snippet[:160]))
+            hits.append(hit_fn(symbol, path=path, snippet=head_chars(snippet, 160)))
         else:
-            hits.append({"symbol": symbol, "path": path, "line": snippet[:160]})
+            hits.append({"symbol": symbol, "path": path, "line": head_chars(snippet, 160)})
     return hits, "rg"
+
+
+def expand_beam(
+    items: Sequence[Any],
+    *,
+    stopped_fn: Any,
+    expand_fn: Any,
+    cap: int,
+) -> list[Any]:
+    """Keep stopped items; else extend with expand_fn(item). Cap the next beam."""
+
+    nxt: list[Any] = []
+    for item in items or ():
+        if stopped_fn(item):
+            nxt.append(item)
+            continue
+        kids = expand_fn(item)
+        if kids is None:
+            nxt.append(item)
+            continue
+        nxt.extend(list(kids))
+    return nxt[: max(0, int(cap))]
+
+
+def beam_until(
+    items: Sequence[Any],
+    *,
+    max_steps: int,
+    stopped_fn: Any,
+    round_fn: Any,
+) -> list[Any]:
+    """Repeat round_fn(current, step) until every item is stopped or max_steps."""
+
+    current = list(items or ())
+    for step in range(max(0, int(max_steps))):
+        if all(stopped_fn(item) for item in current):
+            break
+        current = list(round_fn(current, step) or current)
+    return current
+
+
+def run_prefix_beam(
+    prefix0: str,
+    *,
+    max_steps: int,
+    beam_n: int,
+    stop_token: str = "STOP",
+    pack_fn: Callable[[str], Mapping[str, Any]],
+    stop_allowed_fn: Callable[[str], bool],
+    propose_fn: Callable[..., Sequence[str]],
+    prune_fn: Callable[..., Mapping[str, Any]],
+    extend_fn: Callable[..., str],
+    filter_fn: Callable[..., Sequence[str]],
+    n_samples: int = 1,
+    item_cls: Any = None,
+) -> dict[str, Any]:
+    """PCA-prefix beam. generate/prune/filter are injected. Never docker0 here."""
+
+    from jevops.outer import unique_rows
+    from jevops.tactics import BeamItem
+
+    cls = item_cls or BeamItem
+    items = [cls(prefix=prefix0)]
+    trace: list[dict[str, Any]] = []
+    local_calls = 0
+    cap = max(1, int(beam_n))
+
+    def _stopped(item: Any) -> bool:
+        return bool(getattr(item, "stopped", False))
+
+    def _expand(item: Any, step: int) -> list[Any]:
+        nonlocal local_calls
+        pack = dict(pack_fn(item.prefix) or {})
+        if stop_allowed_fn(item.prefix):
+            trace.append(
+                {
+                    "step": step,
+                    "stop_exhausted": True,
+                    "earliest_unfinished": pack.get("earliest_unfinished"),
+                }
+            )
+            return [cls(prefix=item.prefix, steps=list(item.steps), stopped=True, score=item.score)]
+        proposals = list(propose_fn(item, pack) or [])
+        local_calls += max(1, int(n_samples))
+        pruned = dict(prune_fn(item, proposals, pack) or {})
+        kept_lines = list(pruned.get("kept") or [stop_token])
+        filtered = list(filter_fn([line for line in kept_lines if line != stop_token], pack) or [])
+        kept_lines = filtered or list(filter_fn(proposals, pack) or [])[:cap] or [stop_token]
+        pruned["kept"] = kept_lines
+        pruned["stop_blocked"] = True
+        trace.append(
+            {
+                "step": step,
+                "prefix_lines": str(item.prefix).count("\n") + 1,
+                "missing_cases": pack.get("missing_cases"),
+                "empty_arms": pack.get("empty_arms"),
+                "earliest_unfinished": pack.get("earliest_unfinished"),
+                "next_original": pack.get("next_original"),
+                "open_case": pack.get("open_case"),
+                "proposals": proposals[:12],
+                "typesafe": {k: pruned.get(k) for k in ("skipped", "reason", "best", "kept", "confidence")},
+            }
+        )
+        return [
+            cls(
+                prefix=extend_fn(item.prefix, nxt, pack),
+                steps=list(item.steps) + [nxt],
+                stopped=nxt == stop_token,
+                score=item.score,
+            )
+            for nxt in kept_lines
+        ]
+
+    def _round(current: list[Any], step: int) -> list[Any]:
+        return expand_beam(current, stopped_fn=_stopped, expand_fn=lambda item: _expand(item, step), cap=cap)
+
+    items = beam_until(items, max_steps=max_steps, stopped_fn=_stopped, round_fn=_round)
+    finals = unique_rows(
+        [{"tactics": item.prefix.strip("\n"), "steps": item.steps, "stopped": item.stopped} for item in items],
+        key_fn=lambda row: row["tactics"],
+    )
+    return {
+        "items": items,
+        "finals": finals,
+        "trace": trace,
+        "local_calls": local_calls,
+        "pca_prefix": prefix0,
+        "beam": cap,
+        "max_steps": int(max_steps),
+        "arena_score": None,
+    }
+
+
+def keepbest_candidates(
+    *,
+    reference: str,
+    hosted: Optional[str] = None,
+    flattened: Optional[str] = None,
+    collapse: Optional[str] = None,
+    span_drafts: Sequence[Any] = (),
+    hosted_kind: str = "hosted_mistral",
+    hosted_generator: str = "labs-leanstral-1-5",
+    collapse_kind: str = "fanout_collapse_simp_at",
+) -> list[dict[str, Any]]:
+    """Assemble keep-best candidates. Does not compile. Jev does not write Lean."""
+
+    from jevops.outer import field_of
+
+    candidates: list[dict[str, Any]] = [
+        {"kind": "reference", "generator": "deterministic", "tactics": reference},
+    ]
+    if hosted is not None:
+        candidates.append({"kind": hosted_kind, "generator": hosted_generator, "tactics": hosted})
+        if flattened is not None and flattened != hosted:
+            candidates.append(
+                {"kind": "hosted_indent_normalized", "generator": "deterministic", "tactics": flattened}
+            )
+    if collapse is not None and collapse != reference:
+        candidates.append({"kind": collapse_kind, "generator": "deterministic", "tactics": collapse})
+    for draft in span_drafts or ():
+        tactics = str(field_of(draft, "tactics", default="") or "")
+        if tactics == reference:
+            continue
+        ops = list(field_of(draft, "ops", default=()) or ())
+        draft_id = field_of(draft, "draft_id", "id", default="")
+        family = field_of(draft, "family", default="")
+        candidates.append(
+            {
+                "kind": f"span_{draft_id}_{ops[-1] if ops else family}",
+                "generator": "deterministic",
+                "tactics": tactics,
+                "ops": ops,
+            }
+        )
+    return candidates
+
+
+def compile_labeled(
+    candidates: Sequence[Mapping[str, Any]],
+    compile_fn: Callable[[str], Mapping[str, Any]],
+    row_fn: Callable[[Mapping[str, Any], Mapping[str, Any]], Mapping[str, Any]],
+) -> tuple[list[dict[str, Any]], dict[str, str]]:
+    """Compile labeled tactic candidates. compile_fn is injected. Lake is the oracle."""
+
+    rows: list[dict[str, Any]] = []
+    tactics_by_kind = {str(item["kind"]): str(item.get("tactics") or "") for item in candidates}
+    for item in candidates:
+        rows.append(dict(row_fn(item, compile_fn(str(item.get("tactics") or "")))))
+    return rows, tactics_by_kind
+
+
+def beats_reference(
+    rows: Sequence[Mapping[str, Any]],
+    ref_tokens: int,
+    *,
+    skip_kind: str = "reference",
+    ok_key: str = "module_exit_0",
+    token_key: str = "token_count",
+) -> bool:
+    """True when a non-reference row is lake-ok and strictly shorter."""
+
+    limit = int(ref_tokens)
+    return any(
+        row.get(ok_key) and int(row.get(token_key) or limit) < limit
+        for row in rows or ()
+        if str(row.get("kind") or "") != skip_kind
+    )
+
+
+def keepbest_kept(kept: Optional[Mapping[str, Any]]) -> Optional[dict[str, Any]]:
+    if kept is None:
+        return None
+    return {
+        "kind": kept.get("kind"),
+        "ok": kept.get("ok"),
+        "theorem_ok": kept.get("theorem_ok"),
+        "module_exit_0": kept.get("module_exit_0"),
+        "token_count": kept.get("token_count"),
+    }
+
+
+def filter_blacklist(
+    proposals: Sequence[Mapping[str, Any]],
+    *,
+    failed_bodies: Optional[set[str]] = None,
+    failed_kinds: Optional[set[str]] = None,
+) -> list[dict[str, Any]]:
+    bodies = failed_bodies or set()
+    kinds = failed_kinds or set()
+    return [
+        dict(item)
+        for item in proposals or ()
+        if str(item.get("tactics") or "") not in bodies and str(item.get("kind") or "") not in kinds
+    ]
+
+
+def kind_prefix_indices(proposals: Sequence[Mapping[str, Any]], prefixes: Sequence[str]) -> list[int]:
+    heads = tuple(str(p) for p in prefixes or ())
+    return [
+        index
+        for index, item in enumerate(proposals or ())
+        if str(item.get("kind") or "").startswith(heads)
+    ]
+
+
+def mcmc_chains(start: str, start_tok: int, start_ok: bool, beam: int, cls: Any) -> list[Any]:
+    return [cls(tactics=start, tokens=int(start_tok), theorem_ok=bool(start_ok)) for _ in range(max(1, int(beam)))]
+
+
+def init_mcmc_best(
+    *,
+    start: str,
+    start_ok: bool,
+    start_tok: int,
+    reference: str,
+    ref_tok: int,
+    kind: str,
+) -> dict[str, Any]:
+    if start_ok:
+        return {"kind": kind, "tactics": start, "token_count": int(start_tok), "theorem_ok": True}
+    return {"kind": "reference", "tactics": reference, "token_count": int(ref_tok), "theorem_ok": True}
+
+
+def mcmc_try_proposals(
+    *,
+    proposals: Sequence[Mapping[str, Any]],
+    order: Sequence[Any],
+    chain: Any,
+    compile_fn: Callable[[str], Mapping[str, Any]],
+    token_fn: Callable[[str], int],
+    accept_fn: Callable[..., bool],
+    best: dict[str, Any],
+    failed_bodies: set[str],
+    failed_kinds: set[str],
+    sticky_fail: set[str],
+    round_i: int,
+    chain_i: int,
+    history: list[dict[str, Any]],
+    ranked_meta: Mapping[str, Any],
+    temperature: float,
+    rng: Any,
+    n_try: int = 3,
+) -> Optional[dict[str, Any]]:
+    """Compile up to n_try ranked proposals; MH-accept into chain. Lake is the oracle."""
+
+    from jevops.outer import head_seq
+
+    tried: Optional[dict[str, Any]] = None
+    for idx in head_seq(order, n_try):
+        if int(idx) >= len(proposals):
+            continue
+        cand = proposals[int(idx)]
+        compiled = dict(compile_fn(str(cand.get("tactics") or "")) or {})
+        ok = bool(compiled.get("theorem_ok"))
+        tok = int(compiled.get("token_count") or token_fn(str(cand.get("tactics") or "")))
+        accept = False
+        reason = "reject_invalid"
+        if ok:
+            accept = bool(
+                accept_fn(old_tok=chain.tokens, new_tok=tok, temperature=temperature, rng=rng)
+            )
+            reason = "accept" if accept else "reject_mh"
+            if tok < int(best.get("token_count") or tok + 1):
+                best["kind"] = f"mcmc_r{round_i}_c{chain_i}_{cand.get('kind')}"
+                best["tactics"] = cand.get("tactics")
+                best["token_count"] = tok
+                best["theorem_ok"] = True
+        tried = {
+            "round": round_i,
+            "chain": chain_i,
+            "kind": cand.get("kind"),
+            "note": cand.get("note"),
+            "ok": ok,
+            "tokens": tok,
+            "accept": accept,
+            "reason": reason,
+            "typesafe": {k: ranked_meta.get(k) for k in ("pick", "likely_compiles", "likely_shorter", "skipped")},
+            "errors": head_seq(compiled.get("errors"), 1),
+        }
+        history.append(tried)
+        if not ok:
+            failed_bodies.add(str(cand.get("tactics") or ""))
+            if str(cand.get("kind") or "") in sticky_fail:
+                failed_kinds.add(str(cand.get("kind") or ""))
+        if accept and ok:
+            chain.tactics = str(cand.get("tactics") or "")
+            chain.tokens = tok
+            chain.theorem_ok = True
+            chain.trace.append(tried)
+            break
+    return tried
+
+
+def mcmc_result(
+    *,
+    rounds: int,
+    beam: int,
+    temperature: float,
+    seed: int,
+    lake_calls: int,
+    leanstral_calls: int,
+    best: Mapping[str, Any],
+    history: Sequence[Mapping[str, Any]],
+    extra: Optional[Mapping[str, Any]] = None,
+    head_n: int = 400,
+) -> dict[str, Any]:
+    from jevops.outer import head_chars
+
+    out: dict[str, Any] = {
+        "mode": "mcmc_beam",
+        "rounds": int(rounds),
+        "beam": max(1, int(beam)),
+        "mh_temperature": float(temperature),
+        "seed": int(seed),
+        "lake_calls": int(lake_calls),
+        "leanstral_calls": int(leanstral_calls),
+        "best": {k: best.get(k) for k in ("kind", "token_count", "theorem_ok")},
+        "best_tactics": str(best.get("tactics") or ""),
+        "best_tactics_head": head_chars(best.get("tactics") or "", head_n),
+        "history": list(history or ()),
+        "called_docker0": False,
+        "called_hosted_mistral": False,
+        "official_track2": False,
+        "arena_score": None,
+        "jev_generated_lean": False,
+    }
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def compile_variant_evals(
+    pairs: Sequence[tuple[str, str]],
+    compile_fn: Callable[[str, str], Mapping[str, Any]],
+    *,
+    label_key: str = "hammer",
+) -> list[dict[str, Any]]:
+    """Compile labeled tactic variants into eval rows. compile_fn is injected."""
+
+    rows: list[dict[str, Any]] = []
+    for label, body in pairs:
+        compiled = dict(compile_fn(str(label), str(body)) or {})
+        rows.append(
+            {
+                label_key: label,
+                "tactics": body,
+                "token_count": compiled.get("token_count"),
+                "theorem_ok": compiled.get("theorem_ok"),
+                "exit_code": compiled.get("exit_code"),
+                "errors": compiled.get("errors"),
+                "n_chars": len(body),
+            }
+        )
+    return rows
+
+
+def sample_next_lines(
+    n_samples: int,
+    *,
+    generate_fn: Callable[[], Any],
+    parse_fn: Callable[[Any], str],
+    empty: str,
+) -> list[str]:
+    """Sample next-line proposals. generate_fn returning None yields ``empty``."""
+
+    proposals: list[str] = []
+    for _ in range(max(0, int(n_samples))):
+        raw = generate_fn()
+        if raw is None:
+            proposals.append(empty)
+        else:
+            proposals.append(parse_fn(raw))
+    return proposals
+
+
+def unique_pin_cap(
+    items: Sequence[Any],
+    pick: Any,
+    *,
+    key_fn: Callable[[Any], Any],
+    cap: int,
+) -> list[Any]:
+    """Pin matching pick first, then unique-by-key, then cap. No Lean."""
+
+    from jevops.outer import unique_rows
+
+    rows = list(items or ())
+    if pick not in (None, ""):
+        prefer = [item for item in rows if key_fn(item) == pick]
+        rows = pin_front(rows, prefer, n=1)
+    return unique_rows(rows, key_fn=key_fn)[: max(0, int(cap))]

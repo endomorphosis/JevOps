@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import time
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from typing import Any, Callable, Mapping, Optional, Sequence
 
 
@@ -142,6 +142,84 @@ def skipped(reason: str, **extra: Any) -> dict[str, Any]:
     out = {"skipped": True, "reason": str(reason)}
     out.update(extra)
     return out
+
+
+@dataclass(frozen=True)
+class RouteResult:
+    skipped: bool
+    reason: str
+    mode: str
+    official_track2: bool
+    family: Optional[str] = None
+    family_confidence: Optional[float] = None
+    family_probs: Optional[dict[str, float]] = None
+    hammer_before_llm: Optional[float] = None
+    reference_already_tight: Optional[float] = None
+    likely_shorter: Optional[float] = None
+    likely_shorter_legend: Optional[dict[int, str]] = None
+    likely_shorter_is_rubric_index: bool = True
+    elab_risk: Optional[float] = None
+    elab_risk_legend: Optional[dict[int, str]] = None
+    version_fragile: Optional[float] = None
+    putnam_aesop_plausible: Optional[float] = None
+    calc_structure_worth_keeping: Optional[float] = None
+    statement_in_proof_duplicated: Optional[float] = None
+    uses_sorry_or_admit: Optional[float] = None
+    neighbor_style_match: Optional[str] = None
+    spend_llm: Optional[float] = None
+    usage: Optional[dict[str, Any]] = None
+    wall_ms: Optional[float] = None
+    called_typesafe: bool = False
+    used_fixture: bool = False
+    model: str = ""
+    jev_generated_lean: bool = False
+    lean_text: None = None
+    tactics: None = None
+    proof_text: None = None
+    arena_score: None = None
+    api_key_redacted: bool = True
+    score_is_rubric_index: bool = True
+    additive_not_replacement: bool = True
+
+    def as_dict(self) -> dict[str, Any]:
+        return stringify_legend_keys(asdict(self))
+
+
+def draft_rank_state(
+    record: Mapping[str, Any],
+    drafts: Sequence[Mapping[str, Any]],
+    *,
+    n: int = 20,
+    statement_n: int = 700,
+    head_n: int = 220,
+    goal: str = "Prefer the shortest lake-valid draft. Do not write Lean.",
+) -> dict[str, Any]:
+    from jevops.outer import head_chars, head_seq
+
+    rows = list(head_seq(drafts, n))
+    criteria = {
+        str(item.get("kind") or item.get("id") or index): (
+            f"{item.get('generator')}; ops={item.get('ops')}; {len(str(item.get('tactics') or ''))} chars"
+        )
+        for index, item in enumerate(rows)
+    }
+    return {
+        "criteria": criteria,
+        "state": {
+            "problem": {"name": record.get("name"), "source": record.get("source")},
+            "statement": head_chars(record.get("statement") or "", statement_n),
+            "goal": goal,
+            "drafts": [
+                {
+                    "id": item.get("kind") or item.get("id"),
+                    "ops": item.get("ops"),
+                    "n_chars": len(str(item.get("tactics") or "")),
+                    "head": head_chars(item.get("tactics") or "", head_n),
+                }
+                for item in rows
+            ],
+        },
+    }
 
 
 def skip_reason(
@@ -633,3 +711,153 @@ class FixtureClient:
             scores=scores,
             usage={"input_tokens": 0, "output_tokens": 0, "fixture": True, "model": self.model},
         )
+
+
+def require_choice_cap(
+    n: int,
+    cap: int,
+    *,
+    error_cls: Any = RuntimeError,
+    fmt: str = "draft catalog {n} exceeds Choice option cap {cap}",
+) -> None:
+    if int(n) > int(cap):
+        raise error_cls(fmt.format(n=int(n), cap=int(cap)))
+
+
+def draft_criteria(
+    drafts: Sequence[Any],
+    *,
+    id_attr: str = "draft_id",
+) -> dict[str, str]:
+    """id → family/ops/chars blurb. Does not write Lean."""
+
+    from jevops.outer import field_of
+
+    out: dict[str, str] = {}
+    for item in drafts or ():
+        hid = str(field_of(item, id_attr, "id", default="") or "")
+        family = str(field_of(item, "family", default="") or "")
+        ops = list(field_of(item, "ops", default=()) or ())
+        n_chars = field_of(item, "n_chars", default=None)
+        if n_chars in (None, ""):
+            n_chars = len(str(field_of(item, "tactics", default="") or ""))
+        out[hid] = f"{family}; ops={','.join(str(op) for op in ops)}; {n_chars} chars"
+    return out
+
+
+def fanout_problem_state(
+    record: Mapping[str, Any],
+    *,
+    statement_n: int = 480,
+    extra: Optional[Mapping[str, Any]] = None,
+    problem: Optional[Mapping[str, Any]] = None,
+    problem_keys: Sequence[str] = ("name", "source"),
+) -> dict[str, Any]:
+    """Compact fan-out state. Proof text is truncated, not generated."""
+
+    from jevops.outer import head_chars
+
+    row = dict(problem) if problem is not None else {key: record.get(key) for key in problem_keys}
+    state: dict[str, Any] = {
+        "problem": row,
+        "statement": head_chars(record.get("statement") or "", statement_n),
+    }
+    if extra:
+        state.update(dict(extra))
+    return state
+
+
+def choice_questions(
+    *,
+    Choice: Any,
+    Noul: Any = None,
+    Score: Any = None,
+    criteria: Optional[Mapping[str, str]] = None,
+    best_key: str = "best_first_draft",
+    best_instructions: str = "",
+    nouls: Optional[Mapping[str, str]] = None,
+    scores: Optional[Mapping[str, tuple[str, Sequence[str]]]] = None,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Build Choice/Noul/Score questions. Does not call HTTP. No Lean."""
+
+    out: dict[str, Any] = {}
+    if extra:
+        out.update(dict(extra))
+    if best_instructions:
+        out[best_key] = Choice(instructions=best_instructions, criteria=dict(criteria or {}))
+    for name, instructions in dict(nouls or {}).items():
+        out[str(name)] = Noul(instructions=instructions)
+    for name, packed in dict(scores or {}).items():
+        instructions, legend = packed
+        out[str(name)] = Score(instructions=instructions, criteria=list(legend or []))
+    return out
+
+
+def hole_criteria(holes: Sequence[Any], *, head_n: int = 80) -> dict[str, str]:
+    from jevops.outer import field_of, head_chars
+
+    out: dict[str, str] = {}
+    for hole in holes or ():
+        hid = str(field_of(hole, "hole_id", "id", default="") or "")
+        family = str(field_of(hole, "family", default="") or "")
+        original = str(field_of(hole, "original", default="") or "")
+        out[hid] = f"{family}; {len(original.split())} words; {head_chars(original.strip(), head_n)}"
+    return out
+
+
+def hole_round_state(
+    record: Mapping[str, Any],
+    holes: Sequence[Any],
+    history: Sequence[Mapping[str, Any]],
+    keep_tokens: int,
+    *,
+    history_n: int = 8,
+    goal: str = "Pick the MCA hole whose deletion is most likely to lake-compile AND cut tokens. Do not write Lean.",
+) -> dict[str, Any]:
+    from jevops.outer import field_of, tail_seq
+
+    return {
+        "problem": record.get("name"),
+        "keep_tokens": keep_tokens,
+        "history": tail_seq(history, history_n),
+        "holes": [
+            {
+                "id": field_of(hole, "hole_id", "id", default=""),
+                "family": field_of(hole, "family", default=""),
+                "n_words": len(str(field_of(hole, "original", default="") or "").split()),
+            }
+            for hole in holes or ()
+        ],
+        "goal": goal,
+    }
+
+
+def pack_choice_round(
+    result: Any,
+    *,
+    choice_key: str,
+    noul_key: str = "likely_compiles",
+    score_key: str = "likely_token_cut",
+    wall_ms: Optional[float] = None,
+) -> dict[str, Any]:
+    """Project one Choice + optional Noul/Score. Never includes generated Lean."""
+
+    choices, nouls, scores, usage = unpack_response(result)
+    choice = choices.get(choice_key)
+    out: dict[str, Any] = {
+        "skipped": False,
+        "choice": getattr(choice, "choice", None),
+        "confidence": getattr(choice, "confidence", None),
+        "probabilities": dict(getattr(choice, "probabilities", None) or {}),
+        "usage": usage,
+        "model": getattr(result, "model", None),
+        "jev_generated_lean": False,
+    }
+    if noul_key:
+        out[noul_key] = getattr((nouls or {}).get(noul_key), "noul", None)
+    if score_key:
+        out[score_key] = getattr((scores or {}).get(score_key), "score", None)
+    if wall_ms is not None:
+        out["wall_ms"] = wall_ms
+    return out

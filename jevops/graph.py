@@ -124,13 +124,16 @@ def traverse(
                 seen[nxt] = seen[node] + 1
                 order.append(nxt)
                 q.append(nxt)
-    memory.setdefault("nca", {})["traverse"] = {"order": order[:32], "mode": mode, "integer": True}
+    from jevops.outer import head_seq
+
+    path = head_seq(order, 32)
+    memory.setdefault("nca", {})["traverse"] = {"order": path, "mode": mode, "integer": True}
     return {
         "ok": True,
         "kind": "port_graph_traverse",
         "start": root,
         "mode": mode,
-        "path": order[:32],
+        "path": path,
         "n": len(order),
         "writes_lean": False,
         "integer": True,
@@ -154,13 +157,16 @@ def message_pass(memory: dict[str, Any], *, iters: int = MSG_ITERS) -> dict[str,
             nxt[node] = _clip(acc)
         h = nxt
     ranked = sorted(h, key=lambda node: (-h[node], node))
+    from jevops.outer import head_seq
+
+    ranked_head = head_seq(ranked, 12)
     memory.setdefault("nca", {})["neural_graph"] = {"h": h, "integer": True}
-    if ranked:
-        memory.setdefault("nca", {})["pipeline_bias"] = ranked[:12]
+    if ranked_head:
+        memory.setdefault("nca", {})["pipeline_bias"] = ranked_head
     return {
         "ok": True,
         "kind": "port_neural_graph",
-        "ranked": ranked[:12],
+        "ranked": ranked_head,
         "n_nodes": len(h),
         "iters": int(iters),
         "writes_lean": False,
@@ -214,7 +220,9 @@ def graphrag_search(
         if search is None:
             raise RuntimeError("symbol_search_unavailable")
         found = search(q, memory=memory, tactics=tactics, use_duckdb=False)
-        for hit in (found.get("hits") or found.get("ranked") or [])[:12]:
+        from jevops.outer import head_seq
+
+        for hit in head_seq(found.get("hits") or found.get("ranked") or [], 12):
             src = str(hit.get("source") or "symbol_search")
             if src in {"duckdb", "sidecar_duckdb"}:
                 continue
@@ -243,6 +251,9 @@ def graphrag_search(
     except Exception as exc:
         sources["datasets_graphrag"] = type(exc).__name__
     ranked = [str(h.get("symbol") or "") for h in hits if h.get("symbol")]
+    from jevops.outer import head_seq
+
+    ranked_head = head_seq(ranked, 12)
     memory.setdefault("nca", {})["graphrag"] = {
         "query": q,
         "n_hits": len(hits),
@@ -250,14 +261,14 @@ def graphrag_search(
         "interface": "json-ld",
         "integer": True,
     }
-    if ranked:
-        memory.setdefault("nca", {})["pipeline_bias"] = ranked[:12]
+    if ranked_head:
+        memory.setdefault("nca", {})["pipeline_bias"] = ranked_head
     return {
         "ok": True,
         "kind": "port_graphrag",
         "query": q,
         "n_hits": len(hits),
-        "ranked": ranked[:12],
+        "ranked": ranked_head,
         "sources": sources,
         "interface": "json-ld",
         "writes_lean": False,

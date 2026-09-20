@@ -1,4 +1,4 @@
-"""JevOps: TypeSafe/Jev kernel, separate from Lean/LRA implementations.
+"""JevOps: TypeSafe/Jev kernel, including Lean folds/binders/tactics/lake helpers.
 
 Kernel never writes Lean. Lake (or other oracles) live in consumers.
 Cache hits never admit proofs. Never docker0.
@@ -6,13 +6,17 @@ Cache hits never admit proofs. Never docker0.
 
 from jevops import (
     autoencoder,
+    binders,
     board,
+    folds,
     graph,
     hooks,
+    inits,
     int_rankers,
     jev,
     jsonld,
     kernel,
+    lean,
     mask,
     memory,
     more_rankers,
@@ -27,6 +31,7 @@ from jevops import (
     search,
     skill_tree,
     stack,
+    tactics,
     tape,
     tape_tools,
     temporal,
@@ -37,13 +42,17 @@ from jevops import (
 
 __all__ = [
     "autoencoder",
+    "binders",
     "board",
+    "folds",
     "graph",
     "hooks",
+    "inits",
     "int_rankers",
     "jev",
     "jsonld",
     "kernel",
+    "lean",
     "mask",
     "memory",
     "more_rankers",
@@ -58,6 +67,7 @@ __all__ = [
     "search",
     "skill_tree",
     "stack",
+    "tactics",
     "tape",
     "tape_tools",
     "temporal",

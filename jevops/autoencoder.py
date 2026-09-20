@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""VAE-style text→Lean round-trip. Jev is the batch loss; lake is the oracle.
+"""VAE-style text→Lean IR→text round-trip. Jev is the batch loss; lake is the oracle.
 
 Adapts ipfs_datasets_py modal-autoencoder diagnostics (cosine / CE) as
-*diagnostics only*. TypeSafe Jev replaces those as the training signal:
-it scores the current variation against previous rounds in a batch.
-Several VAE samples get Jev scores; among Jev-ok variants we keep the
-shortest lake-valid Lean. Jev never writes Lean. Never docker0.
-Not Arena scores. Not Track 2.
+*diagnostics only*, without legal/modal IR families. TypeSafe Jev replaces
+those as the training signal: it scores the current variation against
+previous rounds in a batch. ``port_lean_ir`` encodes functional Lean closers
+(``True := by``) only. Several VAE samples get Jev scores; among Jev-ok
+variants we keep the shortest lake-valid Lean. Jev never writes Lean.
+Never docker0. Not Arena scores. Not Track 2.
 
 
 TypeSafe/JevOps kernel primitive. Implementations (Lean lake, LRA board, portable folds) live outside this package. Jev does not write Lean. Never docker0."""
@@ -22,6 +23,22 @@ MILLE = 1000
 LATENT_D = 16
 BATCH_MAX = 8
 N_VARIATIONS = 4
+LEAN_IR_SCHEMA = "jevops-lean-ir/v1"
+# Functional Lean closers only. Not legal/modal IR families.
+LEAN_IR_OPS = (
+    "intro",
+    "intros",
+    "exact",
+    "apply",
+    "simp",
+    "simp_all",
+    "rfl",
+    "trivial",
+    "constructor",
+    "omega",
+    "decide",
+)
+_FUNCTIONAL_BODY = frozenset({"trivial", "rfl", "constructor", "simp", "simp_all", "omega", "decide", "intro"})
 _TOKEN = re.compile(r"[A-Za-z0-9_]+")
 
 
@@ -122,16 +139,98 @@ def _codebook(memory: Mapping[str, Any]) -> list[dict[str, Any]]:
     return list(((memory.get("nca") or {}).get("autoencoder") or {}).get("codebook") or [])
 
 
+def encode_lean_ir(text: str) -> dict[str, Any]:
+    """Text → Lean IR. Functional closers only. No legal/modal families."""
+
+    from jevops.outer import head_seq
+
+    toks = _tokens(text)
+    ops = [{"op": tok} for tok in toks if tok in LEAN_IR_OPS]
+    if not ops:
+        ops = [{"op": "trivial"}]
+    ident = re.sub(r"[^A-Za-z0-9_]", "", head_seq(toks, 1)[0] if toks else "roundtrip") or "roundtrip"
+    return {
+        "schema": LEAN_IR_SCHEMA,
+        "goal": "True",
+        "ident": ident,
+        "ops": ops,
+        "families": [],
+        "legal_ir": False,
+        "functional_lean": True,
+    }
+
+
+def ir_counts(ir: Mapping[str, Any]) -> list[int]:
+    """Bag of functional Lean IR ops as milles. Not a legal-IR family vector."""
+
+    bag = {op: 0 for op in LEAN_IR_OPS}
+    for item in ir.get("ops") or ():
+        op = str(item.get("op") or "") if isinstance(item, Mapping) else str(item)
+        if op in bag:
+            bag[op] += MILLE
+    return [bag[op] for op in LEAN_IR_OPS]
+
+
+def decode_lean_ir(ir: Mapping[str, Any]) -> str:
+    """Lean IR → functional Lean. Always ``True := by`` closers. Not an admit."""
+
+    ident = re.sub(r"[^A-Za-z0-9_]", "", str(ir.get("ident") or "roundtrip")) or "roundtrip"
+    lines: list[str] = []
+    for item in ir.get("ops") or ():
+        op = str(item.get("op") or "") if isinstance(item, Mapping) else str(item)
+        if op == "intros":
+            op = "intro"
+        if op in _FUNCTIONAL_BODY:
+            lines.append(f"  {op}")
+        elif op in LEAN_IR_OPS:
+            lines.append("  trivial")
+    if not lines:
+        lines = ["  trivial"]
+    from jevops.outer import unique_keep
+
+    body = "\n".join(unique_keep(lines))
+    return f"theorem {ident}_rt : True := by\n{body}\n"
+
+
+def perturb_lean_ir(ir: Mapping[str, Any], rng: random.Random) -> dict[str, Any]:
+    """Drop/replace functional closers. Stays ``True := by`` Lean."""
+
+    nxt = dict(ir)
+    ops = [dict(item) if isinstance(item, Mapping) else {"op": str(item)} for item in (ir.get("ops") or ())]
+    if ops and rng.randrange(2):
+        ops.pop()
+    if rng.randrange(2):
+        ops.append({"op": rng.choice(("trivial", "rfl", "constructor"))})
+    if not ops:
+        ops = [{"op": "trivial"}]
+    nxt["ops"] = ops
+    nxt["families"] = []
+    nxt["legal_ir"] = False
+    nxt["functional_lean"] = True
+    nxt["schema"] = LEAN_IR_SCHEMA
+    return nxt
+
+
+def ir_diagnostics(left: Mapping[str, Any], right: Mapping[str, Any]) -> dict[str, int]:
+    """IR-op CE and cosine. Diagnostic only — Jev is the loss."""
+
+    a = ir_counts(left)
+    b = ir_counts(right)
+    return {"ir_cosine_m": cosine_milles(a, b), "ir_ce_m": ce_milles(a, b)}
+
+
 def decode_lean(
     latent: Sequence[int],
     *,
     source: str = "",
     codebook: Optional[Sequence[Mapping[str, Any]]] = None,
     max_tokens: Optional[int] = None,
+    ir: Optional[Mapping[str, Any]] = None,
+    force_ir: bool = False,
 ) -> str:
-    """Map latent → Lean sketch. Not a proof admit. Prefer codebook snippets."""
+    """Map latent / Lean IR → functional Lean sketch. Not a proof admit."""
 
-    rows = list(codebook or [])
+    rows = [] if force_ir else list(codebook or [])
     if rows:
         scored = []
         for row in rows:
@@ -153,13 +252,11 @@ def decode_lean(
                 break
         if pieces:
             return "\n".join(pieces) + "\n"
-    toks = _tokens(source)[:12]
-    ident = toks[0] if toks else "roundtrip"
-    ident = re.sub(r"[^A-Za-z0-9_]", "", ident) or "roundtrip"
-    body = "  trivial\n"
-    if max_tokens is not None and max_tokens <= 4:
-        body = "  trivial\n"
-    return f"theorem {ident}_rt : True := by\n{body}"
+    packed = dict(ir or encode_lean_ir(source))
+    if max_tokens is not None and int(max_tokens) <= 4:
+        packed = dict(packed)
+        packed["ops"] = [{"op": "trivial"}]
+    return decode_lean_ir(packed)
 
 
 def _datasets_diagnostics(left: Sequence[int], right: Sequence[int]) -> dict[str, Any]:
@@ -185,6 +282,57 @@ def _datasets_diagnostics(left: Sequence[int], right: Sequence[int]) -> dict[str
     return out
 
 
+def lean_ir_roundtrip(
+    text: str,
+    *,
+    memory: Optional[Mapping[str, Any]] = None,
+    rng: Optional[random.Random] = None,
+    ir: Optional[Mapping[str, Any]] = None,
+    max_tokens: Optional[int] = None,
+    force_ir: bool = True,
+) -> dict[str, Any]:
+    """text → Lean IR → functional Lean → IR. CE/cosine diagnostics; Jev is gold."""
+
+    rng = rng or random.Random(0)
+    packed = dict(ir or encode_lean_ir(text))
+    if rng.randrange(3) == 0:
+        packed = perturb_lean_ir(packed, rng)
+    encoded = encode_milles(text)
+    lean = decode_lean(
+        encoded["mu"],
+        source=text,
+        codebook=_codebook(memory or {}),
+        max_tokens=max_tokens,
+        ir=packed,
+        force_ir=force_ir,
+    )
+    recon_ir = encode_lean_ir(lean)
+    recon = encode_milles(lean)
+    ird = ir_diagnostics(packed, recon_ir)
+    return {
+        "text": text,
+        "ir": packed,
+        "recon_ir": recon_ir,
+        "lean": lean,
+        "mu": encoded["mu"],
+        "z": encoded["mu"],
+        "recon_mu": recon["mu"],
+        "cosine_m": cosine_milles(encoded["mu"], recon["mu"]),
+        "ce_m": ce_milles(encoded["mu"], recon["mu"]),
+        "ir_cosine_m": ird["ir_cosine_m"],
+        "ir_ce_m": ird["ir_ce_m"],
+        "kl_m": kl_milles(encoded),
+        "n_tokens": _token_count(lean),
+        "datasets": _datasets_diagnostics(encoded["mu"], recon["mu"]),
+        "gold": False,
+        "loss_gold": "jev",
+        "legal_ir": False,
+        "functional_lean": True,
+        "writes_lean": False,
+        "integer": True,
+    }
+
+
 def roundtrip_once(
     text: str,
     *,
@@ -192,25 +340,45 @@ def roundtrip_once(
     rng: Optional[random.Random] = None,
     max_tokens: Optional[int] = None,
     latent: Optional[Sequence[int]] = None,
+    ir: Optional[Mapping[str, Any]] = None,
+    force_ir: bool = False,
 ) -> dict[str, Any]:
     rng = rng or random.Random(0)
     encoded = encode_milles(text)
     z = list(latent) if latent is not None else sample_latent(encoded, rng=rng)
-    lean = decode_lean(z, source=text, codebook=_codebook(memory or {}), max_tokens=max_tokens)
+    packed = dict(ir or encode_lean_ir(text))
+    lean = decode_lean(
+        z,
+        source=text,
+        codebook=_codebook(memory or {}),
+        max_tokens=max_tokens,
+        ir=packed,
+        force_ir=force_ir,
+    )
     recon = encode_milles(lean)
+    recon_ir = encode_lean_ir(lean)
+    ird = ir_diagnostics(packed, recon_ir)
     cos = cosine_milles(encoded["mu"], recon["mu"])
     ce = ce_milles(encoded["mu"], recon["mu"])
     return {
         "text": text,
+        "ir": packed,
+        "recon_ir": recon_ir,
         "lean": lean,
         "mu": encoded["mu"],
         "z": z,
         "recon_mu": recon["mu"],
         "cosine_m": cos,
         "ce_m": ce,
+        "ir_cosine_m": ird["ir_cosine_m"],
+        "ir_ce_m": ird["ir_ce_m"],
         "kl_m": kl_milles(encoded),
         "n_tokens": _token_count(lean),
         "datasets": _datasets_diagnostics(encoded["mu"], recon["mu"]),
+        "gold": False,
+        "loss_gold": "jev",
+        "legal_ir": False,
+        "functional_lean": True,
         "writes_lean": False,
         "integer": True,
     }
@@ -229,6 +397,8 @@ def jev_rank_variations(
     jev_fn: Optional[Callable[..., Mapping[str, Any]]] = None,
 ) -> dict[str, Any]:
     """Jev replaces CE/cosine as the batch loss. Compares current vs previous rounds."""
+
+    from jevops.outer import head_chars
 
     pool = list(variations) + list(previous)
     if not pool:
@@ -259,8 +429,10 @@ def jev_rank_variations(
                 "n_tokens": int(row.get("n_tokens") or 0),
                 "cosine_m": int(row.get("cosine_m") or 0),
                 "ce_m": int(row.get("ce_m") or 0),
+                "ir_cosine_m": int(row.get("ir_cosine_m") or 0),
+                "ir_ce_m": int(row.get("ir_ce_m") or 0),
                 "from_previous": i >= len(variations),
-                "lean_head": str(row.get("lean") or "")[:80],
+                "lean_head": head_chars(row.get("lean"), 80),
             }
             for i, row in enumerate(pool)
         ]
@@ -303,18 +475,29 @@ def teach_roundtrip(
     compile_fn: Optional[Callable[..., Mapping[str, Any]]] = None,
     rng: Optional[random.Random] = None,
     n_variations: int = N_VARIATIONS,
+    force_ir: bool = False,
 ) -> dict[str, Any]:
     """Sample VAE variations, Jev-rank vs previous batch, keep shortest lake-ok Lean."""
 
     rng = rng or random.Random(0)
     source = str(text or tactics or "")
     encoded = encode_milles(source)
+    base_ir = encode_lean_ir(source)
     lengths = [None, max(4, _token_count(source) * 3 // 4), max(3, _token_count(source) // 2), 4]
     variations: list[dict[str, Any]] = []
     for i in range(max(1, int(n_variations))):
         z = sample_latent(encoded, rng=rng)
         cap = lengths[i] if i < len(lengths) else None
-        row = roundtrip_once(source, memory=memory, rng=rng, max_tokens=cap, latent=z)
+        packed = base_ir if i == 0 else perturb_lean_ir(base_ir, rng)
+        row = roundtrip_once(
+            source,
+            memory=memory,
+            rng=rng,
+            max_tokens=cap,
+            latent=z,
+            ir=packed,
+            force_ir=force_ir,
+        )
         row["variation"] = i
         variations.append(row)
     previous = _batch(memory)
@@ -373,18 +556,22 @@ def teach_roundtrip(
                 winner["picked"] = "shortest_jev_ok"
     store = memory.setdefault("nca", {}).setdefault("autoencoder", {})
     batch = list(store.get("batch") or [])
+    from jevops.outer import head_chars, tail_seq
+
     batch.append(
         {
             "problem": problem,
             "cosine_m": int(winner.get("cosine_m") or 0),
             "ce_m": int(winner.get("ce_m") or 0),
+            "ir_cosine_m": int(winner.get("ir_cosine_m") or 0),
+            "ir_ce_m": int(winner.get("ir_ce_m") or 0),
             "n_tokens": int(winner.get("n_tokens") or 0),
-            "lean": str(winner.get("lean") or "")[:400],
+            "lean": head_chars(winner.get("lean"), 400),
             "mu": list(winner.get("mu") or []),
             "used_jev": bool(ranked.get("used_jev")),
         }
     )
-    store["batch"] = batch[-BATCH_MAX:]
+    store["batch"] = tail_seq(batch, BATCH_MAX)
     if winner.get("lake_ok") or compile_fn is None:
         code = list(store.get("codebook") or [])
         code.append(
@@ -421,6 +608,12 @@ def teach_roundtrip(
         "lake_ok": winner.get("lake_ok"),
         "jev": {k: ranked[k] for k in ranked if k != "best"},
         "datasets": winner.get("datasets"),
+        "ir": winner.get("ir"),
+        "ir_cosine_m": int(winner.get("ir_cosine_m") or 0),
+        "ir_ce_m": int(winner.get("ir_ce_m") or 0),
+        "gold": False,
+        "legal_ir": False,
+        "functional_lean": True,
         "writes_lean": False,
         "integer": True,
         "called_docker0": False,
@@ -440,6 +633,8 @@ def call_autoencoder(
     rng: Optional[random.Random] = None,
 ) -> dict[str, Any]:
     source = str(text or tactics or problem or "")
+    text_stem = str(stem or "").lower()
+    force_ir = "lean_ir" in text_stem or ("ir" in text_stem and "legal" not in text_stem and "vae" not in text_stem and "autoencoder" not in text_stem)
     out = teach_roundtrip(
         memory,
         source,
@@ -449,7 +644,10 @@ def call_autoencoder(
         compile_fn=compile_fn,
         rng=rng,
         n_variations=N_VARIATIONS,
+        force_ir=force_ir,
     )
-    if "vae" in str(stem or "").lower():
+    if "vae" in text_stem:
         out["kind"] = "port_vae"
+    if force_ir:
+        out["kind"] = "port_lean_ir"
     return out
