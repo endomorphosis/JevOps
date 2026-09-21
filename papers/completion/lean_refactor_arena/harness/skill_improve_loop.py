@@ -187,7 +187,11 @@ def canary_args(
         seed=int(seed),
         k=lra_rand.DEFAULT_K,
         out=out,
-        include_inits=False,
+        # Keep the benchmark's verified Core.InitsUpdatesComm kernel in every
+        # outer-loop sample; otherwise a small random sample can spend the
+        # whole budget on unrelated canaries and never measure the current
+        # high-score target.
+        include_inits=True,
         quiet=True,
         nest_depth=int(nest_depth),
     )

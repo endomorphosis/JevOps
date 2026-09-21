@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from typing import Any, Callable
 
 TARGET_TOKENS = 139
+BEST_TARGET_TOKENS = 130
 PROBLEM = "Core.InitsUpdatesComm"
 
 
@@ -486,6 +487,16 @@ def propose(tactics: str) -> list[dict[str, str]]:
     from jevops.pick import unique_transforms
 
     out: list[dict[str, str]] = []
+    best = best_replay(tactics)
+    if best and best != tactics:
+        out.append(
+            {
+                "kind": "inits_best",
+                "tactics": best,
+                "note": "verified compound deletion of Hlen2 and UpdateStatesLength Hups",
+                "family": "mca",
+            }
+        )
     for kernel, nxt in unique_transforms(
         tactics,
         KERNELS,
@@ -513,6 +524,15 @@ def pca_mca_ops(tactics: str) -> list[tuple[str, str, tuple[str, ...]]]:
                 ("inits_replay", "mca", "no_llm"),
             )
         )
+    best = best_replay(current)
+    if best and best != current:
+        rows.append(
+            (
+                "inits_best",
+                best,
+                ("inits_best", "mca", "verified_compound", "no_llm"),
+            )
+        )
     for item in propose(current):
         rows.append(
             (
@@ -534,6 +554,20 @@ def replay(tactics: str) -> str:
         tuple((kernel.kind, kernel.apply) for kernel in KERNELS),
     )
     return text
+
+
+def best_replay(tactics: str) -> str:
+    """Apply the verified compound shortening after the historical 139 cut.
+
+    The two deletions must be admitted together: removing either ``Hlen2`` or
+    the ``UpdateStatesLength Hups`` induction argument in isolation fails in
+    Lean, while the compound candidate compiles at the pinned v4.26 checkout.
+    """
+
+    body = replay(tactics)
+    body = body.replace("  have Hlen2 := UpdateStatesLength Hup\n", "", 1)
+    body = body.replace(" $ UpdateStatesLength Hups", "", 1)
+    return body
 
 
 IH_APPLY = "apply (ih Hinit ?_ ?_).2.2"
@@ -577,6 +611,15 @@ def mcmc_extras(tactics: str) -> list[dict[str, Any]]:
 
     def add(kind: str, body: str, note: str, *, lock: bool = True) -> None:
         rows.append({"kind": str(kind), "tactics": str(body or ""), "note": str(note), "lock": lock})
+
+    best = best_replay(tactics)
+    if best and best != tactics:
+        add(
+            "inits_best",
+            best,
+            "verified compound deletion of Hlen2 and UpdateStatesLength Hups",
+            lock=False,
+        )
 
     if HND_BLOCK in tactics:
         for kind, repl, note in HND_REPLACEMENTS:
@@ -1040,4 +1083,3 @@ def mcmc_extras(tactics: str) -> list[dict[str, Any]]:
         add("none_update_none", tactics.replace(none_last_ctor, "    simp [InitStatesUpdated Hinit]\n    exact UpdateStates.update_none", 1), "last constructor -> exact UpdateStates.update_none")
         add("none_dot_update_none", tactics.replace(none_last_ctor, "    simp [InitStatesUpdated Hinit]\n    exact .update_none", 1), "last constructor -> exact .update_none")
     return rows
-

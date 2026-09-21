@@ -243,9 +243,12 @@ def fold_unused_intros(tactics: str) -> str:
     """``intros x Hin`` → nameless ``intros`` when Hin is unused in the arm.
 
     Skip when the next tactic is ``assumption``: that arm needs the named hyps
-    (extractedOldExprInVars ``intros x Hin / assumption``).
+    (extractedOldExprInVars ``intros x Hin / assumption``). Both binders must
+    be absent from the remainder; checking only ``Hin`` can erase ``x`` from
+    a later ``exact`` or ``rw`` and create an invalid draft.
     """
 
+    from jevops import binders as lra_bind
     from jevops.mask import map_lines, peek_next_stripped
 
     def _fn(index: int, line: str, lines: list[str]) -> Optional[str]:
@@ -258,7 +261,8 @@ def fold_unused_intros(tactics: str) -> str:
         while cursor < len(lines) and not lines[cursor].lstrip().startswith("case "):
             rest.append(lines[cursor])
             cursor += 1
-        if "Hin" not in "\n".join(rest):
+        later_ids = lra_bind.idents_in("\n".join(rest))
+        if "x" not in later_ids and "Hin" not in later_ids:
             indent = line[: len(line) - len(line.lstrip())]
             return f"{indent}intros"
         return None
@@ -470,7 +474,9 @@ PIPELINE: tuple[tuple[str, Any], ...] = (
     ("unused_intros", fold_unused_intros),
     ("trim_intro_names", fold_trim_intro_names),
     ("drop_try_simp_all", fold_drop_try_simp_all),
-    ("drop_unfold_before_split", fold_drop_unfold_before_split),
+    # Context-sensitive: ``split`` may need the definition that ``unfold``
+    # exposed.  Keep it available through portable_drafts, where Lake can
+    # reject the candidate, but never apply it in the default composition.
     ("grind_only_to_grind", fold_grind_only_to_grind),
     # drop_intro_before_simp_all is not default: AutoResearch help was high but lake
     # failed (simp_all no progress / unsolved subset). Only via portable_drafts if not skipped.

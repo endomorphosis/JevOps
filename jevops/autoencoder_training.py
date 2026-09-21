@@ -1192,6 +1192,35 @@ def nca_feedback_for_example(
     )
 
 
+def advance_autoencoder_nca(
+    memory: Optional[MutableMapping[str, Any]],
+    *,
+    problem: str = "",
+) -> dict[str, Any]:
+    """Run one focused NCA propagation step for an autoencoder batch."""
+
+    if not isinstance(memory, MutableMapping):
+        return {"ok": False, "reason": "memory_required", "tick": 0, "n_cells": 0}
+    try:
+        from . import nca as nca_kernel
+
+        result = dict(
+            nca_kernel.tick(
+                memory,
+                problem=problem,
+                focus="ptr://skill/port_autoencoder",
+            )
+            or {}
+        )
+        return {
+            "ok": bool(result.get("ok", True)),
+            "tick": int(result.get("tick") or 0),
+            "n_cells": int(result.get("n_cells") or 0),
+        }
+    except Exception as exc:
+        return {"ok": False, "reason": type(exc).__name__, "tick": 0, "n_cells": 0}
+
+
 def record_autoencoder_nca_feedback(
     memory: Optional[MutableMapping[str, Any]],
     *,
@@ -1201,8 +1230,15 @@ def record_autoencoder_nca_feedback(
     typesafe_reward: Optional[float] = None,
     tokens: int = 0,
     candidate: Optional[Mapping[str, Any]] = None,
+    advance_nca: bool = True,
 ) -> dict[str, Any]:
-    """Feed one bounded autoencoder outcome back into NCA working memory."""
+    """Feed one bounded autoencoder outcome back into NCA working memory.
+
+    ``advance_nca`` is false for per-candidate batch observations. Callers
+    can then perform one focused cellular update after the batch, avoiding an
+    O(number-of-candidates × number-of-cells) propagation cost while keeping
+    every verifier outcome in the skill statistics.
+    """
 
     if not isinstance(memory, MutableMapping):
         return {"ok": False, "reason": "memory_required"}
@@ -1236,19 +1272,29 @@ def record_autoencoder_nca_feedback(
         parent = ""
         if problem:
             parent = nca_kernel.canonical_cell_id(f"proof:{problem}", kind="theorem")
+        skill_ptr = "ptr://skill/port_autoencoder"
         nca_kernel.upsert_from_event(
             memory,
-            ptr="ptr://skill/port_autoencoder",
+            ptr=skill_ptr,
             kind="skill",
             energy=reward_value,
             theorem_ok=theorem_ok,
             tokens=max(0, int(tokens)),
             parent_ptr=parent,
         )
+        if parent:
+            edges = memory.setdefault("nca", {}).setdefault("board_edges", [])
+            edge = [skill_ptr, parent]
+            if edge not in edges:
+                edges.append(edge)
+        if advance_nca:
+            tick_result = advance_autoencoder_nca(memory, problem=problem)
+            feedback["nca_tick"] = int(tick_result.get("tick") or 0)
+            feedback["nca_cells"] = int(tick_result.get("n_cells") or 0)
         nca_kernel.journal_event(
             memory,
             event="autoencoder_feedback",
-            ptr="ptr://skill/port_autoencoder",
+            ptr=skill_ptr,
             op="AE_FEEDBACK",
             energy_delta=0.0,
             extra={"reward": reward_value, "theorem_ok": theorem_ok, "problem_digest": feedback["last_problem_digest"]},
@@ -2409,6 +2455,7 @@ __all__ = [
     "loss_for_example",
     "merge_model_states",
     "minimality_score",
+    "advance_autoencoder_nca",
     "nca_feedback_for_example",
     "record_autoencoder_nca_feedback",
     "score_candidate",

@@ -1301,6 +1301,12 @@ def restrict_drafts(
     skip_port: Optional[set[str]] = None,
     allow_skills: Optional[set[str]] = None,
 ) -> list[dict[str, Any]]:
+    # These are closed benchmark kernels whose bodies are still submitted to
+    # Lake.  A recursive TypeSafe leaf may narrow ``allow_skills`` to an
+    # unrelated local family; dropping a known verifier-backed kernel there
+    # would make the outer loop unable to rediscover an existing best.  Keep
+    # the kernel visible, but never treat it as accepted without the oracle.
+    verifier_backed = {"inits_replay", "inits_best"}
     rows = list(drafts)
     blocked = set(skip_port or ())
     if blocked:
@@ -1322,6 +1328,7 @@ def restrict_drafts(
             if str(item.get("kind") or "") in want
             or str(item.get("kind") or "").replace("port_", "") in want
             or str(item.get("kind") or "").startswith("port_pipeline")
+            or str(item.get("kind") or "") in verifier_backed
         ]
     return rows
 
@@ -1759,3 +1766,40 @@ def inner_loop(
         tape=tape,
         stack=stack,
     )
+
+
+def child_base(
+    *,
+    args: Any,
+    memory: Any,
+    ledger: Any,
+    rng: Any,
+    model: Any,
+    restore: Any,
+    depth: int,
+    steps: Any,
+    max_steps: int,
+    max_depth: int,
+    compile_one: Any,
+    research_fn: Any,
+    pick_fn: Any,
+    router_fn: Any,
+) -> dict[str, Any]:
+    """Shared kwargs for nest/spawn/ptr-nest. Closures stay in the consumer."""
+
+    return {
+        "args": args,
+        "memory": memory,
+        "ledger": ledger,
+        "rng": rng,
+        "model": model,
+        "restore": restore,
+        "depth": int(depth),
+        "steps": steps,
+        "max_steps": int(max_steps),
+        "max_depth": int(max_depth),
+        "compile_one": compile_one,
+        "research_fn": research_fn,
+        "pick_fn": pick_fn,
+        "router_fn": router_fn,
+    }

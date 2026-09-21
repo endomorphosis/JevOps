@@ -1207,6 +1207,7 @@ from .autoencoder_training import (  # noqa: E402  (intentional late import)
     loss_for_example,
     merge_model_states,
     minimality_score,
+    advance_autoencoder_nca,
     nca_feedback_for_example,
     record_autoencoder_nca_feedback,
     score_candidate,

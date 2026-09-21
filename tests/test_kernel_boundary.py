@@ -2590,6 +2590,78 @@ class KernelBoundaryTests(unittest.TestCase):
         self.assertEqual(reraise_as(lambda: 3, (ValueError,), RuntimeError), 3)
         with self.assertRaises(RuntimeError):
             reraise_as(lambda: (_ for _ in ()).throw(FileNotFoundError("x")), (FileNotFoundError,), RuntimeError, missing="gone")
+        aligned = __import__("jevops.repair", fromlist=["align_generated"]).align_generated(
+            "  case a =>",
+            "    case a =>",
+            extract_fn=lambda text: text,
+            match_fn=lambda _ref, text: text,
+            flatten_fn=lambda _ref, text: text.strip(),
+        )
+        self.assertEqual(aligned, "case a =>")
+        from jevops.outer import usage_line
+
+        line = usage_line(
+            dict,
+            kind="jev",
+            input_tokens=1,
+            output_tokens=2,
+            usd=0.0,
+            call_index=0,
+            fixture=True,
+            model="m",
+            skipped=True,
+            reason="no_key",
+        )
+        self.assertTrue(line["skipped"])
+        stamped = lean.stamp_measured(
+            type("R", (), {"argv": None})(),
+            argv=["lake"],
+            cwd="/tmp",
+            toolchain=type("T", (), {"elan_home": "/e", "lean_path": "/lean"})(),
+            timeout=1.0,
+            stamp_fn=lambda receipt, **_k: receipt,
+            run_fn=lambda _argv, _env: None,
+            state_root="/tmp",
+            tmp_name="x",
+            process_env_key="K",
+            threads=1,
+            max_heartbeats=1,
+            ikv_floor=30.0,
+            under_fn=lambda *_a, **_k: "/tmp/sup",
+        )
+        self.assertEqual(stamped.argv, ["lake"])
+        from jevops.walk import child_base
+        from jevops.outer import bump_named, ignore_error, overlay_skip
+
+        self.assertIsNone(ignore_error(lambda: (_ for _ in ()).throw(ValueError("x")), ValueError))
+        box = type("B", (), {"n": 0})()
+        bump_named(box, "a", {"a": "n"})
+        self.assertEqual(box.n, 1)
+        base = child_base(
+            args=None,
+            memory={},
+            ledger=None,
+            rng=None,
+            model=None,
+            restore=b"",
+            depth=1,
+            steps=[0],
+            max_steps=8,
+            max_depth=3,
+            compile_one=None,
+            research_fn=None,
+            pick_fn=None,
+            router_fn=None,
+        )
+        self.assertEqual(base["depth"], 1)
+        skipped = overlay_skip(
+            lambda **kw: type("R", (), {"as_dict": lambda self: kw})(),
+            digest="d",
+            extra={"source": "s"},
+            reason="no_key",
+        )
+        self.assertTrue(skipped["ok"])
+        self.assertEqual(skipped["reason"], "no_key")
         a, b = coalesce_pair(None, "keep", lambda: ("loaded", "ignored"))
         self.assertEqual((a, b), ("loaded", "keep"))
         from jevops.outer import coalesce_chat_text
@@ -2738,6 +2810,11 @@ class KernelBoundaryTests(unittest.TestCase):
         drafts = [{"kind": "port_cache_get"}, {"kind": "port_cache_put"}]
         kept = walk.restrict_drafts(drafts, skip_port={"cache_put"})
         self.assertEqual([d["kind"] for d in kept], ["port_cache_get"])
+        kept_kernel = walk.restrict_drafts(
+            [{"kind": "inits_best"}, {"kind": "port_cache_put"}],
+            allow_skills={"unrelated_skill"},
+        )
+        self.assertEqual([d["kind"] for d in kept_kernel], ["inits_best"])
         self.assertEqual(jev.noul_value({"noul": 0.2}), 0.2)
         choice, conf, _probs = jev.choice_value({"choice": "v0", "confidence": 0.9})
         self.assertEqual(choice, "v0")
@@ -3414,7 +3491,7 @@ class KernelBoundaryTests(unittest.TestCase):
         self.assertEqual(led.calls[0][0], "jev")
         import json
         from jevops.jev import invoke_system_one, list_field
-        from jevops.outer import file_stem, load_json_object, merge_keep_best, read_shortest_glob
+        from jevops.outer import file_stem, load_json_object, merge_keep_best, read_shortest_glob, write_best_body
         from jevops.pick import compose_steps
         from jevops.memory import expand_keep_notes
         from jevops.walk import pack_canary
@@ -3456,6 +3533,8 @@ class KernelBoundaryTests(unittest.TestCase):
             self.assertEqual(merged["P"], 4)
             self.assertEqual(read_shortest_glob(root, "random-best-P-*.lean"), "simp")
             self.assertEqual(load_json_object(root / "missing.json"), {})
+            written = write_best_body(root / "nested" / "out", "P", 3, "exact Hin")
+            self.assertEqual(written.read_text(), "exact Hin\n")
             from jevops.oracle import closed, lake_budget, require_named
             from jevops.outer import arg_value, starting_body
             from jevops.jev import instantiate_questions

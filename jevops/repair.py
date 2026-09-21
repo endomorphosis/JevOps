@@ -573,6 +573,19 @@ def match_leading_indent(reference: str, tactics: str) -> str:
     return "\n".join((indent + line if line.strip() else line) for line in body.splitlines())
 
 
+def align_generated(
+    reference: str,
+    text: str,
+    *,
+    extract_fn: Callable[[str], str],
+    match_fn: Callable[[str, str], str],
+    flatten_fn: Callable[[str, str], str],
+) -> str:
+    """Match hosted indent to the reference, then flatten extra case indent."""
+
+    return flatten_fn(reference, match_fn(reference, extract_fn(text)))
+
+
 def flatten_overindent(
     reference: str,
     tactics: str,

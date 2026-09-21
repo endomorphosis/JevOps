@@ -18,6 +18,8 @@ import mcmc_beam as lra_mcmc
 import pca_mca_fanout as lra_pca
 import run_warmup as lra_loop
 import sgd_fanout as lra_sgd
+from jevops.inits import BEST_TARGET_TOKENS
+from jevops.inits import best_replay
 
 
 class InitsUpdatesShortenTests(unittest.TestCase):
@@ -38,6 +40,18 @@ class InitsUpdatesShortenTests(unittest.TestCase):
         self.assertIn("unzip_simp_all", kinds)
         self.assertEqual(lra_loop.token_count(lra_ius.replay(src)), 139)
 
+    def test_verified_compound_candidate_beats_historical_replay(self) -> None:
+        src = lra_ius.original_tactics()
+        best = best_replay(src)
+        self.assertEqual(lra_loop.token_count(best), BEST_TARGET_TOKENS)
+        self.assertLess(lra_loop.token_count(best), lra_loop.token_count(lra_ius.replay(src)))
+        self.assertNotIn("have Hlen2 := UpdateStatesLength Hup", best)
+        self.assertNotIn("$ UpdateStatesLength Hups", best)
+        kinds = {item["kind"] for item in lra_ius.propose(src)}
+        self.assertIn("inits_best", kinds)
+        mcmc_kinds = {item["kind"] for item in lra_ius.mcmc_extras(src)}
+        self.assertIn("inits_best", mcmc_kinds)
+
     def test_replay_is_idempotent_on_139(self) -> None:
         src = lra_ius.original_tactics()
         once = lra_ius.replay(src)
@@ -54,6 +68,9 @@ class InitsUpdatesShortenTests(unittest.TestCase):
         replay_drafts = [item for item in drafts if "inits_replay" in item.ops or item.family == "inits_replay"]
         self.assertTrue(replay_drafts, [item.ops for item in drafts[:8]])
         self.assertEqual(lra_loop.token_count(replay_drafts[0].tactics), 139)
+        best_drafts = [item for item in drafts if "inits_best" in item.ops or item.family == "inits_best"]
+        self.assertTrue(best_drafts, [item.ops for item in drafts[:8]])
+        self.assertEqual(lra_loop.token_count(best_drafts[0].tactics), BEST_TARGET_TOKENS)
 
     def test_hammer_and_mcmc_and_cascade_expose_replay(self) -> None:
         src = lra_ius.original_tactics()

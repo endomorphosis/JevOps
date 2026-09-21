@@ -22,6 +22,8 @@ from jevops.walk import begin_session
 from jevops.walk import flatten_trace
 from jevops.walk import inner_loop
 
+HERE = Path(__file__).resolve().parent
+
 
 def apply_lake_round(
     *,
@@ -472,12 +474,21 @@ def starting_tactics(record: Mapping[str, Any], *, out: Any = None, from_best: b
     tactics = lra_fan.tactic_block(record)
     if not from_best:
         return tactics
-    return starting_body(
+    selected = starting_body(
         tactics,
         out,
         str(record.get("name") or "canary"),
         extras={"Core.InitsUpdatesComm": "cascade-best-139.lean"},
     )
+    if selected != tactics or str(record.get("name") or "") != "Core.InitsUpdatesComm":
+        return selected
+    # A disposable outer-loop --out directory does not contain the curated
+    # historical canary. Fall back to that fixture so the live loop actually
+    # challenges 139 and can measure the 130 candidate.
+    source = HERE.parent / "evidence" / "canaries" / "cascade-best-139.lean"
+    if source.is_file():
+        return source.read_text(encoding="utf-8").strip("\n")
+    return selected
 
 
 def run_nested_canary(

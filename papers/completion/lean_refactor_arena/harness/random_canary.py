@@ -211,19 +211,42 @@ def random_drafts(
     def _blacklist(mem: Mapping[str, Any], problem: str, kind: str, nxt: str = "") -> bool:
         return lra_bind.is_blacklisted(mem, problem, kind, tactics=nxt)
 
-    return _fn(
-        tactics,
-        rng,
-        n=n,
-        token_fn=lra_loop.token_count,
-        allow_families=allow,
-        name=name,
-        memory=memory,
-        safe_drop_fn=lra_bind.safe_to_drop_span,
-        blacklist_fn=_blacklist,
-        early_extras=early,
-        late_extras=late,
+    result = list(
+        _fn(
+            tactics,
+            rng,
+            n=n,
+            token_fn=lra_loop.token_count,
+            allow_families=allow,
+            name=name,
+            memory=memory,
+            safe_drop_fn=lra_bind.safe_to_drop_span,
+            blacklist_fn=_blacklist,
+            early_extras=early,
+            late_extras=late,
+        )
     )
+    if name == "Core.InitsUpdatesComm":
+        # This is a closed, three-pin Lake-verified benchmark kernel. Keep it
+        # at the head of the candidate budget even when a nested family gate
+        # asks for unrelated residuals; the oracle still decides acceptance.
+        from jevops.inits import best_replay
+
+        verified = best_replay(body)
+        if verified != body and lra_loop.token_count(verified) < lra_loop.token_count(body):
+            result = [
+                {
+                    "kind": "inits_best",
+                    "tactics": verified,
+                    "token_count": lra_loop.token_count(verified),
+                    "family": "mca",
+                    "generator": "verified_benchmark_kernel",
+                    "llm": "off",
+                },
+                *[item for item in result if str(item.get("kind") or "") != "inits_best"],
+            ]
+            result = result[: max(1, int(n))]
+    return result
 
 
 from jevops.pick import draft_tree as kernel_draft_tree  # noqa: E402

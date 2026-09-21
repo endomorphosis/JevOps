@@ -411,8 +411,14 @@ def should_halt(memory: Mapping[str, Any]) -> dict[str, Any]:
     budget_dead = bool(budget.get("visited")) and budget_energy < BUDGET_DEAD
     journal = list(((memory.get("nca") or {}).get("journal")) or [])
     last_ran = list((((memory.get("nca") or {}).get("program_state") or {}).get("last_ran")) or [])
+    # ``jev`` and ``jev_pick`` are accounting observations emitted before a
+    # candidate is admitted.  Treating either as a completed NCA action makes
+    # a nested walker halt immediately after its first budget charge, before
+    # it has a chance to call Lake.  Only completed program actions (or an
+    # explicit program receipt in ``last_ran``) establish the post-run idle
+    # condition.
     ever_ran = bool(last_ran) or any(
-        str(row.get("event") or "") in {"call", "instruct", "jev", "jev_pick", "grok"} for row in journal
+        str(row.get("event") or "") in {"call", "instruct", "grok"} for row in journal
     )
     idle = (not issues) and (not pending) and (not hot_tasks)
     halt = (ever_ran and idle) or budget_dead

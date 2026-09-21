@@ -3187,6 +3187,45 @@ def try_receipt_summary(
     }
 
 
+def stamp_measured(
+    receipt: Any,
+    *,
+    argv: Sequence[str],
+    cwd: Any,
+    toolchain: Any,
+    timeout: float,
+    stamp_fn: Callable[..., Any],
+    run_fn: Callable[[Sequence[str], Mapping[str, str]], Any],
+    state_root: Any,
+    tmp_name: str,
+    process_env_key: str,
+    threads: Any,
+    max_heartbeats: int,
+    ikv_floor: float,
+    under_fn: Optional[Callable[..., Any]] = None,
+) -> Any:
+    """Compute supervisor dir and stamp a measured lake run. run_fn is injected."""
+
+    from jevops.outer import under_or_tmp
+
+    under = under_fn or under_or_tmp
+    supervisor_dir = under(state_root, "process-supervisor", tmp_name=tmp_name)
+    return stamp_tag_compile(
+        receipt,
+        cwd=cwd,
+        argv=argv,
+        toolchain=toolchain,
+        timeout=timeout,
+        stamp_fn=stamp_fn,
+        run_fn=run_fn,
+        supervisor_dir=supervisor_dir,
+        process_env_key=process_env_key,
+        threads=threads,
+        max_heartbeats=max_heartbeats,
+        ikv_floor=ikv_floor,
+    )
+
+
 def stamp_tag_compile(
     receipt: Any,
     *,

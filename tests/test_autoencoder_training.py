@@ -156,6 +156,10 @@ def test_nca_feedback_is_auxiliary_and_records_verified_outcomes() -> None:
     assert recorded["ok"] is True
     assert memory["nca"]["autoencoder"]["feedback"]["count"] == 1
     assert memory["nca"]["grid"]["ptr://skill/port_autoencoder"]["wins"] == 4
+    assert recorded["feedback"]["nca_tick"] == 1
+    assert recorded["feedback"]["nca_cells"] >= 1
+    assert memory["nca"]["tick"] == 1
+    assert ["ptr://skill/port_autoencoder", "ptr://theorem/P"] in memory["nca"]["board_edges"]
 
 
 def test_fuzzy_typesafe_prover_is_typed_soft_advice_only() -> None:

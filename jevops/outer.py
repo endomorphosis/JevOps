@@ -1097,7 +1097,9 @@ def write_best_body(
 ) -> Path:
     """Write a keep-best body next to other evidence. Does not generate Lean."""
 
-    path = Path(directory) / f"{prefix}-{file_stem(name)}-{int(tokens)}{suffix}"
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    path = root / f"{prefix}-{file_stem(name)}-{int(tokens)}{suffix}"
     path.write_text(str(body) + "\n", encoding="utf-8")
     return path
 
@@ -4782,17 +4784,49 @@ def reraise_as(
     error_cls: type[BaseException],
     *,
     missing: str = "",
+    fmt: str = "",
+    skip_types: tuple[type[BaseException], ...] = (),
 ) -> Any:
     """Reraise typed failures with a consumer error class."""
 
     try:
         return fn()
+    except skip_types:
+        raise
     except FileNotFoundError as exc:
         if FileNotFoundError in from_types:
             raise error_cls(missing or str(exc)) from exc
         raise
     except from_types as exc:
-        raise error_cls(str(exc)) from exc
+        raise error_cls((fmt or "{exc}").format(exc=exc) if fmt else str(exc)) from exc
+
+
+def usage_line(
+    cls: Any,
+    *,
+    kind: str,
+    input_tokens: int,
+    output_tokens: int,
+    usd: Any,
+    call_index: int,
+    fixture: bool,
+    model: str,
+    skipped: bool,
+    reason: str,
+) -> Any:
+    """Usage line constructor. USD stays on the consumer class."""
+
+    return cls(
+        kind=kind,
+        input_tokens=int(input_tokens),
+        output_tokens=int(output_tokens),
+        usd=usd,
+        call_index=int(call_index),
+        fixture=bool(fixture),
+        model=model,
+        skipped=bool(skipped),
+        reason=reason,
+    )
 
 
 def overlay_if_status(
@@ -4971,6 +5005,47 @@ def catch_error(fn: Callable[[], Any], error_cls: Any) -> tuple[bool, str]:
     except error_cls as exc:
         return True, str(exc)
     return False, ""
+
+
+def ignore_error(
+    fn: Callable[[], Any],
+    error_cls: Any = Exception,
+    default: Any = None,
+) -> Any:
+    """Call fn and swallow typed errors. Used for optional board/sidecar overlays."""
+
+    try:
+        return fn()
+    except error_cls:
+        return default
+
+
+def bump_named(
+    obj: Any,
+    key: str,
+    mapping: Mapping[str, str],
+    *,
+    error_cls: type[BaseException] = ValueError,
+    fmt: str = "unknown spend kind {kind!r}",
+) -> None:
+    """Increment a named counter attribute. Unknown keys fail closed."""
+
+    attr = mapping.get(key)
+    if not attr:
+        raise error_cls(fmt.format(kind=key))
+    setattr(obj, attr, int(getattr(obj, attr, 0)) + 1)
+
+
+def overlay_skip(
+    result_fn: Callable[..., Any],
+    *,
+    digest: str,
+    extra: Optional[Mapping[str, Any]] = None,
+    **kwargs: Any,
+) -> dict[str, Any]:
+    """Build a skip result and overlay it. Catalog extras stay in the consumer."""
+
+    return overlay_skipped(result_fn(**kwargs), digest=digest, extra=extra)
 
 
 def map_collect(

@@ -25,6 +25,18 @@ class SkillImproveLoopTests(unittest.TestCase):
         self.assertFalse(check["jev_writes_lean"])
         self.assertFalse(check["grok_writes_lean"])
 
+    def test_outer_canary_args_force_the_high_score_inits_target(self) -> None:
+        args = lra_loop_sk.canary_args(
+            out=HERE.parent / "evidence" / "canaries",
+            rounds=1,
+            lake_top=1,
+            drafts=2,
+            timeout=1.0,
+            seed=1,
+        )
+        self.assertTrue(args.include_inits)
+        self.assertTrue(args.init_139)
+
     def test_parse_action_extracts_json(self) -> None:
         text = 'Sure.\n{"action": "stop", "reason": "saturated"}\n'
         self.assertEqual(lra_loop_sk.parse_action(text)["action"], "stop")

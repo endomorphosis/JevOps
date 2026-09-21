@@ -40,6 +40,7 @@ from .autoencoder_training import (
     coerce_training_example,
     loss_for_example,
     nca_feedback_for_example,
+    advance_autoencoder_nca,
     record_autoencoder_nca_feedback,
 )
 from .outer import head_chars, make_llm_router_generate
@@ -718,11 +719,18 @@ class RouterTuningLoop:
                     theorem_ok=bool(row.get("lake_ok")),
                     tokens=int(row.get("body_tokens") or 0),
                     candidate={"id": row.get("id"), "ir_digest": _digest(row.get("ir") or {}), "n_tokens": row.get("body_tokens")},
+                    advance_nca=False,
                 )
             except Exception:
                 pass
+        nca_step = advance_autoencoder_nca(self.memory, problem=self.problem)
         if not self.config.train or winner is None or not winner.get("lake_ok"):
-            return {"ok": True, "trained": False, "reason": "no_verified_winner_or_training_disabled"}
+            return {
+                "ok": True,
+                "trained": False,
+                "reason": "no_verified_winner_or_training_disabled",
+                "nca": nca_step,
+            }
         try:
             store = self.memory.setdefault("nca", {}).setdefault("autoencoder", {})
             model = LeanIRAutoencoder.from_dict(store.get("training_state"), config=AutoencoderConfig())
@@ -765,7 +773,7 @@ class RouterTuningLoop:
             train_report["model_prediction"] = _compact_row(before["row"])
             train_report["model_prediction_after"] = _compact_row(after["row"])
             store["training_state"] = model.to_dict()
-            return {"ok": True, "trained": True, "step": model.step, **train_report}
+            return {"ok": True, "trained": True, "step": model.step, "nca": nca_step, **train_report}
         except Exception as exc:
             return {"ok": False, "trained": False, "reason": type(exc).__name__}
 
