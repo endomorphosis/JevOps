@@ -21,8 +21,6 @@ from typing import Any, Mapping, Optional, Sequence
 
 HERE = Path(__file__).resolve().parent
 PAPER_ROOT = HERE.parent
-OUT_DEFAULT = PAPER_ROOT / "evidence" / "canaries"
-CANARY_139 = OUT_DEFAULT / "cascade-best-139.lean"
 
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
@@ -37,6 +35,11 @@ import binder_use as lra_bind  # noqa: E402
 import portable_rewrites as lra_port  # noqa: E402
 import track1_keepbest as lra_kb  # noqa: E402
 import track1_ledger as lra_t1  # noqa: E402
+
+# ``CANARY_139`` is a read-only curated fixture; all generated evidence uses
+# the configured runtime artifact root by default.
+CANARY_139 = PAPER_ROOT / "evidence" / "canaries" / "cascade-best-139.lean"
+OUT_DEFAULT = _jevops_path.LRA_CANARY_ROOT
 
 DEFAULT_STATE = _jevops_path.LRA_STATE_ROOT / "track1-lake"
 

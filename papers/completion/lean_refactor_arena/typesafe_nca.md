@@ -157,7 +157,7 @@ Do **not** treat the following live Python as the design. They are accidental. R
 | --- | --- | --- |
 | D1 | `persist_memory=False` inhibits **every** `save_memory` in `run_loop` (per-step and final). | **Fixed.** `test_persist_memory_false_never_writes`. `run_live` still saves (live path). |
 | D2 | `program_nca` assigns `memory["nca"]["program_state"] = state` **before** `execute_program_ops`, then keeps `last_ran` / remaining ops / tactics. | **Fixed.** `test_program_nca_replaces_state_before_execute`. |
-| D3 | Inner walk logs `nca_halt` but only **breaks** on `budget_dead`. Outer Grok stops on full `should_halt`. `run_live` skips remaining canaries only on `budget_dead`. | **As-built, keep.** Shared `last_ran`/journal means inner halt-break would skip later leftover-ranked canaries. |
+| D3 | Inner walk and `run_live` must stop on an idle `nca_halt` as well as `budget_dead`. | **Fixed.** `halt_step` returns a terminal `nca_halt` row and `run_sampled` skips remaining work on either terminal condition. |
 
 Predicate `should_halt` itself is correct and must stay: cold seed (seeded board, empty journal, empty `last_ran`) is **not** halt. There is **no** existing test that `seed_nca_from_board` + empty journal/`last_ran` ⇒ `halt is False`. The false-halt fixture at `test_skill_improve_loop.py` ~1059 plants a **visited** task with energy 0.8, so `idle` is false. PR-NCA-6 adds that cold-seed assertion.
 
@@ -254,7 +254,7 @@ sequenceDiagram
   end
 ```
 
-Outer `run_loop` / `route_next_action` already stop on `halt` or `budget_dead` after inner returns. `run_live` currently skips remaining canaries **only** on `budget_dead` (same defect as inner).
+Outer `run_loop` / `route_next_action`, the inner walk, and `run_live` stop on `halt` or `budget_dead` after the terminal state is observed.
 
 ### 2. Cell grid as the shared store
 
@@ -338,8 +338,8 @@ Cold seed (board just inserted, journal empty, `last_ran=[]`) is **not** halt. `
 | --- | --- | --- |
 | `should_halt` predicate | `(ever_ran ∧ idle) ∨ budget_dead`; cold seed false | Matches |
 | Outer `route_next_action` / `run_loop` | `stop` on `halt` or `budget_dead` | Matches |
-| Inner `inner_typesafe_walk` | `break` on `halt` **or** `budget_dead`; lake row `skipped: nca_halt` | **Defect:** `halt` is only `trace.append`; only `budget_dead` `break`s (PR-NCA-5) |
-| `run_live` canary loop | skip remaining on `halt` or `budget_dead` | **Defect:** skip remaining only on `budget_dead` |
+| Inner `inner_typesafe_walk` | `break` on `halt` **or** `budget_dead`; lake row `skipped: nca_halt` | Matches |
+| `run_live` canary loop | skip remaining on `halt` or `budget_dead` | Matches |
 | Tests | `seed_nca_from_board` + empty journal/`last_ran` ⇒ `halt is False` | **Missing.** Existing false-halt fixture has a visited hot task (energy 0.8) so `idle` is false (PR-NCA-6) |
 
 **Journal** is a ring of 128 rows: `{tick, event, ptr, op, energy_delta, …}`. `replay_journal` re-applies the last 32 deltas onto canonical cells.

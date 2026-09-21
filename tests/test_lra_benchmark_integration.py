@@ -203,3 +203,28 @@ def test_nca_runtime_sidecars_leave_the_arena_source_tree() -> None:
     assert codepath_graph.SIDECAR_DUCKDB.parent == _jevops_path.LRA_NCA_ROOT
     assert codepath_graph.SIDECAR.parent != source_canaries
     assert _jevops_path.LRA_CAS_ROOT != source_canaries / "nca-cas"
+
+
+def test_outer_inner_halt_is_terminal_and_preserves_fail_closed_score_fields() -> None:
+    from jevops.walk import halt_step
+
+    memory = {
+        "nca": {
+            "grid": {
+                "ptr://goal/LRA-G000": {"kind": "goal", "id": "ptr://goal/LRA-G000", "energy": 0.4},
+                "ptr://task/LRA-024": {
+                    "kind": "task",
+                    "id": "ptr://task/LRA-024",
+                    "energy": 0.05,
+                    "blocked": True,
+                    "do_not_fork": True,
+                },
+            },
+            "program_state": {"ops": [{"op": "KEEP"}], "last_ran": [{"op": "TICK"}]},
+        }
+    }
+    stepped = halt_step(memory, depth=0, name="fixture", round_i=2)
+    assert stepped["flow"] == "break"
+    assert stepped["trace"]["action"] == "nca_halt"
+    assert stepped["lake"]["skipped"] == "nca_halt"
+    assert stepped["halt"]["budget_dead"] is False

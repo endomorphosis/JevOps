@@ -8,6 +8,8 @@ import importlib
 from pathlib import Path
 from typing import Any, Callable
 
+import _jevops_path
+
 HERE = Path(__file__).resolve().parent
 
 
@@ -39,7 +41,7 @@ def register_lra_hooks() -> None:
         return
     hooks.register("_lra_registered", lambda: True)
     hooks.register("harness_dir", lambda: HERE)
-    hooks.register("mcp_catalog_path", lambda: HERE.parent / "evidence" / "canaries" / "mcp-catalog.json")
+    hooks.register("mcp_catalog_path", lambda: _jevops_path.LRA_ARTIFACT_ROOT / "mcp-catalog.json")
     hooks.register("load_board", _lazy("board_graph", "load_lra_board"))
     hooks.register("seed_board", _lazy("board_graph", "seed_nca_from_board"))
     hooks.register("overlay_board", _lazy("board_graph", "overlay_live_board"))
@@ -82,7 +84,7 @@ def register_lra_hooks() -> None:
     hooks.register("install_fold", _lazy("binder_use", "install_memory_skill"))
     hooks.register(
         "memory_default",
-        lambda: HERE.parent / "evidence" / "canaries" / "refactor-memory.json",
+        lambda: _jevops_path.LRA_ARTIFACT_ROOT / "refactor-memory.json",
     )
     hooks.register(
         "skill_analysis_default",

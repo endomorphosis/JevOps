@@ -21,7 +21,6 @@ from typing import Any, Callable, Mapping, Optional
 
 HERE = Path(__file__).resolve().parent
 PAPER_ROOT = HERE.parent
-OUT_DEFAULT = PAPER_ROOT / "evidence" / "canaries"
 PROTOCOL = "LRA/v1"
 PR_ID = "PR-9h"
 ACTIONS = ("run", "nest_inner", "mint", "skip_stem", "install_fold", "stop")
@@ -41,6 +40,10 @@ from jevops.outer import deterministic_route  # noqa: E402
 from jevops.outer import nca_status as nca_status_for_router  # noqa: E402
 from jevops.outer import parse_action as _parse_action  # noqa: E402
 from jevops.outer import route_next as _route_next  # noqa: E402
+
+# CLI/runtime output must be outside the imported, curated Arena tree.  Keep
+# ``--out`` explicit/overridable, but make the safe location the default.
+OUT_DEFAULT = _jevops_path.LRA_CANARY_ROOT
 
 SMALL_NAMES = (
     "CallElimCorrect.substOldPostSubset",

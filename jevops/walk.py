@@ -617,7 +617,7 @@ def halt_step(
     name: str = "",
     round_i: int = 0,
 ) -> dict[str, Any]:
-    """Halt log vs budget-dead break. Cold seed does not halt."""
+    """Return a terminal step for idle/budget-dead state; cold seed does not halt."""
 
     from jevops import nca as lra_nca
 
@@ -629,14 +629,18 @@ def halt_step(
             "trace": {"depth": depth, "action": "nca_budget", "budget_energy": halt.get("budget_energy")},
             "lake": {"name": name, "skipped": "nca_budget", "round": round_i},
         }
-    out: dict[str, Any] = {"flow": "continue", "halt": halt}
     if halt.get("halt"):
-        out["trace"] = {
-            "depth": depth,
-            "action": "nca_halt",
-            **{k: halt[k] for k in ("n_issues", "n_pending_ops", "n_hot_tasks")},
+        return {
+            "flow": "break",
+            "halt": halt,
+            "trace": {
+                "depth": depth,
+                "action": "nca_halt",
+                **{k: halt[k] for k in ("n_issues", "n_pending_ops", "n_hot_tasks")},
+            },
+            "lake": {"name": name, "skipped": "nca_halt", "round": round_i},
         }
-    return out
+    return {"flow": "continue", "halt": halt}
 
 
 def absorb_nested(
@@ -1456,7 +1460,7 @@ def run_sampled(
     halt_fn: Any,
     run_fn: Any,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    """Run one nested canary per record. Budget-dead skips never lake."""
+    """Run one nested canary per record; terminal skips never lake."""
 
     canaries: list[dict[str, Any]] = []
     lake_rows: list[dict[str, Any]] = []
@@ -1466,10 +1470,11 @@ def run_sampled(
         except Exception:
             halt = {}
         name = record.get("name")
-        if halt.get("budget_dead"):
-            skipped = pack_canary({}, skipped="nca_budget", name=name)
+        if halt.get("budget_dead") or halt.get("halt"):
+            reason = "nca_budget" if halt.get("budget_dead") else "nca_halt"
+            skipped = pack_canary({}, skipped=reason, name=name)
             canaries.append(skipped)
-            lake_rows.append({"name": name, "skipped": "nca_budget"})
+            lake_rows.append({"name": name, "skipped": reason})
             continue
         nested = dict(run_fn(record) or {})
         lake = list(nested.get("lake") or [])

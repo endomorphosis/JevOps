@@ -8,10 +8,15 @@ from jevops import binders as _mod
 
 globals().update({k: getattr(_mod, k) for k in dir(_mod) if not k.startswith("__")})
 
-MEMORY_DEFAULT = (
-    Path(__file__).resolve().parent.parent / "evidence" / "canaries" / "refactor-memory.json"
+# Keep curated benchmark evidence read-only.  Runtime memory belongs under the
+# configured LRA artifact root so live runs cannot dirty the imported source
+# tree (or accidentally turn a generated receipt into benchmark input).
+MEMORY_DEFAULT = _jevops_path.LRA_ARTIFACT_ROOT / "refactor-memory.json"
+# This file is a checked-in, read-only research fixture.  Unlike mutable
+# memory, it is intentionally resolved from the imported Arena evidence tree.
+SKILL_ANALYSIS_DEFAULT = (
+    Path(__file__).resolve().parent.parent / "evidence" / "canaries" / "skill-analysis.json"
 )
-SKILL_ANALYSIS_DEFAULT = MEMORY_DEFAULT.parent / "skill-analysis.json"
 
 
 def skill_analysis_default() -> Path:
