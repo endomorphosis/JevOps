@@ -644,6 +644,11 @@ def seed_grid_from_board(
 
     nca = memory.setdefault("nca", {})
     grid = nca.setdefault("grid", {})
+    preserved_edges = [
+        list(edge)
+        for edge in (nca.get("board_edges") or [])
+        if isinstance(edge, (list, tuple)) and len(edge) >= 2
+    ]
     if not force and any(str(cid).startswith("ptr://goal/") for cid in grid):
         window = refresh_board_window(memory)
         return {
@@ -692,7 +697,12 @@ def seed_grid_from_board(
                 continue
             _put(cptr, "codepath", path=path, blocked=False)
             edges.append((tid, cptr))
-    nca["board_edges"] = [list(edge) for edge in edges]
+    # Board seeding owns the goal DAG, but callers may already have attached
+    # theorem/skill/residual neighborhoods (for example autoencoder feedback).
+    # Replacing the edge list here silently erased those neighborhoods and
+    # made NCA feedback depend on import order. Merge the explicit edges and
+    # let the canonical deduplication below remove repeats.
+    nca["board_edges"] = [list(edge) for edge in edges] + preserved_edges
     try:
         lra_plan.seed_plan(memory, board=data, force=force)
     except Exception:

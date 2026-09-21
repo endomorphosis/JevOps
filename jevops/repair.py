@@ -382,7 +382,7 @@ def typesafe_pick_repair(issues: list[dict[str, Any]], *, ledger: Any = None) ->
     if len(names) == 1 or ledger is None:
         return names[0]
     try:
-        from ipfs_accelerate_py.typesafe_inference import Choice, TypeSafeClient, typesafe_configured
+        from jevops.typesafe_inference import Choice, TypeSafeClient, typesafe_configured
         from jevops import hooks
 
         pin = hooks.resolve("pin_typesafe", "pca_mca_fanout", "pin_typesafe_path")
@@ -398,7 +398,7 @@ def typesafe_pick_repair(issues: list[dict[str, Any]], *, ledger: Any = None) ->
             fam = family_of(name)
             if fam not in families:
                 families.append(fam)
-        from ipfs_accelerate_py.typesafe_inference import Noul
+        from jevops.typesafe_inference import Noul
         from jevops import hooks as _hooks
 
         t1 = _hooks.try_import("track1_ledger")

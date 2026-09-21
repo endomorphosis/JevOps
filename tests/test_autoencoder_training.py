@@ -36,6 +36,31 @@ def test_v2_ir_preserves_goal_arguments_and_is_non_admitting() -> None:
     assert [row["op"] for row in compact["ops"]] == ["intro", "simp", "trivial"]
 
 
+def test_structural_ir_preserves_case_bullets_and_branches() -> None:
+    source = """theorem shaped (xs : List Nat) : True := by
+  induction xs <;> simp_all
+  case nil =>
+    trivial
+  case cons x xs ih =>
+    cases ih with
+    | left h => exact h
+    | right h => exact h
+"""
+    packed = ae.encode_lean_ir(source)
+    rendered = ae.decode_lean_ir(packed)
+    assert any(node.get("kind") == "control" for node in packed["script"])
+    assert any(node.get("kind") == "branch" for node in packed["script"])
+    assert "induction xs <;> simp_all" in rendered
+    assert "case cons x xs ih =>" in rendered
+    assert "| left h => exact h" in rendered
+    assert "sorry" not in rendered.lower()
+    assert packed["source_copy"] is False
+
+    example = ae.coerce_training_example({"id": "shaped", "text": source})
+    predicted = ae.LeanIRAutoencoder().predict_ir(source, source_ir=example.source_ir)
+    assert "case cons x xs ih =>" in ae.decode_lean_ir(predicted)
+
+
 def test_losses_are_finite_and_training_is_sparse_and_deterministic() -> None:
     rows = _rows()
     config = ae.AutoencoderConfig(

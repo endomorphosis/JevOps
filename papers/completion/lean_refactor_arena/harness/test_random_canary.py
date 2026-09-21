@@ -72,6 +72,17 @@ class RandomCanaryTests(unittest.TestCase):
         self.assertEqual(check["n_records"], 15)
         self.assertFalse(check["called_docker0"])
 
+    def test_typesafe_provider_failure_fails_closed(self) -> None:
+        skipped = lra_rand._typesafe_provider_skip(
+            RuntimeError("HTTP 503: upstream connection refused\nsecret-free"),
+            families=("dead_code",),
+        )
+        self.assertTrue(skipped["skipped"])
+        self.assertEqual(skipped["reason"], "typesafe_provider_error")
+        self.assertIn("RuntimeError: HTTP 503", skipped["error"])
+        self.assertEqual(skipped["families"], {"dead_code"})
+        self.assertIsNone(skipped["arena_score"])
+
     def test_sample_is_seeded(self) -> None:
         _raw, _digest, records = lra_splice.load_warmup_records()
         a = [item.get("name") for item in lra_rand.sample_records(records, k=3, seed=7)]

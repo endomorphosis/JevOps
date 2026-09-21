@@ -14,10 +14,10 @@ following order of authority:
 3. IR/cosine, CE, NCA, and router-confidence signals as learning/tie-break
    signals only.
 
-The default route is ``ipfs_accelerate_py.llm_router`` with the configurable
-``codex_cli`` / ``gpt-5.6-luna`` pair.  Tests and offline users can inject a
-``router_generate(prompt)`` callback, so importing this module never requires
-the optional accelerator checkout.
+The default route is the in-tree ``jevops.llm_router`` facade with the
+configurable ``codex_cli`` / ``gpt-5.6-luna`` pair.  Tests and offline users
+can inject a ``router_generate(prompt)`` callback, so importing this module
+never requires the deprecated accelerator checkout.
 """
 from __future__ import annotations
 

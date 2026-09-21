@@ -98,12 +98,35 @@ def compile_local_ir(memory: Mapping[str, Any], *, problem: str = "") -> dict[st
 
 
 def compile_datasets_ir(memory: Mapping[str, Any]) -> dict[str, Any]:
-    """ipfs_datasets_py QueryIR pipeline over NCA cell ids."""
+    """Optional legacy QueryIR projection over NCA cell ids.
 
-    try:
-        from ipfs_datasets_py.search.graph_query.ir import Expand, Limit, Project, QueryIR, SeedEntities
-    except Exception as exc:
-        return {"ok": False, "source": "datasets_query_ir", "reason": type(exc).__name__, "called_docker0": False}
+    The local closed IR is the normal path.  The Endomorphosis datasets
+    compiler is a deprecated, explicit opt-in adapter and is never required
+    for program execution.
+    """
+
+    from .dependencies import load_external_symbol
+
+    classes = {
+        name: load_external_symbol(
+            "ipfs_datasets_py.search.graph_query.ir",
+            name,
+            feature="datasets QueryIR",
+        )
+        for name in ("Expand", "Limit", "Project", "QueryIR", "SeedEntities")
+    }
+    if any(value is None for value in classes.values()):
+        return {
+            "ok": False,
+            "source": "datasets_query_ir",
+            "reason": "external_dependency_disabled",
+            "called_docker0": False,
+        }
+    Expand = classes["Expand"]
+    Limit = classes["Limit"]
+    Project = classes["Project"]
+    QueryIR = classes["QueryIR"]
+    SeedEntities = classes["SeedEntities"]
     local = compile_local_ir(memory)
     seeds = list(local.get("seeds") or [])
     ir = QueryIR.from_ops(
@@ -143,25 +166,41 @@ def decompile_ir(ir: Mapping[str, Any]) -> dict[str, Any]:
             lines.append(name.lower())
     text = "; ".join(lines) or "TICK then KEEP"
     extra: dict[str, Any] = {}
-    try:
-        from ipfs_datasets_py.logic.modal.decompiler_repairs import decompile_modal_ir_structure
+    from .dependencies import load_external_symbol
 
-        extra["datasets_decompiler"] = {
+    decompiler = load_external_symbol(
+        "ipfs_datasets_py.logic.modal.decompiler_repairs",
+        "decompile_modal_ir_structure",
+        feature="datasets modal decompiler",
+    )
+    extra["datasets_decompiler"] = (
+        {
             "ok": True,
             "note": "modal decompiler imported; NCA IR is not a legal sample so not executed",
         }
-    except Exception as exc:
-        extra["datasets_decompiler"] = {"ok": False, "reason": type(exc).__name__}
+        if decompiler is not None
+        else {"ok": False, "reason": "external_dependency_disabled"}
+    )
     return {"ok": True, "instructions": text, "n_ops": len(ops), "called_docker0": False, **extra}
 
 
 def autoencoder_hints(memory: Mapping[str, Any]) -> dict[str, Any]:
     """Optional AdaptiveModalAutoencoder synthesis hints. No model weights required."""
 
-    try:
-        from ipfs_datasets_py.optimizers.logic import synthesis_hints_from_autoencoder_introspection
-    except Exception as exc:
-        return {"ok": False, "source": "autoencoder", "reason": type(exc).__name__, "called_docker0": False}
+    from .dependencies import load_external_symbol
+
+    hint_fn = load_external_symbol(
+        "ipfs_datasets_py.optimizers.logic",
+        "synthesis_hints_from_autoencoder_introspection",
+        feature="datasets autoencoder hints",
+    )
+    if hint_fn is None:
+        return {
+            "ok": False,
+            "source": "autoencoder",
+            "reason": "external_dependency_disabled",
+            "called_docker0": False,
+        }
     from jevops.outer import head_seq
 
     window = head_seq(((memory.get("nca") or {}).get("board_window")) or [], 8)
@@ -171,7 +210,7 @@ def autoencoder_hints(memory: Mapping[str, Any]) -> dict[str, Any]:
         "legal_ir_view_metrics": {},
     }
     try:
-        hints = synthesis_hints_from_autoencoder_introspection(fake)
+        hints = hint_fn(fake)
     except Exception:
         hints = {"focus": fake["synthesis_focus"], "imported": True}
     return {"ok": True, "source": "autoencoder", "hints": hints, "called_docker0": False}

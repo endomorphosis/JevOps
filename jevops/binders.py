@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any, Mapping, Optional, Sequence
+from typing import Any, Callable, Mapping, Optional, Sequence
 
 # Unicode letters so CCS ``μ`` counts as a binder.
 IDENT = re.compile(r"[^\W\d][\w']*", re.UNICODE)
@@ -433,3 +433,23 @@ def is_blacklisted(
     from jevops.memory import is_blacklisted as _fn
 
     return _fn(memory, name, kind, tactics)
+
+
+def blocked_port_stems(
+    memory: Optional[Mapping[str, Any]],
+    name: str,
+    pipeline: Sequence[Any],
+    *,
+    blacklist_fn: Callable[..., bool],
+    failed_fn: Callable[[Mapping[str, Any], str], Any],
+) -> set[str]:
+    """Union of blacklisted port_ stems and failed skill stems. Not a lake admit."""
+
+    blocked: set[str] = set()
+    if memory is None:
+        return blocked
+    for key, _fn in pipeline or ():
+        if blacklist_fn(memory, name, f"port_{key}"):
+            blocked.add(str(key))
+    blocked |= set(failed_fn(memory, name) or ())
+    return blocked

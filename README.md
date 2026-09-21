@@ -92,12 +92,32 @@ hooks.register("token_count", my_token_count)
 
 If hooks are missing, the kernel `try_import`s consumer modules that happen to be on `PYTHONPATH` (LRA harness). Missing hooks fail closed.
 
+## Dependency boundary and deprecation
+
+This checkout has no Git submodule entry and does not require the separate
+Endomorphosis `ipfs_accelerate` or `ipfs_datasets` repositories for its core
+runtime. The small interfaces JevOps actually uses are now in-tree:
+
+* `jevops.typesafe_inference` is the stdlib-only structured TypeSafe client;
+* `jevops.llm_router` supplies deterministic offline, Codex CLI, and
+  OpenAI-compatible HTTP routes;
+* local JSON-LD, SQLite, and symbolic fallbacks remain the normal graph and
+  receipt paths.
+
+The old external repositories are compatibility inputs, not core
+dependencies. `JEVOPS_USE_EXTERNAL_ROUTER=1` selects the deprecated
+`ipfs_accelerate_py.llm_router`; `JEVOPS_USE_EXTERNAL_DEPS=1` enables the
+deprecated optional datasets/accelerator adapters. Those paths emit
+`DeprecationWarning`, are never silent proof authorities, and can be removed
+after downstream consumers migrate. DuckDB, NumPy, and Lean/Lake remain
+optional adapters/toolchains; they are not copied into this Python package.
+
 ## Two-level autoresearch loop
 
 `jevops.harness.JevOpsHarness` runs a bounded inner/outer loop. The inner
 iteration analyzes the JevOps source tree and updates AutoResearch memory; the
-outer iteration calls `ipfs_accelerate_py.llm_router.generate_text` for a
-closed JSON action. `update_code` proposals use exact `old`/`new` text, are
+outer iteration calls the in-tree `jevops.llm_router.generate_text` facade for
+a closed JSON action. `update_code` proposals use exact `old`/`new` text, are
 evaluated in a temporary repository copy, and are applied only when the
 injected evaluator improves (`score` is higher-is-better and `ok` must be
 true).
@@ -112,15 +132,20 @@ harness = JevOpsHarness(
 receipt = harness.run(iterations=4)
 ```
 
-The accelerator checkout can be installed normally or exposed with
-`JEVOPS_IPFS_ACCELERATE_PATH=/path/to/ipfs_accelerate`; the router import is
-lazy, so the kernel still works without that optional dependency.
+The default is fully offline and deterministic:
+
+```bash
+python -m jevops.harness --iterations 4
+```
+
+For a real model, select an in-tree provider explicitly. The Codex CLI route
+does not require the accelerator checkout:
 
 For a bounded command-line run:
 
 ```bash
-JEVOPS_IPFS_ACCELERATE_PATH=/path/to/ipfs_accelerate \
-  python -m jevops.harness --iterations 4
+python -m jevops.harness --iterations 4 \
+  --provider codex_cli --model gpt-5.6-luna --reasoning-effort high --strict-router
 ```
 
 For a continuously supervised run, use `--continuous`. Each cycle performs
@@ -130,16 +155,16 @@ cross-provider fallback; `update_code` is still applied only after the
 isolated evaluator improves.
 
 ```bash
-JEVOPS_IPFS_ACCELERATE_PATH=/path/to/ipfs_accelerate \
-  python -m jevops.harness --continuous --interval 60 \
+python -m jevops.harness --continuous --interval 60 \
   --provider codex_cli --model gpt-5.6-luna \
   --reasoning-effort high --strict-router
 ```
 
 The TypeSafe provider is a structured System One evaluator, not a free-form
 text generator. Keep its credential in `TYPESAFE_API_KEY` when TypeSafe gates
-are used; the outer code-proposal text route above is the Codex-backed
-`ipfs_accelerate_py.llm_router` path.
+are used. Existing consumers that still require the external route may set
+`JEVOPS_USE_EXTERNAL_ROUTER=1` and `JEVOPS_IPFS_ACCELERATE_PATH`, but that
+compatibility path is deprecated.
 
 ### Router-guided proof tuning
 
@@ -312,9 +337,11 @@ The invariant argument and its assumptions are documented in
 
 ## Not in this package
 
-Portable Lean folds, `lake env`, random canaries, TypeSafe Jev HTTP, Track 1/2,
-LRA `tasks.json` board, and the implementation-specific inner TypeSafe lake
-walker.
+Portable Lean folds, `lake env`, random canaries, Track 1/2, LRA `tasks.json`
+board, and the implementation-specific inner TypeSafe lake walker remain
+consumer/toolchain concerns. The TypeSafe HTTP DTO/client itself is now
+available in `jevops.typesafe_inference`; it remains an optional network
+service, not a proof authority.
 
 ## Lean Refactor Arena benchmark integration
 

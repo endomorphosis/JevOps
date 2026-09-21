@@ -4,9 +4,10 @@
 The inner loop is deliberately local and deterministic: it parses the JevOps
 source tree, records structural observations, and lets the existing Jev
 AutoResearch memory propose closed improvements.  The outer loop is the only
-place that talks to an LLM.  It uses ``ipfs_accelerate_py.llm_router`` to
-return a closed JSON action and accepts a source change only after evaluating
-the change in an isolated copy of the repository.
+place that talks to an LLM.  It uses the in-tree ``jevops.llm_router`` facade
+by default (with an explicit deprecated accelerator opt-in) to return a
+closed JSON action and accepts a source change only after evaluating the
+change in an isolated copy of the repository.
 
 This module is implementation-agnostic.  A consumer can inject an evaluator
 for its own harness, or use the default bounded pytest/compile evaluator.
@@ -133,7 +134,8 @@ class JevOpsHarness:
         root: Repository root.  The default is the checkout containing this
             package, or the current checkout when it contains ``jevops/``.
         router_generate: Optional ``generate(prompt)`` callback.  If omitted,
-            the callback is lazy-backed by ``ipfs_accelerate_py.llm_router``.
+            the callback is lazy-backed by the in-tree ``jevops.llm_router``
+            facade; the deprecated accelerator router is explicit opt-in.
         evaluate_fn: Optional callable receiving an isolated repository path
             and returning ``Evaluation``-compatible data.  Supplying this is
             recommended for a real harness because it can score its oracle,
@@ -181,7 +183,12 @@ class JevOpsHarness:
         self.stalled_limit = max(1, int(stalled_limit))
         self.objective = str(objective or "Improve JevOps")
         self.router_config = {
-            "module": "ipfs_accelerate_py.llm_router",
+            "module": (
+                "ipfs_accelerate_py.llm_router"
+                if str(os.environ.get("JEVOPS_USE_EXTERNAL_ROUTER") or "").strip().lower()
+                in {"1", "true", "yes", "on"}
+                else "jevops.llm_router"
+            ),
             "provider": str(provider or "auto"),
             "model_name": str(model_name or "auto"),
             "reasoning_effort": str((router_kwargs or {}).get("reasoning_effort") or ""),

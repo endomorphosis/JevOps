@@ -2418,3 +2418,124 @@ def eligible_span_counts(
     """Count eligible non-PCA windows per span length."""
 
     return {f"span_{span}": len(list(window_fn(tactics, int(span)) or ())) for span in spans or ()}
+
+
+def collect_path_candidates(
+    paths: Sequence[Any],
+    *,
+    load_fn: Callable[[Any], str],
+    flatten_fn: Callable[[str], str],
+    pack_fn: Callable[..., Mapping[str, Any]],
+    generator: str,
+    extra: Optional[Mapping[str, Any]] = None,
+    kind_prefix: str = "grok_file_",
+    stem_n: int = 48,
+    head_fn: Optional[Callable[[str, int], str]] = None,
+) -> list[dict[str, Any]]:
+    """Pack labeled candidates from tactic files. Generation stays injected."""
+
+    rows: list[dict[str, Any]] = []
+    for path in paths or ():
+        filled = flatten_fn(load_fn(path))
+        stem = Path(path).stem
+        if head_fn is not None:
+            stem = head_fn(stem, int(stem_n))
+        row = pack_fn(
+            kind=f"{kind_prefix}{stem}",
+            generator=generator,
+            tactics=filled,
+            extra={"source": str(path), **dict(extra or {})},
+        )
+        rows.append(dict(row))
+    return rows
+
+
+def collect_one_hole_fills(
+    targets: Sequence[Any],
+    holes: Sequence[Any],
+    tactics: str,
+    *,
+    generate_fn: Callable[[Any], Any],
+    parse_fn: Callable[[str, Sequence[Any]], Mapping[str, str]],
+    fallback_fn: Callable[[str], str],
+    apply_fn: Callable[..., str],
+    align_fn: Callable[[str], str],
+    pack_fn: Callable[..., Mapping[str, Any]],
+    asdict_fn: Callable[[Any], Mapping[str, Any]],
+    skip_exc: Any = (),
+    generator: str = "",
+    kind_fmt: str = "leanstral_one_{id}",
+    head_fn: Optional[Callable[[str, int], str]] = None,
+    fill_head: int = 400,
+) -> tuple[list[dict[str, Any]], Any]:
+    """Fill one hole at a time. generate_fn stays in the consumer. Lake still admits."""
+
+    rows: list[dict[str, Any]] = []
+    identity: Any = None
+    errors = skip_exc if skip_exc else ()
+    for hole in targets or ():
+        try:
+            generated = generate_fn(hole)
+        except errors:
+            break
+        if isinstance(generated, tuple):
+            text = str(generated[0] or "")
+            if len(generated) > 1:
+                identity = generated[1]
+        else:
+            text = str(generated or "")
+        hole_id = str(getattr(hole, "hole_id", hole))
+        parsed = dict(parse_fn(text, [hole]) or {})
+        fill = str(parsed.get(hole_id) or parsed.get("__full__") or "")
+        if not fill.strip():
+            fill = str(fallback_fn(text) or "")
+        fills = {
+            str(getattr(item, "hole_id", item)): (
+                fill if str(getattr(item, "hole_id", item)) == hole_id else str(getattr(item, "original", ""))
+            )
+            for item in holes or ()
+        }
+        filled = align_fn(apply_fn(tactics, holes, fills))
+        fill_view = head_fn(fill, int(fill_head)) if head_fn is not None else fill
+        rows.append(
+            dict(
+                pack_fn(
+                    kind=str(kind_fmt).format(id=hole_id),
+                    generator=generator,
+                    tactics=filled,
+                    holes=[dict(asdict_fn(hole)) | {"fill": fill_view}],
+                )
+            )
+        )
+    return rows, identity
+
+
+SHOT_SCORE_FIELDS = {
+    "name": "name",
+    "ratio": "ratio",
+    "filled_tokens": "filled_tokens",
+    "ref_tokens": "ref_tokens",
+}
+
+
+def pack_shot_candidate(
+    *,
+    kind: str,
+    generator: str,
+    tactics: str,
+    shots: Sequence[Any],
+    pack_fn: Callable[..., Mapping[str, Any]],
+    extra: Optional[Mapping[str, Any]] = None,
+    fields: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Pack a few-shot generated candidate. shot_scores stay projected."""
+
+    from jevops.pick import project_items
+
+    row_extra: dict[str, Any] = {
+        "n_shots": len(list(shots or ())),
+        "shot_scores": project_items(shots, dict(fields or SHOT_SCORE_FIELDS)),
+    }
+    if extra:
+        row_extra.update(dict(extra))
+    return dict(pack_fn(kind=kind, generator=generator, tactics=tactics, extra=row_extra))

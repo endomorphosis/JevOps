@@ -243,13 +243,14 @@ def graphrag_search(
                 sources[key] = note
     except Exception as exc:
         sources["symbol_search"] = type(exc).__name__
-    try:
-        from ipfs_datasets_py.logic.intent_ir.graphrag.skillcenter_graphrag import SkillCenterGraphRAG
+    from .dependencies import load_external_symbol
 
-        _ = SkillCenterGraphRAG
-        sources["datasets_graphrag"] = "importable"
-    except Exception as exc:
-        sources["datasets_graphrag"] = type(exc).__name__
+    datasets_graphrag = load_external_symbol(
+        "ipfs_datasets_py.logic.intent_ir.graphrag.skillcenter_graphrag",
+        "SkillCenterGraphRAG",
+        feature="datasets GraphRAG",
+    )
+    sources["datasets_graphrag"] = "importable" if datasets_graphrag is not None else "external_dependency_disabled"
     ranked = [str(h.get("symbol") or "") for h in hits if h.get("symbol")]
     from jevops.outer import head_seq
 

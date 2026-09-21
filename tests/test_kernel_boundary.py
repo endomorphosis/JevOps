@@ -181,6 +181,7 @@ class KernelBoundaryTests(unittest.TestCase):
         lean = ae.decode_lean_ir(packed)
         self.assertIn("True := by", lean)
         self.assertTrue(lean.startswith("theorem "))
+        self.assertIn("  trivial", lean)
         self.assertNotIn("sorry", lean)
         ir_rt = ae.lean_ir_roundtrip("intro simp trivial")
         self.assertFalse(ir_rt["gold"])
@@ -570,6 +571,86 @@ class KernelBoundaryTests(unittest.TestCase):
         )
         self.assertEqual(merged[0], "simp")
         self.assertIn("STOP", merged)
+        from jevops import outer, jev as lra_jev, nca as lra_nca
+
+        clone, dest, restore = outer.clone_restore(
+            {"url": "https://example.com", "file": "A.lean"},
+            "/tmp/state",
+            clone_fn=lambda url, root: Path(root) / "clone",
+            relpath_fn=lambda rec: rec["file"],
+            read_fn=lambda _path: b"keep",
+        )
+        self.assertEqual(clone, Path("/tmp/state") / "clone")
+        self.assertEqual(dest.name, "A.lean")
+        self.assertEqual(restore, b"keep")
+        rec, recs, digest = outer.load_named_pack(
+            lambda: (b"raw", "abc", [{"name": "P"}, {"name": "Q"}]),
+            "P",
+        )
+        self.assertEqual(rec["name"], "P")
+        self.assertEqual(digest, "abc")
+        self.assertEqual(len(recs), 2)
+        shots = outer.named_shots(
+            [{"name": "A", "n": 1}, {"name": "B", "n": 2}],
+            ("A", "B", "C"),
+            skip_name="B",
+            example_fn=lambda row: row["n"],
+        )
+        self.assertEqual(shots, [1])
+        self.assertTrue(outer.inspect_only("generate_text.py", markers=("generate_text",)))
+        self.assertFalse(outer.inspect_only("portable_rewrites.py", markers=("generate_text",)))
+        packed = lra_search.collect_path_candidates(
+            [Path("/tmp/foo.lean")],
+            load_fn=lambda _p: "  simp\n",
+            flatten_fn=lambda text: text.strip(),
+            pack_fn=lra_search.pack_generated_candidate,
+            generator="grok-file",
+            extra={"chat_ignored": True},
+        )
+        self.assertEqual(packed[0]["kind"], "grok_file_foo")
+        self.assertEqual(packed[0]["tactics"], "simp")
+        hole = type("H", (), {"hole_id": "h0", "original": "simp at h", "family": "dead_code"})()
+        fills, ident = lra_search.collect_one_hole_fills(
+            [hole],
+            [hole],
+            "  simp at h\n  exact Hin\n",
+            generate_fn=lambda _h: ("exact Hin", {"model": "x"}),
+            parse_fn=lambda _text, _holes: {"h0": "exact Hin"},
+            fallback_fn=lambda _text: "",
+            apply_fn=lambda tactics, _holes, mapping: mapping["h0"],
+            align_fn=lambda text: text,
+            pack_fn=lra_search.pack_generated_candidate,
+            asdict_fn=lambda item: {"hole_id": item.hole_id},
+            generator="labs-leanstral-1-5",
+        )
+        self.assertEqual(fills[0]["kind"], "leanstral_one_h0")
+        self.assertEqual(ident["model"], "x")
+        qs = lra_jev.with_residual_questions(
+            {"intent": "keep"},
+            extra=True,
+            residuals={"have": 2},
+            skills=["port_foo", "keep"],
+            noul_ctor=lambda **kw: ("noul", kw),
+            score_ctor=lambda **kw: ("score", kw),
+            unsafe_instructions_fn=lambda kv: kv[0],
+            help_instructions_fn=lambda kv: kv[0],
+            fail_instructions_fn=lambda sk: sk,
+            unsafe_criteria={"true": "t", "false": "f"},
+            help_criteria=["a"],
+            fail_criteria={"true": "t", "false": "f"},
+        )
+        self.assertIn("unsafe_have", qs)
+        self.assertIn("fail_skill_port_foo", qs)
+        self.assertNotIn("fail_skill_keep", qs)
+        seeded = lra_nca.seed_edges_from_query(
+            {"nca": {}},
+            query_fn=lambda: [],
+            graph_fn=lambda: [("a.py:f", "b.py:g")],
+            limit=8,
+        )
+        self.assertTrue(seeded["ok"])
+        self.assertEqual(seeded["source"], "harness_ast")
+        self.assertEqual(seeded["n_edges"], 1)
         putnam_dir = lean.project_dir_for_record(
             {"name": "Q", "source": "putnambench", "url": ""},
             lean.VersionPin(lean_tag="v4.26.0", git_commit="abc"),
@@ -2662,6 +2743,52 @@ class KernelBoundaryTests(unittest.TestCase):
         )
         self.assertTrue(skipped["ok"])
         self.assertEqual(skipped["reason"], "no_key")
+        from jevops.binders import blocked_port_stems
+
+        blocked = blocked_port_stems(
+            {"x": 1},
+            "P",
+            (("drop", None),),
+            blacklist_fn=lambda *_a, **_k: True,
+            failed_fn=lambda *_a, **_k: {"failed"},
+        )
+        self.assertIn("drop", blocked)
+        self.assertIn("failed", blocked)
+        from jevops.outer import attrs_dict, call_then, first_truthy, if_none
+
+        self.assertEqual(if_none(None, 3), 3)
+        self.assertEqual(if_none(0, 3), 0)
+        self.assertEqual(if_none(None, factory=lambda: 7), 7)
+        self.assertEqual(first_truthy("", 0, "x"), "x")
+        self.assertEqual(call_then(lambda n: n + 1, 1, cond=True, second=10), 11)
+        self.assertEqual(call_then(lambda n: n + 1, 1, cond=False, second=10), 2)
+        packed = attrs_dict(type("O", (), {"a": 1, "b": 2})(), ("a", "b"), extra={"c": 3})
+        self.assertEqual(packed, {"a": 1, "b": 2, "c": 3})
+        receipt = lean.begin_path_a_receipt(
+            {"name": "P", "source": "s", "url": "u"},
+            lean.VersionPin(lean_tag="v4.26.0", git_commit="c"),
+            relpath="A.lean",
+            template="thm := by\nsorry",
+            statement="thm",
+            suffix=" := by\nsorry",
+            lake_sorry="header\nthm := by\nsorry",
+            aesop=False,
+            considered=["rfl"],
+            timeout=1.0,
+            digest_fn=lambda text: "d" * 64 if text else "",
+        )
+        self.assertEqual(receipt.name, "P")
+        self.assertTrue(receipt.sorry_template_prefix_bound)
+        self.assertFalse(receipt.hammer_006_lra_ready)
+        from jevops.outer import call_or, mark_skipped, starmap, with_defaults
+
+        skipped_obj = type("S", (), {"skipped": False, "reason": ""})()
+        mark_skipped(skipped_obj, "no_key")
+        self.assertTrue(skipped_obj.skipped)
+        self.assertEqual(with_defaults({"a": 1}, a=9, b=2), {"a": 1, "b": 2})
+        self.assertEqual(starmap(lambda x, y: x + y, ((1, 2), (3, 4))), [3, 7])
+        self.assertEqual(call_or(None, 5), 5)
+        self.assertEqual(call_or(lambda: 8, 5), 8)
         a, b = coalesce_pair(None, "keep", lambda: ("loaded", "ignored"))
         self.assertEqual((a, b), ("loaded", "keep"))
         from jevops.outer import coalesce_chat_text

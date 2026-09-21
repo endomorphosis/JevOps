@@ -150,7 +150,21 @@ def kernel_check_fol(declaration: str, body: str, timeout: float = 30.0) -> dict
 
 
 def run_fol_canary(spec: Mapping[str, Any]) -> dict[str, Any]:
-    from ipfs_accelerate_py.leanstral_typesafe import LeanstralGoal, propose_and_solve
+    # The FOL proposal helper is not part of the JevOps-owned protocol. Keep
+    # it as an explicit, deprecated adapter instead of making this tool's
+    # import path require the full accelerator checkout.
+    from _optional_deps import load_module
+
+    legacy, reason = load_module("ipfs_accelerate_py.leanstral_typesafe")
+    if legacy is None:
+        return {
+            "ok": False,
+            "goal_id": str(spec.get("goal_id") or ""),
+            "reason": reason or "external_dependency_disabled",
+            "external_dependency": True,
+        }
+    LeanstralGoal = legacy.LeanstralGoal
+    propose_and_solve = legacy.propose_and_solve
 
     goal = LeanstralGoal(
         goal_id=str(spec["goal_id"]),
@@ -304,7 +318,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parser.parse_args(list(argv) if argv is not None else None)
     load_keyfile()
     pin_paths()
-    from ipfs_accelerate_py.typesafe_inference import typesafe_configured
+    from jevops.typesafe_inference import typesafe_configured
     import docker0_client as lra_d0
 
     health = lra_d0.probe_docker0_health()

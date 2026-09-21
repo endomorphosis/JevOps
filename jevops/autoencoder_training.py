@@ -2085,7 +2085,7 @@ def typesafe_rank_variations(
         return {"ok": False, "reason": "empty", "called_typesafe": False}
     if client is None:
         try:
-            from ipfs_accelerate_py.typesafe_inference import Choice, Noul, TypeSafeClient, typesafe_configured
+            from .typesafe_inference import Choice, Noul, TypeSafeClient, typesafe_configured
             if not typesafe_configured():
                 return {"ok": False, "reason": "typesafe_not_configured", "called_typesafe": False}
             client = TypeSafeClient(timeout=float(timeout))
@@ -2093,7 +2093,7 @@ def typesafe_rank_variations(
             return {"ok": False, "reason": type(exc).__name__, "called_typesafe": False}
     try:
         try:
-            from ipfs_accelerate_py.typesafe_inference import Choice, Noul
+            from .typesafe_inference import Choice, Noul
         except Exception:
             # A consumer may inject a TypeSafe-compatible test/client object
             # without installing the accelerator package.  Small records are
@@ -2189,7 +2189,7 @@ def typesafe_fuzzy_prove(
 
     try:
         if client is None:
-            from ipfs_accelerate_py.typesafe_inference import (
+            from .typesafe_inference import (
                 Choice,
                 Noul,
                 Score,
@@ -2207,7 +2207,7 @@ def typesafe_fuzzy_prove(
             client = TypeSafeClient(timeout=float(timeout))
         else:
             try:
-                from ipfs_accelerate_py.typesafe_inference import Choice, Noul, Score
+                from .typesafe_inference import Choice, Noul, Score
             except Exception:
                 @dataclass(frozen=True)
                 class Choice:  # type: ignore[no-redef]

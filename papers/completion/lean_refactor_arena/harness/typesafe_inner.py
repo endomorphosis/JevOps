@@ -478,7 +478,7 @@ def starting_tactics(record: Mapping[str, Any], *, out: Any = None, from_best: b
         tactics,
         out,
         str(record.get("name") or "canary"),
-        extras={"Core.InitsUpdatesComm": "cascade-best-139.lean"},
+        extras={"Core.InitsUpdatesComm": "cascade-best-130.lean"},
     )
     if selected != tactics or str(record.get("name") or "") != "Core.InitsUpdatesComm":
         return selected

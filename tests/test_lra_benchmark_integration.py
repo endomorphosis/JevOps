@@ -187,8 +187,8 @@ print(json.dumps({{
         "datasets": str(datasets),
         "state": str(state),
         "generate_text_accel": str(accel),
-        "typesafe_available": False,
-        "typesafe_reason": "accelerator_checkout_missing",
+        "typesafe_available": True,
+        "typesafe_reason": "in_tree",
     }
 
 

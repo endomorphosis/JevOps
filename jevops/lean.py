@@ -1279,6 +1279,41 @@ def sorry_prefix_bound(
     )
 
 
+def begin_path_a_receipt(
+    record: Mapping[str, Any],
+    pin: Any,
+    *,
+    relpath: str,
+    template: str,
+    statement: str,
+    suffix: str,
+    lake_sorry: str,
+    aesop: bool,
+    considered: Sequence[str],
+    timeout: float,
+    digest_fn: Callable[[str], str],
+    **fields: Any,
+) -> Any:
+    """Seed Path A receipt from a prefix-bound sorry template. Lake still admits."""
+
+    return init_try_receipt(
+        record,
+        pin,
+        relpath=relpath,
+        template_digest=digest_fn(template),
+        prefix_bound=sorry_prefix_bound(
+            template=template,
+            statement=statement,
+            suffix=suffix,
+            lake_sorry=lake_sorry,
+        ),
+        aesop=aesop,
+        considered=considered,
+        timeout=timeout,
+        **fields,
+    )
+
+
 def lake_source_for_tactic(
     *,
     header: str,

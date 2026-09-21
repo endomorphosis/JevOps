@@ -78,6 +78,12 @@ _UNSAFE_IR_TEXT = re.compile(
     r"(?:\b(?:sorry|admit|unsafe|run_tac|exact\?|import|namespace|open|set_option|macro|elab|quote)\b|<;>|\|)",
     re.IGNORECASE,
 )
+_UNSAFE_SCRIPT_TEXT = re.compile(
+    r"\b(?:sorry|admit|unsafe|run_tac|exact\?|import|namespace|open|set_option|macro|elab|quote)\b",
+    re.IGNORECASE,
+)
+_SCRIPT_HEAD = re.compile(r"(?P<op>[A-Za-z_][A-Za-z0-9_']*)(?:\s+(?P<args>.*))?$")
+_SCRIPT_BRANCH = re.compile(r"(?P<label>[A-Za-z_][A-Za-z0-9_']*)(?:\s+(?P<args>.*))?$")
 
 
 def _clip(value: int, lo: int = 0, hi: int = MILLE) -> int:
@@ -124,6 +130,155 @@ def _safe_ir_arg(value: Any, *, max_chars: int = 160) -> str:
     if not text or _UNSAFE_IR_TEXT.search(text) or ";" in text:
         return ""
     return text
+
+
+def _safe_script_arg(value: Any, *, max_chars: int = 320) -> str:
+    """Sanitize a structured tactic argument without flattening its grammar.
+
+    The legacy operation IR rejects ``<;>`` and ``|`` because those tokens are
+    unsafe in a single flat argument.  The structural script stores them only
+    as already-parsed control-flow syntax, so they can be retained while still
+    rejecting declarations, metaprogramming, and proof admission escapes.
+    """
+
+    text = " ".join(str(value or "").replace("\x00", " ").split())[:max_chars]
+    if not text or _UNSAFE_SCRIPT_TEXT.search(text):
+        return ""
+    if "\n" in text or "\r" in text or ";" in text.replace("<;>", ""):
+        return ""
+    return text
+
+
+def _script_nodes(text: str) -> list[dict[str, Any]]:
+    """Parse a bounded tactic tree representation from a proof body.
+
+    This is deliberately a syntax-preserving *shape*, not arbitrary source
+    storage: every node has an indentation, a small control prefix, a Lean
+    identifier head, and a sanitized one-line argument.  The flat ``ops``
+    sequence remains the learning target; these nodes preserve enough control
+    flow for a verified text → IR → text round trip.
+    """
+
+    nodes: list[dict[str, Any]] = []
+    for raw in str(text or "").splitlines():
+        if not raw.strip():
+            continue
+        leading = raw[: len(raw) - len(raw.lstrip(" "))]
+        indent = min(64, len(leading))
+        content = raw.strip()
+        bullet = ""
+        if content.startswith(".") and (len(content) == 1 or content[1].isspace()):
+            bullet, content = ".", content[1:].strip()
+        elif content.startswith("·") and (len(content) == 1 or content[1].isspace()):
+            bullet, content = "·", content[1:].strip()
+        elif content.startswith("|") and (len(content) == 1 or content[1].isspace()):
+            bullet, content = "|", content[1:].strip()
+        match = _SCRIPT_HEAD.fullmatch(content)
+        kind = "tactic"
+        if bullet == "|":
+            match = _SCRIPT_BRANCH.fullmatch(content)
+            kind = "branch"
+        if match is None:
+            continuation = _safe_script_arg(content)
+            if continuation:
+                nodes.append(
+                    {
+                        "kind": "continuation",
+                        "indent": indent,
+                        "bullet": bullet,
+                        "text": continuation,
+                    }
+                )
+            continue
+        raw_op = str((match.group("label") if kind == "branch" else match.group("op")) or "").strip()
+        op = raw_op.lower()
+        args = _safe_script_arg(match.group("args") or "")
+        if not op or (match.group("args") and not args):
+            continue
+        if op == "intros":
+            op = "intro"
+        if op == "case":
+            kind = "control"
+        nodes.append(
+            {
+                "kind": kind,
+                "indent": indent,
+                "bullet": bullet,
+                "op": op,
+                "head": "intro" if op == "intro" and raw_op == "intros" else raw_op,
+                **({"args": args} if args else {}),
+            }
+        )
+    return nodes
+
+
+def _script_node_ops(nodes: Sequence[Mapping[str, Any]]) -> list[tuple[str, tuple[str, ...]]]:
+    """Return learnable operation nodes, excluding case/branch controls."""
+
+    result: list[tuple[str, tuple[str, ...]]] = []
+    vocab = set(LEAN_IR_OPS)
+    for node in nodes:
+        if str(node.get("kind") or "tactic") != "tactic":
+            continue
+        op = str(node.get("op") or "").lower()
+        if op not in vocab:
+            continue
+        args = _safe_script_arg(node.get("args") or "")
+        result.append(("intro" if op == "intros" else op, (args,) if args else ()))
+    return result
+
+
+def _project_script(source_ir: Mapping[str, Any], ops: Sequence[tuple[str, Sequence[str]]]) -> Optional[list[dict[str, Any]]]:
+    """Project a learned op subsequence back onto the source control tree."""
+
+    raw_nodes = source_ir.get("script")
+    if not isinstance(raw_nodes, Sequence) or isinstance(raw_nodes, (str, bytes)):
+        return None
+    nodes = [dict(node) for node in raw_nodes if isinstance(node, Mapping)]
+    wanted = [(str(op).lower(), tuple(str(arg) for arg in args)) for op, args in ops]
+    available = _script_node_ops(nodes)
+    if not wanted or len(wanted) > len(available):
+        return None
+    # The model may shorten the sequence but may not reorder it.  Align on
+    # operation names; arguments stay source-derived and are replaced only by
+    # sanitized learned arguments when they are present.
+    cursor = 0
+    selected_positions: list[int] = []
+    for op, args in wanted:
+        found = None
+        for pos in range(cursor, len(nodes)):
+            node = nodes[pos]
+            if str(node.get("kind") or "tactic") != "tactic":
+                continue
+            node_op = str(node.get("op") or "").lower()
+            if node_op == "intros":
+                node_op = "intro"
+            if node_op == op:
+                found = pos
+                break
+        if found is None:
+            return None
+        selected_positions.append(found)
+        cursor = found + 1
+    keep = set(selected_positions)
+    projected: list[dict[str, Any]] = []
+    for index, node in enumerate(nodes):
+        kind = str(node.get("kind") or "tactic")
+        if kind == "tactic" and index not in keep:
+            continue
+        if index in keep:
+            wanted_index = selected_positions.index(index)
+            op, args = wanted[wanted_index]
+            node["op"] = op
+            if args:
+                safe = _safe_script_arg(args[0])
+                if not safe:
+                    return None
+                node["args"] = safe
+            else:
+                node.pop("args", None)
+        projected.append(node)
+    return projected
 
 
 def _op_item(item: Any) -> tuple[str, tuple[str, ...]]:
@@ -289,12 +444,14 @@ def encode_lean_ir(text: str) -> dict[str, Any]:
         if op:
             canonical_ops.append({"op": op, **({"args": list(args)} if args else {})})
     canonical_ops = canonical_ops or [{"op": "trivial"}]
+    script = _script_nodes(body) if "\n" in str(body) else []
     payload = {
         "schema": LEAN_IR_SCHEMA,
         "goal": goal,
         "ident": ident,
         "binders": binders,
         "ops": canonical_ops,
+        "script": script,
         "families": [],
         "legal_ir": False,
         "functional_lean": True,
@@ -328,20 +485,62 @@ def decode_lean_ir(ir: Mapping[str, Any]) -> str:
         raw_binders = [raw_binders]
     binders = [binder for binder in (_safe_ir_arg(value, max_chars=240) for value in raw_binders) if binder]
     lines: list[str] = []
-    for item in ir.get("ops") or ():
-        op, args = _op_item(item)
-        if not op:
-            continue
-        # A no-argument exact/apply/change/etc. is not a meaningful Lean
-        # command.  Render a closed fallback so malformed model output cannot
-        # become a syntactically plausible but unsafe candidate.
-        if op in {"exact", "apply", "cases", "induction", "rw", "nth_rewrite", "change", "show", "have", "use", "refine", "unfold"} and not args:
-            lines.append("  trivial")
-            continue
-        rendered = op
-        if args:
-            rendered += " " + " ".join(args)
-        lines.append(f"  {rendered}")
+    structured = ir.get("script")
+    saw_tactic = False
+    if isinstance(structured, Sequence) and not isinstance(structured, (str, bytes)):
+        for raw_node in structured:
+            if not isinstance(raw_node, Mapping):
+                continue
+            kind = str(raw_node.get("kind") or "tactic")
+            op = re.sub(r"[^A-Za-z0-9_']", "", str(raw_node.get("op") or "")).lower()
+            args = _safe_script_arg(raw_node.get("args") or "")
+            indent = " " * max(0, min(64, int(raw_node.get("indent") or 0)))
+            bullet = str(raw_node.get("bullet") or "")
+            if kind == "continuation":
+                head = _safe_script_arg(raw_node.get("text") or "")
+                if not head:
+                    continue
+            else:
+                if not op or (raw_node.get("args") and not args):
+                    continue
+                raw_head = str(raw_node.get("head") or op)
+                if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_']*", raw_head):
+                    raw_head = op
+                head = raw_head + ((" " + args) if args else "")
+                saw_tactic = True
+            if kind == "branch" and bullet == "|":
+                lines.append(f"{indent}| {head}")
+                saw_tactic = True
+            elif bullet in {".", "·"}:
+                lines.append(f"{indent}{bullet} {head}")
+            else:
+                lines.append(f"{indent}{head}")
+        # A one-line op bag is stored as a single unindented node. That is not
+        # a tactic tree; fall back to the indented ops renderer.
+        if not saw_tactic or (
+            len(list(ir.get("ops") or ())) > 1
+            and lines
+            and all(not str(line).startswith((" ", "|", ".", "·")) for line in lines)
+        ):
+            lines = []
+    # A projected/learned IR may intentionally omit the structural layer when
+    # its operation sequence cannot be aligned.  Fall back to the older flat
+    # renderer rather than emitting an empty proof.
+    if not lines:
+        for item in ir.get("ops") or ():
+            op, args = _op_item(item)
+            if not op:
+                continue
+            # A no-argument exact/apply/change/etc. is not a meaningful Lean
+            # command.  Render a closed fallback so malformed model output
+            # cannot become a syntactically plausible but unsafe candidate.
+            if op in {"exact", "apply", "cases", "induction", "rw", "nth_rewrite", "change", "show", "have", "use", "refine", "unfold"} and not args:
+                lines.append("  trivial")
+                continue
+            rendered = op
+            if args:
+                rendered += " " + " ".join(args)
+            lines.append(f"  {rendered}")
     if not lines:
         lines = ["  trivial"]
     body = "\n".join(lines)
@@ -365,6 +564,12 @@ def perturb_lean_ir(ir: Mapping[str, Any], rng: random.Random) -> dict[str, Any]
     nxt["legal_ir"] = False
     nxt["functional_lean"] = True
     nxt["schema"] = LEAN_IR_SCHEMA
+    normalized = [_op_item(item) for item in ops]
+    projected = _project_script(ir, normalized)
+    if projected is not None:
+        nxt["script"] = projected
+    else:
+        nxt.pop("script", None)
     nxt["ops_digest"] = hashlib.sha256(json.dumps(ops, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
     return nxt
 
@@ -373,10 +578,12 @@ def _ir_with_ops(ir: Mapping[str, Any], ops: Sequence[Any]) -> dict[str, Any]:
     """Copy an IR envelope while replacing only its bounded operation list."""
 
     normalized: list[dict[str, Any]] = []
+    normalized_pairs: list[tuple[str, tuple[str, ...]]] = []
     for item in ops:
         op, args = _op_item(item)
         if op:
             normalized.append({"op": op, **({"args": list(args)} if args else {})})
+            normalized_pairs.append((op, args))
     if not normalized:
         normalized = [{"op": "trivial"}]
     out = dict(ir)
@@ -386,6 +593,11 @@ def _ir_with_ops(ir: Mapping[str, Any], ops: Sequence[Any]) -> dict[str, Any]:
     out["functional_lean"] = True
     out["schema"] = LEAN_IR_SCHEMA
     out["source_copy"] = False
+    projected = _project_script(ir, normalized_pairs)
+    if projected is not None:
+        out["script"] = projected
+    else:
+        out.pop("script", None)
     out["ops_digest"] = hashlib.sha256(
         json.dumps(normalized, sort_keys=True, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
@@ -498,10 +710,20 @@ def _datasets_diagnostics(left: Sequence[int], right: Sequence[int]) -> dict[str
 
     out: dict[str, Any] = {"ok": False}
     try:
-        from ipfs_datasets_py.optimizers.logic_theorem_optimizer.modal_autoencoder import (
-            cosine_loss,
-            cosine_similarity,
+        from .dependencies import load_external_symbol
+
+        cosine_loss = load_external_symbol(
+            "ipfs_datasets_py.optimizers.logic_theorem_optimizer.modal_autoencoder",
+            "cosine_loss",
+            feature="datasets autoencoder diagnostics",
         )
+        cosine_similarity = load_external_symbol(
+            "ipfs_datasets_py.optimizers.logic_theorem_optimizer.modal_autoencoder",
+            "cosine_similarity",
+            feature="datasets autoencoder diagnostics",
+        )
+        if cosine_loss is None or cosine_similarity is None:
+            return {"ok": False, "reason": "external_dependency_disabled", "gold": False}
 
         lf = [float(x) / float(MILLE) for x in left]
         rf = [float(x) / float(MILLE) for x in right]

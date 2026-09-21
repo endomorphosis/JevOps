@@ -1803,3 +1803,31 @@ def child_base(
         "pick_fn": pick_fn,
         "router_fn": router_fn,
     }
+
+
+def bind_walk_defaults(
+    *,
+    compile_one: Any,
+    research_fn: Any,
+    pick_fn: Any,
+    steps: Any,
+    tape: Any,
+    stack: Any,
+    default_compile: Any,
+    default_research: Any,
+    default_pick: Any,
+    tape_factory: Callable[[], Any],
+    stack_factory: Callable[[], Any],
+) -> tuple[Any, Any, Any, Any, Any, Any]:
+    """Fill optional walk injectables. Implementations stay in the consumer."""
+
+    from jevops.outer import if_none
+
+    return (
+        if_none(compile_one, default_compile),
+        if_none(research_fn, default_research),
+        if_none(pick_fn, default_pick),
+        if_none(steps, factory=lambda: [0]),
+        if_none(tape, factory=tape_factory),
+        if_none(stack, factory=stack_factory),
+    )

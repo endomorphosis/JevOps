@@ -266,6 +266,28 @@ def draft_tree(drafts: Sequence[Mapping[str, Any]]) -> dict[str, dict[str, str]]
     )
 
 
+def _typesafe_provider_skip(
+    exc: Exception, *, families: Optional[Sequence[str]] = None
+) -> dict[str, Any]:
+    """Turn a transient TypeSafe outage into a recorded, fail-closed skip.
+
+    TypeSafe is a routing aid; it is never allowed to make the Lake benchmark
+    disappear.  In particular, ``--llm off`` controls the outer router and
+    does not imply that an already-configured TypeSafe endpoint is healthy.
+    Keep the exception short and single-line so receipts remain safe to log.
+    """
+
+    from jevops.jev import skipped
+
+    detail = " ".join(str(exc).split())[:240]
+    return skipped(
+        "typesafe_provider_error",
+        error=f"{type(exc).__name__}: {detail}",
+        families=set(families or FAMILY_BLURB),
+        arena_score=None,
+    )
+
+
 def typesafe_pick(
     record: Mapping[str, Any],
     analysis: Mapping[str, Any],
@@ -407,13 +429,16 @@ def typesafe_pick(
             epsilon=EPSILON,
         )
 
-    return invoke_then_project(
-        invoke_fn=lambda: invoke_system_one(TypeSafeClient(timeout=45.0), state, questions),
-        record_fn=lambda usage, model: record_usage(ledger, usage, model=model),
-        unpack_fn=unpack_response,
-        model=lra_t1.JEV_MODEL_ID,
-        project_fn=_project,
-    )
+    try:
+        return invoke_then_project(
+            invoke_fn=lambda: invoke_system_one(TypeSafeClient(timeout=45.0), state, questions),
+            record_fn=lambda usage, model: record_usage(ledger, usage, model=model),
+            unpack_fn=unpack_response,
+            model=lra_t1.JEV_MODEL_ID,
+            project_fn=_project,
+        )
+    except Exception as exc:
+        return _typesafe_provider_skip(exc, families=tuple(tree))
 
 
 # Residual name -> pipeline skill to skip when Noul says cutting it is unsafe.
@@ -673,32 +698,35 @@ def typesafe_intent(
     from jevops.jev import invoke_system_one, invoke_then_project, record_usage, unpack_response
     from jevops.pick import intent_from_answers
 
-    return invoke_then_project(
-        invoke_fn=lambda: invoke_system_one(TypeSafeClient(timeout=45.0), state, questions),
-        record_fn=lambda usage, model: record_usage(ledger, usage, model=model),
-        unpack_fn=unpack_response,
-        model=lra_t1.JEV_MODEL_ID,
-        project_fn=lambda _result, wall_ms, choices, nouls, scores, _usage: intent_from_answers(
-            choices=choices,
-            scores=scores,
-            nouls=nouls,
-            skills=skills,
-            tree=tree,
-            residuals=residuals,
-            residual_to_skill=RESIDUAL_TO_SKILL,
-            fire_t_residual=FIRE_T_RESIDUAL,
-            fire_t=FIRE_T,
-            fire_t_leaf=FIRE_T_LEAF,
-            confident=CONFIDENT,
-            uncertain=UNCERTAIN,
-            high_stakes=record.get("name") in HIGH_STAKES,
-            tree_node=tree_node,
-            wall_ms=wall_ms,
-            memory=memory,
-            name=str(record.get("name") or ""),
-            criteria=criteria,
-        ),
-    )
+    try:
+        return invoke_then_project(
+            invoke_fn=lambda: invoke_system_one(TypeSafeClient(timeout=45.0), state, questions),
+            record_fn=lambda usage, model: record_usage(ledger, usage, model=model),
+            unpack_fn=unpack_response,
+            model=lra_t1.JEV_MODEL_ID,
+            project_fn=lambda _result, wall_ms, choices, nouls, scores, _usage: intent_from_answers(
+                choices=choices,
+                scores=scores,
+                nouls=nouls,
+                skills=skills,
+                tree=tree,
+                residuals=residuals,
+                residual_to_skill=RESIDUAL_TO_SKILL,
+                fire_t_residual=FIRE_T_RESIDUAL,
+                fire_t=FIRE_T,
+                fire_t_leaf=FIRE_T_LEAF,
+                confident=CONFIDENT,
+                uncertain=UNCERTAIN,
+                high_stakes=record.get("name") in HIGH_STAKES,
+                tree_node=tree_node,
+                wall_ms=wall_ms,
+                memory=memory,
+                name=str(record.get("name") or ""),
+                criteria=criteria,
+            ),
+        )
+    except Exception as exc:
+        return _typesafe_provider_skip(exc, families=tuple(FAMILY_BLURB))
 
 
 def self_check() -> dict[str, Any]:

@@ -1311,6 +1311,34 @@ def call_pairs_from_graph(graph: Mapping[str, Any], *, limit: int = 48) -> list[
     return rows
 
 
+def seed_edges_from_query(
+    memory: dict[str, Any],
+    *,
+    refused: bool = False,
+    query_fn: Optional[Callable[[], Sequence[Any]]] = None,
+    graph_fn: Optional[Callable[[], Sequence[Any]]] = None,
+    limit: int = 48,
+    refuse_reason: str = "campaign_db_refused",
+) -> dict[str, Any]:
+    """DuckDB rows, else AST pairs, then board_edges. Never campaign writes."""
+
+    if refused:
+        return {"ok": False, "reason": refuse_reason, "n_edges": 0, "control_duckdb": True}
+    rows = list(query_fn() or []) if query_fn is not None else []
+    source = "sidecar_duckdb" if rows else "harness_ast"
+    if not rows and graph_fn is not None:
+        rows = list(graph_fn() or [])
+        source = "harness_ast"
+    added = append_board_edges(memory, rows, limit=limit)
+    return {
+        "ok": True,
+        "n_edges": added,
+        "source": source,
+        "control_duckdb": False,
+        "called_docker0": False,
+    }
+
+
 _LEAN_MARKERS = ("simp_all", "intros ", "theorem ", "\nby\n", "exact ⟨", "induction ", "have :=")
 
 

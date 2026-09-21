@@ -614,6 +614,62 @@ def expand_questions(
     return out
 
 
+def with_residual_questions(
+    questions: Mapping[str, Any],
+    *,
+    extra: bool,
+    residuals: Mapping[str, Any],
+    skills: Any,
+    noul_ctor: Any,
+    score_ctor: Any,
+    unsafe_instructions_fn: Any,
+    help_instructions_fn: Any,
+    fail_instructions_fn: Any,
+    unsafe_criteria: Any,
+    help_criteria: Any,
+    fail_criteria: Any,
+    limit: int = 6,
+    skip_skills: Sequence[str] = ("keep",),
+) -> dict[str, Any]:
+    """Append residual/skill Noul+Score questions. Instruction catalogs stay injected."""
+
+    out = dict(questions or {})
+    items = list(dict(residuals or {}).items())
+    if extra:
+        out.update(
+            expand_questions(
+                items,
+                ctor=noul_ctor,
+                name_fn=lambda kv: f"unsafe_{kv[0]}",
+                instructions_fn=unsafe_instructions_fn,
+                criteria=unsafe_criteria,
+                limit=limit,
+            )
+        )
+        out.update(
+            expand_questions(
+                items,
+                ctor=score_ctor,
+                name_fn=lambda kv: f"help_{kv[0]}",
+                instructions_fn=help_instructions_fn,
+                criteria=help_criteria,
+                limit=limit,
+            )
+        )
+    out.update(
+        expand_questions(
+            list(skills or ()),
+            ctor=noul_ctor,
+            name_fn=lambda sk: f"fail_skill_{sk}",
+            instructions_fn=fail_instructions_fn,
+            criteria=fail_criteria,
+            limit=limit,
+            skip=skip_skills,
+        )
+    )
+    return out
+
+
 def truncate_middle(
     src: str,
     *,

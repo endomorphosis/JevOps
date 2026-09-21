@@ -383,19 +383,36 @@ def route_next(
 
 
 def load_ipfs_accelerate_router(*, search_paths: Optional[Sequence[Any]] = None) -> Any:
-    """Load ``ipfs_accelerate_py.llm_router`` lazily.
+    """Load the JevOps router facade, with legacy external opt-in.
 
-    JevOps keeps the router optional so the kernel remains importable without
-    the accelerator repository.  ``JEVOPS_IPFS_ACCELERATE_PATH`` or
-    ``IPFS_ACCELERATE_PY_PATH`` may point at either the accelerator checkout or
-    its inner ``ipfs_accelerate_py`` package directory.  A conventional
-    sibling ``external/ipfs_accelerate`` checkout is also discovered when the
-    repositories live under one workspace.
+    The in-tree :mod:`jevops.llm_router` has the narrow API used by JevOps and
+    is the default, so an Endomorphosis sibling checkout is not required.
+    Set ``JEVOPS_USE_EXTERNAL_ROUTER=1`` (or pass ``search_paths``) only for
+    compatibility with the deprecated ``ipfs_accelerate_py`` router.  The
+    legacy path remains lazy and fail-closed.
     """
 
     import importlib
     import os
     import sys
+    import warnings
+
+    use_external = str(os.environ.get("JEVOPS_USE_EXTERNAL_ROUTER") or "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+    if not use_external and not search_paths:
+        from . import llm_router
+
+        return llm_router
+    warnings.warn(
+        "ipfs_accelerate_py.llm_router is deprecated; use jevops.llm_router "
+        "or set JEVOPS_USE_EXTERNAL_ROUTER=1 only for compatibility",
+        DeprecationWarning,
+        stacklevel=2,
+    )
 
     try:
         return importlib.import_module("ipfs_accelerate_py.llm_router")
@@ -440,8 +457,8 @@ def load_ipfs_accelerate_router(*, search_paths: Optional[Sequence[Any]] = None)
             except ModuleNotFoundError:
                 continue
         raise ImportError(
-            "ipfs_accelerate_py.llm_router is unavailable; install it or set "
-            "JEVOPS_IPFS_ACCELERATE_PATH"
+            "deprecated ipfs_accelerate_py.llm_router is unavailable; use "
+            "jevops.llm_router or set JEVOPS_IPFS_ACCELERATE_PATH"
         ) from initial
 
 
@@ -483,16 +500,14 @@ def make_llm_router_generate(
     verify_route: bool = False,
     **kwargs: Any,
 ) -> Any:
-    """Return a ``generate(prompt)`` callable backed by ipfs_accelerate_py.
+    """Return a ``generate(prompt)`` callable backed by the router facade.
 
-    The import is lazy.  This makes the callable suitable for ``route_next``
-    and for tests that inject a fixture router without installing optional
-    accelerator dependencies.  When ``verify_route`` is true and the router
-    exposes ``get_last_generation_trace()``, the requested provider/model are
-    checked against the route actually used.  This matters for proof search:
-    an unverified fallback response must not be mistaken for a response from
-    the configured tuning model.  Fixture routers without a trace remain
-    usable for offline tests.
+    The import is lazy.  ``jevops.llm_router`` is the default and tests may
+    still inject a fixture router.  When ``verify_route`` is true and the
+    router exposes ``get_last_generation_trace()``, the requested
+    provider/model are checked against the route actually used.  This matters
+    for proof search: an unverified fallback response must not be mistaken for
+    a response from the configured tuning model.
     """
 
     def generate(prompt: str) -> str:
@@ -4778,6 +4793,80 @@ def call_if(cond: Any, fn: Callable[[], Any], default: Any = None) -> Any:
     return default
 
 
+def mark_skipped(obj: Any, reason: str) -> Any:
+    obj.skipped = True
+    obj.reason = str(reason)
+    return obj
+
+
+def with_defaults(kwargs: Mapping[str, Any], **defaults: Any) -> dict[str, Any]:
+    out = dict(kwargs)
+    for key, value in defaults.items():
+        out.setdefault(key, value)
+    return out
+
+
+def starmap(fn: Callable[..., Any], rows: Sequence[Any]) -> list[Any]:
+    return [fn(*row) for row in rows or ()]
+
+
+def call_or(fn: Any, default: Any = None) -> Any:
+    if fn is None:
+        return default
+    return fn()
+
+
+def if_none(value: Any, default: Any = None, *, factory: Optional[Callable[[], Any]] = None) -> Any:
+    if value is not None:
+        return value
+    if factory is not None:
+        return factory()
+    return default
+
+
+def first_truthy(*values: Any, default: Any = None) -> Any:
+    for value in values:
+        if value:
+            return value
+    return default
+
+
+def attrs_dict(
+    obj: Any,
+    keys: Sequence[str],
+    *,
+    extra: Optional[Mapping[str, Any]] = None,
+    transform: Optional[Mapping[str, Callable[[Any], Any]]] = None,
+) -> dict[str, Any]:
+    """Public attribute snapshot. Transform/extra stay injected."""
+
+    casts = dict(transform or {})
+    out: dict[str, Any] = {}
+    for key in keys or ():
+        value = getattr(obj, key)
+        if key in casts:
+            value = casts[key](value)
+        out[key] = value
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def call_then(
+    fn: Callable[[Any], Any],
+    first: Any,
+    *,
+    cond: bool,
+    second: Any,
+) -> Any:
+    """Call fn(first), then fn(second) when cond. Used for optional repair."""
+
+    result = fn(first)
+    if cond:
+        result = fn(second)
+    return result
+
+
 def reraise_as(
     fn: Callable[[], Any],
     from_types: tuple[type[BaseException], ...],
@@ -5007,6 +5096,53 @@ def catch_error(fn: Callable[[], Any], error_cls: Any) -> tuple[bool, str]:
     return False, ""
 
 
+def call_caught(
+    fn: Callable[[], Any],
+    error_cls: Any = Exception,
+    default: Any = None,
+) -> tuple[bool, Any, Optional[BaseException]]:
+    """(ok, result, exc). Typed failures return (False, default, exc)."""
+
+    try:
+        return True, fn(), None
+    except error_cls as exc:
+        return False, default, exc
+
+
+def set_if(mapping: dict[str, Any], cond: Any, key: str, value: Any) -> dict[str, Any]:
+    """Set mapping[key]=value when cond. Returns mapping."""
+
+    if cond:
+        mapping[str(key)] = value
+    return mapping
+
+
+def first_call(*pairs: tuple[Any, Callable[[], Any]]) -> Any:
+    """Return the first fn() whose condition is true. None if none match."""
+
+    for cond, fn in pairs:
+        if cond:
+            return fn()
+    return None
+
+
+def keyed_map(
+    items: Sequence[Any],
+    *,
+    key_fn: Callable[[Any], Any],
+    val_fn: Callable[[Any], Any],
+    pred: Optional[Callable[[Any], Any]] = None,
+) -> dict[Any, Any]:
+    """Build a dict from items. pred/key_fn/val_fn stay injected."""
+
+    out: dict[Any, Any] = {}
+    for item in items or ():
+        if pred is not None and not pred(item):
+            continue
+        out[key_fn(item)] = val_fn(item)
+    return out
+
+
 def ignore_error(
     fn: Callable[[], Any],
     error_cls: Any = Exception,
@@ -5176,6 +5312,95 @@ def plant_named_tags(root: Any, tags: Sequence[str], plant_fn: Callable[[Any, st
     for tag in tags or ():
         plant_fn(root, str(tag))
     return root
+
+
+def clone_restore(
+    record: Mapping[str, Any],
+    state_root: Any,
+    *,
+    clone_fn: Callable[..., Any],
+    relpath_fn: Callable[[Mapping[str, Any]], Any],
+    read_fn: Optional[Callable[[Any], bytes]] = None,
+    url_key: str = "url",
+) -> tuple[Any, Path, bytes]:
+    """Clone a record URL, then read dest bytes. Does not compile Lean."""
+
+    clone = clone_fn(str(record.get(url_key) or ""), state_root)
+    dest = Path(clone) / relpath_fn(record)
+    restore = (read_fn or read_bytes_if)(dest)
+    return clone, dest, restore
+
+
+def load_named_pack(
+    load_fn: Callable[..., Any],
+    name: str,
+    *,
+    error_cls: Any = RuntimeError,
+    miss: str = "",
+    extra: Any = None,
+) -> tuple[Any, list[Any], str]:
+    """Load (raw, digest, records) then lookup ``name``. raw is discarded."""
+
+    packed = load_fn() if extra is None else load_fn(extra)
+    _raw, digest, records = packed
+    del _raw
+    record = lookup_named(
+        records,
+        name,
+        error_cls=error_cls,
+        miss=miss or f"unknown name: {name}",
+    )
+    return record, list(records), str(digest)
+
+
+def named_shots(
+    records: Sequence[Mapping[str, Any]],
+    names: Sequence[str],
+    *,
+    skip_name: str = "",
+    example_fn: Callable[[Mapping[str, Any]], Any],
+) -> list[Any]:
+    """Lookup named records and map example_fn. Missing names are skipped."""
+
+    shots: list[Any] = []
+    skip = str(skip_name or "")
+    for shot_name in names or ():
+        if str(shot_name) == skip:
+            continue
+        rec = lookup_named(records, str(shot_name))
+        if rec is not None:
+            shots.append(example_fn(rec))
+    return shots
+
+
+def inspect_only(
+    name: str,
+    *,
+    markers: Sequence[str],
+    needles: Sequence[str] = (),
+    resolve_fn: Optional[Callable[[str], Any]] = None,
+    read_fn: Optional[Callable[..., str]] = None,
+    max_chars: int = 8000,
+) -> bool:
+    """True when the name or file head contains inspect-only markers. No Lean."""
+
+    if contains_any(name, markers):
+        return True
+    if resolve_fn is None or not needles:
+        return False
+    path = resolve_fn(name)
+    if path is None:
+        return False
+    target = Path(path)
+    if not target.is_file():
+        return False
+    try:
+        head = read_fn(target) if read_fn is not None else read_text(
+            target, errors="ignore", max_chars=max_chars
+        )
+    except OSError:
+        return False
+    return contains_any(head, needles)
 
 
 def coalesce_chat_text(

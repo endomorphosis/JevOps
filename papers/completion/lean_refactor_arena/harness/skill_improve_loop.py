@@ -64,7 +64,7 @@ def keep_best_board(out: Path) -> dict[str, int]:
         out,
         SMALL_NAMES,
         latest_json="random-canary-latest.json",
-        extras={"Core.InitsUpdatesComm": ("cascade-best-139.lean", 139)},
+        extras={"Core.InitsUpdatesComm": ("cascade-best-130.lean", 130)},
     )
 
 
