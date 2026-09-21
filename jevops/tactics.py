@@ -7,6 +7,8 @@ Not Arena scores. Not Track 2.
 from __future__ import annotations
 
 import re
+import math
+import random
 from dataclasses import dataclass, field
 from typing import Any, Callable, Mapping, Optional, Sequence
 
@@ -1328,6 +1330,22 @@ def closed_tree_edits(tactics: str, *, case_replace_cap: int = 8) -> list[tuple[
     return rows
 
 
+def collect_tree_drafts(
+    *,
+    closed_edits: Sequence[tuple[Any, ...]] = (),
+    neighbor_ops: Sequence[tuple[Any, ...]] = (),
+    push_fn: Callable[..., Any],
+    cap: int = 48,
+) -> list[Any]:
+    """Push closed-tree then neighbor-style drafts. Does not write Lean."""
+
+    drafts: list[Any] = []
+    seen: set[str] = set()
+    for family, body, ops in list(closed_edits or ()) + list(neighbor_ops or ()):
+        push_fn(drafts, seen, family, body, ops)
+    return drafts[: max(0, int(cap))]
+
+
 def mutable_line_indices(tactics: str, locked_haves: set[str], *, skip_prefix: Sequence[str] = LOCKED_HEADS) -> list[int]:
     from jevops.mask import mutable_indices as _fn
 
@@ -1394,6 +1412,25 @@ def guided_mca_edits(
         if name:
             push("algebraic_simplification", f"induction {name} <;> simp", ("induction_simp", "mca"))
     return rows
+
+
+def collect_guided_drafts(
+    tactics: str,
+    families: Sequence[Mapping[str, Any]],
+    counts: Optional[Mapping[str, Any]] = None,
+    *,
+    extras: Sequence[Sequence[tuple[str, str, tuple[str, ...]]]] = (),
+    push_fn: Callable[..., Any],
+) -> list[Any]:
+    """Merge MCA + injected extras, then push drafts. Extras stay in the consumer."""
+
+    names = [str(item.get("family") or "") for item in families or ()]
+    merged = merge_draft_ops(guided_mca_edits(tactics, names, counts), *list(extras or ()))
+    drafts: list[Any] = []
+    seen: set[str] = set()
+    for family, body, ops in merged:
+        push_fn(drafts, seen, family, body, ops)
+    return drafts
 
 
 @dataclass
@@ -1883,3 +1920,475 @@ def merge_draft_ops(*groups: Sequence[tuple[str, str, tuple[str, ...]]]) -> list
             rows.append((family, text, tuple(ops)))
     return rows
 
+
+# The existing Thompson ranker orders pipeline stems.  The tactic below is
+# deliberately a little more concrete: it represents an action, records the
+# outstanding pull, and requires an explicit reward before updating that
+# action.  This keeps selection separate from proof admission and makes the
+# state usable by the NCA cell layer.
+BANDIT_POLICIES = frozenset({"thompson", "ucb1", "epsilon_greedy"})
+_BANDIT_SEED_STEP = 104729
+
+
+def _bandit_policy(policy: str, current: str = "") -> str:
+    text = str(policy or current or "thompson").strip().lower().replace("-", "_")
+    aliases = {
+        "beta": "thompson",
+        "ts": "thompson",
+        "ucb": "ucb1",
+        "epsilon": "epsilon_greedy",
+        "egreedy": "epsilon_greedy",
+    }
+    text = aliases.get(text, text)
+    return text if text in BANDIT_POLICIES else ""
+
+
+def _bandit_active_arms(arms: Any) -> list[str]:
+    if isinstance(arms, str):
+        raw = [arms]
+    elif isinstance(arms, Mapping):
+        raw = list(arms.keys())
+    else:
+        raw = list(arms or ())
+    out: list[str] = []
+    seen: set[str] = set()
+    for item in raw:
+        arm = str(item or "").strip()
+        if not arm or arm in seen:
+            continue
+        seen.add(arm)
+        out.append(arm)
+    return sorted(out)
+
+
+def _bandit_key(name: str) -> str:
+    text = re.sub(r"[^A-Za-z0-9_.:-]+", "_", str(name or "default").strip())
+    return text[:80] or "default"
+
+
+def _bandit_arm_row() -> dict[str, Any]:
+    return {
+        "pulls": 0,
+        "reward_sum": 0.0,
+        "alpha": 1.0,
+        "beta": 1.0,
+        "pending": 0,
+        "last_reward": None,
+        "last_selected": 0,
+        "last_observed": 0,
+    }
+
+
+def _bandit_number(value: Any, default: float = 0.0) -> float:
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return default
+    return number if math.isfinite(number) else default
+
+
+def _bandit_reward(value: Any) -> Optional[float]:
+    if isinstance(value, bool):
+        return 1.0 if value else 0.0
+    number = _bandit_number(value, default=float("nan"))
+    if not math.isfinite(number) or number < 0.0 or number > 1.0:
+        return None
+    return number
+
+
+def _bandit_state(memory: dict[str, Any], name: str, policy: str, seed: Any) -> dict[str, Any]:
+    nca = memory.setdefault("nca", {})
+    stores = nca.setdefault("bandits", {})
+    key = _bandit_key(name)
+    state = stores.setdefault(key, {})
+    if not isinstance(state, dict):
+        state = {}
+        stores[key] = state
+    state.setdefault("arms", {})
+    state.setdefault("decisions", 0)
+    state.setdefault("pending_arm", "")
+    state.setdefault("seed", int(_bandit_number(seed, 0.0)))
+    state["policy"] = _bandit_policy(policy, str(state.get("policy") or "")) or "thompson"
+    return state
+
+
+def _bandit_rng(state: Mapping[str, Any], rng: Optional[random.Random]) -> random.Random:
+    if rng is not None:
+        return rng
+    seed = int(_bandit_number(state.get("seed"), 0.0))
+    decisions = int(_bandit_number(state.get("decisions"), 0.0))
+    # A fresh, decision-indexed generator is JSON-safe and deterministic across
+    # process restarts, unlike serializing random.Random.getstate().
+    return random.Random(seed + decisions * _BANDIT_SEED_STEP)
+
+
+def _bandit_arm_ptr(arm: str) -> str:
+    from jevops.nca import canonical_cell_id
+
+    return canonical_cell_id(str(arm), kind="skill")
+
+
+def _bandit_ptr(name: str) -> str:
+    return f"ptr://cell/bandit/{_bandit_key(name)}"
+
+
+def _record_bandit_cell(
+    memory: dict[str, Any],
+    *,
+    name: str,
+    arm: str,
+    policy: str,
+    score: float,
+    reward: Optional[float] = None,
+    event: str,
+) -> None:
+    """Reflect one bandit transition into the symbolic NCA graph."""
+
+    try:
+        from jevops import nca
+
+        bandit_ptr = _bandit_ptr(name)
+        arm_ptr = _bandit_arm_ptr(arm)
+        nca.upsert_from_event(
+            memory,
+            ptr=bandit_ptr,
+            kind="cell",
+            energy=score,
+        )
+        theorem_ok = None if reward is None else bool(reward >= 0.5)
+        nca.upsert_from_event(
+            memory,
+            ptr=arm_ptr,
+            kind="skill",
+            energy=score if reward is None else reward,
+            theorem_ok=theorem_ok,
+            parent_ptr=bandit_ptr,
+        )
+        nca.append_board_edges(memory, [[bandit_ptr, arm_ptr]], prefix="")
+        nca.journal_event(
+            memory,
+            event=event,
+            ptr=arm_ptr,
+            op="BANDIT",
+            energy_delta=0.0,
+            extra={
+                "bandit": _bandit_key(name),
+                "arm": arm,
+                "policy": policy,
+                "reward": reward,
+            },
+        )
+    except Exception:
+        # Bandit selection remains usable with a minimal memory mapping; NCA
+        # reflection is an enhancement, never an admission dependency.
+        pass
+
+
+def multi_armed_bandit(
+    memory: dict[str, Any],
+    arms: Sequence[str] | Mapping[str, Any] | str,
+    *,
+    name: str = "default",
+    policy: str = "",
+    reward: Any = None,
+    arm: Optional[str] = None,
+    selected: Optional[str] = None,
+    rng: Optional[random.Random] = None,
+    epsilon: float = 0.1,
+    exploration: float = 1.0,
+    seed: int = 0,
+) -> dict[str, Any]:
+    """Run one explicit multi-armed-bandit tactic step.
+
+    A call without ``reward`` selects one active arm and records one pending
+    pull.  The next call should pass that arm's measured reward in ``[0, 1]``;
+    a Boolean reward is accepted as ``0``/``1``.  Selection is not proof
+    admission: only the caller's explicit observation changes the arm's
+    posterior.  ``selected`` can force a known active arm for replay/tests;
+    ``arm`` names the arm whose pending result is being observed.
+
+    State is kept in ``memory["nca"]["bandits"][name]``.  Every transition
+    is also mirrored into the NCA grid and journal so bandit policy is a
+    symbolic, inspectable cell process rather than an opaque side table.
+    """
+
+    active = _bandit_active_arms(arms)
+    if not active:
+        return {
+            "ok": False,
+            "kind": "tactic_multi_armed_bandit",
+            "reason": "no_arms",
+            "writes_lean": False,
+            "called_docker0": False,
+        }
+    chosen_policy = _bandit_policy(policy) if str(policy or "").strip() else ""
+    if not chosen_policy:
+        existing = ((memory.get("nca") or {}).get("bandits") or {}).get(_bandit_key(name)) or {}
+        chosen_policy = _bandit_policy("", str(existing.get("policy") or "")) or "thompson"
+    try:
+        epsilon_value = float(epsilon)
+    except (TypeError, ValueError):
+        epsilon_value = -1.0
+    if not math.isfinite(epsilon_value) or not (0.0 <= epsilon_value <= 1.0):
+        return {"ok": False, "kind": "tactic_multi_armed_bandit", "reason": "bad_epsilon", "writes_lean": False}
+    try:
+        exploration_value = float(exploration)
+    except (TypeError, ValueError):
+        exploration_value = 0.0
+    if exploration_value <= 0.0 or not math.isfinite(exploration_value):
+        return {"ok": False, "kind": "tactic_multi_armed_bandit", "reason": "bad_exploration", "writes_lean": False}
+
+    state = _bandit_state(memory, name, chosen_policy, seed)
+    rows = state.setdefault("arms", {})
+    for active_arm in active:
+        row = rows.get(active_arm)
+        if not isinstance(row, dict):
+            row = _bandit_arm_row()
+            rows[active_arm] = row
+        defaults = _bandit_arm_row()
+        for key, value in defaults.items():
+            row.setdefault(key, value)
+
+    observed_arm = ""
+    observed_reward: Optional[float] = None
+    if reward is not None:
+        observed_arm = str(arm or state.get("pending_arm") or "").strip()
+        observed_reward = _bandit_reward(reward)
+        if observed_reward is None:
+            return {
+                "ok": False,
+                "kind": "tactic_multi_armed_bandit",
+                "reason": "reward_out_of_range",
+                "expected": "reward in [0, 1]",
+                "writes_lean": False,
+                "called_docker0": False,
+            }
+        if not observed_arm:
+            return {
+                "ok": False,
+                "kind": "tactic_multi_armed_bandit",
+                "reason": "reward_without_arm",
+                "writes_lean": False,
+                "called_docker0": False,
+            }
+        if observed_arm not in rows:
+            return {
+                "ok": False,
+                "kind": "tactic_multi_armed_bandit",
+                "reason": "unknown_arm",
+                "arm": observed_arm,
+                "writes_lean": False,
+                "called_docker0": False,
+            }
+        pending_before = str(state.get("pending_arm") or "")
+        if arm is not None and pending_before and observed_arm != pending_before:
+            return {
+                "ok": False,
+                "kind": "tactic_multi_armed_bandit",
+                "reason": "pending_arm_mismatch",
+                "pending_arm": pending_before,
+                "arm": observed_arm,
+                "writes_lean": False,
+                "called_docker0": False,
+            }
+        row = rows[observed_arm]
+        row["pulls"] = max(0, int(row.get("pulls") or 0)) + 1
+        row["reward_sum"] = _bandit_number(row.get("reward_sum"), 0.0) + observed_reward
+        row["alpha"] = max(1e-9, _bandit_number(row.get("alpha"), 1.0)) + observed_reward
+        row["beta"] = max(1e-9, _bandit_number(row.get("beta"), 1.0)) + (1.0 - observed_reward)
+        row["pending"] = max(0, int(row.get("pending") or 0) - 1)
+        row["last_reward"] = observed_reward
+        row["last_observed"] = int(state.get("decisions") or 0)
+        if str(state.get("pending_arm") or "") == observed_arm:
+            state["pending_arm"] = ""
+        mean = row["reward_sum"] / max(1, int(row["pulls"]))
+        _record_bandit_cell(
+            memory,
+            name=name,
+            arm=observed_arm,
+            policy=chosen_policy,
+            score=mean,
+            reward=observed_reward,
+            event="bandit_observe",
+        )
+
+    pending = str(state.get("pending_arm") or "")
+    if pending and not isinstance(rows.get(pending), dict):
+        pending = ""
+    if pending and reward is None:
+        # Do not create a second unmeasured pull when a loop is polled before
+        # its oracle/lake result arrives.
+        selected_arm = pending
+        selected_score = _bandit_number((rows.get(pending) or {}).get("last_score"), 0.5)
+        reason = "pending_observation"
+        new_selection = False
+        scores = {a: _bandit_number((rows.get(a) or {}).get("last_score"), 0.5) for a in active}
+        draws: dict[str, float] = {}
+    else:
+        if selected is not None and str(selected).strip() not in active:
+            return {
+                "ok": False,
+                "kind": "tactic_multi_armed_bandit",
+                "reason": "selected_arm_not_active",
+                "arm": str(selected),
+                "writes_lean": False,
+                "called_docker0": False,
+            }
+        generator = _bandit_rng(state, rng)
+        untried = [a for a in active if int((rows[a].get("pulls") or 0)) <= 0]
+        scores: dict[str, float] = {}
+        draws = {}
+        if selected is not None:
+            selected_arm = str(selected).strip()
+            scores = {
+                a: _bandit_number(rows[a].get("reward_sum"), 0.0) / max(1, int(rows[a].get("pulls") or 0))
+                for a in active
+            }
+            reason = "forced"
+        elif untried:
+            selected_arm = untried[0]
+            # Keep the persisted/returned state JSON-safe. All untried arms
+            # are tied for coverage priority; ``1.0`` is only a ranking
+            # sentinel, not an observed reward.
+            scores = {a: (1.0 if a in untried else 0.0) for a in active}
+            reason = "initial_exploration"
+        elif chosen_policy == "thompson":
+            for active_arm in active:
+                row = rows[active_arm]
+                alpha = max(1e-9, _bandit_number(row.get("alpha"), 1.0))
+                beta = max(1e-9, _bandit_number(row.get("beta"), 1.0))
+                try:
+                    draw = float(generator.betavariate(alpha, beta))
+                except (AttributeError, ValueError, ZeroDivisionError):
+                    x = generator.gammavariate(alpha, 1.0)
+                    y = generator.gammavariate(beta, 1.0)
+                    draw = x / (x + y) if x + y else 0.5
+                draws[active_arm] = draw
+                scores[active_arm] = draw
+            selected_arm = min(active, key=lambda a: (-scores[a], a))
+            reason = "thompson_sample"
+        elif chosen_policy == "ucb1":
+            total = max(1, sum(int(rows[a].get("pulls") or 0) for a in active))
+            for active_arm in active:
+                row = rows[active_arm]
+                pulls = max(1, int(row.get("pulls") or 0))
+                mean = _bandit_number(row.get("reward_sum"), 0.0) / pulls
+                scores[active_arm] = mean + exploration_value * math.sqrt(math.log(total + 1.0) / pulls)
+            selected_arm = min(active, key=lambda a: (-scores[a], a))
+            reason = "ucb1"
+        else:
+            means = {
+                a: _bandit_number(rows[a].get("reward_sum"), 0.0) / max(1, int(rows[a].get("pulls") or 0))
+                for a in active
+            }
+            scores = dict(means)
+            if generator.random() < epsilon_value:
+                selected_arm = active[generator.randrange(len(active))]
+                reason = "epsilon_explore"
+            else:
+                selected_arm = min(active, key=lambda a: (-scores[a], a))
+                reason = "epsilon_greedy"
+        state["decisions"] = int(state.get("decisions") or 0) + 1
+        state["pending_arm"] = selected_arm
+        rows[selected_arm]["pending"] = int(rows[selected_arm].get("pending") or 0) + 1
+        rows[selected_arm]["last_selected"] = int(state["decisions"])
+        selected_score = _bandit_number(scores.get(selected_arm), 0.5)
+        rows[selected_arm]["last_score"] = selected_score
+        _record_bandit_cell(
+            memory,
+            name=name,
+            arm=selected_arm,
+            policy=chosen_policy,
+            score=selected_score if math.isfinite(selected_score) else 0.5,
+            event="bandit_select",
+        )
+        new_selection = True
+
+    ranked = sorted(active, key=lambda a: (-_bandit_number(scores.get(a), 0.0), a))
+    state["active_arms"] = list(active)
+    state["last_selected"] = selected_arm
+    state["last_reason"] = reason
+    state["pipeline_bias"] = list(ranked)
+    memory.setdefault("nca", {})["pipeline_bias"] = list(ranked)
+    return {
+        "ok": True,
+        "kind": "tactic_multi_armed_bandit",
+        "bandit": _bandit_key(name),
+        "policy": chosen_policy,
+        "selected_arm": selected_arm,
+        "selected_score": selected_score,
+        "observed_arm": observed_arm or None,
+        "observed_reward": observed_reward,
+        "new_selection": new_selection,
+        "reason": reason,
+        "pending_arm": state.get("pending_arm") or None,
+        "decisions": int(state.get("decisions") or 0),
+        "ranked": ranked,
+        "scores": scores,
+        "draws": draws,
+        "arms": {a: dict(rows[a]) for a in active},
+        "writes_lean": False,
+        "called_docker0": False,
+    }
+
+
+def bandit_tactic(
+    memory: dict[str, Any],
+    arms: Sequence[str] | Mapping[str, Any] | str,
+    **kwargs: Any,
+) -> dict[str, Any]:
+    """Readable alias for :func:`multi_armed_bandit` in tactic catalogs."""
+
+    return multi_armed_bandit(memory, arms, **kwargs)
+
+
+def collect_random_draft_extras(
+    body: str,
+    rng: Any,
+    *,
+    wanted_fn: Callable[[str], bool],
+    portable_items: Sequence[Mapping[str, Any]] = (),
+    symbol_spans: Sequence[Any] = (),
+    prefer_fn: Optional[Callable[..., Sequence[Any]]] = None,
+    phrase_alts: Sequence[tuple[str, str]] = (),
+    operators: Sequence[str] = (),
+    closed_fn: Optional[Callable[..., Any]] = None,
+    pca_drafts: Sequence[Any] = (),
+) -> tuple[list[tuple[str, str, dict[str, Any]]], list[tuple[str, str, dict[str, Any]]]]:
+    """Portable + symbol-diffuse + PCA extras for random drafts. No LLM."""
+
+    early: list[tuple[str, str, dict[str, Any]]] = []
+    for item in portable_items or ():
+        fam = str(item.get("family") or "search_space")
+        early.append(
+            (str(item["kind"]), str(item["tactics"]), {"family": fam, "generator": "portable_rewrites"})
+        )
+    late: list[tuple[str, str, dict[str, Any]]] = []
+    spans = list(symbol_spans or ())
+    if hasattr(rng, "shuffle"):
+        rng.shuffle(spans)
+    for span in spans:
+        if not wanted_fn("symbol_diffuse"):
+            break
+        if prefer_fn is None or closed_fn is None:
+            continue
+        windows = list(prefer_fn(body, span, max_pos=3) or ())
+        if not windows:
+            continue
+        hole = rng.choice(windows)
+        original = str(getattr(hole, "original", "") or "")
+        if not any(src in original for src, _dst in phrase_alts) and not any(
+            op in original for op in operators
+        ):
+            continue
+        row = closed_fn(body, [hole], schedule_id=f"rand_s{span}")
+        if row:
+            late.append((str(row["kind"]), str(row["tactics"]), {"family": "symbol_diffuse", "span": span}))
+    for draft in pca_drafts or ():
+        family = str(getattr(draft, "family", None) or (draft.get("family") if isinstance(draft, Mapping) else "") or "")
+        draft_id = getattr(draft, "draft_id", None) or (draft.get("draft_id") if isinstance(draft, Mapping) else "")
+        tactics = str(
+            getattr(draft, "tactics", None) or (draft.get("tactics") if isinstance(draft, Mapping) else "") or ""
+        )
+        late.append((f"pca_{family}_{draft_id}", tactics, {"family": family}))
+    return early, late

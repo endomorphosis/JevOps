@@ -638,6 +638,29 @@ class AdmissionView:
     arena_score: None = None
 
 
+def pack_admission_view(
+    admission: Any,
+    *,
+    name: str,
+    native: str,
+    statement: str,
+    view_cls: Any = None,
+) -> AdmissionView:
+    """Lexical admission view. Not a lake admit. Never copies full src."""
+
+    cls = view_cls or AdmissionView
+    return cls(
+        accepted=bool(getattr(admission, "accepted", False)),
+        failure_code=str(getattr(getattr(admission, "failure_code", None), "value", getattr(admission, "failure_code", ""))),
+        reason=str(getattr(admission, "reason", "")),
+        name=name,
+        native_source_starts_with_statement=str(native).startswith(str(statement)),
+        used_full_src_as_native=False,
+        used_full_src_as_canonical=False,
+        arena_score=None,
+    )
+
+
 @dataclass
 class TacticTryReceipt:
     """Path A lake-native try receipt. Snapshot/HAMMER flags stay false."""
@@ -1542,6 +1565,79 @@ def failed_candidate(
     )
 
 
+def generation_skip_reason(
+    generation: Any,
+    *,
+    probe_ok: bool,
+    down_msg: str = "docker0 down; skip generate; keep reference",
+) -> tuple[bool, str]:
+    skipped = bool(getattr(generation, "skipped", False)) or not probe_ok
+    if skipped:
+        return True, str(getattr(generation, "error", "") or down_msg)
+    err = str(getattr(generation, "error", "") or "")
+    return False, err
+
+
+def append_generated(
+    candidates: list[Any],
+    *,
+    called: bool,
+    skipped: bool,
+    generation: Any,
+    cap: int,
+    extract_fn: Callable[[str], str],
+    evaluate_fn: Callable[[str, Any], Any],
+    generator_default: str,
+    hardware_class: str,
+) -> list[Any]:
+    """Append a generated or fail-closed candidate. Does not write Lean."""
+
+    if called and not skipped and len(candidates) < int(cap):
+        tactics = extract_fn(getattr(generation, "text", "") or "")
+        if not tactics:
+            identity = getattr(generation, "identity", None)
+            candidates.append(
+                failed_candidate(
+                    kind="generated",
+                    code="empty_generation",
+                    reason="Leanstral returned no tactic block",
+                    generator=str(getattr(identity, "resolved_provider", "") or generator_default),
+                    error=str(getattr(generation, "error", "") or "empty tactic block"),
+                    hardware_class=hardware_class,
+                )
+            )
+        else:
+            candidates.append(evaluate_fn(tactics, generation))
+        return candidates
+    if called and getattr(generation, "error", "") and not skipped:
+        candidates.append(
+            failed_candidate(
+                kind="generated",
+                code="generate_error",
+                reason=str(generation.error),
+                generator=generator_default,
+                error=str(generation.error),
+                hardware_class=hardware_class,
+            )
+        )
+    return candidates
+
+
+def catch_trace(trace_fn: Optional[Callable[[], Any]]) -> dict[str, Any]:
+    if trace_fn is None:
+        return {}
+    try:
+        return dict(trace_fn() or {})
+    except Exception:
+        return {}
+
+
+def require_text(text: Any, *, error_cls: Any, msg: str = "Leanstral returned a non-text payload") -> str:
+    if not isinstance(text, str):
+        raise error_cls(msg)
+    return text
+
+
 def make_candidate(
     *,
     kind: str,
@@ -1676,6 +1772,257 @@ class ProblemResult:
             "statement_chars": len(self.statement),
             "typesafe": self.typesafe,
         }
+
+
+def pack_problem_result(
+    split: Any,
+    *,
+    phases: Sequence[str],
+    probe: Any,
+    called: bool,
+    skipped: bool,
+    skip_reason: str,
+    retrieval: Any,
+    candidates: Sequence[CandidateRecord],
+    kept: Optional[CandidateRecord],
+    failures: Sequence[Mapping[str, Any]],
+    hardware_class: str,
+    hammers: str,
+    typesafe: str,
+    generator: str,
+    loop_version: str,
+    result_cls: Any = None,
+) -> ProblemResult:
+    """Warm-up problem result. Arena scores stay None."""
+
+    cls = result_cls or ProblemResult
+    return cls(
+        name=getattr(split, "name", ""),
+        source=getattr(split, "source", ""),
+        header=getattr(split, "header", ""),
+        statement=getattr(split, "statement", ""),
+        phases=list(phases or ()),
+        health_ok=bool(getattr(probe, "ok", False)),
+        called_leanstral=bool(called),
+        skipped_generate=bool(skipped),
+        skip_reason=str(skip_reason or ""),
+        retrieval_digest=str(getattr(retrieval, "lemma_id_digest", "") or ""),
+        n_neighbors=len(getattr(retrieval, "neighbors", ()) or ()),
+        n_src_lemmas=len(getattr(retrieval, "src_lemmas", ()) or ()),
+        candidates=list(candidates or ()),
+        kept=kept,
+        failures=list(failures or ()),
+        hardware_class=hardware_class,
+        hammers=hammers,
+        typesafe=typesafe,
+        generator=generator,
+        loop_version=loop_version,
+        arena_score=None,
+        official_score=None,
+    )
+
+
+def admission_receipt(
+    result: Any,
+    *,
+    hardware_class: str,
+) -> dict[str, Any]:
+    return {
+        "arena_score": None,
+        "candidates": [
+            {
+                "accepted": getattr(item, "admission_accepted", None),
+                "code": getattr(item, "admission_code", None),
+                "kind": getattr(item, "kind", None),
+                "reason": getattr(item, "admission_reason", None),
+            }
+            for item in getattr(result, "candidates", ()) or ()
+        ],
+        "hardware_class": hardware_class,
+        "name": getattr(result, "name", ""),
+    }
+
+
+def problem_receipt_json(
+    result: Any,
+    *,
+    schema: str,
+    hammers: str,
+    hardware_class: str,
+    loop_version: str,
+    typesafe: str,
+    warmup_sha256: str,
+    compile_records: Sequence[Mapping[str, Any]],
+    candidate_text: str,
+) -> dict[str, Any]:
+    kept = getattr(result, "kept", None)
+    return {
+        "schema": schema,
+        "accepted": bool(kept is not None and getattr(kept, "valid", False)),
+        "arena_score": None,
+        "candidate": candidate_text,
+        "failures_retained": True,
+        "generator": getattr(result, "generator", ""),
+        "hammers": hammers,
+        "hardware_class": hardware_class,
+        "header": getattr(result, "header", ""),
+        "kept_kind": None if kept is None else getattr(kept, "kind", None),
+        "loop_version": loop_version,
+        "name": getattr(result, "name", ""),
+        "official_score": None,
+        "score": None,
+        "source": getattr(result, "source", ""),
+        "statement": getattr(result, "statement", ""),
+        "typesafe": typesafe,
+        "warmup_sha256": warmup_sha256,
+        "compile_records": list(compile_records or ()),
+    }
+
+
+def warmup_batch_payload(
+    *,
+    digest: str,
+    results: Sequence[Any],
+    health_ok: bool,
+    jsonl_bytes: int,
+    n_records: int,
+    planted: bool,
+    written: Sequence[str],
+    generator: str,
+    hammers: str,
+    hardware_class: str,
+    loop_version: str,
+    protocol: str,
+    typesafe: str,
+    gates: str,
+    phases: Sequence[str],
+) -> dict[str, Any]:
+    rows = list(results or ())
+    return {
+        "arena_score": None,
+        "called_leanstral_when_healthy": all(item.called_leanstral for item in rows) if health_ok else True,
+        "failures_retained": all(item.to_dict()["failures_retained"] for item in rows) if rows else True,
+        "frozen_warmup_sha256": digest,
+        "gates": gates,
+        "generator": generator,
+        "hammers": hammers,
+        "hardware_class": hardware_class,
+        "health_ok": bool(health_ok),
+        "jsonl_bytes": int(jsonl_bytes),
+        "llama_server_started": False,
+        "lock_ex_taken_by_client": False,
+        "loop_version": loop_version,
+        "n_failures": sum(len(getattr(item, "failures", ()) or ()) for item in rows),
+        "n_problems": len(rows),
+        "n_records": int(n_records),
+        "official_score": None,
+        "phases": list(phases or ()),
+        "planted_synthetic": bool(planted),
+        "protocol": protocol,
+        "receipts_written": list(written or ()),
+        "results": [item.to_dict() for item in rows],
+        "score": None,
+        "skip_generate_only_if_docker0_down": True,
+        "skipped_generate": (not health_ok),
+        "typesafe": typesafe,
+        "warmup_jsonl_sha256": digest,
+    }
+
+
+def path_a_plan_rows(
+    records: Sequence[Mapping[str, Any]],
+    *,
+    tactics_fn: Callable[[Mapping[str, Any]], Sequence[str]],
+    aesop_fn: Callable[[Mapping[str, Any]], bool],
+    aesop_tactic: str = "aesop",
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for record in records or ():
+        considered = list(tactics_fn(record) or ())
+        rows.append(
+            {
+                "aesop_imported": bool(aesop_fn(record)),
+                "name": str(record.get("name") or ""),
+                "source": str(record.get("source") or ""),
+                "tactics": considered,
+                "aesop_in_list": aesop_tactic in considered,
+            }
+        )
+    return rows
+
+
+def plan_loop_problems(
+    records: Sequence[Mapping[str, Any]],
+    *,
+    split_fn: Callable[[Mapping[str, Any]], Any],
+    pins_fn: Callable[[Mapping[str, Any]], Sequence[Any]],
+) -> list[dict[str, Any]]:
+    """Per-record plan rows. split_fn is the consumer prefix-bind."""
+
+    rows: list[dict[str, Any]] = []
+    for record in records or ():
+        split = split_fn(record)
+        pins = list(pins_fn(record) or ())
+        rows.append(
+            {
+                "name": getattr(split, "name", record.get("name")),
+                "n_tags": len(pins),
+                "source": getattr(split, "source", record.get("source")),
+                "tags": [getattr(pin, "lean_tag", pin) for pin in pins],
+            }
+        )
+    return rows
+
+
+def plan_loop_payload(
+    *,
+    digest: str,
+    problems: Sequence[Mapping[str, Any]],
+    health: Any,
+    jsonl_bytes: int,
+    autostart: str,
+    health_url: str,
+    generator: str,
+    hammers: str,
+    hardware_class: str,
+    loop_version: str,
+    protocol: str,
+    typesafe: str,
+    gates: str,
+    phases: Sequence[str],
+    tokenizer_id: str,
+    token_weights: Mapping[str, float],
+) -> dict[str, Any]:
+    from dataclasses import asdict as _asdict
+
+    health_row = dict(health) if isinstance(health, Mapping) else _asdict(health)
+    return {
+        "action_if_health_ok": "generate",
+        "action_if_health_down": "skip_generate_keep_reference",
+        "arena_score": None,
+        "autostart": autostart,
+        "docker0_health_url": health_url,
+        "frozen_warmup_sha256": digest,
+        "gates": gates,
+        "generator": generator,
+        "hammers": hammers,
+        "hardware_class": hardware_class,
+        "health": health_row,
+        "jsonl_bytes": int(jsonl_bytes),
+        "llama_server_started": False,
+        "lock_ex_taken_by_client": False,
+        "loop_version": loop_version,
+        "must_call_leanstral_if_health_ok": True,
+        "n_problems": len(problems),
+        "official_score": None,
+        "phases": list(phases or ()),
+        "problems": list(problems or ()),
+        "protocol": protocol,
+        "skip_generate_only_if_docker0_down": True,
+        "token_weights": dict(token_weights),
+        "tokenizer_id": tokenizer_id,
+        "typesafe": typesafe,
+    }
 
 
 def score_candidate(
@@ -1981,6 +2328,112 @@ class Generation:
     error: str = ""
 
 
+def identity_from_trace(
+    trace: Mapping[str, Any],
+    *,
+    generated: bool,
+    requested_provider: str,
+    requested_model: str,
+    allowed: Sequence[str] = (),
+    forbidden: Sequence[str] = (),
+    identity_cls: Any = None,
+) -> ProviderIdentity:
+    """Resolved provider/model from a generation trace. Never writes Lean."""
+
+    from jevops.outer import first_nonempty, name_fallback_used
+
+    cls = identity_cls or ProviderIdentity
+    resolved_provider = first_nonempty(
+        trace,
+        "effective_provider_name",
+        "provider_name",
+        "provider",
+        default=requested_provider if generated else "",
+    )
+    resolved_model = first_nonempty(
+        trace, "effective_model_name", "model_name", default=requested_model if generated else ""
+    )
+    fallback_used = name_fallback_used(
+        resolved_provider,
+        allowed=allowed,
+        forbidden=forbidden,
+    )
+    return cls(
+        requested_provider=requested_provider,
+        requested_model=requested_model,
+        resolved_provider=resolved_provider,
+        resolved_model=resolved_model,
+        fallback_used=fallback_used,
+        arena_score=None,
+    )
+
+
+def refuse_if_fallback(
+    identity: Any,
+    *,
+    error_cls: Any,
+    fmt: str = "resolved provider/model is a forbidden fallback: {provider}/{model}",
+) -> Any:
+    if getattr(identity, "fallback_used", False):
+        raise error_cls(
+            fmt.format(
+                provider=getattr(identity, "resolved_provider", ""),
+                model=getattr(identity, "resolved_model", ""),
+            )
+        )
+    return identity
+
+
+def coalesce_limits(
+    *,
+    source: str = "",
+    max_new: Optional[int] = None,
+    timeout: Optional[float] = None,
+    lookup_fn: Optional[Callable[[str], tuple[int, float]]] = None,
+    default_new: int = 256,
+    default_timeout: float = 90.0,
+) -> tuple[int, float]:
+    if source and lookup_fn is not None and (max_new is None or timeout is None):
+        looked_new, looked_timeout = lookup_fn(source)
+        if max_new is None:
+            max_new = looked_new
+        if timeout is None:
+            timeout = looked_timeout
+    if max_new is None:
+        max_new = default_new
+    if timeout is None:
+        timeout = default_timeout
+    return int(max_new), float(timeout)
+
+
+def stamp_measured_receipt(
+    receipt: Any,
+    *,
+    argv: Sequence[str],
+    cwd: Any,
+    run_fn: Callable[[], Any],
+    max_heartbeats: int,
+    lean_path: str = "",
+    timeout_seconds: float = 0.0,
+    extra_ok: bool = True,
+    ikv_floor: float = IKV_DEFAULT_TIMEOUT_SECONDS,
+) -> Any:
+    """Stamp argv/cwd, then overlay a timed lake/lean run. run_fn is injected."""
+
+    receipt.argv = list(argv)
+    receipt.cwd = str(cwd)
+    return measure_overlay(
+        receipt,
+        run_fn,
+        argv=argv,
+        max_heartbeats=max_heartbeats,
+        lean_path=lean_path,
+        timeout_seconds=timeout_seconds,
+        extra_ok=extra_ok,
+        ikv_floor=ikv_floor,
+    )
+
+
 def skipped_generation(
     health: HealthProbe,
     *,
@@ -2094,3 +2547,1438 @@ def bake_or_hit(
         "arena_score": None,
     }
 
+
+def write_candidate_if_needed(
+    record: Mapping[str, Any],
+    dest: Any,
+    *,
+    putnam_source: str,
+    write_fn: Callable[..., Any],
+) -> None:
+    """Write the candidate when Putnam or the dest file is missing. Never PATH lean."""
+
+    source = str(record.get("source") or "")
+    if source == putnam_source or not Path(dest).is_file():
+        write_fn(record, dest)
+
+
+def lake_supervisor_fields(
+    *,
+    threads: Any,
+    elan_home: Any,
+    supervisor_dir: Any,
+    process_env_key: str,
+) -> dict[str, str]:
+    """Env overlay for tag-pinned lake. IndependentKernelVerifier is unused."""
+
+    return {
+        "LEAN_NUM_THREADS": str(threads),
+        "ELAN_HOME": str(elan_home),
+        process_env_key: str(supervisor_dir),
+    }
+
+
+def plan_from_records(
+    records: Sequence[Mapping[str, Any]],
+    digest: str,
+    jsonl_bytes: int,
+    *,
+    first_source: str = "strata",
+    cls: Any = None,
+) -> CompilePlan:
+    """Warmup compile plan. Arena score stays None."""
+
+    plan_cls = cls or CompilePlan
+    rows = [dict(item) for item in records]
+    return plan_cls(
+        records=rows,
+        frozen_warmup_sha256=str(digest),
+        jsonl_bytes=int(jsonl_bytes),
+        n_records=len(rows),
+        first_source=first_source,
+        arena_score=None,
+    )
+
+
+def plan_bake_from_jobs(
+    jobs: Sequence[BakeJob],
+    digest: str,
+    jsonl_bytes: int,
+    n_records: int,
+    *,
+    cls: Any = None,
+) -> BakePlan:
+    """Warmup bake plan. Arena score stays None."""
+
+    plan_cls = cls or BakePlan
+    return plan_cls(
+        jobs=list(jobs),
+        frozen_warmup_sha256=str(digest),
+        jsonl_bytes=int(jsonl_bytes),
+        n_records=int(n_records),
+        arena_score=None,
+    )
+
+
+def plant_fake_toolchain(
+    elan_home: Any,
+    lean_tag: str,
+    *,
+    dirname_fn: Callable[[str], str],
+    files: Mapping[str, str],
+) -> Path:
+    """Plant tag-pinned lake/lean scripts. Injected bodies stay in the consumer."""
+
+    from jevops.outer import join_under, plant_executables
+
+    toolchain_dir = join_under(elan_home, "toolchains", dirname_fn(lean_tag), "bin")
+    plant_executables(toolchain_dir, files)
+    return Path(toolchain_dir)
+
+
+def plant_synthetic_olean_cache(
+    cache_dir: Any,
+    *,
+    blobs: Mapping[str, bytes],
+    receipt: Mapping[str, Any],
+    marker_text: str = "synthetic\n",
+    receipt_name: str = "bake-receipt.json",
+    marker_name: str = "BAKED",
+    build_parts: Sequence[str] = (".lake", "build", "lib"),
+) -> Path:
+    """Write dummy oleans. Not a live lake bake. Blob bytes are injected."""
+
+    from jevops.outer import join_under, write_blobs, write_json
+
+    root = Path(cache_dir)
+    build_dir = join_under(root, *build_parts)
+    write_blobs(build_dir, blobs)
+    write_json(root / receipt_name, dict(receipt))
+    (root / marker_name).write_text(marker_text, encoding="utf-8")
+    return root
+
+
+def plant_synthetic_clone(clone: Any, files: Mapping[str, str]) -> Path:
+    """Git skeleton with injected lakefile/toolchain text. Not a live clone."""
+
+    from jevops.outer import plant_git_skeleton
+
+    return plant_git_skeleton(clone, files=files)
+
+
+def probe_pins(
+    tags: Sequence[str],
+    *,
+    resolve_fn: Callable[[str], Mapping[str, Any]],
+    extra: Optional[Mapping[str, Any]] = None,
+    gap_msg: Optional[str] = None,
+) -> dict[str, Any]:
+    """Partition tag-pinned resolver rows. Missing tags are a capability gap, not PATH lake."""
+
+    from jevops.outer import map_partition, unique_keep
+
+    wanted = unique_keep(list(tags))
+    pins = [dict(resolve_fn(tag)) for tag in wanted]
+    installed, missing = map_partition(
+        pins, lambda pin: pin.get("installed"), lambda pin: pin.get("lean_tag")
+    )
+    default_gap = (
+        "No tag-pinned elan lean/lake binaries are installed under the "
+        "resolver elan home. Paths remain tag-pinned; this is not PATH "
+        "lake usability and is not IndependentKernelVerifier."
+    )
+    out: dict[str, Any] = {
+        "arena_score": None,
+        "installed_tags": installed,
+        "missing_tags": missing,
+        "pins": pins,
+        "score": None,
+        "capability_gap": (
+            (gap_msg or default_gap)
+            if missing and not installed
+            else ""
+        ),
+    }
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def compile_receipt_summary(
+    receipt: Any,
+    *,
+    max_heartbeats: int,
+    ikv_floor: float,
+) -> dict[str, Any]:
+    """JSON view of a lake compile receipt. IndependentKernelVerifier is unused."""
+
+    from jevops.outer import argv_layout, nonempty
+
+    argv = list(getattr(receipt, "argv", None) or [])
+    return {
+        "aborted_remaining_tags": list(getattr(receipt, "aborted_remaining_tags", None) or []),
+        "argv_has_lake_env_lean": argv_layout(
+            argv,
+            min_len=6,
+            names={0: "lake", 2: "lean"},
+            eq={
+                1: "env",
+                3: f"-DmaxHeartbeats={int(max_heartbeats)}",
+                4: "--json",
+            },
+        ),
+        "argv_tag_pinned": argv_layout(
+            argv,
+            min_len=3,
+            contains={
+                0: str(getattr(receipt, "lean_tag", "") or ""),
+                2: str(getattr(receipt, "lean_tag", "") or ""),
+            },
+        ),
+        "axiom_digest": getattr(receipt, "axiom_digest", ""),
+        "axiom_digest_hex64": len(str(getattr(receipt, "axiom_digest", "") or "")) == 64,
+        "axiom_names": list(getattr(receipt, "axiom_names", None) or []),
+        "cpu_ms_nonnegative": float(getattr(receipt, "cpu_ms", 0.0) or 0.0) >= 0.0,
+        "exit_code": getattr(receipt, "exit_code", -1),
+        "file_path": getattr(receipt, "file_path", ""),
+        "git_commit": getattr(receipt, "git_commit", ""),
+        "header_maxHeartbeats": getattr(receipt, "header_maxHeartbeats", None),
+        "independent_kernel_verifier_timeout_seconds": getattr(
+            receipt, "independent_kernel_verifier_timeout_seconds", None
+        ),
+        "independent_kernel_verifier_used": bool(
+            getattr(receipt, "independent_kernel_verifier_used", False)
+        ),
+        "lake_oracle": bool(getattr(receipt, "lake_oracle", True)),
+        "lean_tag": getattr(receipt, "lean_tag", ""),
+        "measurement_maxHeartbeats": getattr(receipt, "measurement_maxHeartbeats", 0),
+        "measurement_maxHeartbeats_finite": int(
+            getattr(receipt, "measurement_maxHeartbeats", 0) or 0
+        )
+        > 0
+        and int(getattr(receipt, "measurement_maxHeartbeats", 0) or 0) == int(max_heartbeats),
+        "name": getattr(receipt, "name", ""),
+        "ok": bool(getattr(receipt, "ok", False)),
+        "sorryAx": bool(getattr(receipt, "sorryAx", False)),
+        "source": getattr(receipt, "source", ""),
+        "stdout_digest": getattr(receipt, "stdout_digest", ""),
+        "stdout_nonempty": nonempty(getattr(receipt, "stdout", "") or ""),
+        "printed_axioms": "#print axioms" in str(getattr(receipt, "stdout", "") or ""),
+        "timeout_exceeds_ikv_30s": float(getattr(receipt, "timeout_seconds", 0.0) or 0.0)
+        > float(ikv_floor),
+        "timeout_seconds": getattr(receipt, "timeout_seconds", 0.0),
+        "timed_out": bool(getattr(receipt, "timed_out", False)),
+        "wall_ms_positive": float(getattr(receipt, "wall_ms", 0.0) or 0.0) > 0.0,
+        "error": getattr(receipt, "error", ""),
+        "arena_score": None,
+        "score": None,
+    }
+
+
+def prompt_neighbors(retrieval: Retrieval, *, k: int = 4) -> list[dict[str, str]]:
+    """Name / statement head / proof head slice. Full src stays on the dataclass."""
+
+    from jevops.outer import head_seq
+    from jevops.pick import project_items
+
+    return project_items(
+        head_seq(retrieval.neighbors, k),
+        {
+            "name": "name",
+            "statement": "statement_head",
+            "proof_head": "proof_head",
+        },
+    )
+
+
+def retrieval_view(
+    retrieval: Retrieval,
+    *,
+    src_chars: int,
+    lemma_cap: int,
+    prompt_k: int = 4,
+) -> dict[str, Any]:
+    """JSON view with truncated proofs. Full src stays on the dataclass."""
+
+    from dataclasses import asdict as _asdict
+
+    from jevops.outer import head_chars as _head
+
+    return {
+        "query": retrieval.query,
+        "source": retrieval.source,
+        "n_neighbors": len(retrieval.neighbors),
+        "n_src_lemmas": len(retrieval.src_lemmas),
+        "n_src_lemmas_uncapped": retrieval.n_src_lemmas_uncapped,
+        "src_lemma_cap": int(lemma_cap),
+        "neighbors": [
+            {
+                "name": item.name,
+                "source": item.source,
+                "statement": _head(item.statement, src_chars),
+                "proof_head": _head(item.src, src_chars),
+                "file_path": item.file_path,
+                "url": item.url,
+                "proof_length": item.proof_length,
+                "src_chars": len(item.src),
+                "retrieved_full_src": True,
+            }
+            for item in retrieval.neighbors
+        ],
+        "src_lemmas": [_asdict(item) for item in retrieval.src_lemmas],
+        "lemma_ids": list(retrieval.lemma_ids),
+        "lemma_id_digest": retrieval.lemma_id_digest,
+        "prompt_neighbors": prompt_neighbors(retrieval, k=prompt_k),
+        "arena_score": retrieval.arena_score,
+        "corpus_manifest_ingest": retrieval.corpus_manifest_ingest,
+        "mathlib_ingest": retrieval.mathlib_ingest,
+        "score": None,
+        "relevance_score": None,
+    }
+
+
+def closed_provider_identity(
+    *,
+    requested_provider: str,
+    requested_model: str,
+    identity_cls: Any = None,
+) -> ProviderIdentity:
+    """Unresolved identity. Never a fallback success."""
+
+    cls = identity_cls or ProviderIdentity
+    return cls(
+        requested_provider=requested_provider,
+        requested_model=requested_model,
+        resolved_provider="",
+        resolved_model="",
+        fallback_used=False,
+        arena_score=None,
+    )
+
+
+def refuse_unhealthy(
+    health: Any,
+    *,
+    require_health: bool,
+    error_cls: Any,
+    fmt: str,
+    **fmt_kwargs: Any,
+) -> None:
+    """Fail closed when docker0 /health is down. Never a Grok/HF fallback."""
+
+    if require_health and not bool(getattr(health, "ok", False)):
+        raise error_cls(fmt.format(**fmt_kwargs))
+
+
+def splice_span(original: str, src: str, replacement: str) -> tuple[int, int]:
+    """Line span of a one-shot src splice. Does not search for ``:=``."""
+
+    spliced = original.replace(src, replacement, 1)
+    start_at = spliced.find(replacement)
+    start_line = spliced[:start_at].count("\n") + 1 if start_at >= 0 else 1
+    end_line = start_line + replacement.count("\n")
+    return start_line, end_line
+
+
+def patch_putnam_src(record: Mapping[str, Any], tactics: str, *, statement: str) -> dict[str, Any]:
+    """Putnam candidate src is statement + tactic body. Never Tmp.lean."""
+
+    body = tactics if tactics.startswith(" := by") else " := by\n" + tactics
+    patched = dict(record)
+    patched["src"] = statement + body
+    return patched
+
+
+def filter_installed_pin_maps(
+    pins: Sequence[Any],
+    *,
+    resolve_fn: Callable[[Any], Any],
+    head: str = "",
+    skip_exc: Any = Exception,
+) -> list[dict[str, str]]:
+    """Keep pins whose tag-pinned elan resolve succeeds. Never PATH lean."""
+
+    kept: list[dict[str, str]] = []
+    for pin in pins or ():
+        try:
+            resolve_fn(pin)
+        except skip_exc:
+            continue
+        commit = str(getattr(pin, "git_commit", "") or "")
+        if head and commit and commit != head:
+            continue
+        kept.append({str(getattr(pin, "lean_tag", "") or ""): commit})
+    return kept
+
+
+def hosted_tactics_from_payload(
+    payload: Mapping[str, Any],
+    *,
+    extract_fn: Callable[[str], str],
+    error_cls: type[BaseException] = ValueError,
+    labs_host: str = "api.mistral.ai",
+) -> str:
+    """Extract tactics from a Track 1 hosted receipt. Refuse prototype/docker0."""
+
+    if payload.get("used_prototype_endpoint") or payload.get("called_docker0"):
+        raise error_cls("refusing a prototype/docker0 generation as a Track 1 candidate")
+    identity = payload.get("identity") or {}
+    host = identity.get("url_host")
+    if "url_host" in identity and host not in {None, labs_host} and host != labs_host:
+        raise error_cls(f"refusing non-Labs host {host}")
+    return extract_fn(str(payload.get("text") or payload.get("text_head") or ""))
+
+
+def unsolved_record(
+    *,
+    source: str,
+    file_path: str,
+    url: str,
+    lean_tag: str,
+    git_commit: str,
+    ident: str = "lra_unsolved",
+) -> dict[str, Any]:
+    """Sorry hole that Path A must not close. Not a lake admit."""
+
+    statement = f"theorem {ident} : False"
+    return {
+        "name": ident,
+        "source": source,
+        "statement": statement,
+        "src": statement + " := by\nsorry",
+        "header": "",
+        "file_path": file_path,
+        "url": url,
+        "version_info": [{lean_tag: git_commit}],
+        "proof_length": 5,
+        "num_lines": 2,
+    }
+
+
+def attempt_summary(
+    attempt: Mapping[str, Any],
+    *,
+    max_heartbeats: int,
+    ikv_floor: float,
+    pin_needles: Sequence[str] = ("leanprover--lean4---", "leanprover--lean4---"),
+) -> dict[str, Any]:
+    """JSON view of one Path A tactic try. IndependentKernelVerifier is unused."""
+
+    from jevops.outer import argv_layout
+
+    argv = list(attempt.get("argv") or [])
+    needles = list(pin_needles)
+    contains = {0: needles[0]} if needles else {}
+    if len(needles) > 1:
+        contains[2] = needles[1]
+    return {
+        "argv_has_lake_env_lean": argv_layout(
+            argv,
+            min_len=6,
+            names={0: "lake", 2: "lean"},
+            eq={
+                1: "env",
+                3: f"-DmaxHeartbeats={int(max_heartbeats)}",
+                4: "--json",
+            },
+        ),
+        "argv_tag_pinned": bool(str(attempt.get("cwd") or ""))
+        and argv_layout(argv, min_len=3, contains=contains),
+        "exit_code": attempt.get("exit_code"),
+        "ok": bool(attempt.get("ok")),
+        "sorryAx": bool(attempt.get("sorryAx")),
+        "tactic": attempt.get("tactic"),
+        "used_snapshot_goal": bool(attempt.get("used_snapshot_goal")),
+        "used_lean_frontend": bool(attempt.get("used_lean_frontend")),
+        "generator": attempt.get("generator"),
+        "stdout_nonempty": bool(str(attempt.get("stdout") or "").strip()),
+        "printed_axioms": "#print axioms" in str(attempt.get("stdout") or ""),
+        "timeout_exceeds_ikv_30s": float(attempt.get("timeout_seconds") or 0.0) > float(ikv_floor),
+        "arena_score": None,
+        "score": None,
+    }
+
+
+def try_receipt_summary(
+    receipt: Any,
+    *,
+    attempt_fn: Callable[[Mapping[str, Any]], Mapping[str, Any]],
+    aesop_tactic: str = "aesop",
+    sorry_tactic: str = "sorry",
+) -> dict[str, Any]:
+    """JSON view of a Path A receipt. HAMMER-006 stays a consumer constant."""
+
+    attempts = [dict(attempt_fn(item)) for item in getattr(receipt, "attempts", None) or ()]
+    sorry_raw = getattr(receipt, "sorry_attempt", None)
+    sorry = dict(attempt_fn(sorry_raw)) if sorry_raw else None
+    considered = list(getattr(receipt, "tactics_considered", None) or [])
+    run = list(getattr(receipt, "tactics_run", None) or [])
+    winner = getattr(receipt, "winning_tactic", None)
+    stopped = False
+    if winner is not None and run and run[-1] == winner and winner in considered:
+        stopped = considered.index(winner) == len(run) - 1
+    return {
+        "aesop_imported": bool(getattr(receipt, "aesop_imported", False)),
+        "aesop_in_considered": aesop_tactic in considered,
+        "attempts": attempts,
+        "error": getattr(receipt, "error", ""),
+        "generator": getattr(receipt, "generator", ""),
+        "git_commit": getattr(receipt, "git_commit", ""),
+        "hammer_006_lra_ready": bool(getattr(receipt, "hammer_006_lra_ready", False)),
+        "lean_tag": getattr(receipt, "lean_tag", ""),
+        "loop": getattr(receipt, "loop", ""),
+        "name": getattr(receipt, "name", ""),
+        "ok": bool(getattr(receipt, "ok", False)),
+        "on_30_sep_critical_path": bool(getattr(receipt, "on_30_sep_critical_path", False)),
+        "path": getattr(receipt, "path", ""),
+        "path_b_implemented": bool(getattr(receipt, "path_b_implemented", False)),
+        "sorry_attempt": sorry,
+        "sorry_failed": sorry is not None and not sorry["ok"] and sorry["sorryAx"],
+        "sorry_first": sorry is not None and sorry["tactic"] == sorry_tactic,
+        "sorry_template_prefix_bound": bool(getattr(receipt, "sorry_template_prefix_bound", False)),
+        "source": getattr(receipt, "source", ""),
+        "stopped_after_winner": stopped,
+        "tactics_considered": considered,
+        "tactics_run": run,
+        "uses_snapshot_goal": bool(getattr(receipt, "uses_snapshot_goal", False)),
+        "v1_runs_this": bool(getattr(receipt, "v1_runs_this", False)),
+        "winning_tactic": winner,
+        "all_attempts_lake_env_lean": all(item["argv_has_lake_env_lean"] for item in attempts)
+        and (sorry is None or sorry["argv_has_lake_env_lean"]),
+        "no_snapshot_goal_on_attempts": all(not item["used_snapshot_goal"] for item in attempts)
+        and (sorry is None or not sorry["used_snapshot_goal"]),
+        "arena_score": None,
+        "score": None,
+    }
+
+
+def stamp_tag_compile(
+    receipt: Any,
+    *,
+    cwd: Any,
+    argv: Sequence[str],
+    toolchain: Any,
+    timeout: float,
+    stamp_fn: Callable[..., Any],
+    run_fn: Callable[[Sequence[str], Mapping[str, str]], Any],
+    supervisor_dir: Any,
+    process_env_key: str,
+    threads: Any,
+    max_heartbeats: int,
+    ikv_floor: float,
+) -> Any:
+    """Stamp argv/cwd/env then overlay a timed lake run. run_fn is injected."""
+
+    from jevops.outer import env_copy
+
+    argv = list(argv)
+    receipt.argv = list(argv)
+    receipt.cwd = str(cwd)
+    env = env_copy(
+        lake_supervisor_fields(
+            threads=threads,
+            elan_home=toolchain.elan_home,
+            supervisor_dir=supervisor_dir,
+            process_env_key=process_env_key,
+        )
+    )
+    return stamp_fn(
+        receipt,
+        argv=argv,
+        cwd=cwd,
+        run_fn=lambda: run_fn(argv, env),
+        max_heartbeats=max_heartbeats,
+        lean_path=toolchain.lean_path,
+        timeout_seconds=getattr(receipt, "timeout_seconds", timeout),
+        extra_ok=getattr(receipt, "measurement_maxHeartbeats", 0) == int(max_heartbeats),
+        ikv_floor=ikv_floor,
+    )
+
+
+def failed_generation(
+    health: Any,
+    error: str,
+    *,
+    requested_provider: str,
+    requested_model: str,
+    generation_cls: Any = None,
+    identity_cls: Any = None,
+    skipped: bool = False,
+) -> Any:
+    """Closed generate failure. Never a fallback success. Never writes Lean."""
+
+    cls = generation_cls or Generation
+    return cls(
+        text="",
+        identity=closed_provider_identity(
+            requested_provider=requested_provider,
+            requested_model=requested_model,
+            identity_cls=identity_cls,
+        ),
+        health=health,
+        skipped=skipped,
+        error=error,
+    )
+
+
+def retrieval_prompt_extra(
+    *,
+    lemmas: str,
+    n_neighbors: int,
+    lemma_cap: int,
+) -> str:
+    """Append JSONL neighbor/lemma context. Not a Mathlib CorpusManifest."""
+
+    return (
+        "\n\nRetrieved src lemmas (cap "
+        f"{int(lemma_cap)}): {lemmas or '(none)'}\n"
+        f"Other warm-up JSONL neighbors: {int(n_neighbors)} "
+        "(public; not a Mathlib CorpusManifest).\n"
+        "Return only the tactic block after := by."
+    )
+
+
+def plant_loop_workspace(
+    records: Sequence[Mapping[str, Any]],
+    *,
+    parent: Any,
+    prefix: str,
+    pin_iter_fn: Callable[[Any], Sequence[Any]],
+    plant_toolchain_fn: Callable[[Any, str], Any],
+    plant_clone_fn: Callable[[str, Any], Any],
+) -> dict[str, Any]:
+    """Plant tag-pinned fake toolchains and repo clones. Not a live lake bake."""
+
+    from jevops.outer import mkdtemp_under, unique_keep
+
+    root = mkdtemp_under(parent, prefix=prefix)
+    elan_home = Path(root) / "elan"
+    state_root = Path(root) / "state"
+    tags = unique_keep(
+        [
+            pin.lean_tag
+            for record in records
+            for pin in pin_iter_fn(record.get("version_info"))
+        ]
+    )
+    urls = unique_keep(
+        [str(record.get("url") or "") for record in records if str(record.get("url") or "")]
+    )
+    for tag in tags:
+        plant_toolchain_fn(elan_home, tag)
+    for url in urls:
+        plant_clone_fn(url, state_root)
+    return {
+        "elan_home": elan_home,
+        "root": root,
+        "state_root": state_root,
+        "tags": tags,
+        "urls": urls,
+    }
+
+
+def reraise_router_fail(
+    exc: BaseException,
+    *,
+    identity: Any,
+    generate_cls: Any,
+    unreachable_cls: Any,
+    refuse_fn: Callable[..., Any],
+    fmt: str,
+    **fmt_kwargs: Any,
+) -> None:
+    """Fail closed on a router exception. Fallback identities never succeed."""
+
+    if getattr(identity, "fallback_used", False):
+        try:
+            refuse_fn(
+                identity,
+                error_cls=generate_cls,
+                fmt="refusing cross-provider fallback {provider}/{model}",
+            )
+        except Exception as refuse_exc:
+            if isinstance(refuse_exc, generate_cls):
+                raise generate_cls(str(refuse_exc)) from exc
+            raise
+    raise unreachable_cls(fmt.format(**fmt_kwargs)) from exc
+
+
+def pack_synthetic_compile(
+    *,
+    elan_home: Any,
+    expand_receipts: Sequence[Any],
+    first_receipts: Sequence[Any],
+    putnam_receipt: Any,
+    written: Sequence[Any],
+    persisted: Sequence[Any],
+    receipts_dir: Any = "",
+    first_file: str,
+    first_name: str,
+    first_green: bool,
+    missing_clone_closed: bool,
+    timeout_30_rejected: bool,
+    timeout_is_warmup: bool,
+    summary_fn: Callable[[Any], Mapping[str, Any]],
+    tag_sort_fn: Callable[[str], Any],
+    max_heartbeats: int,
+) -> dict[str, Any]:
+    """Synthetic compile-worker payload. IndependentKernelVerifier is unused."""
+
+    expand_tags = [item.lean_tag for item in expand_receipts]
+    first_summaries = [dict(summary_fn(item)) for item in first_receipts]
+    return {
+        "elan_home": str(elan_home),
+        "expand_n_receipts": len(list(expand_receipts)),
+        "expand_ok": bool(expand_receipts) and all(item.ok for item in expand_receipts),
+        "expand_receipts": [dict(summary_fn(item)) for item in expand_receipts],
+        "expand_tags_newest_first": expand_tags == sorted(expand_tags, key=tag_sort_fn, reverse=True),
+        "first_file": first_file,
+        "first_green": bool(first_green),
+        "first_n_receipts": len(list(first_receipts)),
+        "first_name": first_name,
+        "first_receipts": first_summaries,
+        "first_strata_compiled": bool(first_green),
+        "first_via_lake_env_lean": bool(first_receipts)
+        and all(row["argv_has_lake_env_lean"] for row in first_summaries),
+        "missing_clone_fails_closed_under_network_deny": bool(missing_clone_closed),
+        "n_receipts_persisted": len(list(persisted)),
+        "n_receipts_written": len(list(written)),
+        "persisted_receipts": list(persisted),
+        "receipts_dir": str(receipts_dir),
+        "receipts_written": [Path(path).name for path in written],
+        "putnam_header_maxHeartbeats": getattr(putnam_receipt, "header_maxHeartbeats", None),
+        "putnam_measurement_maxHeartbeats": getattr(putnam_receipt, "measurement_maxHeartbeats", None),
+        "putnam_ok": bool(getattr(putnam_receipt, "ok", False)),
+        "putnam_overrides_zero_header": (
+            getattr(putnam_receipt, "header_maxHeartbeats", None) == 0
+            and getattr(putnam_receipt, "measurement_maxHeartbeats", None) == int(max_heartbeats)
+            and bool(getattr(putnam_receipt, "ok", False))
+        ),
+        "putnam_receipt": dict(summary_fn(putnam_receipt)),
+        "timeout_30s_rejected": bool(timeout_30_rejected),
+        "timeout_is_warmup_600s": bool(timeout_is_warmup),
+        "independent_kernel_verifier_used": False,
+    }
+
+
+def putnam_candidate_stub(*, theorem: Optional[str] = None) -> str:
+    """Putnam candidate module stub. Never Tmp.lean."""
+
+    body = theorem if theorem is not None else render_placeholder_theorem()
+    return (
+        "/-\n"
+        "  LRA Putnam candidate module: Putnam.Candidate.\n"
+        "\n"
+        "  The compile worker overwrites this file with header + statement +\n"
+        "  tactic block via splice.lake_candidate_source. This is a module in\n"
+        "  the per-tag Mathlib+Aesop lake project, not Tmp.lean, and not\n"
+        "  `lake env lean Tmp.lean` without a lakefile.\n"
+        "-/\n"
+        "\n"
+        + body
+    )
+
+
+def hosted_identity(
+    *,
+    requested_provider: str,
+    requested_model: str,
+    fixture: bool,
+    extra: Optional[Mapping[str, Any]] = None,
+    api_host: str,
+    hardware_class: str,
+    error_cls: type[BaseException] = ValueError,
+    host_fmt: str = "resolved host is not {host}",
+) -> dict[str, Any]:
+    """Track 1 hosted identity. Never docker0. Never a fallback success."""
+
+    extra = dict(extra or {})
+    if fixture:
+        return {
+            "requested_provider": requested_provider,
+            "requested_model": requested_model,
+            "resolved_provider": requested_provider,
+            "resolved_model": requested_model,
+            "fallback_used": False,
+            "url_host": api_host,
+            "hardware_class": hardware_class,
+            "used_prototype_endpoint": False,
+            "arena_score": None,
+        }
+    if extra.get("url_host") != api_host:
+        raise error_cls(host_fmt.format(host=api_host))
+    return {
+        "requested_provider": requested_provider,
+        "requested_model": requested_model,
+        "resolved_provider": requested_provider,
+        "resolved_model": extra.get("model") or requested_model,
+        "fallback_used": False,
+        "request_id": extra.get("id"),
+        "url_host": extra.get("url_host"),
+        "hardware_class": hardware_class,
+        "used_prototype_endpoint": False,
+        "finish_reason": extra.get("finish_reason"),
+        "arena_score": None,
+    }
+
+
+def refuse_line_identity(
+    identity: Any,
+    *,
+    allowed: Sequence[str],
+    forbidden: Sequence[str],
+    error_cls: type[BaseException],
+) -> None:
+    """Refuse fallback / non-docker0 resolved providers. Empty resolved stays local."""
+
+    provider = str(getattr(identity, "resolved_provider", "") or "")
+    model = str(getattr(identity, "resolved_model", "") or "")
+    if getattr(identity, "fallback_used", False):
+        raise error_cls(f"refusing fallback {provider}/{model}")
+    if provider and provider not in set(allowed) and provider in set(forbidden):
+        raise error_cls("refusing non-docker0 provider")
+
+
+def overlay_try_probe(payload: Mapping[str, Any], extra: Optional[Mapping[str, Any]] = None) -> dict[str, Any]:
+    """Path A toolchain overlay. Snapshot/HAMMER flags stay false."""
+
+    out = dict(payload or {})
+    if extra:
+        out.update(dict(extra))
+    gap = bool(out.get("capability_gap"))
+    out["live_elan_usable"] = False if gap else bool(out.get("installed_tags"))
+    out["snapshot_goal_usable_for_lake_projects"] = False
+    if gap:
+        out["live_elan_usable"] = False
+    return out
+
+
+def pack_synthetic_try(
+    *,
+    elan_home: Any,
+    missing_closed: bool,
+    written: Sequence[Any],
+    persisted: Sequence[Any],
+    putnam: Any,
+    strata: Any,
+    unsolved: Any,
+    timeout_30_rejected: bool,
+    summary_fn: Callable[[Any], Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Synthetic Path A try payload. IndependentKernelVerifier is unused."""
+
+    return {
+        "elan_home": str(elan_home),
+        "missing_clone_fails_closed_under_network_deny": bool(missing_closed),
+        "n_receipts_persisted": len(list(persisted)),
+        "n_receipts_written": len(list(written)),
+        "persisted_receipts": list(persisted),
+        "putnam": dict(summary_fn(putnam)),
+        "receipts_written": [Path(path).name for path in written],
+        "strata": dict(summary_fn(strata)),
+        "timeout_30s_rejected": bool(timeout_30_rejected),
+        "unsolved": dict(summary_fn(unsolved)),
+    }
+
+
+def grok_file_prompt(
+    body: str,
+    *,
+    dest_name: str,
+    stub: str,
+) -> str:
+    """Instruct a file-writing generator. Chat is not the deliverable. Never docker0."""
+
+    return (
+        f"Your deliverable is the file {dest_name} in the working directory.\n"
+        "Use the write_file tool once to OVERWRITE that file with Lean 4 tactics only.\n"
+        "Do not read other files. Do not search the filesystem. Everything you need is in this prompt.\n"
+        "Do not put the tactics in chat. Chat may be a one-line ack such as wrote tactics.lean.\n"
+        "The file must contain ONLY the tactic block after := by.\n"
+        "No English, no markdown fences, no theorem/lemma/import/open/sorry/admit.\n"
+        "Keep induction and every case arm. Smallest lake-valid proof.\n"
+        f"The file currently contains a stub `{str(stub).strip()}`. Replace it completely.\n\n"
+        + str(body or "")
+    )
+
+
+def grok_file_argv(
+    *,
+    grok_bin: str,
+    socket: str,
+    workspace: Any,
+    model: str,
+    max_turns: int,
+    tools: str,
+    disallowed: str,
+    dest_name: str,
+    prompt_path: Any,
+) -> list[str]:
+    """Fail-closed grok CLI argv for a tactics file. Never docker0."""
+
+    return [
+        grok_bin,
+        "--leader-socket",
+        socket,
+        "--cwd",
+        str(workspace),
+        "--model",
+        model,
+        "--output-format",
+        "json",
+        "--no-plan",
+        "--no-subagents",
+        "--disable-web-search",
+        "--no-memory",
+        "--verbatim",
+        "--always-approve",
+        "--max-turns",
+        str(int(max_turns)),
+        "--permission-mode",
+        "acceptEdits",
+        "--reasoning-effort",
+        "low",
+        "--tools",
+        tools,
+        "--disallowed-tools",
+        disallowed,
+        "--allow",
+        f"Write({dest_name})",
+        "--allow",
+        f"Edit({dest_name})",
+        "--deny",
+        "Bash(*)",
+        "--prompt-file",
+        str(prompt_path),
+    ]
+
+
+def pack_try_plan(
+    *,
+    digest: str,
+    jsonl_bytes: int,
+    n_records: int,
+    per_record: Sequence[Mapping[str, Any]],
+    first_name: str,
+    first_tactics: Sequence[str],
+    putnam_name: str,
+    putnam_tactics: Sequence[str],
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Path A plan overlay. Catalog strings stay in the consumer."""
+
+    out: dict[str, Any] = {
+        "arena_score": None,
+        "score": None,
+        "first_putnam_name": str(putnam_name),
+        "first_putnam_tactics": list(putnam_tactics or ()),
+        "first_strata_name": str(first_name),
+        "first_strata_tactics": list(first_tactics or ()),
+        "frozen_warmup_sha256": str(digest),
+        "jsonl_bytes": int(jsonl_bytes),
+        "n_records": int(n_records),
+        "records": list(per_record or ()),
+    }
+    if extra:
+        out.update(dict(extra))
+    out["arena_score"] = None
+    out["score"] = None
+    return out
+
+
+def pack_materialized_putnam(
+    dest: Any,
+    files: Sequence[str],
+    *,
+    lakefile: str,
+    toolchain: str,
+    pins: Mapping[str, Any],
+    mathlib_git: str,
+    aesop_git: str,
+    refuse: str,
+) -> dict[str, Any]:
+    """Per-tag Putnam lake project view. Never Tmp.lean."""
+
+    dest_path = Path(dest)
+    return {
+        "dest": str(dest_path),
+        "files": sorted(files),
+        "has_lakefile": (dest_path / "lakefile.lean").is_file(),
+        "has_tmp_lean": (dest_path / refuse).exists(),
+        "toolchain": toolchain,
+        "mathlib_in_lakefile": "mathlib" in lakefile and mathlib_git in lakefile,
+        "aesop_in_lakefile": "aesop" in lakefile and aesop_git in lakefile,
+        "candidate_module": pins.get("module"),
+        "putnambench_url": pins.get("putnambench_url"),
+        "tmp_lean": pins.get("tmp_lean"),
+        "jsonl_version_pin": pins.get("jsonl_version_pin"),
+    }
+
+
+def pack_synthetic_bake(
+    *,
+    planted: Any,
+    planted_n: int,
+    hit: Mapping[str, Any],
+    missing_raised: bool,
+    missing_message: str,
+    allow_missing: Mapping[str, Any],
+    write_denied: bool,
+    materialized: Mapping[str, Any],
+    putnam_tags: Sequence[str],
+    putnam_module: str,
+) -> dict[str, Any]:
+    """Synthetic olean-bake payload. IndependentKernelVerifier is unused."""
+
+    rows = list(dict(materialized or {}).values())
+    return {
+        "planted_cache_dir": str(planted),
+        "planted_n_oleans": int(planted_n),
+        "deny_cache_hit_on_planted_strata_v4_26": hit.get("ok") is True
+        and hit.get("status") == "cache-hit",
+        "missing_putnam_under_network_deny_raises": bool(missing_raised),
+        "missing_message_mentions_network_deny": "network=deny" in str(missing_message or ""),
+        "allow_missing_does_not_raise": allow_missing.get("ok") is False
+        and allow_missing.get("status") == "cache-missing",
+        "write_candidate_rejects_tmp_lean": bool(write_denied),
+        "materialized_putnam": dict(materialized or {}),
+        "all_putnam_tags_materialized": set(materialized) == set(putnam_tags),
+        "any_putnam_tmp_lean": any(row.get("has_tmp_lean") for row in rows),
+        "all_putnam_have_mathlib_aesop_lakefile": bool(rows)
+        and all(
+            row.get("has_lakefile") and row.get("mathlib_in_lakefile") and row.get("aesop_in_lakefile")
+            for row in rows
+        ),
+        "all_putnam_module_candidate": bool(rows)
+        and all(row.get("candidate_module") == putnam_module for row in rows),
+        "all_putnambench_url_null": bool(rows)
+        and all(row.get("putnambench_url") is None for row in rows),
+    }
+
+
+def _first_receipt_dict(receipts: Sequence[Any]) -> dict[str, Any]:
+    rows = list(receipts or ())
+    if not rows:
+        return {"ok": False, "error": "no_receipt"}
+    item = rows[0]
+    if hasattr(item, "to_dict"):
+        return dict(item.to_dict())
+    return dict(item)
+
+
+def compile_keepbest(
+    record: Mapping[str, Any],
+    tactics: str,
+    *,
+    putnam_source: str,
+    token_fn: Callable[[str], int],
+    closed_fn: Callable[..., Mapping[str, Any]],
+    pins_fn: Callable[[Mapping[str, Any]], Sequence[Any]],
+    compile_fn: Callable[[Mapping[str, Any]], Sequence[Any]],
+    parse_errors_fn: Callable[[str], Sequence[Mapping[str, Any]]],
+    sorry_fn: Callable[[str, int, int], bool],
+    pack_fn: Callable[..., Mapping[str, Any]],
+    elapsed_fn: Callable[[float], float],
+    now_fn: Callable[[], float],
+    patch_fn: Callable[..., Mapping[str, Any]],
+    statement_fn: Callable[[Mapping[str, Any]], str],
+    dest_fn: Callable[[Mapping[str, Any]], Path],
+    restore: bytes,
+    write_bytes_fn: Callable[[Any, bytes], Any],
+    candidate_source_fn: Callable[[Mapping[str, Any], str], str],
+    splice_fn: Callable[..., Any],
+    span_fn: Callable[[str, str, str], tuple[int, int]],
+    line_in_span_fn: Callable[..., bool],
+    extra_fn: Callable[..., Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Putnam vs repo keep-best compile. Lake is the oracle. Never PATH lean."""
+
+    record = dict(record)
+    record["version_info"] = list(pins_fn(record) or ())
+    if not record["version_info"]:
+        return dict(closed_fn(token_count=token_fn(tactics)))
+    if str(record.get("source") or "") == putnam_source:
+        patched = patch_fn(record, tactics, statement=statement_fn(record))
+        started = now_fn()
+        receipt = _first_receipt_dict(compile_fn(patched))
+        stdout = str(receipt.get("stdout") or "")
+        errors = list(parse_errors_fn(stdout) or ())
+        return dict(
+            pack_fn(
+                receipt,
+                token_count=token_fn(tactics),
+                errors=errors,
+                sorry=bool(sorry_fn(stdout, 1, 10**9)),
+                extra={"compile_wall_ms_outer": elapsed_fn(started)},
+            )
+        )
+    dest = dest_fn(record)
+    write_bytes_fn(dest, restore)
+    replacement = candidate_source_fn(record, tactics)
+    original = restore.decode("utf-8") if isinstance(restore, (bytes, bytearray)) else str(restore)
+    start_line, end_line = span_fn(original, str(record["src"]), replacement)
+    splice_fn(dest, str(record["src"]), replacement)
+    started = now_fn()
+    receipts = compile_fn(record)
+    write_bytes_fn(dest, restore)
+    receipt = _first_receipt_dict(receipts)
+    stdout = str(receipt.get("stdout") or "")
+    errors = list(parse_errors_fn(stdout) or ())
+    errors_in = [item for item in errors if line_in_span_fn(item.get("pos"), start_line, end_line)]
+    errors_out = [item for item in errors if not line_in_span_fn(item.get("pos"), start_line, end_line)]
+    return dict(
+        pack_fn(
+            receipt,
+            token_count=token_fn(tactics),
+            errors=errors_in or errors_out,
+            sorry=bool(sorry_fn(stdout, start_line, end_line)),
+            extra=extra_fn(
+                receipt,
+                record,
+                start_line,
+                end_line,
+                stdout,
+                errors_in,
+                errors_out,
+                elapsed_fn(started),
+            ),
+        )
+    )
+
+
+def collect_warmup_problem(
+    record: Mapping[str, Any],
+    records: Sequence[Mapping[str, Any]],
+    *,
+    split: Any,
+    reconstruct_ok: bool,
+    error_cls: type[BaseException],
+    retrieve_fn: Callable[..., Any],
+    phases: Sequence[str],
+    probe: Any,
+    ref_tactics: str,
+    stripped: str,
+    token_fn: Callable[[str], int],
+    evaluate_fn: Callable[..., Any],
+    pin_fn: Callable[..., Any],
+    composite_fn: Callable[..., float],
+    prompt_fn: Callable[..., str],
+    generate_fn: Callable[..., Any],
+    skip_reason_fn: Callable[..., tuple[bool, str]],
+    append_fn: Callable[..., Any],
+    extract_fn: Callable[[str], str],
+    keep_fn: Callable[..., Any],
+    failure_fn: Callable[..., Mapping[str, Any]],
+    pack_fn: Callable[..., Any],
+    max_candidates: int,
+    hardware_class: str,
+    hammers: str,
+    typesafe: str,
+    generator: str,
+    loop_version: str,
+    generator_default: str,
+) -> Any:
+    """Warm-up problem candidate assembly. Lake still admits. Never writes Lean."""
+
+    if not reconstruct_ok:
+        raise error_cls(f"{getattr(split, 'name', '')}: prefix bind reconstruction drifted")
+    retrieval = retrieve_fn(record, records)
+    reference_tokens = token_fn(ref_tactics)
+    candidates: list[Any] = []
+    reference = evaluate_fn(
+        "reference",
+        ref_tactics,
+        generator="deterministic",
+        reference_tokens=reference_tokens,
+        reference_elab_ms=0.0,
+    )
+    pin_fn(reference, composite_fn=composite_fn)
+    candidates.append(reference)
+    reference_elab = getattr(reference, "elab_ms", 0.0)
+    if stripped != ref_tactics and len(candidates) < int(max_candidates):
+        candidates.append(
+            evaluate_fn(
+                "reference_stripped",
+                stripped,
+                generator="deterministic",
+                reference_tokens=reference_tokens,
+                reference_elab_ms=reference_elab,
+            )
+        )
+    prompt = prompt_fn(record, retrieval)
+    generation = generate_fn(prompt)
+    called = bool(getattr(probe, "ok", False))
+    skipped, skip_reason = skip_reason_fn(generation, probe_ok=called)
+
+    def _eval_generated(tactics: str, gen: Any) -> Any:
+        identity = getattr(gen, "identity", None)
+        return evaluate_fn(
+            "generated",
+            tactics,
+            generator=str(getattr(identity, "resolved_provider", "") or generator_default),
+            reference_tokens=reference_tokens,
+            reference_elab_ms=reference_elab,
+            called_leanstral=True,
+            generate_error=str(getattr(gen, "error", "") or ""),
+        )
+
+    append_fn(
+        candidates,
+        called=called,
+        skipped=skipped,
+        generation=generation,
+        cap=int(max_candidates),
+        extract_fn=extract_fn,
+        evaluate_fn=_eval_generated,
+        generator_default=generator_default,
+        hardware_class=hardware_class,
+    )
+    kept = keep_fn(candidates)
+    failures = [failure_fn(item) for item in candidates if not getattr(item, "valid", False)]
+    return pack_fn(
+        split,
+        phases=phases,
+        probe=probe,
+        called=called,
+        skipped=skipped,
+        skip_reason=skip_reason,
+        retrieval=retrieval,
+        candidates=candidates,
+        kept=kept,
+        failures=failures,
+        hardware_class=hardware_class,
+        hammers=hammers,
+        typesafe=typesafe,
+        generator=generator,
+        loop_version=loop_version,
+    )
+
+
+def evaluate_with_compile(
+    *,
+    kind: str,
+    tactics: str,
+    source_text: str,
+    admit_fn: Callable[[str], Any],
+    make_fn: Callable[..., Any],
+    compile_fn: Callable[[str], Sequence[Any]],
+    attach_fn: Callable[[Any, Sequence[Any]], Any],
+    score_fn: Callable[..., Any],
+    reconstruct_fn: Callable[[], bool],
+    generator: str,
+    token_count: int,
+    hardware_class: str,
+    called_leanstral: bool = False,
+    skipped_generate: bool = False,
+    generate_error: str = "",
+) -> Any:
+    """Admit lexically, lake-compile when allowed, then score. Lake is the oracle."""
+
+    view = admit_fn(tactics)
+    accepted = bool(getattr(view, "accepted", False) if not isinstance(view, Mapping) else view.get("accepted"))
+    code = str(
+        getattr(view, "failure_code", "") if not isinstance(view, Mapping) else view.get("failure_code") or ""
+    )
+    reason = str(getattr(view, "reason", "") if not isinstance(view, Mapping) else view.get("reason") or "")
+    candidate = make_fn(
+        kind=kind,
+        tactics=tactics,
+        source_text=source_text,
+        admission_accepted=accepted,
+        admission_code=code,
+        admission_reason=reason,
+        generator=generator,
+        token_count=token_count,
+        hardware_class=hardware_class,
+        called_leanstral=called_leanstral,
+        skipped_generate=skipped_generate,
+        error=generate_error,
+    )
+    if str(kind).startswith("reference") or accepted:
+        attach_fn(candidate, list(compile_fn(tactics) or ()))
+    reconstructed_ok = bool(reconstruct_fn()) if str(kind).startswith("reference") else False
+    return score_fn(candidate, reconstructed_ok=reconstructed_ok)
+
+
+def run_locked_generate(
+    *,
+    lock: Any,
+    pin_fn: Callable[[], Any],
+    call_fn: Callable[[], Any],
+    catch_trace_fn: Callable[[], Any],
+    identity_fn: Callable[..., Any],
+    refuse_fn: Callable[..., Any],
+    reraise_fn: Callable[..., Any],
+    require_fn: Callable[..., str],
+    generation_cls: Any,
+    health: Any,
+    generate_cls: type[BaseException],
+    unreachable_cls: type[BaseException],
+    reraise_kwargs: Optional[Mapping[str, Any]] = None,
+    error_fn: Optional[Callable[[BaseException], str]] = None,
+    refuse_fmt: str = "resolved provider/model is a forbidden fallback: {provider}/{model}",
+) -> Any:
+    """Pin, call the injected generator under lock, then refuse fallbacks.
+
+    ``call_fn`` is the live router call. The lock object stays in the consumer.
+    """
+
+    text = ""
+    with lock:
+        pin_fn()
+        try:
+            text = call_fn()
+        except unreachable_cls:
+            raise
+        except generate_cls:
+            raise
+        except Exception as exc:
+            identity = identity_fn(catch_trace_fn(), generated=False)
+            extra = dict(reraise_kwargs or {})
+            extra.setdefault("error", error_fn(exc) if error_fn is not None else str(exc))
+            extra["requested_provider"] = getattr(identity, "requested_provider", extra.get("requested_provider", ""))
+            extra["requested_model"] = getattr(identity, "requested_model", extra.get("requested_model", ""))
+            extra["resolved_provider"] = getattr(identity, "resolved_provider", extra.get("resolved_provider", ""))
+            extra["resolved_model"] = getattr(identity, "resolved_model", extra.get("resolved_model", ""))
+            reraise_fn(
+                exc,
+                identity=identity,
+                generate_cls=generate_cls,
+                unreachable_cls=unreachable_cls,
+                refuse_fn=refuse_fn,
+                **extra,
+            )
+    identity = refuse_fn(
+        identity_fn(catch_trace_fn(), generated=True),
+        error_cls=generate_cls,
+        fmt=refuse_fmt,
+    )
+    text = require_fn(text, error_cls=generate_cls)
+    return generation_cls(text=text, identity=identity, health=health)
+
+
+def run_path_a_try(
+    receipt: Any,
+    considered: Sequence[str],
+    *,
+    aesop_err: Any,
+    resolve_fn: Callable[[], Any],
+    prepare_fn: Callable[[], tuple[Any, str, Any]],
+    env_fn: Callable[[Any], Mapping[str, str]],
+    run_tactic_fn: Callable[..., Any],
+    fill_fn: Callable[..., Any],
+    close_fn: Callable[..., Any],
+    error_types: tuple[type[BaseException], ...],
+    extra_fn: Callable[[BaseException], str],
+    timeout: float,
+) -> Any:
+    """Sorry-then-closers Path A try. ``run_tactic_fn`` still owns lake/lean."""
+
+    if aesop_err:
+        receipt.error = aesop_err
+        receipt.ok = False
+        return receipt
+    try:
+        toolchain = resolve_fn()
+        cwd, source_file, dest = prepare_fn()
+        env = env_fn(toolchain)
+        return fill_fn(
+            receipt,
+            considered,
+            lambda tactic: run_tactic_fn(
+                tactic=tactic,
+                dest=dest,
+                source_file=source_file,
+                cwd=cwd,
+                toolchain=toolchain,
+                timeout=timeout,
+                env=env,
+            ),
+        )
+    except error_types as exc:
+        return close_fn(receipt, exc, extra=extra_fn(exc))
+
+
+def run_workspace_generate(
+    *,
+    workspace: Any,
+    dest_name: str,
+    stub: str,
+    reset_stub: bool,
+    generate_fn: Optional[Callable[..., str]] = None,
+    generate_kwargs: Optional[Mapping[str, Any]] = None,
+    identity_from_generate: Optional[Callable[[], Any]] = None,
+    run_fn: Optional[Callable[[], tuple[str, Any]]] = None,
+    read_fn: Callable[..., str],
+    write_text_fn: Callable[..., Any],
+) -> tuple[str, Any, str, Path]:
+    """Write a tactics file via injected generate or CLI run. Chat is not the deliverable."""
+
+    workspace = Path(workspace)
+    workspace.mkdir(parents=True, exist_ok=True)
+    dest = workspace / str(dest_name)
+    if reset_stub or not dest.exists():
+        write_text_fn(dest, stub)
+    chat = ""
+    identity: Any = None
+    if generate_fn is not None:
+        chat = str(generate_fn(**dict(generate_kwargs or {})))
+        write_text_fn(dest, chat)
+        identity = identity_from_generate() if identity_from_generate is not None else None
+    else:
+        if run_fn is None:
+            raise ValueError("run_workspace_generate needs generate_fn or run_fn")
+        chat, identity = run_fn()
+        chat = str(chat or "")
+    tactics = read_fn(workspace, dest_name=dest_name)
+    return str(tactics), identity, chat, dest
+
+
+def run_tag_compile(
+    receipt: Any,
+    *,
+    resolve_fn: Callable[[], Any],
+    prepare_fn: Callable[[], tuple[Any, Any, Any]],
+    write_fn: Callable[[Any], Any],
+    stamp_fn: Callable[..., Any],
+    close_fn: Callable[..., Any],
+    error_types: tuple[type[BaseException], ...],
+    bake_fn: Optional[Callable[[], Any]] = None,
+) -> Any:
+    """Resolve pin, prepare lake paths, stamp. stamp_fn still owns lake/lean."""
+
+    try:
+        toolchain = resolve_fn()
+        cwd, source_file, dest = prepare_fn()
+        write_fn(dest)
+        if bake_fn is not None:
+            bake_fn()
+        return stamp_fn(receipt, toolchain=toolchain, cwd=cwd, source_file=source_file)
+    except error_types as exc:
+        return close_fn(receipt, exc)
+
+
+def fill_timed_attempt(
+    *,
+    tactic: str,
+    argv: Sequence[str],
+    cwd: Any,
+    source_file: str,
+    timeout: float,
+    run_fn: Callable[[], Any],
+    fill_fn: Callable[..., Any],
+    timed_fn: Callable[..., tuple[Any, float, float]],
+) -> Any:
+    """Time an injected lake/lean run, then fill a tactic attempt. run_fn is the oracle."""
+
+    result, wall_ms, cpu_ms = timed_fn(run_fn)
+    return fill_fn(
+        tactic=tactic,
+        argv=argv,
+        cwd=str(cwd),
+        source_file=source_file,
+        timeout=timeout,
+        result=result,
+        wall_ms=wall_ms,
+        cpu_ms=cpu_ms,
+    )

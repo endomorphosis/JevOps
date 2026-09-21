@@ -15,6 +15,7 @@ Modules: `jevops.tactics`, `jevops.inits`, `jevops.lean`, `jevops.folds`, `jevop
 - MCMC edits: `join_consecutive_applies`, `collapse_ih_simps`, `drop_last_bare_simp_all`
 - Constrained beam: `pca_case_tags`, `looks_like_tactic`, `stop_allowed`, `insert_haves_before_induction`
 - Closed drafts: `HAMMER_BODIES`, `closed_tree_edits`, `span_preserving_edits`, `guided_mca_edits`
+- `multi_armed_bandit` / `bandit_tactic` — explicit select→observe policy over tactic/action arms (`thompson`, `ucb1`, `epsilon_greedy`), persisted in `memory["nca"]["bandits"]` and mirrored into NCA cells/journal
 - `jevops.lean.extract_generated_tactics` / `parse_next_tactic_line` — untrusted model payload → one tactic line
 - `jevops.lean.VersionPin` / `lake_candidate_source` / `tactic_block_from_body`
 

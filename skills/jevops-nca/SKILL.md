@@ -8,6 +8,7 @@ description: TypeSafe NCA cell store — ptr:// ids, tick/halt, energy, overlay,
 Module: `jevops.nca`. PYTHONPATH must include JevOps.
 
 - Cells keyed by `ptr://kind/id`. Energy clip `[0,1]`. Tick, halt, neighborhood, fork.
+- `nca_bandit` — action-level bandit transitions are cells: selection creates a pending pull; only an explicit reward updates the arm posterior.
 - `feed_with_overlays` plus residual/tree overlays. `credit_skill` from lake rows.
 - `dispatch_tool` closed names; consumers pass `extras=` for walk/hook/mutate.
 - `function_call_map` — Python AST defs + callees (optional qualify_fn). No source bodies.

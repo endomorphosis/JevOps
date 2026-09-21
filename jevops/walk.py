@@ -5,7 +5,7 @@ Lake, Lean folds, and hosted Jev HTTP live in implementations.
 """
 from __future__ import annotations
 
-from typing import Any, Mapping, Optional, Sequence
+from typing import Any, Callable, Mapping, Optional, Sequence
 
 
 def no_drafts_flag(memory: dict[str, Any], record: Mapping[str, Any], key: str) -> bool:
@@ -45,6 +45,7 @@ CONTROL = frozenset(
         "fork",
         "mutate",
         "hook",
+        "bandit",
         "call",
         "instruct",
         "heal",
@@ -96,6 +97,10 @@ COMPOSE_CRITERIA: dict[str, dict[str, str]] = {
     "hook": {
         "what": "Hook, walk, and evaluate an implementation module",
         "not_for": "Paths outside the implementation root",
+    },
+    "bandit": {
+        "what": "Select a tactic/action arm and wait for an explicit reward before updating its NCA cell",
+        "not_for": "Using an unverified selection as a proof or code change",
     },
     "call": {
         "what": "CALL ptr://skill|theorem|module|tool|cell|subloop|mcpplusplus|goal|task|codepath/…",
@@ -368,16 +373,27 @@ def do_nca_compose(
         "fork": "nca_fork",
         "mutate": "nca_mutate",
         "hook": "nca_hook",
+        "bandit": "nca_bandit",
     }.get(compose)
     if not nca_key:
         return {"flow": "fallthrough"}
     nca_tool = hooks.resolve("nca_tool", "typesafe_nca", "nca_tool")
     extra_kw = {k: v for k, v in dict(extra or {}).items() if k not in {"memory", "tactics", "problem", "name"}}
-    payload = (
-        nca_tool(nca_key, memory=memory, tactics=body, problem=problem, **extra_kw)
-        if nca_tool
-        else {"ok": False, "reason": "no_nca_tool"}
-    )
+    if nca_tool:
+        payload = nca_tool(nca_key, memory=memory, tactics=body, problem=problem, **extra_kw)
+    else:
+        # The kernel has safe built-ins for the closed NCA transitions. A
+        # consumer hook may still override them, but a standalone JevOps
+        # harness can now execute the same transition graph.
+        from jevops import nca as lra_nca
+
+        payload = lra_nca.dispatch_tool(
+            nca_key,
+            memory=memory,
+            tactics=body,
+            problem=problem,
+            **extra_kw,
+        )
     memory.setdefault("observations", {})[nca_key] = payload
     nxt = body
     if compose == "mutate" and isinstance((payload.get("applied") or {}).get("tactics"), str):
@@ -836,7 +852,7 @@ def dispatch_control(
     if compose == "self_improve":
         out = do_self_improve(memory=memory, body=body, problem=problem)
         return {"flow": "continue", "trace": out["trace"], "body": body}
-    if compose in {"tick", "fork", "mutate", "hook"}:
+    if compose in {"tick", "fork", "mutate", "hook", "bandit"}:
         out = do_nca_compose(
             compose=compose,
             memory=memory,
@@ -1394,6 +1410,28 @@ def pack_canary(
         "returned": True,
         "observations": walked.get("observations") or {},
     }
+
+
+def run_nested(
+    *,
+    tactics: str,
+    dest: Any,
+    restore: bytes,
+    name: Any = "",
+    analyze_fn: Callable[..., Mapping[str, Any]],
+    pack_fn: Callable[..., Mapping[str, Any]],
+    budget_fn: Callable[[], tuple[int, int]],
+    walk_fn: Callable[..., Mapping[str, Any]],
+    restore_fn: Callable[..., Any],
+) -> dict[str, Any]:
+    """Walk a nested canary if the clone file exists. Restore after. No Lean writes."""
+
+    if not getattr(dest, "is_file", lambda: False)():
+        return pack_fn({"analysis": analyze_fn(tactics)}, skipped="no_clone", name=name)
+    max_steps, max_depth = budget_fn()
+    walked = walk_fn(tactics, restore=restore, max_steps=max_steps, max_depth=max_depth)
+    restore_fn(dest, restore)
+    return pack_fn(walked, clone_exists=True)
 
 
 def slim_canary(row: Mapping[str, Any]) -> dict[str, Any]:

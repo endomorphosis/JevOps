@@ -1,15 +1,18 @@
 """JevOps: TypeSafe/Jev kernel, including Lean folds/binders/tactics/lake helpers.
 
 Kernel never writes Lean. Lake (or other oracles) live in consumers.
-Cache hits never admit proofs. Never docker0.
+Kernel cache hits never admit proofs; proof_ca validates typed cached evidence
+before reusing an existing verification receipt. Never docker0.
 """
 
 from jevops import (
     autoencoder,
+    autoresearch,
     binders,
     board,
     folds,
     graph,
+    harness,
     hooks,
     inits,
     int_rankers,
@@ -26,8 +29,10 @@ from jevops import (
     pick,
     plan,
     program,
+    proof_ca,
     rankers,
     repair,
+    router_tuning,
     search,
     skill_tree,
     stack,
@@ -42,10 +47,12 @@ from jevops import (
 
 __all__ = [
     "autoencoder",
+    "autoresearch",
     "binders",
     "board",
     "folds",
     "graph",
+    "harness",
     "hooks",
     "inits",
     "int_rankers",
@@ -62,8 +69,10 @@ __all__ = [
     "pick",
     "plan",
     "program",
+    "proof_ca",
     "rankers",
     "repair",
+    "router_tuning",
     "search",
     "skill_tree",
     "stack",

@@ -1,0 +1,13 @@
+{
+  "schema": "jevops-autoencoder-local-proxy-baseline/v1",
+  "name": "untrained_v2_roundtrip",
+  "score": 0.3676894259727491,
+  "formula": "0.65/(1+cross_entropy) + 0.25*cosine_similarity + 0.10*verifier_success_rate",
+  "metrics": {
+    "cross_entropy": 3.555348061489413,
+    "cosine_similarity": 0.5,
+    "verifier_success_rate": 1.0
+  },
+  "official_arena_score": null,
+  "note": "Frozen local training proxy only; no official Lean Refactor Arena score is claimed."
+}

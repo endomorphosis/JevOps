@@ -43,6 +43,7 @@ def empty_memory() -> dict[str, Any]:
         "subloop_returns": [],
         "nca": {},
         "tape": {},
+        "autoresearch": {},
     }
 
 
@@ -128,6 +129,7 @@ def save_memory(
         "subloop_returns": list(cleaned.get("subloop_returns") or [])[-32:],
         "nca": dict(cleaned.get("nca") or {}),
         "tape": dict(cleaned.get("tape") or {}),
+        "autoresearch": dict(cleaned.get("autoresearch") or {}),
     }
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return path

@@ -233,12 +233,46 @@ def _arc_touch(k: dict[str, Any], cid: str, *, hit: bool) -> None:
     k["arc"] = {"t1": t1, "t2": t2, "b1": b1, "b2": b2, "p": p}
 
 
+def _arc_enforce_limits(k: dict[str, Any]) -> None:
+    """Enforce both ARC entry and byte limits.
+
+    ARC's ghost lists still track evicted identities, but a large single blob
+    must not bypass the configured byte ceiling merely because the entry count
+    is within the cap.
+    """
+
+    cap = max(1, int(k.get("l1_cap") or L1_CAP))
+    byte_cap = max(1, int(k.get("l1_max_bytes") or L1_MAX_BYTES))
+    arc = dict(k.get("arc") or {})
+    t1 = list(arc.get("t1") or [])
+    t2 = list(arc.get("t2") or [])
+    b1 = list(arc.get("b1") or [])
+    b2 = list(arc.get("b2") or [])
+    l1 = dict(k.get("l1") or {})
+    while l1 and (len(l1) > cap or _l1_bytes(l1) > byte_cap):
+        victim = t1.pop(0) if t1 else (t2.pop(0) if t2 else next(iter(l1)))
+        if victim in l1:
+            l1.pop(victim, None)
+            _stat(k, "evicts")
+        if victim not in b1 and victim not in b2:
+            b1.append(victim)
+    k["l1"] = l1
+    k["arc"] = {
+        "t1": [item for item in t1 if item in l1],
+        "t2": [item for item in t2 if item in l1],
+        "b1": b1[-cap:],
+        "b2": b2[-cap:],
+        "p": int(arc.get("p") or 0),
+    }
+
+
 def _l1_touch(k: dict[str, Any], cid: str, *, hit: bool) -> None:
     policy = str(k.get("policy") or "arc").lower()
     if policy == "lru":
         _lru_evict(k, cid, hit=True)
     else:
         _arc_touch(k, cid, hit=hit)
+        _arc_enforce_limits(k)
 
 
 def bump_tick(memory: dict[str, Any]) -> int:
@@ -404,33 +438,44 @@ def flight_begin(memory: dict[str, Any], key: str) -> dict[str, Any]:
         _stat(k, "flights")
         return {"ok": False, "kind": "port_singleflight", "reason": "in_flight", "key": key, "admit": False}
     path = _inflight_path(key)
-    if path.is_file():
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        return {"ok": False, "kind": "port_singleflight", "reason": "lock_unavailable", "key": key, "admit": False}
+    acquired = False
+    for _attempt in range(2):
         try:
-            age = time.time() - path.stat().st_mtime
+            fd = os.open(str(path), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                handle.write(json.dumps({"key": key, "t": time.time()}))
+            acquired = True
+            break
+        except FileExistsError:
+            try:
+                age = time.time() - path.stat().st_mtime
+            except OSError:
+                age = INFLIGHT_TTL_S + 1
+            if age < INFLIGHT_TTL_S:
+                _stat(k, "flights")
+                return {
+                    "ok": False,
+                    "kind": "port_singleflight",
+                    "reason": "in_flight",
+                    "key": key,
+                    "durable": True,
+                    "admit": False,
+                }
+            try:
+                path.unlink()
+            except OSError:
+                return {"ok": False, "kind": "port_singleflight", "reason": "in_flight", "key": key, "durable": True, "admit": False}
         except OSError:
-            age = INFLIGHT_TTL_S + 1
-        if age < INFLIGHT_TTL_S:
-            _stat(k, "flights")
-            return {
-                "ok": False,
-                "kind": "port_singleflight",
-                "reason": "in_flight",
-                "key": key,
-                "durable": True,
-                "admit": False,
-            }
-        try:
-            path.unlink()
-        except OSError:
-            pass
+            break
+    if not acquired:
+        return {"ok": False, "kind": "port_singleflight", "reason": "lock_unavailable", "key": key, "admit": False}
     inflight.append(key)
     _stat(k, "flights")
     k["in_flight"] = inflight[-64:]
-    try:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps({"key": key, "t": time.time()}), encoding="utf-8")
-    except OSError:
-        pass
     return {"ok": True, "kind": "port_singleflight", "key": key, "begun": True, "admit": False}
 
 
@@ -499,8 +544,8 @@ def flight_end(memory: dict[str, Any], key: str) -> dict[str, Any]:
 def apply_context_budget(memory: dict[str, Any]) -> dict[str, Any]:
     k = _kernel(memory)
     budget = dict(k.get("budget") or {})
-    max_cells = int(budget.get("max_cells") or MAX_CELLS)
-    max_bytes = int(budget.get("max_bytes") or MAX_BYTES)
+    max_cells = int(budget["max_cells"]) if "max_cells" in budget else MAX_CELLS
+    max_bytes = int(budget["max_bytes"]) if "max_bytes" in budget else MAX_BYTES
     trimmed = 0
     try:
         from jevops import tape as lra_tape

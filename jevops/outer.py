@@ -11,10 +11,21 @@ import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Mapping, Optional, Sequence
+from typing import Any, Callable, Mapping, Optional, Sequence
 
-_JSON_OBJ = re.compile(r"\{.*\}", re.DOTALL)
-ACTIONS = ("run", "nest_inner", "mint", "skip_stem", "install_fold", "stop")
+# ``update_code`` is deliberately a closed outer action.  The action only
+# describes a candidate; a consumer must provide the validator/updater hook
+# that decides whether the candidate is allowed to touch the worktree.
+ACTIONS = (
+    "run",
+    "nest_inner",
+    "mint",
+    "skip_stem",
+    "install_fold",
+    "update_code",
+    "patch",
+    "stop",
+)
 
 
 def split_after_prefix(
@@ -240,24 +251,44 @@ def load_jsonl_objects(
 def parse_action(text: str, *, actions: tuple[str, ...] = ACTIONS) -> dict[str, Any]:
     """First JSON object in outer-loop text; fail closed to action=run."""
 
-    match = _JSON_OBJ.search(str(text or ""))
-    if not match:
-        return {"action": "run", "reason": "no_json"}
-    try:
-        raw = json.loads(match.group(0))
-    except json.JSONDecodeError:
-        return {"action": "run", "reason": "bad_json"}
-    if not isinstance(raw, dict):
-        return {"action": "run", "reason": "not_object"}
+    source = str(text or "")
+    decoder = json.JSONDecoder()
+    raw: Any = None
+    saw_object_start = False
+    for index, char in enumerate(source):
+        if char != "{":
+            continue
+        saw_object_start = True
+        try:
+            candidate, _end = decoder.raw_decode(source, index)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(candidate, dict):
+            raw = candidate
+            break
+    if raw is None:
+        return {"action": "run", "reason": "bad_json" if saw_object_start else "no_json"}
     action = str(raw.get("action") or "run").strip()
     if action not in actions:
         return {"action": "run", "reason": "unknown_action"}
     out = {"action": action, "reason": str(raw.get("reason") or "router")}
-    for key in ("stem", "name", "old", "new", "family"):
+    for key in ("stem", "name", "old", "new", "family", "path", "file", "diff"):
         if key in raw:
             out[key] = str(raw.get(key) or "")
     if "keep" in raw and isinstance(raw["keep"], list):
         out["keep"] = [str(item) for item in raw["keep"]]
+    if "changes" in raw and isinstance(raw["changes"], list):
+        changes: list[dict[str, str]] = []
+        for item in raw["changes"]:
+            if not isinstance(item, dict):
+                continue
+            row: dict[str, str] = {}
+            for key in ("path", "file", "old", "new"):
+                if key in item:
+                    row[key] = str(item.get(key) or "")
+            if row:
+                changes.append(row)
+        out["changes"] = changes
     if "count" in raw:
         try:
             out["count"] = int(raw["count"])
@@ -349,6 +380,143 @@ def route_next(
         except Exception:
             pass
     return action
+
+
+def load_ipfs_accelerate_router(*, search_paths: Optional[Sequence[Any]] = None) -> Any:
+    """Load ``ipfs_accelerate_py.llm_router`` lazily.
+
+    JevOps keeps the router optional so the kernel remains importable without
+    the accelerator repository.  ``JEVOPS_IPFS_ACCELERATE_PATH`` or
+    ``IPFS_ACCELERATE_PY_PATH`` may point at either the accelerator checkout or
+    its inner ``ipfs_accelerate_py`` package directory.  A conventional
+    sibling ``external/ipfs_accelerate`` checkout is also discovered when the
+    repositories live under one workspace.
+    """
+
+    import importlib
+    import os
+    import sys
+
+    try:
+        return importlib.import_module("ipfs_accelerate_py.llm_router")
+    except ModuleNotFoundError as initial:
+        candidates: list[Path] = []
+        values = list(search_paths or ())
+        values.extend(
+            value
+            for value in (
+                os.environ.get("JEVOPS_IPFS_ACCELERATE_PATH"),
+                os.environ.get("IPFS_ACCELERATE_PY_PATH"),
+            )
+            if value
+        )
+        candidates.extend(Path(value).expanduser() for value in values)
+        candidates.extend(
+            [
+                Path.cwd() / "external" / "ipfs_accelerate",
+                Path(__file__).resolve().parents[2] / "external" / "ipfs_accelerate",
+            ]
+        )
+        seen: set[str] = set()
+        for candidate in candidates:
+            try:
+                resolved = candidate.resolve()
+            except OSError:
+                continue
+            if (resolved / "ipfs_accelerate_py").is_dir():
+                import_root = resolved
+            elif resolved.name == "ipfs_accelerate_py" and resolved.is_dir():
+                import_root = resolved.parent
+            else:
+                continue
+            key = str(import_root)
+            if key in seen:
+                continue
+            seen.add(key)
+            if key not in sys.path:
+                sys.path.insert(0, key)
+            try:
+                return importlib.import_module("ipfs_accelerate_py.llm_router")
+            except ModuleNotFoundError:
+                continue
+        raise ImportError(
+            "ipfs_accelerate_py.llm_router is unavailable; install it or set "
+            "JEVOPS_IPFS_ACCELERATE_PATH"
+        ) from initial
+
+
+def _router_text(value: Any) -> str:
+    """Normalize the router's string/tuple/OpenAI-compatible return shapes."""
+
+    if isinstance(value, str):
+        return value
+    if isinstance(value, (tuple, list)) and value:
+        return _router_text(value[0])
+    if isinstance(value, Mapping):
+        for key in ("text", "generated_text", "content", "response"):
+            if key in value:
+                return str(value[key] or "")
+        choices = value.get("choices")
+        if isinstance(choices, list) and choices:
+            return _router_text(choices[0])
+        message = value.get("message")
+        if message is not None:
+            return _router_text(message)
+    for key in ("text", "generated_text", "content"):
+        value_attr = getattr(value, key, None)
+        if value_attr is not None:
+            return str(value_attr)
+    choices = getattr(value, "choices", None)
+    if isinstance(choices, (tuple, list)) and choices:
+        return _router_text(choices[0])
+    message = getattr(value, "message", None)
+    if message is not None:
+        return _router_text(message)
+    return str(value or "")
+
+
+def make_llm_router_generate(
+    *,
+    router: Any = None,
+    model_name: Optional[str] = None,
+    provider: Optional[str] = None,
+    **kwargs: Any,
+) -> Any:
+    """Return a ``generate(prompt)`` callable backed by ipfs_accelerate_py.
+
+    The import is lazy.  This makes the callable suitable for ``route_next``
+    and for tests that inject a fixture router without installing optional
+    accelerator dependencies.
+    """
+
+    def generate(prompt: str) -> str:
+        module = router or load_ipfs_accelerate_router()
+        call_kwargs = dict(kwargs)
+        if model_name is not None:
+            call_kwargs.setdefault("model_name", model_name)
+        if provider is not None:
+            call_kwargs.setdefault("provider", provider)
+        return _router_text(module.generate_text(str(prompt), **call_kwargs))
+
+    return generate
+
+
+def ipfs_accelerate_generate(
+    prompt: str,
+    *,
+    router: Any = None,
+    model_name: Optional[str] = None,
+    provider: Optional[str] = None,
+    **kwargs: Any,
+) -> str:
+    """Generate one outer-loop response through ``ipfs_accelerate_py``."""
+
+    return make_llm_router_generate(
+        router=router,
+        model_name=model_name,
+        provider=provider,
+        **kwargs,
+    )(prompt)
 
 
 def compact_gaps(gaps: Sequence[Mapping[str, Any]], *, help_n: int = 2) -> list[dict[str, Any]]:
@@ -1035,8 +1203,10 @@ def format_prompt(
     last_lake: Sequence[Mapping[str, Any]],
     nca_status: Optional[Mapping[str, Any]] = None,
     total: Optional[int] = None,
+    self_analysis: Optional[Mapping[str, Any]] = None,
+    code_context: str = "",
 ) -> str:
-    """Closed outer-router prompt. Does not write Lean."""
+    """Closed outer-router prompt. Does not write Lean or source files."""
 
     tot = int(total) if total is not None else int(sum(int(v) for v in dict(board).values() if str(v).lstrip("-").isdigit() or isinstance(v, int)))
     return (
@@ -1048,6 +1218,8 @@ def format_prompt(
         + f"gaps={json.dumps(compact_gaps(gaps), sort_keys=True)}\n"
         + f"last_lake={json.dumps(compact_lake(last_lake), sort_keys=True)}\n"
         + f"nca={json.dumps(dict(nca_status or {}), sort_keys=True)}\n"
+        + f"inner_self_analysis={json.dumps(dict(self_analysis or {}), sort_keys=True)}\n"
+        + (f"code_context={code_context}\n" if code_context else "")
     )
 
 
@@ -1143,8 +1315,19 @@ def run_steps(
     }
 
 
-def apply_action(memory: dict[str, Any], action: Mapping[str, Any]) -> dict[str, Any]:
-    """Mutate memory from a closed action. No Python exec. No Lean."""
+def apply_action(
+    memory: dict[str, Any],
+    action: Mapping[str, Any],
+    *,
+    code_updater: Optional[Any] = None,
+) -> dict[str, Any]:
+    """Apply a closed action to memory or a consumer-provided code gate.
+
+    ``update_code``/``patch`` never write files in the kernel.  The optional
+    ``code_updater`` (or the ``apply_code_change`` hook) must validate a
+    candidate and return a receipt.  This keeps the router connected to the
+    outer loop without allowing arbitrary model text to become ``exec``.
+    """
 
     from jevops import hooks
 
@@ -1177,6 +1360,20 @@ def apply_action(memory: dict[str, Any], action: Mapping[str, Any]) -> dict[str,
             return {"ok": False, "reason": "no_install_fold"}
         installed = install(memory, action)
         return {"ok": bool(installed.get("ok")), **installed}
+    if kind in {"update_code", "patch"}:
+        updater = code_updater or hooks.get("apply_code_change")
+        if updater is None:
+            return {"ok": False, "reason": "no_code_updater"}
+        try:
+            result = updater(action, memory=memory)
+        except TypeError:
+            # Consumer hooks historically use the compact ``(memory, action)``
+            # shape.  Keep that shape working while preferring the named form.
+            result = updater(memory, action)
+        receipt = dict(result or {}) if isinstance(result, Mapping) else {"result": result}
+        receipt.setdefault("ok", bool(receipt.get("accepted")))
+        receipt.setdefault("applied", "update_code" if receipt.get("ok") else "update_code_rejected")
+        return receipt
     return {"ok": True, "applied": kind}
 
 
@@ -3668,6 +3865,206 @@ class ClientSession:
     owner_exec: dict[str, Any]
     skipped: bool
     reason: str
+
+
+def session_reason(
+    action: str,
+    *,
+    lock_held: bool = False,
+    allow_owner_exec: bool = False,
+) -> str:
+    """Normative client-protocol reason. Never an exclusive-lock action."""
+
+    reasons = {
+        "generate": "docker0 /health ok; generate_text as HTTP client without exclusive lock",
+        "wait": "docker0 unhealthy and owner exclusive lock held; wait for /health",
+        "skip_llm": "docker0 unhealthy; skip LLM (exclusive lock held or owner exec not permitted)",
+        "exec_owner": "docker0 unhealthy and gpu-0.lock free; may exec run_leanstral_ephemeral.py",
+    }
+    reason = reasons.get(action, action)
+    if action == "skip_llm" and lock_held:
+        return "docker0 unhealthy and owner exclusive lock held; skip LLM"
+    if action == "skip_llm" and not allow_owner_exec:
+        return "docker0 unhealthy; owner exec not permitted; skip LLM"
+    return reason
+
+
+def pack_client_session(
+    *,
+    action: str,
+    health: Any,
+    lock: Any,
+    autostart: str,
+    owner: Any,
+    reason: str,
+    session_cls: Any = None,
+) -> Any:
+    from dataclasses import asdict as _asdict
+
+    cls = session_cls or ClientSession
+
+    def _row(item: Any) -> dict[str, Any]:
+        if isinstance(item, Mapping):
+            return dict(item)
+        return _asdict(item)
+
+    return cls(
+        action=action,
+        health=_row(health),
+        lock=_row(lock),
+        autostart=str(autostart or ""),
+        lock_ex_taken_by_client=False,
+        llama_server_started=False,
+        owner_exec=_row(owner),
+        skipped=action != "generate",
+        reason=reason,
+    )
+
+
+def generate_client_flow(
+    *,
+    health: Any,
+    lock: Any,
+    generate_fn: Callable[[], Any],
+    wait_fn: Callable[[float], Any],
+    exec_fn: Callable[[bool], Any],
+    skip_fn: Callable[..., Any],
+    decide_fn: Callable[..., str],
+    allow_owner_exec: bool = False,
+    wait_seconds: float = 0.0,
+    execute_owner: bool = False,
+    wait_reason: str = "docker0 unhealthy after wait; owner exclusive lock held; skip LLM",
+    exec_reason: str = "owner exec not started in this process; skip LLM",
+    skip_reason: str = "docker0 unhealthy; skip LLM without taking owner exclusive lock",
+) -> Any:
+    """Client generate/wait/skip/exec-owner. Never takes exclusive lock here."""
+
+    if getattr(health, "ok", False):
+        return generate_fn()
+    action = decide_fn(
+        health,
+        lock,
+        allow_owner_exec=allow_owner_exec,
+        wait_seconds=wait_seconds,
+    )
+    if action == "wait":
+        nxt = wait_fn(float(wait_seconds))
+        if getattr(nxt, "ok", False):
+            return generate_fn()
+        return skip_fn(nxt, wait_reason)
+    if action == "exec_owner":
+        owner = exec_fn(bool(execute_owner))
+        if getattr(owner, "executed", False) and getattr(owner, "returncode", None) == 0:
+            nxt = wait_fn(max(float(wait_seconds), 1.0))
+            if getattr(nxt, "ok", False):
+                return generate_fn()
+        return skip_fn(health, getattr(owner, "error", "") or exec_reason)
+    return skip_fn(health, skip_reason)
+
+
+def spend_kind(
+    kind: str,
+    *,
+    models: Mapping[str, str],
+    counts: Mapping[str, int],
+    error_cls: Any = ValueError,
+    unknown_fmt: str = "unknown spend kind {kind!r}",
+) -> tuple[str, str, int]:
+    """(kind_key, default_model, next_call_index). Unknown kinds raise."""
+
+    kind_key = str(kind or "").strip().lower()
+    if kind_key not in models:
+        raise error_cls(unknown_fmt.format(kind=kind_key))
+    return kind_key, str(models[kind_key]), int(counts.get(kind_key) or 0) + 1
+
+
+def select_named(
+    records: Sequence[Mapping[str, Any]],
+    names: Optional[Sequence[str]],
+    *,
+    error_cls: Any = ValueError,
+    miss_fmt: str = "unknown warm-up names: {missing}",
+    name_key: str = "name",
+) -> list[Mapping[str, Any]]:
+    """Keep records whose name is in names. Empty names keeps all."""
+
+    rows = list(records or ())
+    if not names:
+        return rows
+    wanted = set(names)
+    selected = [item for item in rows if item.get(name_key) in wanted]
+    missing = wanted - {item.get(name_key) for item in selected}
+    if missing:
+        raise error_cls(miss_fmt.format(missing=sorted(str(x) for x in missing)))
+    return selected
+
+
+def select_limit(items: Sequence[Any], limit: Optional[int]) -> list[Any]:
+    rows = list(items or ())
+    if limit is None:
+        return rows
+    return rows[: max(0, int(limit))]
+
+
+def closed_skip(
+    reason: str,
+    *,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Fail-closed skip payload. Never a generated proof."""
+
+    out: dict[str, Any] = {
+        "ok": True,
+        "skipped": True,
+        "reason": str(reason),
+        "called_mistral": False,
+        "arena_score": None,
+    }
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def skill_loop_payload(
+    *,
+    outer: int,
+    llm: bool,
+    history: Sequence[Mapping[str, Any]],
+    board: Mapping[str, int],
+    total: int,
+    best_total: Any,
+    stop_reason: str,
+    memory_path: Any,
+    memory_skills: Sequence[Any],
+    ledger: Any,
+    protocol: str,
+    pr_id: str,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    from jevops.outer import closed_evidence, utc_stamp
+
+    out: dict[str, Any] = {
+        "schema": "lra-skill-improve-loop/v1",
+        "protocol": protocol,
+        "pr_id": pr_id,
+        "observed_at": utc_stamp(),
+        "outer": "grok",
+        "llm": bool(llm),
+        "inner": "typesafe_nested",
+        "router": "ipfs_accelerate_py.llm_router.generate_text" if llm else "deterministic",
+        "history": list(history or ()),
+        "board": dict(board or {}),
+        "total": int(total),
+        "best_total": best_total,
+        "stop_reason": str(stop_reason or ""),
+        "memory_path": str(memory_path),
+        "memory_skills": list(memory_skills or []),
+        **closed_evidence(grok_writes_lean=False),
+        "ledger": ledger.as_dict() if hasattr(ledger, "as_dict") else {"grok_calls": getattr(ledger, "grok_calls", 0)},
+    }
+    if extra:
+        out.update(dict(extra))
+    return out
 
 
 @dataclass(frozen=True)

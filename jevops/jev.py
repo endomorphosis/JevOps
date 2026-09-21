@@ -930,3 +930,555 @@ def pack_ranked_pick(
     packed["pick"] = pick
     packed["order"] = index_order(int(n), packed.get("probabilities") or {}, prefix=prefix, pick=pick)
     return packed
+
+
+def route_result_from_answers(
+    extracted: Mapping[str, Any],
+    *,
+    mode: str,
+    official_track2: bool,
+    wall_ms: float,
+    used_fixture: bool,
+    model: str,
+    result_cls: Any = None,
+) -> Any:
+    """Build a RouteResult from projected answers. Never includes generated Lean."""
+
+    cls = result_cls or RouteResult
+    return cls(
+        skipped=False,
+        reason="routed",
+        mode=mode,
+        official_track2=official_track2,
+        family=extracted.get("family"),
+        family_confidence=extracted.get("family_confidence"),
+        family_probs=extracted.get("family_probs"),
+        hammer_before_llm=extracted.get("hammer_before_llm"),
+        reference_already_tight=extracted.get("reference_already_tight"),
+        likely_shorter=extracted.get("likely_shorter"),
+        likely_shorter_legend=extracted.get("likely_shorter_legend"),
+        elab_risk=extracted.get("elab_risk"),
+        elab_risk_legend=extracted.get("elab_risk_legend"),
+        version_fragile=extracted.get("version_fragile"),
+        putnam_aesop_plausible=extracted.get("putnam_aesop_plausible"),
+        calc_structure_worth_keeping=extracted.get("calc_structure_worth_keeping"),
+        statement_in_proof_duplicated=extracted.get("statement_in_proof_duplicated"),
+        uses_sorry_or_admit=extracted.get("uses_sorry_or_admit"),
+        neighbor_style_match=extracted.get("neighbor_style_match"),
+        spend_llm=extracted.get("spend_llm"),
+        usage=extracted.get("usage"),
+        wall_ms=wall_ms,
+        called_typesafe=True,
+        used_fixture=used_fixture,
+        model=model,
+        jev_generated_lean=False,
+    )
+
+
+def pack_best_draft(
+    result: Any,
+    *,
+    choice_key: str = "best_first_draft",
+    wall_ms: Optional[float] = None,
+) -> dict[str, Any]:
+    """Project a best-draft Choice. Never includes generated Lean."""
+
+    packed = pack_choice_round(result, choice_key=choice_key, noul_key="", score_key="", wall_ms=wall_ms)
+    packed["best_first_draft"] = packed.get("choice")
+    packed["best_confidence"] = packed.get("confidence")
+    packed["top"] = list(dict(packed.get("probabilities") or {}))
+    packed["reason"] = "routed"
+    packed["arena_score"] = None
+    return packed
+
+
+def overlay_route_payload(
+    result: Mapping[str, Any],
+    *,
+    name: str,
+    source: Any,
+    digest: str,
+    n_neighbors: int,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Named-route overlay. Jev still does not generate Lean."""
+
+    out = dict(result or {})
+    out.update(
+        {
+            "ok": True,
+            "name": name,
+            "source": source,
+            "warmup_jsonl_sha256": digest,
+            "n_neighbors": int(n_neighbors),
+            "imports_typesafe_inference": True,
+            "imports_typesafe_sdk": False,
+            "jev_generates_lean": False,
+            "score_is_rubric_index": True,
+            "official_track2_stays_off": True,
+        }
+    )
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def project_live_answers(
+    result: Any,
+    *,
+    choice_map: Optional[Mapping[str, str]] = None,
+    noul_map: Optional[Mapping[str, str]] = None,
+    score_map: Optional[Mapping[str, str]] = None,
+    best_key: str = "best_first_draft",
+) -> dict[str, Any]:
+    """Project Choice/Noul/Score answers into a live payload. No Lean."""
+
+    choices, nouls, scores, usage = unpack_response(result)
+    out: dict[str, Any] = {
+        "live": True,
+        "model": getattr(result, "model", None),
+        "usage": usage,
+        "jev_generated_lean": False,
+    }
+    for src, dest in dict(choice_map or {}).items():
+        ans = choices.get(src)
+        out[dest] = getattr(ans, "choice", None)
+        if dest == best_key or src == best_key:
+            out["best_confidence"] = getattr(ans, "confidence", None)
+            out["_best"] = ans
+    for src, dest in dict(noul_map or {}).items():
+        out[dest] = getattr((nouls or {}).get(src), "noul", None)
+    for src, dest in dict(score_map or {}).items():
+        out[dest] = getattr((scores or {}).get(src), "score", None)
+    return out
+
+
+def hosted_run_payload(
+    *,
+    name: str,
+    source: Any,
+    digest: str,
+    identity: Mapping[str, Any],
+    text: str,
+    jev_route: Mapping[str, Any],
+    ledger: Mapping[str, Any],
+    wall_ms: float,
+    requested_provider: str,
+    requested_model: str,
+    hardware_class: str,
+    prototype_hardware: str,
+    protocol: str,
+    pr: str,
+    track: str,
+    labs_retire_date: str,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    from jevops.outer import head_chars
+
+    out: dict[str, Any] = {
+        "ok": True,
+        "skipped": False,
+        "schema": "lra-track1-mistral-leanstral/v1",
+        "protocol": protocol,
+        "pr": pr,
+        "track": track,
+        "name": name,
+        "source": source,
+        "warmup_jsonl_sha256": digest,
+        "requested_provider": requested_provider,
+        "requested_model": requested_model,
+        "identity": dict(identity),
+        "hardware_class": hardware_class,
+        "prototype_hardware_class": prototype_hardware,
+        "used_prototype_endpoint": False,
+        "labs_retire_date": labs_retire_date,
+        "text": text,
+        "text_head": head_chars(text, 400),
+        "n_chars": len(text),
+        "jev_route": dict(jev_route),
+        "ledger": dict(ledger),
+        "called_mistral": True,
+        "called_jev": True,
+        "called_docker0": False,
+        "lock_ex": False,
+        "llama_server_started": False,
+        "official_track2": False,
+        "contaminates_track2": False,
+        "arena_score": None,
+        "api_key_present_in_record": False,
+        "wall_ms": wall_ms,
+    }
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def canary_live_payload(
+    *,
+    digest: str,
+    seed: int,
+    k: int,
+    n_records: int,
+    landscape: Sequence[Mapping[str, Any]],
+    model: Mapping[str, Any],
+    extra_139: Any,
+    canaries: Sequence[Any],
+    lake: Sequence[Any],
+    gaps: Any,
+    mem_path: Any,
+    memory: Any,
+    nca_status: Mapping[str, Any],
+    ledger: Any,
+) -> dict[str, Any]:
+    from jevops.outer import closed_evidence, head_seq, landscape_rows, utc_stamp
+
+    return {
+        "schema": "lra-random-canary/v1",
+        "observed_at": utc_stamp(),
+        "seed": int(seed),
+        "k": int(k),
+        "warmup_jsonl_sha256": digest,
+        "n_records": int(n_records),
+        "n_tag_cells": sum(int(item.get("n_tags") or 0) for item in landscape or ()),
+        "pca": {
+            "explained_ratio": head_seq((model or {}).get("explained_ratio"), 6),
+            "principal0": ((model or {}).get("principal") or [{}])[0].get("loadings"),
+        },
+        "landscape": landscape_rows(landscape),
+        "inits_139": extra_139,
+        "canaries": list(canaries or ()),
+        "lake": list(lake or ()),
+        "skill_analysis": gaps,
+        "memory_path": str(mem_path),
+        "memory": memory,
+        "nca_status": dict(nca_status or {}),
+        **closed_evidence(),
+        "ledger": ledger.as_dict() if hasattr(ledger, "as_dict") else {"jev_calls": getattr(ledger, "jev_calls", 0)},
+    }
+
+
+def prune_state(
+    record: Mapping[str, Any],
+    prefix: str,
+    pack: Mapping[str, Any],
+    criteria: Mapping[str, str],
+    *,
+    prefix_n: int = 600,
+    skeleton_n: int = 500,
+    goal: str = "Pick the next Lean tactic line most likely to yield a shorter lake-valid proof.",
+) -> dict[str, Any]:
+    """Beam-prune state. Jev still does not write Lean."""
+
+    from jevops.outer import head_chars, tail_chars
+
+    return {
+        "problem": {"name": record.get("name")},
+        "prefix_tail": tail_chars(prefix, prefix_n),
+        "pca_skeleton_head": head_chars(pack.get("pca_skeleton_head") or "", skeleton_n),
+        "pca_case_tags": pack.get("pca_case_tags"),
+        "missing_cases": pack.get("missing_cases"),
+        "empty_arms": pack.get("empty_arms"),
+        "unfinished_arms": pack.get("unfinished_arms"),
+        "next_original": pack.get("next_original"),
+        "earliest_unfinished": pack.get("earliest_unfinished"),
+        "open_case": pack.get("open_case"),
+        "mca_holes": pack.get("mca_holes"),
+        "n_have_original": pack.get("n_have"),
+        "goal": goal,
+        "candidates": dict(criteria),
+    }
+
+
+def pack_prune(
+    *,
+    skipped: bool,
+    reason: str,
+    best: Any,
+    kept: Sequence[Any],
+    confidence: Any = None,
+    usage: Any = None,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Prune result. Never includes generated Lean. Not an Arena score."""
+
+    out: dict[str, Any] = {
+        "skipped": bool(skipped),
+        "reason": reason,
+        "best": best,
+        "kept": list(kept),
+        "confidence": confidence,
+        "usage": usage,
+        "jev_generated_lean": False,
+        "arena_score": None,
+    }
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def rank_prune_kept(
+    criteria: Mapping[str, str],
+    probs: Mapping[str, Any],
+    pick_id: str,
+    unique: Sequence[str],
+    keep: int,
+) -> list[str]:
+    """Pin the Choice, then rank remaining ids. Empty keep falls back to unique[:keep]."""
+
+    from jevops.search import pin_then_rank
+
+    ranked_ids = pin_then_rank(
+        list(criteria.keys()),
+        dict(probs or {}),
+        first=pick_id if pick_id in criteria else None,
+    )
+    kept = [criteria[key] for key in ranked_ids if key in criteria][: int(keep)]
+    if not kept:
+        kept = list(unique)[: int(keep)]
+    return kept
+
+
+def pack_rank_catalog(
+    record: Mapping[str, Any],
+    *,
+    drafts: Sequence[Any],
+    families: Sequence[Mapping[str, Any]],
+    features: Mapping[str, Any],
+    live: bool = False,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """PCA/MCA catalog payload. Live TypeSafe answers overlay later. No Lean."""
+
+    draft_ids = [
+        getattr(item, "draft_id", None) or (item.get("draft_id") if isinstance(item, Mapping) else None)
+        for item in drafts
+    ]
+    out: dict[str, Any] = {
+        "name": record.get("name"),
+        "source": record.get("source"),
+        "n_drafts": len(list(drafts)),
+        "families": [str(item.get("family") or "") for item in families],
+        "amenable": list(families),
+        "features": dict(features),
+        "draft_ids": draft_ids,
+        "jev_generated_lean": False,
+        "arena_score": None,
+        "live": bool(live),
+    }
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def typesafe_load_payload(
+    *,
+    available: bool,
+    error: str = "",
+    path: str = "",
+    exists: bool = False,
+    Choice: Any = None,
+    Noul: Any = None,
+    Score: Any = None,
+    TypeSafeClient: Any = None,
+    typesafe_configured: Any = None,
+) -> dict[str, Any]:
+    """In-tree TypeSafe load view. Never typesafe-sdk. Never writes Lean."""
+
+    return {
+        "available": bool(available),
+        "error": error,
+        "path": path,
+        "exists": bool(exists),
+        "Choice": Choice,
+        "Noul": Noul,
+        "Score": Score,
+        "TypeSafeClient": TypeSafeClient,
+        "typesafe_configured": typesafe_configured,
+    }
+
+
+def noul_questions(
+    spec: Mapping[str, Sequence[Any]],
+    Noul: Any,
+) -> dict[str, Any]:
+    """Build Noul questions from (instructions, true, false) rows. Catalogs stay in the consumer."""
+
+    return {
+        name: Noul(
+            instructions=row[0],
+            criteria={"true": row[1], "false": row[2]},
+        )
+        for name, row in dict(spec or {}).items()
+    }
+
+
+def pack_plan_view(**fields: Any) -> dict[str, Any]:
+    """TypeSafe plan overlay. Catalog strings stay in the consumer."""
+
+    out = dict(fields)
+    out.setdefault("ok", True)
+    out["arena_score"] = None
+    out["compiled"] = False
+    out["llama_server_started"] = False
+    return out
+
+
+def rank_catalog_or_live(
+    record: Mapping[str, Any],
+    *,
+    drafts: Sequence[Any],
+    families: Sequence[Mapping[str, Any]],
+    features: Mapping[str, Any],
+    live: bool,
+    extra: Optional[Mapping[str, Any]] = None,
+    catalog_fn: Optional[Callable[[], Any]] = None,
+    pin_fn: Optional[Callable[[], Any]] = None,
+    configured_fn: Optional[Callable[[], bool]] = None,
+    invoke_fn: Optional[Callable[[], tuple[Any, float]]] = None,
+    project_fn: Optional[Callable[[Any, float], Mapping[str, Any]]] = None,
+    redact_fn: Optional[Callable[[Mapping[str, Any]], Any]] = None,
+    missing_key: str = "TYPESAFE_API_KEY is not set",
+) -> dict[str, Any]:
+    """Catalog payload, or live TypeSafe overlay. Jev still does not write Lean."""
+
+    payload = pack_rank_catalog(
+        record,
+        drafts=drafts,
+        families=families,
+        features=features,
+        live=False,
+        extra=extra,
+    )
+    if not live:
+        return payload
+    if pin_fn is not None:
+        pin_fn()
+    if configured_fn is not None and not configured_fn():
+        payload["live"] = False
+        payload["error"] = missing_key
+        if catalog_fn is not None:
+            payload["catalog"] = catalog_fn()
+        return payload
+    if invoke_fn is None or project_fn is None:
+        payload["live"] = False
+        payload["error"] = "live ranking is not wired"
+        return payload
+    result, wall_ms = invoke_fn()
+    payload.update(dict(project_fn(result, wall_ms) or {}))
+    return redact_fn(payload) if redact_fn is not None else payload
+
+
+def invoke_then_project(
+    *,
+    invoke_fn: Callable[[], tuple[Any, float]],
+    project_fn: Callable[..., Any],
+    record_fn: Optional[Callable[..., Any]] = None,
+    unpack_fn: Optional[Callable[[Any], tuple[Any, Any, Any, Any]]] = None,
+    model: str = "",
+) -> Any:
+    """Invoke TypeSafe, optionally unpack, then project. Jev still does not write Lean."""
+
+    result, wall_ms = invoke_fn()
+    usage = dict(getattr(result, "usage", None) or {})
+    if record_fn is not None:
+        record_fn(usage, model=model)
+    if unpack_fn is None:
+        return project_fn(result, wall_ms)
+    choices, nouls, scores, unpacked = unpack_fn(result)
+    return project_fn(result, wall_ms, choices, nouls, scores, unpacked or usage)
+
+
+def route_or_skip(
+    *,
+    enabled: bool,
+    official: bool,
+    key_ok: bool,
+    available: bool,
+    using_fixture: bool,
+    require_key: bool,
+    skip_fn: Callable[[str], Any],
+    invoke_fn: Callable[[], tuple[Any, float]],
+    project_fn: Callable[[Any, float], Any],
+) -> Any:
+    """Skip when disabled/no key, else invoke and project. Catalogs stay in the consumer."""
+
+    reason = skip_reason(
+        enabled=enabled,
+        official=official,
+        key_ok=key_ok,
+        available=available,
+        using_fixture=using_fixture,
+        require_key=require_key,
+    )
+    if reason:
+        return skip_fn(reason)
+    result, wall_ms = invoke_fn()
+    return project_fn(result, wall_ms)
+
+
+def complete_prune(
+    *,
+    invoke_fn: Callable[[], tuple[Any, float]],
+    skip_fn: Callable[[BaseException], Mapping[str, Any]],
+    unpack_fn: Callable[[Any], tuple[Any, Any, Any, Any]],
+    record_fn: Callable[[Any], Any],
+    rank_fn: Callable[..., Sequence[str]],
+    pack_fn: Callable[..., Mapping[str, Any]],
+    criteria: Mapping[str, str],
+    unique: Sequence[str],
+    keep: int,
+) -> dict[str, Any]:
+    """Invoke prune Choice, charge ledger, rank kept lines. Catalogs stay in the consumer."""
+
+    try:
+        result, _wall = invoke_fn()
+    except Exception as exc:  # noqa: BLE001 — prune must fail closed to greedy
+        return dict(skip_fn(exc))
+    choices, _nouls, _scores, usage = unpack_fn(result)
+    line = record_fn(usage)
+    best = (choices or {}).get("next_line")
+    pick_id = str(getattr(best, "choice", None) or "c0")
+    probs = dict(getattr(best, "probabilities", None) or {})
+    kept = rank_fn(criteria, probs, pick_id, unique, keep)
+    skipped = bool(getattr(line, "skipped", False))
+    return dict(
+        pack_fn(
+            skipped=skipped,
+            reason=(getattr(line, "reason", None) if skipped else "routed"),
+            best=criteria.get(pick_id),
+            kept=kept,
+            confidence=getattr(best, "confidence", None),
+            usage=usage,
+        )
+    )
+
+
+def featurize_or_skip(
+    *,
+    invoke_fn: Callable[[], tuple[Any, float]],
+    skip_fn: Callable[[BaseException], Mapping[str, Any]],
+    unpack_fn: Callable[[Any], tuple[Any, Any, Any, Any]],
+    record_fn: Callable[[Any], Any],
+    feature_names: Sequence[str],
+    weights: Mapping[str, float],
+    signed_dot_fn: Callable[..., float],
+    penalty: float,
+) -> dict[str, Any]:
+    """Score an MCMC edit from TypeSafe Noul features. Jev does not write Lean."""
+
+    try:
+        result, _wall = invoke_fn()
+    except Exception as exc:  # noqa: BLE001
+        return dict(skip_fn(exc))
+    _choices, nouls, _scores, usage = unpack_fn(result)
+    record_fn(usage)
+    features: dict[str, float] = {}
+    for name in feature_names:
+        got = (nouls or {}).get(name)
+        features[str(name)] = float(getattr(got, "noul", 0.0) or 0.0)
+    return {
+        "skipped": False,
+        "score": float(signed_dot_fn(features, weights, penalty=penalty, default_w=0.5)),
+        "features": features,
+        "jev_generated_lean": False,
+    }

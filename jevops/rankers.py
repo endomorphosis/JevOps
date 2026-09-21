@@ -29,6 +29,7 @@ RANKER_STEMS = (
     "svd",
     "pca",
     "thompson",
+    "bandit",
     "ridge",
     "kmeans",
     "knn",
@@ -926,6 +927,11 @@ def call_ranker(
     rng: Optional[random.Random] = None,
     compile_fn: Optional[Callable[..., Mapping[str, Any]]] = None,
     jev_fn: Optional[Callable[..., Mapping[str, Any]]] = None,
+    reward: Any = None,
+    arm: Optional[str] = None,
+    selected: Optional[str] = None,
+    typesafe_fn: Optional[Callable[..., Mapping[str, Any]]] = None,
+    fuzzy_prover_fn: Optional[Callable[..., Mapping[str, Any]]] = None,
 ) -> dict[str, Any]:
     """Dispatch CALL ptr://skill/port_{random_forest,...,autoencoder,vae,lean_ir,gan}."""
 
@@ -964,6 +970,8 @@ def call_ranker(
             jev_fn=jev_fn,
             compile_fn=compile_fn,
             rng=rng,
+            typesafe_fn=typesafe_fn,
+            fuzzy_prover_fn=fuzzy_prover_fn,
         )
     try:
         from jevops import temporal as lra_time
@@ -972,6 +980,35 @@ def call_ranker(
             return lra_time.call_extra(stem, memory=memory, tactics=tactics, problem=name)
     except Exception:
         pass
+    if "bandit" in text:
+        from jevops.tactics import multi_armed_bandit
+
+        arms: list[str] = []
+        grid = ((memory.get("nca") or {}).get("grid") or {}) if isinstance(memory, dict) else {}
+        arms.extend(
+            str(cid)[len("ptr://skill/") :]
+            for cid, cell in grid.items()
+            if str(cid).startswith("ptr://skill/") and isinstance(cell, dict)
+        )
+        arms.extend(str(item) for item in ((memory.get("nca") or {}).get("pipeline_bias") or []))
+        for row in list(memory.get("successes") or []) + list(memory.get("failures") or []):
+            stem_row = _stem_of(str(row.get("kind") or ""))
+            if stem_row:
+                arms.append(stem_row)
+        arms = sorted(set(arm for arm in arms if arm))
+        policy = "ucb1" if "ucb" in text else ("epsilon_greedy" if "epsilon" in text else "")
+        result = multi_armed_bandit(
+            memory,
+            arms,
+            name=name or "default",
+            policy=policy,
+            reward=reward,
+            arm=arm,
+            selected=selected,
+            rng=rng,
+        )
+        result["kind"] = "port_bandit"
+        return result
     try:
         from jevops import tape_tools as lra_tt
 

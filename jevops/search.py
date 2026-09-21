@@ -1251,6 +1251,79 @@ def keepbest_kept(kept: Optional[Mapping[str, Any]]) -> Optional[dict[str, Any]]
     }
 
 
+def keep_shortest_ok(
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    token_key: str = "token_count",
+    kind_key: str = "kind",
+    ok_key: str = "theorem_ok",
+    prefer_kind: str = "reference",
+) -> Optional[Mapping[str, Any]]:
+    """Shortest lake-ok row, preferring ``prefer_kind`` on ties. Not an Arena score."""
+
+    valid = [row for row in rows or () if row.get(ok_key)]
+    if not valid:
+        return None
+    return sorted(
+        valid,
+        key=lambda row: (
+            int(row.get(token_key) or 10**9),
+            0 if row.get(kind_key) == prefer_kind else 1,
+        ),
+    )[0]
+
+
+def kept_view(
+    kept: Optional[Mapping[str, Any]],
+    keys: Sequence[str] = ("kind", "theorem_ok", "token_count"),
+) -> Optional[dict[str, Any]]:
+    if kept is None:
+        return None
+    return {key: kept.get(key) for key in keys}
+
+
+def pack_mca_problem(
+    *,
+    schema: str,
+    name: str,
+    digest: str,
+    n_holes: int,
+    holes: Sequence[Any],
+    skeleton_head: str,
+    hardware_class: str,
+    reference_token_count: int,
+    beats_reference: bool,
+    candidates: Sequence[Mapping[str, Any]],
+    kept: Optional[Mapping[str, Any]],
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """MCA/mask-replace payload. Lake is the oracle. Not Track 2."""
+
+    out: dict[str, Any] = {
+        "schema": schema,
+        "name": name,
+        "warmup_jsonl_sha256": digest,
+        "n_holes": int(n_holes),
+        "holes": list(holes),
+        "skeleton_head": skeleton_head,
+        "called_docker0": False,
+        "used_prototype_endpoint": False,
+        "hardware_class": hardware_class,
+        "reference_token_count": int(reference_token_count),
+        "beats_reference": bool(beats_reference),
+        "candidates": list(candidates),
+        "kept": kept_view(kept),
+        "arena_score": None,
+        "official_track2": False,
+    }
+    if extra:
+        out.update(dict(extra))
+    out["arena_score"] = None
+    out["official_track2"] = False
+    out["called_docker0"] = False
+    return out
+
+
 def filter_blacklist(
     proposals: Sequence[Mapping[str, Any]],
     *,
@@ -1607,3 +1680,544 @@ def compile_then_hammer(
             elif compiled.get("errors"):
                 grok_errors = grok_errors or list(compiled.get("errors") or [])
     return rows, grok_ok, grok_tactics, grok_errors
+
+
+def keepbest_payload(
+    *,
+    name: str,
+    digest: str,
+    rows: Sequence[Mapping[str, Any]],
+    kept: Optional[Mapping[str, Any]],
+    repaired: bool,
+    clone: Any,
+    file_path: str,
+    hosted_receipt: Any,
+    n_valid: int,
+    n_module_ok: int,
+    hardware_class: str,
+    prototype_hardware: str,
+    schema: str = "lra-track1-keepbest/v1",
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    from jevops.outer import utc_stamp
+
+    out: dict[str, Any] = {
+        "schema": schema,
+        "observed_at": utc_stamp(),
+        "name": name,
+        "warmup_jsonl_sha256": digest,
+        "hardware_class": hardware_class,
+        "prototype_hardware_class": prototype_hardware,
+        "used_prototype_endpoint": False,
+        "called_docker0": False,
+        "repaired": bool(repaired),
+        "official_track2": False,
+        "arena_score": None,
+        "clone": str(clone),
+        "file_path": file_path,
+        "hosted_receipt": str(hosted_receipt),
+        "candidates": list(rows or ()),
+        "kept": kept,
+        "n_valid": int(n_valid),
+        "n_module_exit_0": int(n_module_ok),
+    }
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def vector_hits_from_result(
+    result: Any,
+    *,
+    query: str,
+    hit_fn: Callable[..., dict[str, Any]],
+    cap: int = 12,
+    vector_weight: float = 1.0,
+) -> list[dict[str, Any]]:
+    """Project vector-index hits. Advisory only. Never writes Lean."""
+
+    from jevops.outer import field_of, head_seq
+
+    hits: list[dict[str, Any]] = []
+    rows = getattr(result, "hits", None) or (result.get("hits") if isinstance(result, Mapping) else []) or []
+    for item in head_seq(rows, cap):
+        row = field_of(item, "row", default=item)
+        symbol = str(field_of(row, "qualified_symbol", "symbol") or "")
+        path = str(field_of(row, "path") or "")
+        score = float(field_of(item, "score", default=0.0) or 0.0)
+        if not symbol:
+            continue
+        hit = hit_fn(symbol, source="vector", query=query, path=path)
+        hit["score"] = round(max(float(hit.get("score") or 0.0), score * float(vector_weight)), 4)
+        hits.append(hit)
+    return hits
+
+
+def keepbest_beam_pairs(
+    reference: str,
+    tactics_list: Sequence[str],
+    *,
+    variants_fn: Callable[[str, str, str], Sequence[tuple[str, str]]],
+) -> list[tuple[str, str]]:
+    """Reference plus beam drafts, each expanded by keepbest variants. Lake is the oracle."""
+
+    pairs: list[tuple[str, str]] = []
+    rows = [("reference", reference), *[(f"beam_{index}", text) for index, text in enumerate(tactics_list)]]
+    for kind, body in rows:
+        pairs.extend(list(variants_fn(kind, body, reference)))
+    return pairs
+
+
+def boxed_keepbest(box: dict[str, Any]) -> Callable[..., tuple[Optional[Mapping[str, Any]], int, str]]:
+    """Keep-best accept that mutates box['tokens'] / box['keep'] in place."""
+
+    def _accept(
+        evals: Sequence[Mapping[str, Any]], tokens: int, trial: str
+    ) -> tuple[Optional[Mapping[str, Any]], int, str]:
+        best, nxt, body = apply_keepbest(evals, tokens, trial=trial)
+        if not best:
+            return None, nxt, str(box.get("keep") or "")
+        box["tokens"] = nxt
+        box["keep"] = body
+        return strip_tactics([best])[0], nxt, body
+
+    return _accept
+
+
+def attach_jev_rounds(
+    rounds: Sequence[Mapping[str, Any]],
+    jevs: Sequence[Mapping[str, Any]],
+    history: Optional[Sequence[dict[str, Any]]] = None,
+) -> list[dict[str, Any]]:
+    out: list[dict[str, Any]] = []
+    for row, jev in zip(rounds or (), jevs or ()):
+        item = dict(row)
+        item["jev"] = jev
+        out.append(item)
+    if history is not None:
+        for row, jev in zip(history, jevs or ()):
+            row["jev_choice"] = jev.get("choice")
+    return out
+
+
+def sgd_payload(
+    *,
+    name: str,
+    digest: str,
+    n_holes: int,
+    ref_tokens: int,
+    keep_tokens: int,
+    dropped: Sequence[str],
+    rounds: Sequence[Mapping[str, Any]],
+    leanstral: Any,
+    hardware_class: str,
+    schema: str = "lra-sgd-fanout/v1",
+    protocol: str = "LRA/v1",
+    pr: str = "",
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    out: dict[str, Any] = {
+        "schema": schema,
+        "protocol": protocol,
+        "pr": pr,
+        "name": name,
+        "warmup_jsonl_sha256": digest,
+        "n_holes": int(n_holes),
+        "ref_tokens": int(ref_tokens),
+        "keep_tokens": int(keep_tokens),
+        "ratio": token_ratio(keep_tokens, ref_tokens),
+        "dropped": sorted(dropped),
+        "rounds": list(rounds or ()),
+        "leanstral": leanstral,
+        "hardware_class": hardware_class,
+        "called_docker0": False,
+        "official_track2": False,
+        "arena_score": None,
+        "note": "Jev-guided stochastic coordinate descent on MCA holes; not neural SGD.",
+    }
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def run_keepbest(
+    *,
+    name: str,
+    digest: str,
+    ref_tactics: str,
+    hosted: Optional[str],
+    flattened: Optional[str],
+    collapse: Optional[str],
+    span_drafts: Sequence[Any],
+    compile_fn: Callable[[str], Mapping[str, Any]],
+    row_fn: Callable[[Mapping[str, Any], Mapping[str, Any]], Mapping[str, Any]],
+    token_fn: Callable[[str], int],
+    repair: bool,
+    repair_fn: Optional[Callable[..., Optional[Mapping[str, Any]]]] = None,
+    pick_fn: Callable[..., Any],
+    first_where_fn: Callable[..., Any],
+    pack_fn: Callable[..., Mapping[str, Any]],
+    clone: Any,
+    rel: str,
+    hosted_path: Any,
+    hardware_class: str,
+    prototype_hardware: str,
+    hosted_kind: str = "hosted_mistral",
+) -> dict[str, Any]:
+    """Compile keep-best candidates, optional hosted repair, then pick. Lake is the oracle."""
+
+    candidates = keepbest_candidates(
+        reference=ref_tactics,
+        hosted=hosted,
+        flattened=flattened,
+        collapse=collapse,
+        span_drafts=span_drafts,
+    )
+    rows, tactics_by_kind = compile_labeled(candidates, compile_fn, row_fn)
+    repaired = False
+    hosted_row = next((row for row in rows if row.get("kind") == hosted_kind), None)
+    beats = beats_reference(rows, token_fn(ref_tactics))
+    if repair and not beats and hosted_row is not None and repair_fn is not None:
+        extra = repair_fn(rows, tactics_by_kind, hosted_row)
+        if extra is not None:
+            rows.append(dict(extra))
+            repaired = True
+
+    def _valid(row: Mapping[str, Any]) -> bool:
+        return bool(row.get("theorem_ok") or (row.get("ok") and not row.get("sorry_in_theorem")))
+
+    def _module_ok(row: Mapping[str, Any]) -> bool:
+        return bool(row.get("module_exit_0") or row.get("theorem_ok"))
+
+    kept = pick_fn(
+        rows,
+        (_valid, _module_ok),
+        key_fn=lambda row: (
+            int(row.get("token_count") or 10**9),
+            0 if row.get("kind") == "reference" else 1,
+            float(row.get("wall_ms") or 0),
+        ),
+        fallback_fn=lambda items: first_where_fn(items, lambda row: row.get("kind") == "reference"),
+    )
+    return pack_fn(
+        name=name,
+        digest=digest,
+        rows=rows,
+        kept=keepbest_kept(kept),
+        repaired=repaired,
+        clone=clone,
+        file_path=rel,
+        hosted_receipt=hosted_path,
+        n_valid=sum(1 for row in rows if _valid(row)),
+        n_module_ok=sum(1 for row in rows if _module_ok(row)),
+        hardware_class=hardware_class,
+        prototype_hardware=prototype_hardware,
+    )
+
+
+def maybe_leanstral_restart(
+    *,
+    use: bool,
+    keep: str,
+    keep_tokens: int,
+    ref_tokens: int,
+    generate_fn: Callable[[], tuple[str, Any, Any]],
+    flatten_fn: Callable[[str], str],
+    eval_fn: Callable[[str], Sequence[Mapping[str, Any]]],
+    hammer_fn: Callable[[str, Sequence[Mapping[str, Any]]], str],
+    ledger_fn: Callable[[Any], Any] = lambda item: item,
+) -> tuple[str, int, Any]:
+    """Optional hosted restart when keep is not shorter. Lake still admits."""
+
+    if not use or int(keep_tokens) < int(ref_tokens):
+        return keep, int(keep_tokens), None
+    text, identity, ledger = generate_fn()
+    filled = flatten_fn(text)
+    evals = list(eval_fn(filled) or ())
+    hammered = hammer_fn(filled, evals)
+    evals_h = list(eval_fn(hammered) or ())
+    packed = {
+        "identity": identity,
+        "ledger": ledger_fn(ledger),
+        "evals": evals,
+        "hammer_evals": evals_h,
+    }
+    tokens = int(keep_tokens)
+    body = keep
+    for row in evals + evals_h:
+        if row.get("theorem_ok") and int(row.get("token_count") or tokens) < tokens:
+            body = hammered if row in evals_h else filled
+            tokens = int(row["token_count"])
+    return body, tokens, packed
+
+
+def run_mcmc_rounds(
+    *,
+    rounds: int,
+    chains: Sequence[Any],
+    ledger: Any,
+    leanstral: bool,
+    max_leanstral: int,
+    leanstral_fn: Callable[..., Optional[Mapping[str, str]]],
+    propose_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    filter_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    rank_fn: Callable[..., Mapping[str, Any]],
+    pin_fn: Callable[..., Sequence[Any]],
+    pin_prefixes: Sequence[str],
+    try_fn: Callable[..., Any],
+    compile_fn: Callable[[str], Mapping[str, Any]],
+    history: list[dict[str, Any]],
+    failed_bodies: set[str],
+    failed_kinds: set[str],
+    sticky_fail: set[str],
+    best: dict[str, Any],
+    temperature: float,
+    rng: Any,
+) -> int:
+    """MCMC round/chain loop. propose/rank/compile/try are injected. Lake is the oracle."""
+
+    leanstral_calls = 0
+    hard_stopped = lambda: bool(getattr(ledger, "hard_stopped", False))
+    for round_i in range(int(rounds)):
+        if hard_stopped():
+            break
+        for chain_i, chain in enumerate(chains):
+            extra: list[dict[str, str]] = []
+            if leanstral and leanstral_calls < int(max_leanstral):
+                swap = leanstral_fn(chain.tactics)
+                leanstral_calls += 1
+                if swap:
+                    extra.append(dict(swap))
+            proposals = list(
+                filter_fn(
+                    propose_fn(chain.tactics, extra=extra),
+                    failed_bodies=failed_bodies,
+                    failed_kinds=failed_kinds,
+                )
+                or ()
+            )
+            if not proposals:
+                history.append({"round": round_i, "chain": chain_i, "reason": "all_blacklisted"})
+                continue
+            ranked = rank_fn(chain.tactics, proposals)
+            ranked_order = ranked.get("order") or list(range(len(proposals)))
+            order = pin_fn(
+                ranked_order,
+                kind_prefix_indices(proposals, pin_prefixes),
+                n=2,
+            )
+            tried = try_fn(
+                proposals=proposals,
+                order=order,
+                chain=chain,
+                compile_fn=compile_fn,
+                best=best,
+                failed_bodies=failed_bodies,
+                failed_kinds=failed_kinds,
+                sticky_fail=sticky_fail,
+                round_i=round_i,
+                chain_i=chain_i,
+                history=history,
+                ranked_meta=ranked,
+                temperature=temperature,
+                rng=rng,
+            )
+            if tried is None:
+                history.append({"round": round_i, "chain": chain_i, "reason": "no_proposal"})
+    return leanstral_calls
+
+
+def pack_diffuse(
+    *,
+    name: str,
+    digest: str,
+    n_holes: int,
+    ref_tokens: int,
+    keep_tokens: int,
+    dropped: Sequence[str],
+    rounds: Sequence[Mapping[str, Any]],
+    hardware_class: str,
+    schema: str = "lra-diffuse-denoise/v1",
+    protocol: str = "LRA/v1",
+    pr: str = "",
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Diffuse/denoise payload. Lake is the oracle. Not neural SGD."""
+
+    out: dict[str, Any] = {
+        "schema": schema,
+        "protocol": protocol,
+        "pr": pr,
+        "name": name,
+        "warmup_jsonl_sha256": digest,
+        "n_holes": int(n_holes),
+        "ref_tokens": int(ref_tokens),
+        "keep_tokens": int(keep_tokens),
+        "ratio": token_ratio(keep_tokens, ref_tokens),
+        "dropped": sorted(dropped),
+        "rounds": list(rounds or ()),
+        "ledger": None,
+        "hardware_class": hardware_class,
+        "called_docker0": False,
+        "official_track2": False,
+        "arena_score": None,
+        "note": (
+            "Exploit=drop high-p and all MCA holes; explore=random hole; "
+            "diffuse=Leanstral one-hole noise; denoise=hammer. Not neural SGD."
+        ),
+    }
+    if extra:
+        out.update(dict(extra))
+    out["arena_score"] = None
+    out["official_track2"] = False
+    out["called_docker0"] = False
+    return out
+
+
+def run_diffuse_rounds(
+    holes: Sequence[Any],
+    *,
+    rounds: int,
+    tau: float,
+    rng: Any,
+    hole_id_fn: Callable[[Any], str] = lambda hole: str(getattr(hole, "hole_id", hole)),
+    consider_fn: Callable[[str, Sequence[str]], Mapping[str, Any]],
+    jev_fn: Callable[[Sequence[Any], Sequence[Mapping[str, Any]], int], Mapping[str, Any]],
+    noise_fn: Callable[[int, Sequence[Any]], Any],
+    keep_tokens: int,
+    dropped: Optional[set[str]] = None,
+) -> dict[str, Any]:
+    """Exploit high-p + explore random + optional noise. consider/jev/noise are injected."""
+
+    dropped = dropped if dropped is not None else set()
+    history: list[dict[str, Any]] = []
+    rounds_out: list[dict[str, Any]] = []
+    tokens = int(keep_tokens)
+
+    def _consider(label: str, hole_ids: Sequence[str]) -> dict[str, Any]:
+        nonlocal tokens
+        row = dict(consider_fn(label, hole_ids) or {})
+        tokens = int(row.get("keep_tokens") or tokens)
+        return row
+
+    full = _consider("exploit_all_holes", [hole_id_fn(hole) for hole in holes])
+    rounds_out.append({"round": 0, "phase": "exploit_all", **full})
+    for round_i in range(1, max(1, int(rounds)) + 1):
+        remaining = [hole for hole in holes if hole_id_fn(hole) not in dropped]
+        jev: dict[str, Any] = {"skipped": True, "reason": "no_holes"}
+        step_exploit: Optional[dict[str, Any]] = None
+        step_explore: Optional[dict[str, Any]] = None
+        high: list[str] = []
+        explore: list[str] = []
+        if remaining:
+            jev = dict(jev_fn(remaining, history, tokens) or {})
+            high = high_p_ids(jev.get("probabilities") or {}, tau=tau, fallback=jev.get("choice"))
+            explore = [hole_id_fn(rng.choice(remaining))]
+            step_exploit = _consider("exploit_high_p", high)
+            step_explore = _consider("explore_random", explore)
+        noise = noise_fn(round_i, remaining)
+        history.append(
+            {
+                "round": round_i,
+                "high_p": high,
+                "explore": explore,
+                "keep_tokens": tokens,
+                "jev_choice": jev.get("choice"),
+            }
+        )
+        rounds_out.append(
+            {
+                "round": round_i,
+                "jev": jev,
+                "exploit": step_exploit,
+                "explore": step_explore,
+                "diffuse": noise,
+                "keep_tokens": tokens,
+            }
+        )
+    return {
+        "keep_tokens": tokens,
+        "dropped": sorted(dropped),
+        "history": history,
+        "rounds": rounds_out,
+        "arena_score": None,
+    }
+
+
+def pack_symbol_search(
+    *,
+    query: str,
+    ranked: Sequence[Mapping[str, Any]],
+    sources: Mapping[str, str],
+    promoted: int,
+) -> dict[str, Any]:
+    """JSON-LD-first symbol search payload. DuckDB is optional. Never writes Lean."""
+
+    return {
+        "ok": True,
+        "query": query,
+        "n_hits": len(list(ranked or ())),
+        "hits": list(ranked or ()),
+        "sources": dict(sources or {}),
+        "called_docker0": False,
+        "semantic_authority": False,
+        "n_cells_promoted": int(promoted),
+    }
+
+
+def finish_mca_problem(
+    *,
+    candidates: Sequence[Mapping[str, Any]],
+    compile_fn: Callable[[str], Mapping[str, Any]],
+    row_fn: Callable[[Mapping[str, Any], Mapping[str, Any]], Mapping[str, Any]],
+    hammer_fn: Callable[..., tuple[list[dict[str, Any]], str, list[Any], bool]],
+    needs_hammer_fn: Callable[[str], bool],
+    repair_fn: Optional[Callable[..., tuple[list[dict[str, Any]], bool]]] = None,
+    ablate_fn: Optional[Callable[[], Sequence[Mapping[str, Any]]]] = None,
+    name: str,
+    digest: str,
+    holes: Sequence[Any],
+    skeleton_head: str,
+    hardware_class: str,
+    ref_tokens: int,
+    extra_fn: Callable[..., Mapping[str, Any]],
+    redact_fn: Callable[[Mapping[str, Any]], Any],
+    schema: str = "lra-mca-mask-replace/v1",
+) -> dict[str, Any]:
+    """Compile/hammer/ablate labeled MCA drafts, then pack. Generation stays injected."""
+
+    rows, grok_ok, grok_tactics, grok_errors = compile_then_hammer(
+        candidates,
+        compile_fn=compile_fn,
+        row_fn=row_fn,
+        hammer_fn=hammer_fn,
+        needs_hammer_fn=needs_hammer_fn,
+    )
+    if repair_fn is not None:
+        rows, grok_ok = repair_fn(list(rows), grok_ok, grok_tactics, grok_errors)
+    if ablate_fn is not None:
+        rows.extend(list(ablate_fn() or ()))
+    kept = keep_shortest_ok(rows)
+    beats = beats_reference(
+        [kept] if kept is not None else [],
+        ref_tokens,
+        skip_kind="reference",
+        ok_key="theorem_ok",
+        token_key="token_count",
+    )
+    return redact_fn(
+        pack_mca_problem(
+            schema=schema,
+            name=name,
+            digest=digest,
+            n_holes=len(list(holes or ())),
+            holes=list(holes or ()),
+            skeleton_head=skeleton_head,
+            hardware_class=hardware_class,
+            reference_token_count=int(ref_tokens),
+            beats_reference=beats,
+            candidates=rows,
+            kept=kept,
+            extra=extra_fn(grok_ok=grok_ok, grok_tactics=grok_tactics, grok_errors=grok_errors),
+        )
+    )

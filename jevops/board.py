@@ -6,7 +6,7 @@ writes a campaign DB and does not write Lean.
 """
 from __future__ import annotations
 
-from typing import Any, Mapping, Optional, Sequence
+from typing import Any, Callable, Mapping, Optional, Sequence
 
 
 def ptr(kind: str, ident: str) -> str:
@@ -290,6 +290,84 @@ def overlay_or_empty(
         live,
         prefix=prefix,
         reason=reason,
+        cache=cache,
+        ready_fn=ready_fn,
+    )
+
+
+def replica_page(
+    *,
+    ok: bool,
+    reason: str,
+    tasks: Sequence[Any] = (),
+    campaign_write: bool = False,
+) -> dict[str, Any]:
+    """Read-only ready-task page. Never CAS, never install_schema."""
+
+    return {
+        "ok": bool(ok),
+        "reason": reason,
+        "tasks": list(tasks or ()),
+        "campaign_write": bool(campaign_write),
+    }
+
+
+def aliases_from_page(page: Any, *, prefix: str = "") -> list[dict[str, str]]:
+    tasks: list[dict[str, str]] = []
+    for item in getattr(page, "tasks", ()) or ():
+        alias = str(getattr(item, "task_alias", "") or getattr(item, "id", "") or "")
+        if alias and (not prefix or alias.startswith(prefix)):
+            tasks.append({"task_alias": alias})
+    return tasks
+
+
+def overlay_fetch(
+    memory: dict[str, Any],
+    *,
+    seed_fn: Optional[Any] = None,
+    fetch_fn: Optional[Any] = None,
+    prefix: str = "",
+    cache: bool = True,
+    ready_fn: Optional[Any] = None,
+    empty_reason: str = "no_ready_owner",
+    injected_reason: str = "injected",
+    inject_fail: str = "closed",
+) -> dict[str, Any]:
+    """Seed, fetch live status, overlay. fetch_fn is injected. Never writes a campaign DB."""
+
+    cached = prepare_overlay(memory, seed_fn=seed_fn, cache=cache)
+    if cached is not None:
+        return cached
+    live = None
+    reason = empty_reason
+    if fetch_fn is not None:
+        try:
+            live = fetch_fn()
+            reason = injected_reason
+        except Exception as exc:
+            from jevops.outer import exc_name, tagged_exc
+
+            if inject_fail == "cache":
+                memory.setdefault("nca", {})["overlay_done"] = True
+                return {
+                    "ok": True,
+                    "overlay": False,
+                    "reason": tagged_exc("fetch_failed", exc),
+                    "campaign_write": False,
+                    "called_docker0": False,
+                }
+            return {
+                "ok": False,
+                "overlay": False,
+                "reason": exc_name(exc),
+                "campaign_write": False,
+                "called_docker0": False,
+            }
+    return overlay_or_empty(
+        memory,
+        live,
+        reason=reason,
+        prefix=prefix,
         cache=cache,
         ready_fn=ready_fn,
     )
@@ -582,3 +660,25 @@ def seed_grid_from_board(
         "campaign_write": False,
         "called_docker0": False,
     }
+
+
+def seed_then_sidecar(
+    memory: dict[str, Any],
+    board: Mapping[str, Any],
+    *,
+    force: bool = False,
+    path_ptr: Optional[Any] = None,
+    sidecar_fn: Optional[Callable[[dict[str, Any], dict[str, Any]], Any]] = None,
+) -> dict[str, Any]:
+    """Seed the board grid, then optionally attach a sidecar. No campaign write."""
+
+    out = seed_grid_from_board(memory, board, force=force, path_ptr=path_ptr)
+    if out.get("skipped"):
+        return out
+    nca = memory.setdefault("nca", {})
+    if sidecar_fn is not None:
+        try:
+            sidecar_fn(memory, nca)
+        except Exception:
+            pass
+    return out

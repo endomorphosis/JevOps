@@ -10,10 +10,12 @@ TypeSafe/JevOps kernel primitive. Implementations (Lean lake, LRA board, portabl
 from __future__ import annotations
 
 import ast
+import hashlib
 import importlib
+import json
 import time
 from pathlib import Path
-from typing import Any, Mapping, Optional, Sequence
+from typing import Any, Callable, Mapping, Optional, Sequence
 
 ENERGY_CLIP = (0.0, 1.0)
 BUDGET_PTR = "ptr://tool/budget"
@@ -51,6 +53,17 @@ def _clip(value: float) -> float:
     if number != number:  # NaN
         return 0.5
     return max(lo, min(hi, number))
+
+
+def _energy_value(cell: Mapping[str, Any], default: float = 0.5) -> float:
+    """Read energy without turning an explicit zero into a default."""
+
+    if isinstance(cell, Mapping) and "energy" in cell and cell.get("energy") is not None:
+        try:
+            return float(cell["energy"])
+        except (TypeError, ValueError):
+            return float(default)
+    return float(default)
 
 
 def _grid(memory: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -131,7 +144,10 @@ def journal_event(
 ) -> None:
     nca = memory.setdefault("nca", {})
     journal = list(nca.get("journal") or [])
+    sequence = int(nca.get("journal_sequence") or 0) + 1
+    nca["journal_sequence"] = sequence
     row: dict[str, Any] = {
+        "event_id": f"journal:{sequence}",
         "tick": int(nca.get("tick") or 0),
         "event": str(event),
         "ptr": str(ptr or ""),
@@ -160,7 +176,7 @@ def upsert_from_event(
     cid = canonical_cell_id(str(ptr or f"event:{kind}"), kind=kind)
     cell_kind = kind if kind in {"skill", "goal", "subgoal", "task", "codepath", "theorem", "proof", "tool", "family", "residual"} else "cell"
     cell = _cell(grid, cid, kind=cell_kind)
-    old = float(cell.get("energy") or 0.5)
+    old = _energy_value(cell)
     mixed = _clip(0.7 * old + 0.3 * float(energy))
     if theorem_ok is True:
         cell["wins"] = int(cell.get("wins") or 0) + 1
@@ -179,7 +195,7 @@ def upsert_from_event(
     if parent_ptr and parent_ptr != cid:
         parent_ptr = canonical_cell_id(parent_ptr)
         parent = _cell(grid, parent_ptr, kind=str((grid.get(parent_ptr) or {}).get("kind") or "cell"))
-        parent["energy"] = _clip(0.8 * float(parent.get("energy") or 0.5) + 0.2 * mixed)
+        parent["energy"] = _clip(0.8 * _energy_value(parent) + 0.2 * mixed)
     journal_event(memory, event="upsert", ptr=cid, op=kind, energy_delta=mixed - old)
     return cell
 
@@ -195,10 +211,11 @@ def charge_budget(
     """Spend is an NCA cell: remaining_usd/budget_usd when a ledger is present."""
 
     grid = _grid(memory)
+    existed = BUDGET_PTR in grid
     cell = _cell(grid, BUDGET_PTR, kind="tool")
-    if not cell.get("visited") and "jev_calls" not in cell:
+    if not existed and not cell.get("visited") and "jev_calls" not in cell:
         cell["energy"] = 1.0
-    old = float(cell.get("energy") or 1.0)
+    old = _energy_value(cell, 1.0)
     calls = int(jev_calls)
     spent = float(usd)
     if ledger is not None:
@@ -238,22 +255,33 @@ def charge_budget(
 
 
 def replay_journal(memory: dict[str, Any], *, last_n: int = 32) -> dict[str, Any]:
-    """Re-apply recent journal energy deltas onto canonical cells."""
+    """Apply recent journal deltas once; repeated replay is idempotent."""
 
     nca = memory.setdefault("nca", {})
     journal = list(nca.get("journal") or [])[-max(1, int(last_n)) :]
     grid = _grid(memory)
+    replayed = set(str(item) for item in (nca.get("replayed_journal") or []))
     n_applied = 0
-    for row in journal:
+    n_duplicate = 0
+    for index, row in enumerate(journal):
+        event_id = str(row.get("event_id") or "")
+        if not event_id:
+            blob = json.dumps(row, sort_keys=True, default=str, separators=(",", ":"))
+            event_id = f"legacy:{index}:{hashlib.sha256(blob.encode('utf-8')).hexdigest()[:24]}"
+        if event_id in replayed:
+            n_duplicate += 1
+            continue
         ptr = canonical_cell_id(str(row.get("ptr") or ""))
         if not ptr:
             continue
         cell = _cell(grid, ptr, kind=str(row.get("op") or "cell"))
         delta = float(row.get("energy_delta") or 0.0)
-        cell["energy"] = _clip(float(cell.get("energy") or 0.5) + delta)
+        cell["energy"] = _clip(_energy_value(cell) + delta)
         if str(row.get("event") or "") in {"call", "upsert"}:
             cell["visited"] = True
+        replayed.add(event_id)
         n_applied += 1
+    nca["replayed_journal"] = sorted(replayed)[-256:]
     last_ran = list((nca.get("program_state") or {}).get("last_ran") or [])
     receipts = [
         {"op": row.get("op"), "ptr": row.get("ptr"), "ok": row.get("ok"), "detail_ok": row.get("detail_ok")}
@@ -263,6 +291,7 @@ def replay_journal(memory: dict[str, Any], *, last_n: int = 32) -> dict[str, Any
     return {
         "ok": True,
         "n_replayed": n_applied,
+        "n_duplicate": n_duplicate,
         "receipts": receipts,
         "n_receipts": len(receipts),
         "called_docker0": False,
@@ -284,19 +313,40 @@ def feed_memory(memory: dict[str, Any], *, tactics: str = "", problem: str = "",
     from jevops import hooks
 
     grid = _grid(memory)
-    for row in memory.get("successes") or []:
+    nca = memory.setdefault("nca", {})
+    seen_overlays = set(str(item) for item in (nca.get("overlay_receipts") or []))
+
+    def overlay_receipt(bucket: str, index: int, row: Mapping[str, Any]) -> str:
+        blob = json.dumps(dict(row), sort_keys=True, default=str, separators=(",", ":"))
+        digest = hashlib.sha256(blob.encode("utf-8")).hexdigest()[:20]
+        return f"{bucket}:{index}:{digest}"
+
+    for index, row in enumerate(memory.get("successes") or []):
+        if not isinstance(row, Mapping):
+            continue
+        receipt = overlay_receipt("success", index, row)
+        if receipt in seen_overlays:
+            continue
         cid = canonical_cell_id(str(row.get("kind") or ""), kind="skill")
         if not cid:
             continue
         cell = _cell(grid, cid, kind="skill")
         cell["wins"] = int(cell.get("wins") or 0) + 1
         cell["tokens"] = int(row.get("to_tokens") or cell.get("tokens") or 0)
-    for row in memory.get("failures") or []:
+        seen_overlays.add(receipt)
+    for index, row in enumerate(memory.get("failures") or []):
+        if not isinstance(row, Mapping):
+            continue
+        receipt = overlay_receipt("failure", index, row)
+        if receipt in seen_overlays:
+            continue
         cid = canonical_cell_id(str(row.get("kind") or ""), kind="skill")
         if not cid:
             continue
         cell = _cell(grid, cid, kind="skill")
         cell["losses"] = int(cell.get("losses") or 0) + 1
+        seen_overlays.add(receipt)
+    nca["overlay_receipts"] = sorted(seen_overlays)[-4096:]
     for row in memory.get("research") or []:
         if problem and row.get("name") != problem:
             continue
@@ -357,7 +407,7 @@ def should_halt(memory: Mapping[str, Any]) -> dict[str, Any]:
         and float(cell.get("energy") or 0) > HOT_TASK_ENERGY
     ]
     budget = grid.get(BUDGET_PTR) if isinstance(grid.get(BUDGET_PTR), dict) else {}
-    budget_energy = float(budget.get("energy") or 1.0)
+    budget_energy = _energy_value(budget, 1.0)
     budget_dead = bool(budget.get("visited")) and budget_energy < BUDGET_DEAD
     journal = list(((memory.get("nca") or {}).get("journal")) or [])
     last_ran = list((((memory.get("nca") or {}).get("program_state") or {}).get("last_ran")) or [])
@@ -378,26 +428,22 @@ def should_halt(memory: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def neighborhood(cid: str, memory: Mapping[str, Any]) -> list[str]:
-    """Neighbors from KG edges, skill siblings, and board_edges."""
+    """Neighbors from explicit board edges only.
 
-    from jevops import tools as lra_tools
+    The old implementation connected every skill to every other skill and
+    truncated that insertion-order list. A cellular neighborhood must come
+    from declared edges; bounded summaries belong at the policy boundary.
+    """
 
+    cid = canonical_cell_id(str(cid))
     nbrs: list[str] = []
-    kg = lra_tools.skill_knowledge_graph(memory)
-    for edge in kg.get("edges") or []:
-        if edge.get("src") == cid and edge.get("dst"):
-            nbrs.append(str(edge["dst"]))
-        if edge.get("dst") == cid and edge.get("src"):
-            nbrs.append(str(edge["src"]))
-    grid = (memory.get("nca") or {}).get("grid") or {}
-    kind = (grid.get(cid) or {}).get("kind")
-    if kind == "skill":
-        nbrs.extend(key for key, row in grid.items() if isinstance(row, dict) and row.get("kind") == "skill" and key != cid)
     for src, dst in (memory.get("nca") or {}).get("board_edges") or []:
-        if src == cid:
-            nbrs.append(str(dst))
-        if dst == cid:
-            nbrs.append(str(src))
+        src_id = canonical_cell_id(str(src))
+        dst_id = canonical_cell_id(str(dst))
+        if src_id == cid:
+            nbrs.append(dst_id)
+        if dst_id == cid:
+            nbrs.append(src_id)
     out: list[str] = []
     seen: set[str] = set()
     for item in nbrs:
@@ -429,7 +475,7 @@ def tick(memory: dict[str, Any], *, tactics: str = "", problem: str = "", focus:
         for edge in (memory.get("nca") or {}).get("board_edges") or []:
             if not isinstance(edge, (list, tuple)) or len(edge) < 2:
                 continue
-            src, dst = str(edge[0]), str(edge[1])
+            src, dst = canonical_cell_id(str(edge[0])), canonical_cell_id(str(edge[1]))
             if src == fid:
                 targets.add(dst)
             if dst == fid:
@@ -446,10 +492,10 @@ def tick(memory: dict[str, Any], *, tactics: str = "", problem: str = "", focus:
         win_rate = wins / max(1, wins + losses)
         unsafe = float(cell.get("unsafe") or 0.0)
         help_score = float(cell.get("help") or 0.0)
-        nbr_e = [float((grid.get(nid) or {}).get("energy") or 0.5) for nid in neighborhood(cid, memory)]
-        mean_n = sum(nbr_e) / len(nbr_e) if nbr_e else float(cell.get("energy") or 0.5)
+        nbr_e = [_energy_value(grid.get(nid) or {}) for nid in neighborhood(cid, memory)]
+        mean_n = sum(nbr_e) / len(nbr_e) if nbr_e else _energy_value(cell)
         energy = _clip(
-            0.45 * float(cell.get("energy") or 0.5)
+            0.45 * _energy_value(cell)
             + 0.2 * mean_n
             + 0.2 * (1.0 - unsafe)
             + 0.1 * win_rate
@@ -642,10 +688,61 @@ def dispatch_tool(name: str, *, extras: Optional[Mapping[str, Any]] = None, **kw
     if key == "nca_fork":
         extra = {k: v for k, v in kwargs.items() if k not in {"memory", "tactics", "problem", "name"}}
         return fork_cells(memory, tactics=tactics, problem=problem, **extra)
+    if key in {"nca_bandit", "nca_multi_armed_bandit", "nca_bandit_tactic"}:
+        from jevops.tactics import multi_armed_bandit
+
+        spec = kwargs.get("bandit") if isinstance(kwargs.get("bandit"), Mapping) else {}
+        supplied = dict(spec or {})
+        supplied.update({k: v for k, v in kwargs.items() if k not in {"memory", "tactics", "problem", "name", "bandit"}})
+        arms = supplied.get("arms")
+        if not arms:
+            arms = [
+                str(cid)[len("ptr://skill/") :]
+                for cid, cell in _grid(memory).items()
+                if str(cid).startswith("ptr://skill/") and isinstance(cell, dict)
+            ]
+        bandit_name = str(supplied.get("bandit_name") or supplied.get("name") or "default")
+        call = {
+            "name": bandit_name,
+            "policy": supplied.get("policy") or "",
+            "arms": arms,
+            "epsilon": supplied.get("epsilon", 0.1),
+            "exploration": supplied.get("exploration", 1.0),
+            "seed": supplied.get("seed", 0),
+        }
+        for field in ("reward", "arm", "selected", "rng"):
+            if field in supplied:
+                call[field] = supplied[field]
+        return multi_armed_bandit(memory, **call)
+    if key in {"proof_ca_run", "nca_proof_ca"}:
+        runtime = kwargs.get("runtime")
+        if runtime is None or not hasattr(runtime, "run"):
+            return {"outcome": "RUNTIME_REQUIRED", "tool": key}
+        return dict(runtime.run(fair_period=int(kwargs.get("fair_period") or 3), max_steps=kwargs.get("max_steps")) or {})
     handler = hooks.get(key) or hooks.get(f"nca_tool:{key}")
     if handler is not None:
         return dict(handler(**kwargs) or {})
     return {"ok": False, "reason": "unknown_nca_tool", "tool": key}
+
+
+def create_proof_ca(**kwargs: Any) -> Any:
+    """Construct the strict proof CA without changing the legacy cell API."""
+
+    from jevops.proof_ca import ProofGraphCA
+
+    return ProofGraphCA(**kwargs)
+
+
+def run_proof_ca(runtime: Any = None, **kwargs: Any) -> dict[str, Any]:
+    """Thin adapter for consumers that discover the runtime through ``nca``."""
+
+    run_kwargs = {}
+    constructor_kwargs = dict(kwargs)
+    for name in ("fair_period", "max_steps"):
+        if name in constructor_kwargs:
+            run_kwargs[name] = constructor_kwargs.pop(name)
+    active = runtime if runtime is not None else create_proof_ca(**constructor_kwargs)
+    return dict(active.run(**run_kwargs) or {})
 
 
 def run_unittests(*names: str, root: Path, default: Sequence[str] = ("test_skill_improve_loop",)) -> dict[str, Any]:
@@ -1177,6 +1274,19 @@ def append_board_edges(
     return added
 
 
+def call_pairs_from_graph(graph: Mapping[str, Any], *, limit: int = 48) -> list[tuple[str, str]]:
+    """Caller→callee pairs from an AST call graph. Cap at limit."""
+
+    rows: list[tuple[str, str]] = []
+    cap = max(0, int(limit))
+    for caller, callees in dict((graph or {}).get("calls") or {}).items():
+        for callee in callees or ():
+            rows.append((str(caller), str(callee)))
+            if len(rows) >= cap:
+                return rows
+    return rows
+
+
 _LEAN_MARKERS = ("simp_all", "intros ", "theorem ", "\nby\n", "exact ⟨", "induction ", "have :=")
 
 
@@ -1289,4 +1399,125 @@ def rewrite_python(
         "n_chars": len(new),
         "called_docker0": False,
         "jev_writes_lean": False,
+    }
+
+
+def pack_codepath_slice(
+    *,
+    ok: bool,
+    name: str = "",
+    path: str = "",
+    symbol: str = "",
+    definitions: Sequence[Any] = (),
+    callees: Sequence[Any] = (),
+    callers: Sequence[Any] = (),
+    inspect_only: bool = False,
+    reason: str = "",
+    error: str = "",
+) -> dict[str, Any]:
+    """AST slice payload. Ids only; no source bodies. Never docker0."""
+
+    out: dict[str, Any] = {
+        "ok": bool(ok),
+        "called_docker0": False,
+        "inspect_only": bool(inspect_only),
+    }
+    if not ok:
+        out["reason"] = reason
+        if name:
+            out["name"] = name
+        if error:
+            out["error"] = error
+        return out
+    out.update(
+        {
+            "path": path,
+            "symbol": symbol,
+            "definitions": list(definitions),
+            "callees": list(callees),
+            "callers": list(callers),
+            "complete": True,
+            "source_bodies": False,
+            "campaign_write": False,
+            "invoked": False if inspect_only else True,
+        }
+    )
+    return out
+
+
+def pack_sidecar_index(
+    files_payload: Sequence[Any],
+    *,
+    schema: str = "lra-nca-ast-sidecar/v1",
+) -> dict[str, Any]:
+    """JSON AST sidecar payload. Never campaign DuckDB."""
+
+    return {
+        "schema": schema,
+        "n_files": len(list(files_payload)),
+        "files": list(files_payload),
+        "campaign_write": False,
+        "called_docker0": False,
+        "control_duckdb": False,
+    }
+
+
+def fill_sidecar_duckdb(
+    dest: Any,
+    graph: Mapping[str, Any],
+    *,
+    connect_fn: Callable[..., tuple[Any, Any]],
+    exec_fn: Callable[..., Any],
+    count_fn: Callable[..., int],
+    try_import_fn: Callable[[str], Any],
+    refuse_fn: Callable[..., bool],
+    refuse_names: Sequence[str] = ("control.duckdb",),
+) -> dict[str, Any]:
+    """Fill a local symbols/calls DuckDB. Refuses campaign control.duckdb. JSON-LD first."""
+
+    dest = Path(dest)
+    if refuse_fn(dest, names=tuple(refuse_names), needles=tuple(refuse_names)):
+        return {"ok": False, "reason": "campaign_db_refused", "control_duckdb": True, "called_docker0": False}
+    duckdb = try_import_fn("duckdb")
+    if duckdb is None:
+        return {"ok": False, "reason": "duckdb_unavailable", "control_duckdb": False, "called_docker0": False}
+    statements: list[Any] = [
+        "CREATE TABLE IF NOT EXISTS symbols (qualified_name VARCHAR, path VARCHAR, symbol_kind VARCHAR)",
+        "CREATE TABLE IF NOT EXISTS calls (caller VARCHAR, callee VARCHAR, path VARCHAR)",
+        "DELETE FROM symbols",
+        "DELETE FROM calls",
+    ]
+    for _bare, qnames in (graph.get("defs") or {}).items():
+        for qname in qnames:
+            statements.append(
+                (
+                    "INSERT INTO symbols VALUES (?, ?, ?)",
+                    [qname, f"{str(qname).split(':', 1)[0]}.py", "function"],
+                )
+            )
+    for caller, callees in (graph.get("calls") or {}).items():
+        for callee in callees:
+            statements.append(
+                (
+                    "INSERT INTO calls VALUES (?, ?, ?)",
+                    [caller, callee, f"{str(caller).split(':', 1)[0]}.py"],
+                )
+            )
+    con, _engine = connect_fn(dest, duckdb_module=duckdb)
+    try:
+        exec_fn(con, statements)
+        n_sym = count_fn(con, "symbols")
+        n_calls = count_fn(con, "calls")
+    finally:
+        close = getattr(con, "close", None)
+        if callable(close):
+            close()
+    return {
+        "ok": True,
+        "n_symbols": n_sym,
+        "n_calls": n_calls,
+        "path": str(dest),
+        "control_duckdb": False,
+        "called_docker0": False,
+        "campaign_write": False,
     }

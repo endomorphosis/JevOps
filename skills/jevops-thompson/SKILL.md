@@ -9,3 +9,4 @@ description: Thompson sampling on Bayes skill posteriors. Use to explore high-va
 
 - CALL `ptr://skill/port_thompson`. Syncs Bayes counts if empty, then writes `nca.pipeline_bias` from draws.
 - Use when the mean would starve a rarely tried stem. Lake still admits. Never docker0.
+- For an action-level loop with delayed/explicit outcomes, use `jevops.tactics.multi_armed_bandit` (or the `multi_armed_bandit` / `nca_bandit` tool) instead; it does not infer reward from aggregate success/failure ordering.

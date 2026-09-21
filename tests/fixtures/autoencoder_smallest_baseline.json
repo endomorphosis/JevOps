@@ -1,0 +1,15 @@
+{
+  "schema": "jevops-autoencoder-smallest-local-baseline/v1",
+  "name": "pre_shrink_planner_verified_body_lengths",
+  "score": 0.125,
+  "metric": "mean_verified_body_compression",
+  "formula": "mean(1 - best_verified_body_tokens/source_body_tokens)",
+  "problems": {
+    "redundant_true": {"source_body_tokens": 6, "previous_best_body_tokens": 6},
+    "redundant_rfl": {"source_body_tokens": 7, "previous_best_body_tokens": 7},
+    "redundant_simp": {"source_body_tokens": 2, "previous_best_body_tokens": 1},
+    "long_true": {"source_body_tokens": 14, "previous_best_body_tokens": 14}
+  },
+  "official_arena_score": null,
+  "note": "Frozen local proxy measured before deterministic shrink probes; not an official Arena score."
+}

@@ -1,14 +1,18 @@
 ---
 name: jevops-outer
-description: Outer JSON actions, deterministic route, run_steps, keep-best files. Use for parse_action, route_next, stall/stop, merge_keep_best. Grok does not write Lean.
+description: Outer JSON actions, deterministic route, run_steps, keep-best files, and validated JevOps code proposals. Use for parse_action, route_next, stall/stop, merge_keep_best, or the ipfs_accelerate_py router bridge. Grok does not write Lean.
 ---
 
 # Outer loop
 
 Module: `jevops.outer`.
 
-- Actions: run, nest_inner, mint, skip_stem, install_fold, stop.
+- Actions: run, nest_inner, mint, skip_stem, install_fold, update_code/patch, stop.
 - `route_next` charges budget after LLM JSON. Deterministic fallback on stall.
+- `make_llm_router_generate` lazily connects the outer loop to
+  `ipfs_accelerate_py.llm_router.generate_text`.
+- `jevops.harness.JevOpsHarness` validates code proposals in a temporary copy
+  before applying an improvement.
 - `starting_body` / `merge_keep_best` / `write_best_body` do not generate Lean.
 - `load_env_file` / `pin_sys_path` — KEY=VALUE env files and sys.path front-pin.
 - `retry_call` / `is_unavailable` — 503/429 backoff. `failed_leaves_from_history` reads JSON history.

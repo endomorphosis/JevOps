@@ -1273,3 +1273,248 @@ def default_token_fills(item: Mapping[str, Any], text: str, *, limit: int = 8) -
         if len(fills) >= int(limit):
             break
     return unique_fills(fills, limit=limit)
+
+
+def reindex_holes(holes: Sequence[Any], *, rehole_fn: Any) -> list[Any]:
+    """Rewrite hole ids in start order. rehole_fn(item, index) is injected."""
+
+    rows = list(holes or ())
+    rows.sort(key=lambda item: int(getattr(item, "start", None) if hasattr(item, "start") else item["start"]))
+    return [rehole_fn(item, index) for index, item in enumerate(rows)]
+
+
+def one_hole_shots(
+    *,
+    phrase_alts: Sequence[tuple[str, str]],
+    operator_alts: Mapping[str, Sequence[str]],
+    span: int,
+    n_shots: int,
+    token_fn: Any,
+) -> list[dict[str, Any]]:
+    """Few-shot one-hole fills whose original length is close to ``span``."""
+
+    scored: list[tuple[int, int, str, str]] = []
+    for src, dst in phrase_alts or ():
+        n_tok = int(token_fn(src))
+        scored.append((abs(n_tok - int(span)), n_tok, src, dst))
+    scored.sort()
+    shots: list[dict[str, Any]] = []
+    for _dist, n_tok, src, dst in scored:
+        shots.append(
+            {
+                "note": f"one-hole span~{n_tok}: {src} -> {dst}",
+                "skeleton": "    <<<SYM_0 kind=span>>>",
+                "fills": {"SYM_0": dst},
+                "holes": [{"id": "SYM_0", "kind": "span", "original": src, "fill": dst}],
+                "n_holes": 1,
+            }
+        )
+        if len(shots) >= int(n_shots):
+            break
+    if int(span) <= 2:
+        for op, alts in dict(operator_alts or {}).items():
+            if len(shots) >= int(n_shots):
+                break
+            fill = alts[0] if alts else ""
+            if fill == op:
+                continue
+            shown = repr(fill) if fill else "drop"
+            shots.append(
+                {
+                    "note": f"one-hole operator {op!r} -> {shown}",
+                    "skeleton": "    <<<SYM_0 kind=operator>>>",
+                    "fills": {"SYM_0": fill},
+                    "holes": [{"id": "SYM_0", "kind": "operator", "original": op, "fill": fill}],
+                    "n_holes": 1,
+                }
+            )
+    return shots[: int(n_shots)]
+
+
+def catalog_shots(
+    tactics: str,
+    *,
+    phrase_alts: Sequence[tuple[str, str]],
+    n_shots: int,
+    head_fn: Any,
+) -> list[dict[str, Any]]:
+    """Few-shot multi-hole fills from cataloged phrase cuts."""
+
+    present = [(src, dst) for src, dst in phrase_alts if src in tactics]
+    pool = present or list(phrase_alts)
+    shots: list[dict[str, Any]] = []
+    if len(pool) >= 2:
+        pairs = list(head_fn(pool, 3) or ())
+        items: list[tuple[int, int, int, str, str]] = []
+        used: list[tuple[int, int]] = []
+        for i, (src, dst) in enumerate(pairs):
+            found = tactics.find(src) if src in tactics else -1
+            if found < 0:
+                excerpt = f"    {src}"
+                items.append((0, len(excerpt), i, src, dst))
+                continue
+            end = found + len(src)
+            if any(end > a and found < b for a, b in used):
+                continue
+            used.append((found, end))
+            items.append((found, end, i, src, dst))
+        in_script = [item for item in items if item[3] in tactics]
+        if len(in_script) >= 2:
+            skeleton = tactics
+            fills: dict[str, str] = {}
+            holes: list[dict[str, Any]] = []
+            spans = [(start, end) for start, end, _i, _src, _dst in in_script]
+            for start, end, i, src, dst in sorted(in_script, key=lambda row: row[0], reverse=True):
+                hid = f"SYM_{i}"
+                skeleton = skeleton[:start] + f"<<<{hid} kind=phrase>>>" + skeleton[end:]
+                fills[hid] = dst
+                holes.append({"id": hid, "kind": "phrase", "original": src, "fill": dst})
+            lo = max(0, min(span[0] for span in spans) - 80)
+            hi = min(len(skeleton), max(span[1] for span in spans) + 80 + 40)
+            shots.append(
+                {
+                    "note": "multi-hole phrase fills from the 268→139 catalog",
+                    "skeleton": skeleton[lo:hi],
+                    "fills": fills,
+                    "holes": list(reversed(holes)),
+                    "n_holes": len(holes),
+                }
+            )
+    for src, dst in pool:
+        if len(shots) >= int(n_shots):
+            break
+        shots.append(
+            {
+                "note": f"{src} -> {dst}",
+                "skeleton": "    <<<SYM_0 kind=phrase>>>",
+                "fills": {"SYM_0": dst},
+                "holes": [{"id": "SYM_0", "kind": "phrase", "original": src, "fill": dst}],
+                "n_holes": 1,
+            }
+        )
+    return shots[: int(n_shots)]
+
+
+def shot_fill_prompt(
+    record: Mapping[str, Any],
+    skeleton: str,
+    holes: Sequence[Any],
+    shots: Sequence[Mapping[str, Any]],
+    *,
+    preamble: str,
+    reply: str,
+) -> str:
+    """Few-shot multi-hole fill prompt. Catalog preamble stays in the consumer."""
+
+    from jevops.outer import head_tail
+
+    blocks: list[str] = []
+    for index, shot in enumerate(shots or (), 1):
+        fill_lines: list[str] = []
+        for hole in shot.get("holes") or []:
+            hid = hole.get("id") or hole.get("hole_id")
+            kind = hole.get("kind") or "phrase"
+            fill_lines.append(f"<<<{hid} kind={kind}>>>\n{hole.get('fill')}\n")
+        skel = head_tail(shot.get("skeleton") or "", 600, 400, limit=1200)
+        blocks.append(
+            f"EXAMPLE {index} ({shot.get('note')}): {shot.get('n_holes')} holes, lake-valid shorter fill.\n"
+            f"SKELETON:\n{skel}\n"
+            f"FILLS:\n{''.join(fill_lines)}"
+        )
+    docs: list[str] = []
+    for hole in holes or ():
+        hole_id = getattr(hole, "hole_id", None)
+        kind = getattr(hole, "kind", None)
+        n_tokens = getattr(hole, "n_tokens", None)
+        original = getattr(hole, "original", None)
+        if hole_id is None and isinstance(hole, Mapping):
+            hole_id = hole.get("hole_id")
+            kind = hole.get("kind")
+            n_tokens = hole.get("n_tokens")
+            original = hole.get("original")
+        docs.append(f"{hole_id} kind={kind} n_tokens={n_tokens} ORIGINAL={original!r}\n")
+    return (
+        str(preamble or "")
+        + "\n".join(blocks)
+        + f"\nTARGET: {record.get('name')}\n"
+        f"SKELETON:\n{skeleton}\n\n"
+        f"HOLES:\n{''.join(docs)}\n"
+        + str(reply or "")
+    )
+
+
+def closed_multihole_row(
+    text: str,
+    holes: Sequence[Any],
+    *,
+    schedule_id: str,
+    fills_fn: Any,
+    token_fn: Any,
+    as_row_fn: Any,
+    generator: str = "closed_lean_vocab",
+) -> Optional[dict[str, Any]]:
+    """Apply one shorter closed fill at every selected span together."""
+
+    from jevops.outer import head_chars
+
+    rows = [as_row_fn(item) for item in holes or ()]
+    packed = fill_all_shortest(
+        text, rows, fills_fn=fills_fn, token_fn=token_fn, schedule_id=schedule_id
+    )
+    if not packed:
+        return None
+    packed["kind"] = f"sweep_{schedule_id}_closed"
+    packed["hole_id"] = schedule_id
+    packed["hole_kind"] = "span"
+    packed["original"] = ",".join(head_chars(row.get("original"), 24) for row in rows)
+    packed["fill"] = ",".join(
+        f"{hid}->{head_chars(val, 16) or 'drop'}" for hid, val in dict(packed.get("fills") or {}).items()
+    )
+    packed["generator"] = generator
+    packed["n_masks"] = len(list(holes or ()))
+    return packed
+
+
+def kernel_one_hole_rows(
+    tactics: str,
+    *,
+    propose_fn: Any,
+    token_fn: Any,
+    spans: Sequence[int],
+) -> list[dict[str, Any]]:
+    """One catalog kernel per candidate: a single aligned span of varying length."""
+
+    current_tok = int(token_fn(tactics))
+    rows: list[dict[str, Any]] = []
+    options = list(spans or ())
+    for item in list(propose_fn(tactics) or ()):
+        body = str(item.get("tactics") or "").strip("\n")
+        tok = int(token_fn(body))
+        if not body or tok >= current_tok:
+            continue
+        cut = current_tok - tok
+        span = options[-1] if options else 6
+        for option in options:
+            if cut <= int(option):
+                span = option
+                break
+        rows.append(
+            {
+                "kind": f"kernel_{item['kind']}",
+                "hole_id": str(item["kind"]),
+                "hole_kind": "span",
+                "original": str(item.get("note") or item["kind"]),
+                "fill": str(item["kind"]),
+                "tactics": body,
+                "token_count": tok,
+                "generator": "closed_lean_vocab",
+                "llm": "off",
+                "n_masks": 1,
+                "n_shots": 6,
+                "span": span,
+                "cfg_scale": 1.5,
+                "schedule_id": f"kernel_{item['kind']}",
+                "family": item.get("family"),
+            }
+        )
+    return rows

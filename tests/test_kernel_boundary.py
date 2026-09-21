@@ -803,6 +803,261 @@ class KernelBoundaryTests(unittest.TestCase):
             sorry=False,
         )
         self.assertTrue(packed["theorem_ok"])
+        planned = lean.plan_from_records(
+            [{"name": "P", "source": "strata"}],
+            "b" * 64,
+            12,
+            first_source="strata",
+        )
+        self.assertEqual(planned.n_records, 1)
+        self.assertIsNone(planned.arena_score)
+        bake_plan = lean.plan_bake_from_jobs(
+            [
+                lean.BakeJob(
+                    kind="repo",
+                    source="strata",
+                    lean_tag="v4.26.0",
+                    git_commit="abc",
+                    url="https://example.com",
+                    cache_key="k",
+                    phase=0,
+                    record_names=("P",),
+                    file_paths=("A.lean",),
+                    module="A.lean",
+                )
+            ],
+            "c" * 64,
+            12,
+            1,
+        )
+        self.assertEqual(bake_plan.n_records, 1)
+        self.assertEqual(bake_plan.first_job().cache_key, "k")
+        wrote: list = []
+        lean.write_candidate_if_needed(
+            {"name": "Q", "source": "putnambench"},
+            Path("/tmp/missing-lra-candidate.lean"),
+            putnam_source="putnambench",
+            write_fn=lambda rec, dest: wrote.append((rec.get("name"), str(dest))),
+        )
+        self.assertEqual(wrote[0][0], "Q")
+        fields = lean.lake_supervisor_fields(
+            threads=1,
+            elan_home="/elan",
+            supervisor_dir="/sup",
+            process_env_key="IPFS_DATASETS_PROCESS_SUPERVISOR_DIR",
+        )
+        self.assertEqual(fields["ELAN_HOME"], "/elan")
+        probed = lean.probe_pins(
+            ["v4.26.0", "v4.26.0", "v4.27.0"],
+            resolve_fn=lambda tag: {"lean_tag": tag, "installed": tag == "v4.26.0"},
+        )
+        self.assertEqual(probed["installed_tags"], ["v4.26.0"])
+        self.assertEqual(probed["missing_tags"], ["v4.27.0"])
+        self.assertEqual(probed["capability_gap"], "")
+        dummy_receipt = lean.CompileReceipt(
+            name="P",
+            lean_tag="v4.26.0",
+            argv=["/opt/lake", "env", "/opt/lean", "-DmaxHeartbeats=400000", "--json", "x.lean"],
+            stdout="#print axioms t\n",
+            axiom_digest="a" * 64,
+            timeout_seconds=600.0,
+            wall_ms=1.0,
+            measurement_maxHeartbeats=400000,
+        )
+        summary = lean.compile_receipt_summary(dummy_receipt, max_heartbeats=400000, ikv_floor=30.0)
+        self.assertTrue(summary["argv_has_lake_env_lean"])
+        self.assertTrue(summary["timeout_exceeds_ikv_30s"])
+        self.assertIsNone(summary["arena_score"])
+        retrieved_view = lean.retrieval_view(retrieved, src_chars=40, lemma_cap=16)
+        self.assertEqual(retrieved_view["query"], "A")
+        self.assertEqual(retrieved_view["n_neighbors"], 1)
+        self.assertIsNone(retrieved_view["relevance_score"])
+        neighbors = lean.prompt_neighbors(retrieved, k=1)
+        self.assertEqual(neighbors[0]["name"], "B")
+        from jevops import jev as lra_jev
+
+        kept_row = lra_search.keep_shortest_ok(
+            [
+                {"kind": "reference", "theorem_ok": True, "token_count": 8},
+                {"kind": "mca", "theorem_ok": True, "token_count": 3},
+                {"kind": "fail", "theorem_ok": False, "token_count": 1},
+            ]
+        )
+        self.assertEqual(kept_row["kind"], "mca")
+        mca = lra_search.pack_mca_problem(
+            schema="lra-mca-mask-replace/v1",
+            name="P",
+            digest="d" * 64,
+            n_holes=1,
+            holes=[{"hole_id": "h0"}],
+            skeleton_head="intro",
+            hardware_class="spark_gb10",
+            reference_token_count=8,
+            beats_reference=True,
+            candidates=[kept_row],
+            kept=kept_row,
+        )
+        self.assertEqual(mca["kept"]["kind"], "mca")
+        self.assertFalse(mca["called_docker0"])
+        self.assertFalse(mca["official_track2"])
+        prune_st = lra_jev.prune_state(
+            {"name": "P"},
+            "  intro\n",
+            {"pca_skeleton_head": "case foo", "missing_cases": ["bar"]},
+            {"c0": "simp", "c1": "rfl"},
+        )
+        self.assertEqual(prune_st["candidates"]["c0"], "simp")
+        kept_lines = lra_jev.rank_prune_kept(
+            {"c0": "simp", "c1": "rfl"},
+            {"c1": 0.9, "c0": 0.1},
+            "c1",
+            ["simp", "rfl"],
+            1,
+        )
+        self.assertEqual(kept_lines, ["rfl"])
+        pruned = lra_jev.pack_prune(skipped=False, reason="routed", best="rfl", kept=kept_lines)
+        self.assertFalse(pruned["jev_generated_lean"])
+        catalog = lra_jev.pack_rank_catalog(
+            {"name": "P", "source": "strata"},
+            drafts=[type("D", (), {"draft_id": "d00", "family": "dead_code"})()],
+            families=[{"family": "dead_code"}],
+            features={"n_simp": 1},
+        )
+        self.assertEqual(catalog["draft_ids"], ["d00"])
+        self.assertFalse(catalog["live"])
+        ident = lean.closed_provider_identity(requested_provider="leanstral_local", requested_model="Leanstral")
+        self.assertEqual(ident.resolved_provider, "")
+        self.assertFalse(ident.fallback_used)
+        lean.refuse_unhealthy(
+            lean.HealthProbe(ok=True, url="http://x", alias_ok=True, alias_url="http://y", status_code=200, error="", autostart="0"),
+            require_health=True,
+            error_cls=RuntimeError,
+            fmt="down",
+        )
+        with self.assertRaises(RuntimeError):
+            lean.refuse_unhealthy(
+                lean.HealthProbe(ok=False, url="http://x", alias_ok=False, alias_url="http://y", status_code=None, error="down", autostart="0"),
+                require_health=True,
+                error_cls=RuntimeError,
+                fmt="down {url}",
+                url="http://x",
+            )
+        start, end = lean.splice_span("header\ntheorem t : True := by\n  sorry\n", "theorem t : True := by\n  sorry\n", "theorem t : True := by\n  trivial\n")
+        self.assertEqual(start, 2)
+        patched = lean.patch_putnam_src({"name": "Q", "src": ""}, "  trivial\n", statement="theorem t : True")
+        self.assertTrue(patched["src"].startswith("theorem t : True := by"))
+        pins = lean.filter_installed_pin_maps(
+            [lean.VersionPin(lean_tag="v4.26.0", git_commit="abc"), lean.VersionPin(lean_tag="v4.27.0", git_commit="def")],
+            resolve_fn=lambda pin: (_ for _ in ()).throw(ValueError("missing")) if pin.lean_tag == "v4.27.0" else pin,
+        )
+        self.assertEqual(pins, [{"v4.26.0": "abc"}])
+        unsolved = lean.unsolved_record(source="strata", file_path="U.lean", url="https://example.com", lean_tag="v4.26.0", git_commit="abc")
+        self.assertIn("sorry", unsolved["src"])
+        attempt = lean.attempt_summary(
+            {
+                "argv": ["/opt/lake", "env", "/opt/lean", "-DmaxHeartbeats=400000", "--json", "x.lean"],
+                "cwd": "/elan/toolchains/leanprover--lean4---v4.26.0",
+                "ok": True,
+                "tactic": "rfl",
+                "timeout_seconds": 120.0,
+                "stdout": "#print axioms t\n",
+            },
+            max_heartbeats=400000,
+            ikv_floor=30.0,
+        )
+        self.assertTrue(attempt["argv_has_lake_env_lean"])
+        self.assertTrue(attempt["timeout_exceeds_ikv_30s"])
+        try_view = lean.try_receipt_summary(
+            type(
+                "R",
+                (),
+                {
+                    "attempts": [{"argv": attempt["argv"] if False else ["/opt/lake", "env", "/opt/lean", "-DmaxHeartbeats=400000", "--json", "x.lean"], "ok": True, "tactic": "rfl", "timeout_seconds": 120.0, "stdout": "#print axioms t\n", "cwd": "/elan/toolchains/leanprover--lean4---v4.26.0"}],
+                    "sorry_attempt": {"argv": ["/opt/lake", "env", "/opt/lean", "-DmaxHeartbeats=400000", "--json", "x.lean"], "ok": False, "sorryAx": True, "tactic": "sorry", "timeout_seconds": 120.0, "stdout": "#print axioms t\n", "cwd": "/elan/toolchains/leanprover--lean4---v4.26.0"},
+                    "aesop_imported": False,
+                    "tactics_considered": ["rfl"],
+                    "tactics_run": ["rfl"],
+                    "winning_tactic": "rfl",
+                    "error": "",
+                    "generator": "lake_native",
+                    "git_commit": "abc",
+                    "hammer_006_lra_ready": False,
+                    "lean_tag": "v4.26.0",
+                    "loop": "v2",
+                    "name": "P",
+                    "ok": True,
+                    "on_30_sep_critical_path": False,
+                    "path": "A",
+                    "path_b_implemented": False,
+                    "sorry_template_prefix_bound": True,
+                    "source": "strata",
+                    "uses_snapshot_goal": False,
+                    "v1_runs_this": False,
+                },
+            )(),
+            attempt_fn=lambda item: lean.attempt_summary(item, max_heartbeats=400000, ikv_floor=30.0),
+        )
+        self.assertTrue(try_view["sorry_failed"])
+        self.assertEqual(try_view["winning_tactic"], "rfl")
+        self.assertFalse(try_view["hammer_006_lra_ready"])
+        hosted = lean.hosted_tactics_from_payload(
+            {"text": "```\n  simp\n```", "called_docker0": False, "used_prototype_endpoint": False},
+            extract_fn=lean.extract_generated_tactics,
+        )
+        self.assertEqual(hosted, "simp")
+        loaded = lra_jev.typesafe_load_payload(available=False, error="missing", path="x.py", exists=False)
+        self.assertFalse(loaded["available"])
+        noul_qs = lra_jev.noul_questions(
+            {"will_fail": ("Will it fail?", "yes", "no")},
+            lambda **kw: kw,
+        )
+        self.assertEqual(noul_qs["will_fail"]["criteria"]["true"], "yes")
+        failed = lean.failed_generation(
+            lean.HealthProbe(ok=False, url="http://x", alias_ok=False, alias_url="http://y", status_code=None, error="down", autostart="0"),
+            "boom",
+            requested_provider="leanstral_local",
+            requested_model="Leanstral",
+        )
+        self.assertEqual(failed.error, "boom")
+        self.assertFalse(failed.skipped)
+        extra = lean.retrieval_prompt_extra(lemmas="Foo.bar", n_neighbors=14, lemma_cap=16)
+        self.assertIn("Foo.bar", extra)
+        self.assertIn("not a Mathlib CorpusManifest", extra)
+        from jevops import nca as lra_nca
+
+        sliced = lra_nca.pack_codepath_slice(ok=False, name="x", reason="codepath_not_allowed", inspect_only=True)
+        self.assertFalse(sliced["ok"])
+        self.assertFalse(sliced["called_docker0"])
+        sidecar = lra_nca.pack_sidecar_index([{"path": "a.py"}])
+        self.assertEqual(sidecar["n_files"], 1)
+        self.assertFalse(sidecar["control_duckdb"])
+        vec = lra_search.vector_hits_from_result(
+            {"hits": [{"row": {"qualified_symbol": "Foo", "path": "a.py"}, "score": 1.0}]},
+            query="Foo",
+            hit_fn=lambda symbol, **kw: {"symbol": symbol, "score": 0.1, **kw},
+            vector_weight=0.5,
+        )
+        self.assertEqual(vec[0]["symbol"], "Foo")
+        packed_syn = lean.pack_synthetic_compile(
+            elan_home="/tmp/elan",
+            expand_receipts=[],
+            first_receipts=[],
+            putnam_receipt=type("R", (), {"header_maxHeartbeats": 0, "measurement_maxHeartbeats": 400000, "ok": True})(),
+            written=[],
+            persisted=[],
+            receipts_dir="/tmp/r",
+            first_file="A.lean",
+            first_name="P",
+            first_green=False,
+            missing_clone_closed=True,
+            timeout_30_rejected=True,
+            timeout_is_warmup=True,
+            summary_fn=lambda _item: {"argv_has_lake_env_lean": True, "ok": True},
+            tag_sort_fn=lambda tag: tag,
+            max_heartbeats=400000,
+        )
+        self.assertTrue(packed_syn["missing_clone_fails_closed_under_network_deny"])
+        self.assertFalse(packed_syn["independent_kernel_verifier_used"])
         self.assertTrue(lra_search.should_call_generator(None, {"proof_length": 500}))
         self.assertFalse(lra_search.should_call_generator(None, {"proof_length": 10}))
         walked = lra_search.coordinate_rounds(
@@ -1127,6 +1382,863 @@ class KernelBoundaryTests(unittest.TestCase):
         )
         self.assertEqual(text, "simp_all")
         self.assertEqual(ident["url_host"], "api.mistral.ai")
+        ident = lean.identity_from_trace(
+            {"provider_name": "leanstral_local", "model_name": "Leanstral"},
+            generated=True,
+            requested_provider="leanstral_local",
+            requested_model="Leanstral",
+            allowed=("leanstral_local",),
+            forbidden=("grok",),
+        )
+        self.assertFalse(ident.fallback_used)
+        lean.refuse_if_fallback(ident, error_cls=RuntimeError)
+        new_n, new_t = lean.coalesce_limits(source="putnambench", lookup_fn=lambda _s: (64, 30.0), default_new=32, default_timeout=10.0)
+        self.assertEqual((new_n, new_t), (64, 30.0))
+        routed = lra_jev.route_result_from_answers(
+            {"family": "have_chain", "spend_llm": 0.2, "usage": {}},
+            mode="distill",
+            official_track2=False,
+            wall_ms=1.0,
+            used_fixture=True,
+            model="jev",
+        )
+        self.assertEqual(routed.family, "have_chain")
+        self.assertFalse(routed.jev_generated_lean)
+        self.assertEqual(lra_outer.session_reason("skip_llm", lock_held=True), "docker0 unhealthy and owner exclusive lock held; skip LLM")
+        session = lra_outer.pack_client_session(
+            action="skip_llm",
+            health={"ok": False},
+            lock={"held": True},
+            autostart="0",
+            owner={"executed": False},
+            reason="skip",
+        )
+        self.assertTrue(session.skipped)
+        self.assertFalse(session.lock_ex_taken_by_client)
+        skipped = lra_outer.generate_client_flow(
+            health=type("H", (), {"ok": False})(),
+            lock=type("L", (), {"held": False})(),
+            generate_fn=lambda: "gen",
+            wait_fn=lambda _s: type("H", (), {"ok": False})(),
+            exec_fn=lambda _e: type("O", (), {"executed": False, "returncode": None, "error": ""})(),
+            skip_fn=lambda _h, reason: f"skip:{reason}",
+            decide_fn=lambda *_a, **_k: "skip_llm",
+        )
+        self.assertTrue(str(skipped).startswith("skip:"))
+        healthy = lra_outer.generate_client_flow(
+            health=type("H", (), {"ok": True})(),
+            lock=type("L", (), {"held": False})(),
+            generate_fn=lambda: "gen",
+            wait_fn=lambda _s: None,
+            exec_fn=lambda _e: None,
+            skip_fn=lambda *_a: "skip",
+            decide_fn=lambda *_a, **_k: "generate",
+        )
+        self.assertEqual(healthy, "gen")
+        kind_key, model, idx = lra_outer.spend_kind("jev", models={"jev": "m"}, counts={"jev": 2})
+        self.assertEqual((kind_key, model, idx), ("jev", "m", 3))
+        payload = lra_search.keepbest_payload(
+            name="P",
+            digest="a" * 64,
+            rows=[{"kind": "reference"}],
+            kept={"kind": "reference"},
+            repaired=False,
+            clone="/tmp",
+            file_path="A.lean",
+            hosted_receipt="/tmp/h.json",
+            n_valid=1,
+            n_module_ok=1,
+            hardware_class="spark_gb10",
+            prototype_hardware="spark_gb10",
+        )
+        self.assertFalse(payload["called_docker0"])
+        self.assertEqual(payload["n_valid"], 1)
+        pairs = __import__("jevops.nca", fromlist=["call_pairs_from_graph"]).call_pairs_from_graph(
+            {"calls": {"a": ["b", "c"], "b": ["c"]}}, limit=2
+        )
+        self.assertEqual(len(pairs), 2)
+        dummy_receipt = type("R", (), {"argv": [], "cwd": "", "measurement_maxHeartbeats": 1, "independent_kernel_verifier_used": False})()
+        dummy_receipt = lean.stamp_measured_receipt(
+            dummy_receipt,
+            argv=["/opt/lake", "env", "/opt/lean"],
+            cwd="/tmp",
+            run_fn=lambda: type("P", (), {"stdout": "ok", "stderr": "", "error": "", "returncode": 0})(),
+            max_heartbeats=400000,
+            lean_path="/opt/lean",
+            timeout_seconds=1.0,
+        )
+        self.assertEqual(dummy_receipt.argv[0], "/opt/lake")
+        view = lean.pack_admission_view(
+            type("A", (), {"accepted": True, "failure_code": "ok", "reason": "ok"})(),
+            name="P",
+            native="theorem t : True := by\nsorry",
+            statement="theorem t : True",
+        )
+        self.assertTrue(view.native_source_starts_with_statement)
+        self.assertFalse(view.used_full_src_as_canonical)
+        skipped, reason = lean.generation_skip_reason(
+            type("G", (), {"skipped": True, "error": ""})(),
+            probe_ok=False,
+        )
+        self.assertTrue(skipped)
+        self.assertIn("docker0", reason)
+        cands: list = []
+        lean.append_generated(
+            cands,
+            called=True,
+            skipped=False,
+            generation=type(
+                "G",
+                (),
+                {"text": "", "error": "", "identity": type("I", (), {"resolved_provider": "leanstral_local"})()},
+            )(),
+            cap=8,
+            extract_fn=lambda _t: "",
+            evaluate_fn=lambda *_a: None,
+            generator_default="leanstral",
+            hardware_class="spark_gb10",
+        )
+        self.assertEqual(cands[0].admission_code, "empty_generation")
+        packed_best = lra_jev.pack_best_draft(
+            type(
+                "R",
+                (),
+                {
+                    "choices": {"best_first_draft": type("C", (), {"choice": "d0", "confidence": 0.9, "probabilities": {"d0": 1.0}})()},
+                    "nouls": {},
+                    "scores": {},
+                    "usage": {},
+                    "model": "jev",
+                },
+            )()
+        )
+        self.assertEqual(packed_best["best_first_draft"], "d0")
+        self.assertFalse(packed_best["jev_generated_lean"])
+        box = {"tokens": 10, "keep": "  simp\n"}
+        accept = lra_search.boxed_keepbest(box)
+        hit, nxt, body = accept([{"theorem_ok": True, "token_count": 3, "tactics": "  rfl\n"}], 10, "  rfl\n")
+        self.assertEqual(nxt, 3)
+        self.assertEqual(box["keep"], "  rfl\n")
+        zipped = lra_search.attach_jev_rounds([{"round": 0}], [{"choice": "h0"}], [{"round": 0}])
+        self.assertEqual(zipped[0]["jev"]["choice"], "h0")
+        sgd = lra_search.sgd_payload(
+            name="P",
+            digest="a" * 64,
+            n_holes=2,
+            ref_tokens=10,
+            keep_tokens=4,
+            dropped=["h0"],
+            rounds=zipped,
+            leanstral=None,
+            hardware_class="spark_gb10",
+        )
+        self.assertFalse(sgd["called_docker0"])
+        self.assertEqual(sgd["keep_tokens"], 4)
+        self.assertEqual(lean.catch_trace(None), {})
+        self.assertEqual(lean.require_text("ok", error_cls=RuntimeError), "ok")
+        packed_prob = lean.pack_problem_result(
+            type("S", (), {"name": "P", "source": "s", "header": "", "statement": "theorem t : True"})(),
+            phases=["splice"],
+            probe=type("H", (), {"ok": True})(),
+            called=False,
+            skipped=True,
+            skip_reason="down",
+            retrieval=type("R", (), {"lemma_id_digest": "d", "neighbors": [], "src_lemmas": []})(),
+            candidates=[],
+            kept=None,
+            failures=[],
+            hardware_class="spark_gb10",
+            hammers="off",
+            typesafe="off",
+            generator="leanstral",
+            loop_version="v1",
+        )
+        self.assertIsNone(packed_prob.arena_score)
+        self.assertTrue(packed_prob.skipped_generate)
+        named = lra_outer.select_named(
+            [{"name": "A"}, {"name": "B"}],
+            ["B"],
+            error_cls=RuntimeError,
+        )
+        self.assertEqual([row["name"] for row in named], ["B"])
+        self.assertEqual(lra_outer.select_limit(["a", "b", "c"], 2), ["a", "b"])
+        batch = lean.warmup_batch_payload(
+            digest="a" * 64,
+            results=[],
+            health_ok=False,
+            jsonl_bytes=1,
+            n_records=15,
+            planted=False,
+            written=[],
+            generator="leanstral",
+            hammers="off",
+            hardware_class="spark_gb10",
+            loop_version="v1",
+            protocol="LRA/v1",
+            typesafe="off",
+            gates="off",
+            phases=("splice",),
+        )
+        self.assertTrue(batch["skip_generate_only_if_docker0_down"])
+        self.assertFalse(batch["lock_ex_taken_by_client"])
+        overlay = lra_jev.overlay_route_payload(
+            {"skipped": True, "reason": "no_key"},
+            name="P",
+            source="strata",
+            digest="a" * 64,
+            n_neighbors=1,
+        )
+        self.assertTrue(overlay["ok"])
+        self.assertFalse(overlay["jev_generates_lean"])
+        live = lra_jev.project_live_answers(
+            type(
+                "R",
+                (),
+                {
+                    "choices": {"best_first_draft": type("C", (), {"choice": "d0", "confidence": 0.8, "probabilities": {"d0": 1}})()},
+                    "nouls": {"dead_code_safe": type("N", (), {"noul": 0.1})()},
+                    "scores": {"likely_token_cut": type("S", (), {"score": 1})()},
+                    "usage": {},
+                    "model": "jev",
+                },
+            )(),
+            choice_map={"best_first_draft": "best_first_draft"},
+            noul_map={"dead_code_safe": "dead_code_safe"},
+            score_map={"likely_token_cut": "likely_token_cut"},
+        )
+        self.assertEqual(live["best_first_draft"], "d0")
+        self.assertEqual(live["dead_code_safe"], 0.1)
+        adm = lean.admission_receipt(
+            type("P", (), {"name": "P", "candidates": [type("C", (), {"admission_accepted": True, "admission_code": "ok", "kind": "reference", "admission_reason": ""})()]})(),
+            hardware_class="spark_gb10",
+        )
+        self.assertTrue(adm["candidates"][0]["accepted"])
+        plan_rows = lean.path_a_plan_rows(
+            [{"name": "P", "source": "strata"}],
+            tactics_fn=lambda _r: ["rfl", "aesop"],
+            aesop_fn=lambda _r: True,
+        )
+        self.assertTrue(plan_rows[0]["aesop_in_list"])
+        collected = tactics.collect_tree_drafts(
+            closed_edits=[("reference", "  simp\n", ("identity",))],
+            neighbor_ops=[],
+            push_fn=lambda drafts, seen, family, body, ops: tactics.push_draft(drafts, seen, family, body, ops, cap=8),
+            cap=8,
+        )
+        self.assertEqual(collected[0].family, "reference")
+        problems = lean.plan_loop_problems(
+            [{"name": "P", "source": "s", "version_info": [{"lean_tag": "v4.26.0"}]}],
+            split_fn=lambda rec: type("S", (), {"name": rec["name"], "source": rec["source"]})(),
+            pins_fn=lambda rec: [type("P", (), {"lean_tag": rec["version_info"][0]["lean_tag"]})()],
+        )
+        self.assertEqual(problems[0]["n_tags"], 1)
+        plan = lean.plan_loop_payload(
+            digest="a" * 64,
+            problems=problems,
+            health={"ok": False},
+            jsonl_bytes=1,
+            autostart="0",
+            health_url="http://172.17.0.1:8080/health",
+            generator="leanstral",
+            hammers="off",
+            hardware_class="spark_gb10",
+            loop_version="v1",
+            protocol="LRA/v1",
+            typesafe="off",
+            gates="off",
+            phases=("splice",),
+            tokenizer_id="tok",
+            token_weights={"elab": 0.45, "tokens": 0.55},
+        )
+        self.assertTrue(plan["must_call_leanstral_if_health_ok"])
+        self.assertFalse(plan["lock_ex_taken_by_client"])
+        skip = lra_outer.closed_skip("official_track2_off", extra={"called_jev": False})
+        self.assertTrue(skip["skipped"])
+        hosted = lra_jev.hosted_run_payload(
+            name="P",
+            source="s",
+            digest="a" * 64,
+            identity={"url_host": "api.mistral.ai"},
+            text="simp",
+            jev_route={"skipped": False},
+            ledger={"jev_calls": 1},
+            wall_ms=1.0,
+            requested_provider="mistral",
+            requested_model="labs-leanstral-1-5",
+            hardware_class="mistral_labs_api",
+            prototype_hardware="spark_gb10",
+            protocol="LRA/v1",
+            pr="PR-12b",
+            track="track1",
+            labs_retire_date="2026-09-30",
+        )
+        self.assertFalse(hosted["called_docker0"])
+        loop = lra_outer.skill_loop_payload(
+            outer=1,
+            llm=False,
+            history=[],
+            board={"P": 1},
+            total=1,
+            best_total=1,
+            stop_reason="",
+            memory_path="/tmp",
+            memory_skills=[],
+            ledger=type("L", (), {"as_dict": lambda self: {"grok_calls": 0}})(),
+            protocol="LRA/v1",
+            pr_id="PR-9h",
+        )
+        self.assertEqual(loop["outer"], "grok")
+        self.assertFalse(loop["grok_writes_lean"])
+        canary = lra_jev.canary_live_payload(
+            digest="a" * 64,
+            seed=1,
+            k=2,
+            n_records=15,
+            landscape=[{"n_tags": 2}],
+            model={"explained_ratio": [1], "principal": [{"loadings": {}}]},
+            extra_139=None,
+            canaries=[],
+            lake=[],
+            gaps=[],
+            mem_path="/tmp",
+            memory={"n_skills": 0},
+            nca_status={},
+            ledger=type("L", (), {"jev_calls": 0})(),
+        )
+        self.assertEqual(canary["n_tag_cells"], 2)
+        guided = tactics.collect_guided_drafts(
+            "  simp_all\n",
+            [{"family": "dead_code"}],
+            {"n_have": 0},
+            extras=(),
+            push_fn=lambda drafts, seen, family, body, ops: tactics.push_draft(drafts, seen, family, body, ops, cap=8),
+        )
+        self.assertTrue(any(item.family == "reference" for item in guided))
+        stub = lean.putnam_candidate_stub()
+        self.assertIn("Putnam", stub)
+        self.assertIn("not Tmp.lean", stub)
+        self.assertIn("True := by", stub)
+        ident = lean.hosted_identity(
+            requested_provider="mistral",
+            requested_model="labs-leanstral-1-5",
+            fixture=True,
+            api_host="api.mistral.ai",
+            hardware_class="mistral_labs_api",
+        )
+        self.assertEqual(ident["url_host"], "api.mistral.ai")
+        self.assertFalse(ident["fallback_used"])
+        live = lean.hosted_identity(
+            requested_provider="mistral",
+            requested_model="labs-leanstral-1-5",
+            fixture=False,
+            extra={"url_host": "api.mistral.ai", "model": "labs-leanstral-1-5", "id": "x"},
+            api_host="api.mistral.ai",
+            hardware_class="mistral_labs_api",
+        )
+        self.assertEqual(live["request_id"], "x")
+        with self.assertRaises(ValueError):
+            lean.hosted_identity(
+                requested_provider="mistral",
+                requested_model="labs",
+                fixture=False,
+                extra={"url_host": "172.17.0.1"},
+                api_host="api.mistral.ai",
+                hardware_class="mistral_labs_api",
+            )
+        try_plan = lean.pack_try_plan(
+            digest="a" * 64,
+            jsonl_bytes=12,
+            n_records=15,
+            per_record=[{"name": "P", "tactics": ["rfl"]}],
+            first_name="P",
+            first_tactics=["rfl"],
+            putnam_name="Q",
+            putnam_tactics=["aesop"],
+            extra={"path": "A", "hammer_006_lra_ready": False},
+        )
+        self.assertEqual(try_plan["first_putnam_name"], "Q")
+        self.assertFalse(try_plan["hammer_006_lra_ready"])
+        self.assertIsNone(try_plan["arena_score"])
+        syn_try = lean.pack_synthetic_try(
+            elan_home="/tmp/elan",
+            missing_closed=True,
+            written=["/tmp/P.json"],
+            persisted=[],
+            putnam=type("R", (), {})(),
+            strata=type("R", (), {})(),
+            unsolved=type("R", (), {})(),
+            timeout_30_rejected=True,
+            summary_fn=lambda _item: {"ok": True},
+        )
+        self.assertTrue(syn_try["timeout_30s_rejected"])
+        baked = lean.pack_synthetic_bake(
+            planted="/tmp/cache",
+            planted_n=1,
+            hit={"ok": True, "status": "cache-hit"},
+            missing_raised=True,
+            missing_message="network=deny",
+            allow_missing={"ok": False, "status": "cache-missing"},
+            write_denied=True,
+            materialized={
+                "v4.26.0": {
+                    "has_tmp_lean": False,
+                    "has_lakefile": True,
+                    "mathlib_in_lakefile": True,
+                    "aesop_in_lakefile": True,
+                    "candidate_module": "Putnam.Candidate",
+                    "putnambench_url": None,
+                }
+            },
+            putnam_tags=("v4.26.0",),
+            putnam_module="Putnam.Candidate",
+        )
+        self.assertTrue(baked["write_candidate_rejects_tmp_lean"])
+        self.assertTrue(baked["all_putnambench_url_null"])
+        from jevops import mask as lra_mask
+
+        shots = lra_mask.one_hole_shots(
+            phrase_alts=(("simp at h", "simp_all"),),
+            operator_alts={"$": ("",)},
+            span=2,
+            n_shots=3,
+            token_fn=lean.token_count,
+        )
+        self.assertTrue(shots)
+        self.assertEqual(shots[0]["n_holes"], 1)
+        catalog = lra_mask.catalog_shots(
+            "  simp at h\n",
+            phrase_alts=(("simp at h", "simp_all"), ("exact Hin", "assumption")),
+            n_shots=2,
+            head_fn=lambda rows, n: list(rows)[:n],
+        )
+        self.assertTrue(catalog)
+        closed_row = lra_mask.closed_multihole_row(
+            "  simp at h\n  exact Hin\n",
+            [{"start": 2, "end": 11, "original": "simp at h", "hole_id": "SYM_0", "kind": "phrase"}],
+            schedule_id="cfg0",
+            fills_fn=lambda _item, _text: ["simp_all"],
+            token_fn=lean.token_count,
+            as_row_fn=lambda item: item,
+        )
+        self.assertIsNotNone(closed_row)
+        self.assertLess(closed_row["token_count"], lean.token_count("  simp at h\n  exact Hin\n"))
+        kernel_rows = lra_mask.kernel_one_hole_rows(
+            "  apply And.intro\n  exact Hin\n",
+            propose_fn=lambda _t: [{"kind": "and_intro", "tactics": "  constructor\n", "note": "ctor"}],
+            token_fn=lean.token_count,
+            spans=(1, 2, 3, 4, 6),
+        )
+        self.assertEqual(kernel_rows[0]["kind"], "kernel_and_intro")
+        from jevops import jev as lra_jev2
+
+        plan_view = lra_jev2.pack_plan_view(protocol="LRA/v1", model="jev-latest", n_catalog=3)
+        self.assertTrue(plan_view["ok"])
+        self.assertFalse(plan_view["compiled"])
+        self.assertIsNone(plan_view["arena_score"])
+        grok_prompt = lean.grok_file_prompt("  simp\n", dest_name="tactics.lean", stub="-- REPLACE_THIS_FILE")
+        self.assertIn("tactics.lean", grok_prompt)
+        self.assertNotIn("docker0", grok_prompt.lower())
+        argv = lean.grok_file_argv(
+            grok_bin="/usr/bin/grok",
+            socket="/tmp/s.sock",
+            workspace="/tmp/ws",
+            model="grok-4.6",
+            max_turns=8,
+            tools="write_file",
+            disallowed="Bash",
+            dest_name="tactics.lean",
+            prompt_path="/tmp/PROMPT.txt",
+        )
+        self.assertEqual(argv[0], "/usr/bin/grok")
+        self.assertIn("--prompt-file", argv)
+        pairs = lra_search.keepbest_beam_pairs(
+            "  have h := x\n  simp_all\n",
+            ["  simp_all\n"],
+            variants_fn=lambda label, body, reference: [(label, body)],
+        )
+        self.assertTrue(any(name == "beam_0" for name, _body in pairs))
+        keep_out = lean.compile_keepbest(
+            {"name": "P", "source": "putnambench", "src": "theorem t : True := by\n  sorry\n", "version_info": [{"v4.26.0": "abc"}]},
+            "  trivial\n",
+            putnam_source="putnambench",
+            token_fn=lean.token_count,
+            closed_fn=lambda **kw: {"ok": False, **kw},
+            pins_fn=lambda rec: rec.get("version_info") or [],
+            compile_fn=lambda rec: [type("R", (), {"to_dict": lambda self: {"ok": True, "exit_code": 0, "timed_out": False, "sorryAx": False, "stdout": "", "error": ""}})()],
+            parse_errors_fn=lambda _stdout: [],
+            sorry_fn=lambda *_a: False,
+            pack_fn=lean.pack_compile_view,
+            elapsed_fn=lambda _t: 1.0,
+            now_fn=lambda: 0.0,
+            patch_fn=lambda rec, tactics, statement: rec,
+            statement_fn=lambda _rec: "theorem t : True",
+            dest_fn=lambda _rec: Path("/tmp/x.lean"),
+            restore=b"",
+            write_bytes_fn=lambda *_a: None,
+            candidate_source_fn=lambda rec, tactics: tactics,
+            splice_fn=lambda *_a: None,
+            span_fn=lambda *_a: (1, 2),
+            line_in_span_fn=lambda *_a: True,
+            extra_fn=lambda *_a: {},
+        )
+        self.assertTrue(keep_out["theorem_ok"])
+        packed_prob = lean.collect_warmup_problem(
+            {"name": "P", "src": "theorem t : True := by\n  trivial\n"},
+            [],
+            split=type("S", (), {"name": "P", "source": "s", "header": "", "statement": "theorem t : True", "reconstructed_src": "theorem t : True := by\n  trivial\n"})(),
+            reconstruct_ok=True,
+            error_cls=RuntimeError,
+            retrieve_fn=lambda *_a: type("R", (), {"lemma_id_digest": "d", "neighbors": [], "src_lemmas": []})(),
+            phases=["splice"],
+            probe=type("H", (), {"ok": False})(),
+            ref_tactics="  trivial\n",
+            stripped="  trivial\n",
+            token_fn=lean.token_count,
+            evaluate_fn=lambda kind, tactics, **kw: lean.make_candidate(
+                kind=kind,
+                tactics=tactics,
+                source_text="theorem t : True := by\n" + tactics,
+                admission_accepted=True,
+                admission_code="",
+                admission_reason="ok",
+                generator=kw.get("generator") or "deterministic",
+                token_count=lean.token_count(tactics),
+            ),
+            pin_fn=lambda cand, composite_fn: cand,
+            composite_fn=lambda a, b: a,
+            prompt_fn=lambda *_a: "prompt",
+            generate_fn=lambda _p: type("G", (), {"skipped": True, "error": "down", "identity": type("I", (), {"resolved_provider": ""})(), "text": ""})(),
+            skip_reason_fn=lambda gen, probe_ok: (True, "down"),
+            append_fn=lean.append_generated,
+            extract_fn=lambda _t: "",
+            keep_fn=lambda rows: rows[0] if rows else None,
+            failure_fn=lambda item: {"kind": item.kind},
+            pack_fn=lean.pack_problem_result,
+            max_candidates=8,
+            hardware_class="spark_gb10",
+            hammers="off",
+            typesafe="off",
+            generator="leanstral",
+            loop_version="v1",
+            generator_default="leanstral",
+        )
+        self.assertEqual(packed_prob.name, "P")
+        self.assertTrue(packed_prob.skipped_generate)
+        from jevops import jev as lra_jev3
+        from jevops import walk as lra_walk
+
+        class _View:
+            accepted = True
+            failure_code = ""
+            reason = "ok"
+
+        scored = lean.evaluate_with_compile(
+            kind="reference",
+            tactics="  trivial\n",
+            source_text="theorem t : True := by\n  trivial\n",
+            admit_fn=lambda _body: _View(),
+            make_fn=lean.make_candidate,
+            compile_fn=lambda _body: [],
+            attach_fn=lambda cand, _rows: cand,
+            score_fn=lambda cand, reconstructed_ok: cand if reconstructed_ok else cand,
+            reconstruct_fn=lambda: True,
+            generator="deterministic",
+            token_count=1,
+            hardware_class="spark_gb10",
+        )
+        self.assertEqual(scored.kind, "reference")
+        self.assertTrue(scored.admission_accepted)
+        nested = lra_walk.run_nested(
+            tactics="  simp\n",
+            dest=type("D", (), {"is_file": lambda self: False})(),
+            restore=b"",
+            name="P",
+            analyze_fn=lambda _body: {"name": "P", "n_tokens": 1},
+            pack_fn=lra_walk.pack_canary,
+            budget_fn=lambda: (8, 3),
+            walk_fn=lambda *_a, **_k: {},
+            restore_fn=lambda *_a: None,
+        )
+        self.assertEqual(nested["ranked"]["reason"], "no_clone")
+        catalog = lra_jev3.rank_catalog_or_live(
+            {"name": "P", "source": "s"},
+            drafts=[type("D", (), {"draft_id": "d0"})()],
+            families=[{"family": "dead_code"}],
+            features={"simp": 1},
+            live=False,
+            extra={"catalog": [{"id": "d0"}]},
+        )
+        self.assertEqual(catalog["n_drafts"], 1)
+        self.assertFalse(catalog["live"])
+        self.assertIsNone(catalog["arena_score"])
+        keep_run = lra_search.run_keepbest(
+            name="P",
+            digest="a" * 64,
+            ref_tactics="  simp_all\n",
+            hosted=None,
+            flattened=None,
+            collapse=None,
+            span_drafts=(),
+            compile_fn=lambda body: {"ok": True, "theorem_ok": True, "module_exit_0": True, "token_count": 2, "sorry_in_theorem": False, "wall_ms": 1},
+            row_fn=lambda item, compiled: {**dict(item), **dict(compiled)},
+            token_fn=lean.token_count,
+            repair=False,
+            pick_fn=lra_search.pick_min_tiers,
+            first_where_fn=lambda rows, pred: next((row for row in rows if pred(row)), None),
+            pack_fn=lra_search.keepbest_payload,
+            clone="/tmp/clone",
+            rel="A.lean",
+            hosted_path=None,
+            hardware_class="mistral_labs_api",
+            prototype_hardware="spark_gb10",
+        )
+        self.assertEqual(keep_run["kept"]["kind"], "reference")
+        self.assertFalse(keep_run["repaired"])
+        keep2, tok2, restart = lra_search.maybe_leanstral_restart(
+            use=True,
+            keep="  simp_all\n",
+            keep_tokens=3,
+            ref_tokens=4,
+            generate_fn=lambda: ("x", None, None),
+            flatten_fn=lambda text: text,
+            eval_fn=lambda _body: [],
+            hammer_fn=lambda filled, _evals: filled,
+        )
+        self.assertEqual(keep2, "  simp_all\n")
+        self.assertIsNone(restart)
+        self.assertEqual(tok2, 3)
+        class _Lock:
+            def __enter__(self) -> None:
+                return None
+
+            def __exit__(self, *_a: object) -> None:
+                return None
+
+        gen = lean.run_locked_generate(
+            lock=_Lock(),
+            pin_fn=lambda: None,
+            call_fn=lambda: "  simp\n",
+            catch_trace_fn=lambda: {"effective_provider_name": "leanstral_local", "effective_model_name": "Leanstral"},
+            identity_fn=lambda trace, generated: lean.ProviderIdentity(
+                requested_provider="leanstral_local",
+                requested_model="Leanstral",
+                resolved_provider="leanstral_local",
+                resolved_model="Leanstral",
+                fallback_used=False,
+                arena_score=None,
+            ),
+            refuse_fn=lean.refuse_if_fallback,
+            reraise_fn=lean.reraise_router_fail,
+            require_fn=lean.require_text,
+            generation_cls=lean.Generation,
+            health=lean.HealthProbe(ok=True, url="http://x", alias_ok=True, alias_url="http://y", status_code=200, error="", autostart="0"),
+            generate_cls=RuntimeError,
+            unreachable_cls=RuntimeError,
+        )
+        self.assertEqual(gen.text, "  simp\n")
+        self.assertFalse(gen.identity.fallback_used)
+        class _Receipt:
+            error = ""
+            ok = True
+            aesop_imported = False
+
+        closed = lean.run_path_a_try(
+            _Receipt(),
+            ["rfl"],
+            aesop_err="aesop missing",
+            resolve_fn=lambda: None,
+            prepare_fn=lambda: (None, "", None),
+            env_fn=lambda _t: {},
+            run_tactic_fn=lambda **_k: None,
+            fill_fn=lambda *_a, **_k: None,
+            close_fn=lambda rec, _exc, extra: rec,
+            error_types=(RuntimeError,),
+            extra_fn=lambda _exc: "",
+            timeout=1.0,
+        )
+        self.assertEqual(closed.error, "aesop missing")
+        self.assertFalse(closed.ok)
+        ws = Path("/tmp")
+        tactics_out, ident, chat_out, dest = lean.run_workspace_generate(
+            workspace=ws,
+            dest_name="tactics.lean",
+            stub="-- REPLACE_THIS_FILE",
+            reset_stub=False,
+            generate_fn=lambda **_k: "  simp\n",
+            identity_from_generate=lambda: "fixture",
+            read_fn=lambda _ws, dest_name: "  simp\n",
+            write_text_fn=lambda *_a, **_k: None,
+        )
+        self.assertEqual(tactics_out, "  simp\n")
+        self.assertEqual(ident, "fixture")
+        self.assertEqual(chat_out, "  simp\n")
+        self.assertEqual(dest.name, "tactics.lean")
+        class _Rec:
+            ok = True
+            error = ""
+
+        stamped = lean.run_tag_compile(
+            _Rec(),
+            resolve_fn=lambda: "tc",
+            prepare_fn=lambda: ("/cwd", "x.lean", "/dest"),
+            write_fn=lambda _dest: None,
+            stamp_fn=lambda rec, **_k: rec,
+            close_fn=lambda rec, _exc: rec,
+            error_types=(RuntimeError,),
+        )
+        self.assertTrue(stamped.ok)
+        attempt = lean.fill_timed_attempt(
+            tactic="rfl",
+            argv=["lake"],
+            cwd="/cwd",
+            source_file="x.lean",
+            timeout=1.0,
+            run_fn=lambda: {"ok": True},
+            fill_fn=lambda **kw: kw,
+            timed_fn=lambda fn: (fn(), 1.0, 0.5),
+        )
+        self.assertEqual(attempt["tactic"], "rfl")
+        self.assertEqual(attempt["result"], {"ok": True})
+        from jevops import jev as lra_jev4
+        from jevops import board as lra_board
+
+        projected = lra_jev4.invoke_then_project(
+            invoke_fn=lambda: ("result", 1.5),
+            project_fn=lambda result, wall_ms: {"result": result, "wall_ms": wall_ms},
+        )
+        self.assertEqual(projected["result"], "result")
+        skipped = lra_jev4.route_or_skip(
+            enabled=False,
+            official=False,
+            key_ok=False,
+            available=False,
+            using_fixture=False,
+            require_key=True,
+            skip_fn=lambda reason: {"skipped": True, "reason": reason},
+            invoke_fn=lambda: ("x", 0.0),
+            project_fn=lambda *_a: {"live": True},
+        )
+        self.assertEqual(skipped["reason"], "typesafe_off")
+        class _Hole:
+            def __init__(self, hole_id: str) -> None:
+                self.hole_id = hole_id
+
+        dropped: set[str] = set()
+
+        def _consider(label: str, hole_ids: list[str]) -> dict:
+            dropped.update(hole_ids)
+            return {"label": label, "accepted": True, "keep_tokens": 3, "holes": list(hole_ids)}
+
+        walked = lra_search.run_diffuse_rounds(
+            [_Hole("h0"), _Hole("h1")],
+            rounds=1,
+            tau=0.1,
+            rng=__import__("random").Random(0),
+            consider_fn=_consider,
+            jev_fn=lambda remaining, history, tokens: {"choice": "h1", "probabilities": {"h1": 0.9}},
+            noise_fn=lambda *_a: None,
+            keep_tokens=10,
+            dropped=dropped,
+        )
+        self.assertEqual(walked["keep_tokens"], 3)
+        packed_d = lra_search.pack_diffuse(
+            name="P",
+            digest="a" * 64,
+            n_holes=2,
+            ref_tokens=10,
+            keep_tokens=3,
+            dropped=walked["dropped"],
+            rounds=walked["rounds"],
+            hardware_class="mistral_labs_api",
+        )
+        self.assertEqual(packed_d["schema"], "lra-diffuse-denoise/v1")
+        self.assertIsNone(packed_d["arena_score"])
+        mem_board: dict = {"nca": {}}
+        seeded = lra_board.seed_then_sidecar(
+            mem_board,
+            {"root": "G1", "goal_title": "t", "subgoals": [], "tasks": []},
+            sidecar_fn=lambda _mem, nca: nca.__setitem__("sidecar", True),
+        )
+        self.assertTrue(seeded["ok"])
+        self.assertTrue(mem_board["nca"].get("sidecar"))
+        from jevops import tactics as lra_tactics
+        from jevops import nca as lra_nca2
+
+        early, late = lra_tactics.collect_random_draft_extras(
+            "  simp_all\n",
+            __import__("random").Random(0),
+            wanted_fn=lambda fam: True,
+            portable_items=[{"kind": "port_x", "tactics": "  assumption\n", "family": "dead_code"}],
+            pca_drafts=[type("D", (), {"family": "dead_code", "draft_id": "d0", "tactics": "  simp\n"})()],
+        )
+        self.assertEqual(early[0][0], "port_x")
+        self.assertTrue(any(kind.startswith("pca_") for kind, _body, _extra in late))
+        pruned = lra_jev4.complete_prune(
+            invoke_fn=lambda: (type("R", (), {"usage": {}})(), 0.1),
+            skip_fn=lambda exc: {"skipped": True, "reason": str(exc)},
+            unpack_fn=lambda _r: (
+                {"next_line": type("C", (), {"choice": "c0", "probabilities": {"c0": 1.0}, "confidence": 0.9})()},
+                {},
+                {},
+                {},
+            ),
+            record_fn=lambda _u: type("L", (), {"skipped": False, "reason": ""})(),
+            rank_fn=lambda criteria, probs, pick_id, unique, keep: [criteria[pick_id]],
+            pack_fn=lra_jev4.pack_prune,
+            criteria={"c0": "simp_all"},
+            unique=["simp_all"],
+            keep=1,
+        )
+        self.assertEqual(pruned["best"], "simp_all")
+        self.assertFalse(pruned["skipped"])
+        feat = lra_jev4.featurize_or_skip(
+            invoke_fn=lambda: (object(), 0.0),
+            skip_fn=lambda exc: {"skipped": True, "score": 0.0, "features": {}},
+            unpack_fn=lambda _r: ({}, {"likely_compiles": type("N", (), {"noul": 0.8})()}, {}, {}),
+            record_fn=lambda _u: None,
+            feature_names=["likely_compiles"],
+            weights={"likely_compiles": 1.0},
+            signed_dot_fn=lambda features, weights, penalty, default_w: float(features.get("likely_compiles") or 0),
+            penalty=0.0,
+        )
+        self.assertAlmostEqual(feat["score"], 0.8)
+        packed_sym = lra_search.pack_symbol_search(query="simp", ranked=[{"symbol": "simp"}], sources={"jsonld": "ok"}, promoted=1)
+        self.assertTrue(packed_sym["ok"])
+        self.assertFalse(packed_sym["semantic_authority"])
+        finished = lra_search.finish_mca_problem(
+            candidates=[
+                {"kind": "reference", "tactics": "  simp_all\n"},
+                {"kind": "drop_have", "tactics": "  simp\n"},
+            ],
+            compile_fn=lambda body: {
+                "theorem_ok": True,
+                "token_count": 1 if "simp\n" in body and "simp_all" not in body else 4,
+                "errors": [],
+            },
+            row_fn=lambda item, compiled: {**dict(item), **dict(compiled)},
+            hammer_fn=lambda *_a, **_k: ([], "", [], False),
+            needs_hammer_fn=lambda _kind: False,
+            name="P",
+            digest="a" * 64,
+            holes=[],
+            skeleton_head="  simp_all\n",
+            hardware_class="mistral_labs_api",
+            ref_tokens=4,
+            extra_fn=lambda **_k: {},
+            redact_fn=lambda payload: payload,
+        )
+        self.assertTrue(finished["beats_reference"])
+        sidecar = lra_nca2.fill_sidecar_duckdb(
+            "/tmp/nca-ast.duckdb",
+            {"defs": {}, "calls": {}},
+            connect_fn=lambda *_a, **_k: (type("C", (), {"close": lambda self: None})(), "duckdb"),
+            exec_fn=lambda *_a, **_k: None,
+            count_fn=lambda *_a, **_k: 0,
+            try_import_fn=lambda _name: object(),
+            refuse_fn=lambda *_a, **_k: False,
+        )
+        self.assertTrue(sidecar["ok"])
+        self.assertFalse(sidecar["control_duckdb"])
 
     def test_tick_and_cold_seed_halt(self) -> None:
         from jevops import nca
@@ -1188,6 +2300,9 @@ class KernelBoundaryTests(unittest.TestCase):
         self.assertEqual(resp.choices["pick"].choice, "b")
         self.assertEqual(resp.nouls["risk"].noul, 0.1)
         self.assertEqual(resp.scores["cut"].score, 1.0)
+        prune = jev.pack_prune(skipped=True, reason="no_key", best=None, kept=["STOP"])
+        self.assertTrue(prune["skipped"])
+        self.assertIsNone(prune["arena_score"])
 
     def test_feed_memory_overlays_wins(self) -> None:
         from jevops import nca, walk
@@ -1301,6 +2416,27 @@ class KernelBoundaryTests(unittest.TestCase):
         out = board.seed_grid_from_board(mem, data)
         self.assertTrue(out["ok"])
         self.assertIn("ptr://goal/G1", mem["nca"]["grid"])
+        overlay = board.overlay_fetch(
+            mem,
+            fetch_fn=lambda: {"tasks": [{"task_alias": "T1", "status": "ready"}]},
+            prefix="",
+            cache=False,
+        )
+        self.assertTrue(overlay["ok"])
+        self.assertEqual(overlay["reason"], "injected")
+        self.assertFalse(overlay["campaign_write"])
+        closed = board.overlay_fetch(
+            {"nca": {"grid": {}}},
+            fetch_fn=lambda: (_ for _ in ()).throw(RuntimeError("boom")),
+            cache=False,
+        )
+        self.assertFalse(closed["ok"])
+        self.assertEqual(closed["reason"], "RuntimeError")
+        replica = board.replica_page(ok=False, reason="no_ready_json")
+        self.assertEqual(replica["tasks"], [])
+        self.assertFalse(replica["campaign_write"])
+        page = type("P", (), {"tasks": [type("T", (), {"task_alias": "LRA-017", "id": ""})()]})()
+        self.assertEqual(board.aliases_from_page(page, prefix="LRA-")[0]["task_alias"], "LRA-017")
         payload = board.board_payload("T1", data)
         self.assertEqual(payload["kind"], "task")
         parsed = outer.parse_action('noise {"action":"stop","reason":"done"}')

@@ -29,10 +29,15 @@ Lake (or another oracle) lives in the implementation that *uses* the kernel.
 | `jevops.int_rankers` | Integer milles rankers |
 | `jevops.more_rankers` | Markov / isotonic / AdaBoost / PageRank / contrastive |
 | `jevops.temporal` | Hawkes / CRF / submodular / delayed bandit / tape conv |
-| `jevops.autoencoder` | VAE milles; Jev is the batch loss |
+| `jevops.tactics` | Lean tactic analysis plus explicit multi-armed-bandit action tactic |
+| `jevops.autoencoder` | Canonical Lean IR, sparse trainable autoencoder, verifier-gated rewards |
+| `jevops.autoencoder_training` | Cross-entropy/cosine training, LR schedule, canary/holdout protocol |
 | `jevops.program` | Closed IR compile/parse, work-ops execute (lake/board via hooks) |
 | `jevops.repair` | Diagnose/heal grid, tape, stack, program_state |
 | `jevops.tools` | TypeSafe tool catalog, MCP++ describe, subloops, KG |
+| `jevops.harness` | Inner JevOps self-analysis + outer `llm_router` autoresearch gate |
+| `jevops.proof_ca` | Proof-carrying typed ground-Horn graph cellular automaton |
+| `jevops.proof_ca_demo` | Offline JSON trace and matched scheduling benchmark |
 | `jevops.turing` | TM step/run + decision-transformer window |
 | `jevops.tape_tools` | Tape editor CALLs (`port_tape_*`) |
 
@@ -87,7 +92,221 @@ hooks.register("token_count", my_token_count)
 
 If hooks are missing, the kernel `try_import`s consumer modules that happen to be on `PYTHONPATH` (LRA harness). Missing hooks fail closed.
 
+## Two-level autoresearch loop
+
+`jevops.harness.JevOpsHarness` runs a bounded inner/outer loop. The inner
+iteration analyzes the JevOps source tree and updates AutoResearch memory; the
+outer iteration calls `ipfs_accelerate_py.llm_router.generate_text` for a
+closed JSON action. `update_code` proposals use exact `old`/`new` text, are
+evaluated in a temporary repository copy, and are applied only when the
+injected evaluator improves (`score` is higher-is-better and `ok` must be
+true).
+
+```python
+from jevops.harness import JevOpsHarness
+
+harness = JevOpsHarness(
+    root="/path/to/JevOps",
+    evaluate_fn=lambda root: {"ok": True, "score": run_my_harness(root)},
+)
+receipt = harness.run(iterations=4)
+```
+
+The accelerator checkout can be installed normally or exposed with
+`JEVOPS_IPFS_ACCELERATE_PATH=/path/to/ipfs_accelerate`; the router import is
+lazy, so the kernel still works without that optional dependency.
+
+For a bounded command-line run:
+
+```bash
+JEVOPS_IPFS_ACCELERATE_PATH=/path/to/ipfs_accelerate \
+  python -m jevops.harness --iterations 4
+```
+
+For a continuously supervised run, use `--continuous`. Each cycle performs
+the inner self-analysis, asks the configured router for one closed action, and
+persists memory plus a JSONL receipt. `--strict-router` prevents silent
+cross-provider fallback; `update_code` is still applied only after the
+isolated evaluator improves.
+
+```bash
+JEVOPS_IPFS_ACCELERATE_PATH=/path/to/ipfs_accelerate \
+  python -m jevops.harness --continuous --interval 60 \
+  --provider codex_cli --model gpt-5.6-luna \
+  --reasoning-effort high --strict-router
+```
+
+The TypeSafe provider is a structured System One evaluator, not a free-form
+text generator. Keep its credential in `TYPESAFE_API_KEY` when TypeSafe gates
+are used; the outer code-proposal text route above is the Codex-backed
+`ipfs_accelerate_py.llm_router` path.
+
+### Router-guided proof tuning
+
+`jevops.router_tuning.RouterTuningLoop` is the proof-specific router loop. It
+asks the configured `llm_router` for bounded IR/tactic suggestions, expands
+allowlisted local tactic families, compiles every candidate once, and trains
+the Lean IR autoencoder only from the verified winner. The default route is
+`provider="codex_cli"`, `model_name="gpt-5.6-luna"`, and strict
+cross-provider fallback is off. The router is advisory; Lean/Lake remains the
+admission authority and verified proof-body token count is the primary search
+key.
+
+```python
+from jevops.router_tuning import RouterTuningConfig, tune_autoencoder_with_router
+
+result = tune_autoencoder_with_router(
+    memory,
+    theorem_source,
+    problem="my-theorem",
+    compile_fn=lake_compile,
+    config=RouterTuningConfig(rounds=3, model_name="gpt-5.6-luna"),
+)
+```
+
+For a standalone file, the bounded CLI is:
+
+```bash
+python -m jevops.router_tuning theorem.lean --lake \
+  --provider codex_cli --model gpt-5.6-luna --rounds 3
+```
+
+The router-specific offline tests are `pytest -q tests/test_router_tuning.py`;
+they inject a fixture router and never require router credentials.
+
+## Lean IR autoencoder training
+
+The autoencoder has two separate contracts:
+
+* `encode_lean_ir` / `decode_lean_ir` use a deterministic, argument-preserving
+  Lean IR (`jevops-lean-ir/v2`) and reject admitting or command-smuggling text.
+* `train_autoencoder` trains a JSON-safe sparse model with teacher-forced
+  operation cross-entropy, cosine-aware latent updates, gradient clipping,
+  warmup/cosine/plateau learning-rate control, NCA auxiliary feedback, and
+  bounded reward signals.
+
+Lake/LRA remains the hard proof authority. TypeSafe/JeV can rank candidates or
+provide soft fuzzy theorem-plausibility signals, but an unverified candidate
+cannot enter the verified codebook. `minimality_score` rewards shorter
+candidate equations only after semantic/proof gating. Training creates disjoint `train`, `validation`, `canary`, and
+`holdout` assignments from a content-addressed manifest. The canary is a
+regression gate, not an epoch-selection target; the holdout is not evaluated
+until `evaluate_frozen_holdout` is called explicitly.
+
+```python
+from jevops.autoencoder import (
+    AutoencoderConfig,
+    evaluate_frozen_holdout,
+    train_autoencoder,
+)
+
+config = AutoencoderConfig(seed=17, validation_fraction=0.1,
+                           canary_fraction=0.1, holdout_fraction=0.1)
+report = train_autoencoder(records, config=config, epochs=3,
+                           compile_fn=lake_compile)
+# Seal report["state"] and report["manifest"] before reading the holdout.
+holdout = evaluate_frozen_holdout(report["state"], records,
+                                  manifest=report["manifest"])
+```
+
+The implementation is dependency-free; a consumer can replace the sparse
+backend with a vectorized/Torch trainer while retaining the same state,
+metric, verifier, and holdout contracts.
+For corpus-scale ingestion, `train_autoencoder_stream` accepts a
+split-aware factory and never requests the `holdout` split during training.
+Pass the training `memory` (or evaluator `nca_memory`) to use NCA cell energy,
+neighborhood, residual-help, and historical verifier feedback as a bounded
+auxiliary signal. `typesafe_fuzzy_prove` uses typed Choice/Score/Noul
+questions as a fuzzy advisor; its result is always marked unverified and must
+be followed by Lake compilation.
+Disjoint workers can call `merge_model_states` to combine bounded sparse
+checkpoints without gathering the corpus or retaining source text centrally.
+For the integrated path, `refactor_smallest(...)` composes TypeSafe fuzzy
+ranking, NCA feedback, Lake admission, and minimality selection in one call.
+The offline three-round regression is `pytest -q tests/test_autoencoder_rounds.py`;
+it invokes the installed Lean executable and compares against
+`tests/fixtures/autoencoder_score_baseline.json`. That score is a frozen local
+training proxy, not an official Lean Refactor Arena leaderboard result.
+The same test also runs four deliberately compressible theorems through three
+training rounds. Its shortest-proof proxy counts verified proof-body tokens,
+keeps the pre-shrink result in
+`tests/fixtures/autoencoder_smallest_baseline.json`, and requires every
+shortening to pass Lean before it can win. The current local proxy is
+`0.7797619047619048` versus the frozen pre-shrink `0.125`; neither is an
+official Arena score.
+
+## Action bandits and the neurosymbolic CA
+
+`jevops.tactics.multi_armed_bandit` is the action-level policy primitive. A
+selection creates one pending pull; a later call supplies the measured reward
+in `[0, 1]` (or a Boolean). The tactic stores Beta/UCB statistics under
+`memory["nca"]["bandits"]`, mirrors the action and outcome into `ptr://cell`
+and `ptr://skill` cells, and journals the transition. It never treats a
+selection as a proof or code admission.
+
+```python
+from jevops.tactics import multi_armed_bandit
+
+pick = multi_armed_bandit(memory, ["port_simp", "port_cases"], seed=7)
+# After the lake/evaluator measures pick["selected_arm"]:
+next_pick = multi_armed_bandit(memory, ["port_simp", "port_cases"], reward=0.9)
+```
+
+The existing `port_thompson` ranker remains a pipeline-order heuristic. Use
+the action bandit when a loop needs a real select→measure→update lifecycle.
+The current NCA is a useful substrate—canonical cells, energy diffusion,
+board edges, tape/stack receipts, and symbolic gates—but it is not yet a full
+cellular automaton: the next architectural step is a synchronous, typed local
+transition rule that consumes a cell state plus bounded neighbor messages and
+emits a validated state delta. Keep Lean/Lake and evaluator receipts as the
+symbolic authority for those deltas; keep the outer router responsible only
+for bounded proposals.
+
+## Proof-carrying graph cellular automaton
+
+The strict symbolic runtime is in `jevops.proof_ca`. It uses a declared finite
+universe of ground atoms and immutable positive Horn rules. Rule cells have
+typed premise and conclusion edges; conjunction is checked by exact premise
+identity, not by votes, activation averages, or incoming-edge counts. A fact
+can enter the accepted set only as a declared assumption, a checked local rule
+derivation, or a context-matched verified external receipt.
+
+Run the complete offline example and benchmark with:
+
+```bash
+python -m jevops.proof_ca_demo
+```
+
+The command emits a JSON proof trace, an injected mock-verifier receipt, and a
+matched comparison of a deterministic queue, a centralized controller using
+the same action interface, and the local fair scheduler. It makes no API calls
+and reports measured synthetic work only; `actual_cost` is `null` because no
+paid service is used.
+
+The runtime keeps symbolic, policy, evidence, and operational state separate.
+`JevPolicyAdapter` is dependency-injected and receives only a bounded local
+snapshot. Its selected value, distribution, confidence, question version, and
+model identity are retained as non-authoritative observations. The deterministic
+baseline is explicitly labelled a fixture. A periodic FIFO service guarantees
+that a defer/rejecting policy cannot permanently suppress an enabled rule in
+an unbounded run. Messages, proposals, evidence IDs, reservations, and
+checkpoints are idempotent.
+
+Final statuses are precise: `VERIFIED_COMPLETE` means all required targets
+have checked supporting evidence; `QUIESCENT_INCOMPLETE` means closure with an
+unproved target; `BUDGET_EXHAUSTED` means an explicit integer resource limit
+blocked more work; `ERROR` means a runtime invariant or required adapter failed.
+An absent verifier, timeout, test result, cache hit, activation value, or
+legacy `theorem_ok` field is not silently promoted to proof. The initial
+language is intentionally finite, ground, positive, and single-process; it is
+not arbitrary theorem proving, distributed execution, learned neural dynamics,
+or a claim about the truth of its trusted assumptions.
+
+The invariant argument and its assumptions are documented in
+`PROOF_CARRYING_NCA.md`.
+
 ## Not in this package
 
 Portable Lean folds, `lake env`, random canaries, TypeSafe Jev HTTP, Track 1/2,
-LRA `tasks.json` board, harness file walking, inner TypeSafe lake walker.
+LRA `tasks.json` board, and the implementation-specific inner TypeSafe lake
+walker.

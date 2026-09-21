@@ -137,6 +137,18 @@ TOOL_CRITERIA: dict[str, dict[str, str]] = {
         "what": "Fork high-energy cells as returnable subloops (cap 4)",
         "not_for": "Unbounded nested grok CLIs",
     },
+    "multi_armed_bandit": {
+        "what": "Select and explicitly observe an action arm with Thompson/UCB1/epsilon-greedy state",
+        "not_for": "Treating selection as proof admission or inventing rewards",
+    },
+    "nca_bandit": {
+        "what": "NCA-backed multi-armed-bandit tactic; mirrors arm transitions into cells and journal",
+        "not_for": "Updating an arm without an explicit lake/oracle outcome",
+    },
+    "proof_ca_run": {
+        "what": "Run an injected proof-carrying Horn-rule cellular automaton",
+        "not_for": "Treating neural activation, cache hits, or theorem_ok flags as proofs",
+    },
 }
 
 # Named callables the inner walker can spawn and join. Registered at runtime.
@@ -579,6 +591,61 @@ def run_tool(
 
         live = memory if isinstance(memory, dict) else dict(memory or {})
         payload = lra_prog.program_nca(live, tactics=tactics, problem=problem, llm="off")
+    elif key in {"multi_armed_bandit", "bandit"}:
+        from jevops import tactics as lra_tactics
+
+        live = memory if isinstance(memory, dict) else dict(memory or {})
+        spec: dict[str, Any] = {}
+        if isinstance(observations, Mapping):
+            nested = observations.get("bandit")
+            if isinstance(nested, Mapping):
+                spec.update(dict(nested))
+            spec.update({k: v for k, v in observations.items() if k in {"arms", "name", "bandit_name", "policy", "reward", "arm", "selected", "epsilon", "exploration", "seed"}})
+        arms = spec.get("arms")
+        if not arms:
+            arms = [
+                str(cid)[len("ptr://skill/") :]
+                for cid, cell in ((live.get("nca") or {}).get("grid") or {}).items()
+                if str(cid).startswith("ptr://skill/") and isinstance(cell, dict)
+            ]
+        call = {
+            "name": str(spec.get("bandit_name") or spec.get("name") or problem or "default"),
+            "policy": spec.get("policy") or "",
+            "arms": arms,
+            "epsilon": spec.get("epsilon", 0.1),
+            "exploration": spec.get("exploration", 1.0),
+            "seed": spec.get("seed", 0),
+        }
+        for field in ("reward", "arm", "selected", "rng"):
+            if field in spec:
+                call[field] = spec[field]
+        payload = lra_tactics.multi_armed_bandit(live, **call)
+    elif key in {"nca_bandit", "nca_multi_armed_bandit", "nca_bandit_tactic"}:
+        from jevops import nca as lra_nca
+
+        live = memory if isinstance(memory, dict) else dict(memory or {})
+        spec = dict(observations or {}) if isinstance(observations, Mapping) else {}
+        nested = spec.get("bandit")
+        if isinstance(nested, Mapping):
+            spec = {**dict(nested), **{k: v for k, v in spec.items() if k != "bandit"}}
+        payload = lra_nca.dispatch_tool(
+            key,
+            memory=live,
+            tactics=tactics,
+            problem=problem,
+            **{k: v for k, v in spec.items() if k not in {"tool", "tactics", "memory", "problem"}},
+        )
+    elif key in {"proof_ca_run", "nca_proof_ca"}:
+        from jevops import nca as lra_nca
+
+        spec = dict(observations or {}) if isinstance(observations, Mapping) else {}
+        runtime = spec.get("runtime")
+        payload = lra_nca.dispatch_tool(
+            key,
+            runtime=runtime,
+            fair_period=spec.get("fair_period", 3),
+            max_steps=spec.get("max_steps"),
+        )
     elif key == "board_walk":
         seed_board = hooks.resolve("seed_board", "board_graph", "seed_nca_from_board")
         overlay_board = hooks.resolve("overlay_board", "board_graph", "overlay_live_board")
@@ -616,7 +683,10 @@ def run_tool(
         )
     else:
         return {"ok": False, "tool": key, "reason": "unknown_tool", "available": sorted(TOOL_CRITERIA)}
-    payload["ok"] = True
+    # Preserve a fail-closed tool result.  The previous unconditional write
+    # turned invalid bandit rewards and unavailable NCA tools into apparent
+    # successes for callers.
+    payload.setdefault("ok", True)
     payload["tool"] = key
     return payload
 
