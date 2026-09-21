@@ -179,22 +179,80 @@ def random_drafts(
 
     body = tactics.strip("\n")
     allow = set(allow_families) if allow_families else None
+    design = _active_tactic_design(memory or {}) if memory is not None else None
+    design_rows: list[tuple[str, str, dict[str, Any]]] = []
+    if design and str(design.get("name") or "") == str(name or ""):
+        strategy = str(design.get("strategy") or "").strip().lower().replace("-", "_")
+        if strategy:
+            try:
+                from jevops.router_tuning import _strategy_body
+
+                design_rows = [
+                    (
+                        f"outer_design_{kind}",
+                        candidate,
+                        {
+                            "family": str(design.get("family") or "") or "search_space",
+                            "generator": "outer_design_directive",
+                            "compiler_probe": True,
+                            "directive_action": str(design.get("action") or "mint_tactic"),
+                            "hypothesis": str(design.get("hypothesis") or ""),
+                        },
+                    )
+                    for kind, candidate, _origin in _strategy_body(strategy, body, rng)
+                    if candidate and candidate != body
+                ][:8]
+            except Exception:
+                design_rows = []
 
     def wanted(fam: str) -> bool:
         return allow is None or fam in allow
 
-    portable_items: list[Mapping[str, Any]] = []
-    if wanted("search_space") or wanted("algebraic_simplification") or wanted("dead_code"):
-        blocked = {
-            key
-            for key, _fn in lra_port.PIPELINE
-            if memory is not None and lra_bind.is_blacklisted(memory, name, f"port_{key}")
-        }
-        if memory is not None:
-            blocked |= lra_bind.failed_skill_stems(memory, name)
-        portable_items = list(
-            lra_port.portable_drafts(body, skip=blocked, memory=dict(memory or {}), name=name)
-        )
+    # Always materialize the closed-vocabulary portfolio.  A recursive
+    # TypeSafe branch can select ``loop_invariant`` or another family even
+    # when an unrelated portable fold is the only remaining compiler probe;
+    # those probes are tagged in ``collect_random_draft_extras`` and remain
+    # visible to the bounded Lake queue.
+    blocked = {
+        key
+        for key, _fn in lra_port.PIPELINE
+        if memory is not None and lra_bind.is_blacklisted(memory, name, f"port_{key}")
+    }
+    if memory is not None:
+        blocked |= lra_bind.failed_skill_stems(memory, name)
+    portable_items = list(
+        lra_port.portable_drafts(body, skip=blocked, memory=dict(memory or {}), name=name)
+    )
+    historical_rows: list[tuple[str, str, dict[str, Any]]] = []
+    if memory is not None:
+        try:
+            from historical_seeds import seed_rows_for
+
+            for index, seed in enumerate(seed_rows_for(memory, name)[:8]):
+                seed_body = str(seed.get("body") or "").strip("\n")
+                if not seed_body:
+                    continue
+                # ``port_`` is intentional: pin_prefix keeps historical
+                # seeds in the bounded queue, while provenance says they are
+                # Git teachers rather than current portable folds.
+                historical_rows.append(
+                    (
+                        f"port_historical_seed_{index}",
+                        seed_body,
+                        {
+                            "family": "historical_seed",
+                            "compiler_probe": True,
+                            "seed_provenance": str(seed.get("provenance") or "git_history"),
+                            "seed_commit": str(seed.get("commit") or ""),
+                            "seed_path": str(seed.get("path") or ""),
+                            "claimed_tokens": seed.get("claimed_tokens"),
+                            "actual_tokens": seed.get("actual_tokens"),
+                            "body_digest": str(seed.get("body_digest") or ""),
+                        },
+                    )
+                )
+        except Exception:
+            historical_rows = []
     early, late = collect_random_draft_extras(
         body,
         rng,
@@ -207,6 +265,7 @@ def random_drafts(
         closed_fn=lra_sym.closed_multihole,
         pca_drafts=lra_pca.guided_drafts(body, list(families) or [{"family": "dead_code"}], counts),
     )
+    early = historical_rows + design_rows + early
 
     def _blacklist(mem: Mapping[str, Any], problem: str, kind: str, nxt: str = "") -> bool:
         return lra_bind.is_blacklisted(mem, problem, kind, tactics=nxt)
@@ -786,6 +845,19 @@ def main(argv: Optional[list[str]] = None) -> int:
         help="start each canary from its shortest random-best-*.lean if present",
     )
     parser.add_argument(
+        "--seed-history",
+        dest="seed_history",
+        action="store_true",
+        default=True,
+        help="use pinned lift_coding Git proof bodies as untrusted teacher proposals",
+    )
+    parser.add_argument(
+        "--no-seed-history",
+        dest="seed_history",
+        action="store_false",
+        help="disable read-only historical Git teacher seeding",
+    )
+    parser.add_argument(
         "--quiet",
         action="store_true",
         help="write evidence files but do not print the full payload",
@@ -858,6 +930,10 @@ def rank_live_records(
             unsafe=dict(prior.get("unsafe") or {}),
             residual_map=lra_port.SKILL_RESIDUAL,
             fire_t=FIRE_T_RESIDUAL,
+            revalidate_portable=(
+                (mem.get("nca") or {}).get("portable_probe_revision")
+                == getattr(lra_port, "PORTABLE_PROBE_REVISION", "")
+            ),
         )
 
     def _rf(drafts: list[Mapping[str, Any]], rec: Mapping[str, Any], cut: int) -> float:
@@ -876,6 +952,282 @@ def rank_live_records(
     )
 
 
+def _active_tactic_design(memory: Mapping[str, Any]) -> Optional[dict[str, Any]]:
+    row = (memory.get("nca") or {}).get("active_tactic_design")
+    if not isinstance(row, Mapping):
+        return None
+    if str(row.get("status") or "pending") not in {"pending", "retry"}:
+        return None
+    name = str(row.get("name") or "").strip()
+    strategy = str(row.get("strategy") or "closed_edits").strip()
+    if not name or not strategy:
+        return None
+    return dict(row)
+
+
+def _run_tactic_design(
+    record: Mapping[str, Any],
+    *,
+    body: str,
+    directive: Mapping[str, Any],
+    memory: dict[str, Any],
+    out: Path,
+    timeout: float,
+) -> dict[str, Any]:
+    """Execute one outer-minted design request through the real Lake gate.
+
+    The outer model supplies only a theorem/family/strategy directive. The
+    inner router sees the complete theorem and tactic analysis, proposes
+    bounded bodies, and the bridge compiles every proposal before a shorter
+    body or blacklist repair is recorded.
+    """
+
+    import autoencoder_bridge as lra_ae
+    from jevops.router_tuning import RouterTuningConfig
+
+    name = str(record.get("name") or "")
+    before = int(lra_loop.token_count(body))
+    hint = {
+        key: str(directive.get(key) or "")
+        for key in (
+            "action",
+            "name",
+            "family",
+            "strategy",
+            "repair_stem",
+            "focus",
+            "hypothesis",
+            "constraints",
+            "evaluation",
+        )
+        if directive.get(key)
+    }
+    repair_stem = str(directive.get("repair_stem") or "").strip()
+    repair_seeds: list[str] = []
+    if repair_stem:
+        wanted = repair_stem if repair_stem.startswith("port_") else f"port_{repair_stem}"
+        try:
+            # Reopen only this one old fold for a new compiler probe.  The
+            # current memory is intentionally not passed here: its blacklist
+            # is the object being repaired, not proof that the implementation
+            # remains invalid after a code revision.
+            repair_seeds = [
+                str(row.get("tactics") or "")
+                for row in lra_port.portable_drafts(body, memory={}, name=name)
+                if str(row.get("kind") or "") == wanted and row.get("tactics")
+            ][:2]
+        except Exception:
+            repair_seeds = []
+    historical_seeds: list[dict[str, Any]] = []
+    try:
+        from historical_seeds import seed_rows_for
+
+        historical_seeds = seed_rows_for(memory, name)[:8]
+    except Exception:
+        historical_seeds = []
+    config = RouterTuningConfig(
+        rounds=2,
+        max_router_candidates=8,
+        max_candidate_pool=32,
+        n_variations=4,
+        strategy_cap=6,
+        design_hint=hint,
+        train=True,
+    )
+    try:
+        result = lra_ae.run_record(
+            record,
+            memory=memory,
+            config=config,
+            seed_candidates=[
+                {"body": body, "provenance": "current_run", "source": "current_run"},
+                *historical_seeds,
+                *repair_seeds,
+            ],
+            compile_timeout=float(timeout),
+            state_root=DEFAULT_STATE,
+            network="allow",
+        )
+    except Exception as exc:
+        result = {
+            "ok": False,
+            "admission": "design_exception",
+            "error": type(exc).__name__,
+            "error_detail": str(exc)[:240],
+            "best_body_tokens": before,
+            "source_body_tokens": before,
+            "history": [],
+        }
+    best_source = result.get("best_source")
+    best_body = lra_ae._candidate_tactics(record, best_source) if isinstance(best_source, str) else None
+    after = int(lra_loop.token_count(best_body)) if best_body is not None else before
+    history = list(result.get("history") or [])
+    candidate_count = sum(int(round_row.get("candidate_count") or 0) for round_row in history)
+    lake_verified_count = sum(int(round_row.get("verified_count") or 0) for round_row in history)
+    verified_designs = sum(
+        1
+        for round_row in history
+        for candidate in round_row.get("candidates") or ()
+        if isinstance(candidate, Mapping)
+        and candidate.get("lake_ok")
+        and str(candidate.get("origin") or "") not in {"current", "reference", "verified_seed"}
+    )
+    verified_repairs = sum(
+        1
+        for round_row in history
+        for candidate in round_row.get("candidates") or ()
+        if isinstance(candidate, Mapping)
+        and candidate.get("lake_ok")
+        and str(candidate.get("origin") or "") == "verified_seed"
+        and str(candidate.get("kind") or "") == "teacher_refactor"
+        and repair_seeds
+    )
+    accepted = bool(result.get("ok") and best_body is not None and after < before)
+    best_path = None
+    if accepted:
+        from jevops.outer import write_best_body
+
+        best_path = write_best_body(out, name, after, best_body)
+        try:
+            import board_graph as lra_board
+
+            lra_board.credit_theorem(memory, name, theorem_ok=True, tokens=after)
+        except Exception:
+            pass
+    repair = None
+    # A generic newly generated design is not evidence that the blacklisted
+    # stem itself was repaired.  Only the exact fresh teacher/refactor seed
+    # can reopen a repair target; otherwise the negative result remains active.
+    can_reopen_repair = bool(
+        repair_stem
+        and (
+            (str(directive.get("action") or "") == "repair_tactic" and verified_repairs)
+            or (
+                str(directive.get("action") or "") != "repair_tactic"
+                and verified_designs
+            )
+        )
+    )
+    if can_reopen_repair:
+        repair = lra_bind.repair_blacklist(
+            memory,
+            name=name,
+            stem=repair_stem,
+            receipt={
+                "verified_designs": verified_designs,
+                "verified_repairs": verified_repairs,
+                "best_tokens": after,
+            },
+        )
+    receipt = {
+        "ok": bool(result.get("ok")),
+        "action": str(directive.get("action") or "mint_tactic"),
+        "accepted": accepted,
+        "name": name,
+        "strategy": str(directive.get("strategy") or ""),
+        "family": str(directive.get("family") or ""),
+        "repair_stem": repair_stem,
+        "hypothesis": str(directive.get("hypothesis") or ""),
+        "constraints": str(directive.get("constraints") or ""),
+        "evaluation": str(directive.get("evaluation") or ""),
+        "before_tokens": before,
+        "after_tokens": after,
+        "verified_designs": verified_designs,
+        "verified_repairs": verified_repairs,
+        "repair_seed_count": len(repair_seeds),
+        "repair_seed_tokens": [lra_loop.token_count(seed) for seed in repair_seeds],
+        "historical_seed_count": len(historical_seeds),
+        "historical_seed_claims": [
+            {
+                "path": seed.get("path"),
+                "commit": seed.get("commit"),
+                "claimed_tokens": seed.get("claimed_tokens"),
+                "body_digest": seed.get("body_digest"),
+            }
+            for seed in historical_seeds
+        ],
+        "candidate_count": candidate_count,
+        "lake_verified_count": lake_verified_count,
+        "router_rounds": [
+            {
+                "strategies": list((round_row.get("router") or {}).get("strategies") or []),
+                "focus": (round_row.get("router") or {}).get("focus"),
+                "route_attestation": (round_row.get("router") or {}).get("route_attestation"),
+            }
+            for round_row in history
+        ],
+        "best_body_tokens": result.get("best_body_tokens"),
+        "source_body_tokens": result.get("source_body_tokens"),
+        "model_body_tokens_after": result.get("model_body_tokens_after"),
+        "model_loss_after": result.get("model_loss_after"),
+        "reward_hacking_checks": {
+            "statement_prefix_bound": bool(
+                (result.get("benchmark") or {}).get("statement_prefix_bound")
+            ),
+            "official_scores_null": (result.get("benchmark") or {}).get("arena_score") is None
+            and (result.get("benchmark") or {}).get("official_score") is None,
+            "model_loss_separate": all(
+                "candidate_target_loss" in (round_row.get("training") or {})
+                and "loss" in (round_row.get("training") or {})
+                for round_row in history
+                if (round_row.get("training") or {}).get("trained")
+            ),
+            "hypothesis_assessed": (
+                str(directive.get("action") or "") != "hypothesis_refactor"
+                or bool(result)
+            ),
+        },
+        "best_path": str(best_path) if best_path else None,
+        "repair": repair,
+        "error": result.get("error"),
+        "error_detail": result.get("error_detail"),
+    }
+    nca = memory.setdefault("nca", {})
+    nca["last_tactic_design"] = dict(receipt)
+    history_store = nca.setdefault("tactic_design_history", [])
+    if not isinstance(history_store, list):
+        history_store = []
+        nca["tactic_design_history"] = history_store
+    history_store.append(dict(receipt))
+    nca["tactic_design_history"] = history_store[-12:]
+    nca["active_tactic_design"] = None
+    if str(directive.get("action") or "") == "hypothesis_refactor":
+        nca["last_hypothesis_refactor"] = dict(receipt)
+        hypothesis_history = nca.setdefault("hypothesis_history", [])
+        if not isinstance(hypothesis_history, list):
+            hypothesis_history = []
+            nca["hypothesis_history"] = hypothesis_history
+        hypothesis_history.append(dict(receipt))
+        nca["hypothesis_history"] = hypothesis_history[-12:]
+        nca["active_hypothesis_refactor"] = None
+        hypothesis = str(directive.get("hypothesis") or "")
+        hypothesis_queue = nca.get("hypothesis_queue")
+        if not isinstance(hypothesis_queue, list):
+            hypothesis_queue = []
+        nca["hypothesis_queue"] = [
+            row
+            for row in hypothesis_queue
+            if not (
+                isinstance(row, Mapping)
+                and str(row.get("name") or "") == name
+                and str(row.get("hypothesis") or "") == hypothesis
+            )
+        ]
+    queue = nca.get("tactic_design_queue")
+    if not isinstance(queue, list):
+        queue = []
+    nca["tactic_design_queue"] = [
+        row
+        for row in queue
+        if not (
+            isinstance(row, Mapping)
+            and str(row.get("name") or "") == name
+            and str(row.get("strategy") or "") == str(directive.get("strategy") or "")
+        )
+    ]
+    return receipt
+
+
 def run_live(args: argparse.Namespace) -> dict[str, Any]:
     """AutoResearch entry + lake on sampled canaries. Writes evidence; returns payload."""
 
@@ -892,10 +1244,67 @@ def run_live(args: argparse.Namespace) -> dict[str, Any]:
         sampled = sample_records(records, k=max(1, int(args.k)), seed=int(args.seed))
     if args.include_inits:
         sampled = ensure_named(sampled, records, name="Core.InitsUpdatesComm", k=max(1, int(args.k)))
-    memory = lra_bind.load_memory()
+    supplied_memory = getattr(args, "memory", None)
+    memory = supplied_memory if isinstance(supplied_memory, dict) else lra_bind.load_memory()
+    # A live process opts into fresh compiler probes after fold changes.  Unit
+    # fixtures and imported historical memories without this marker continue
+    # to exercise the conservative stale-prior filtering path.
+    memory.setdefault("nca", {})["portable_probe_revision"] = getattr(
+        lra_port, "PORTABLE_PROBE_REVISION", ""
+    )
+    seed_history = bool(getattr(args, "seed_history", True))
+    historical_catalog: dict[str, list[dict[str, Any]]] = {}
+    if seed_history:
+        try:
+            from historical_seeds import catalog_manifest, load_historical_catalog
+
+            historical_catalog = load_historical_catalog(
+                records,
+                token_fn=lra_loop.token_count,
+            )
+            nca_memory = memory.setdefault("nca", {})
+            nca_memory["historical_seed_candidates"] = historical_catalog
+            nca_memory["historical_seed_manifest"] = catalog_manifest(historical_catalog)
+            nca_memory["historical_seed_commit"] = next(
+                (
+                    str(row.get("commit") or "")
+                    for rows_for_name in historical_catalog.values()
+                    for row in rows_for_name
+                    if row.get("commit")
+                ),
+                "",
+            )
+        except Exception as exc:
+            memory.setdefault("nca", {})["historical_seed_error"] = type(exc).__name__
     from jevops.walk import reset_pass_flags
+    import typesafe_inner as lra_inner
 
     reset_pass_flags(memory)
+    directive = _active_tactic_design(memory)
+    if directive:
+        target = str(directive.get("name") or "")
+        target_record = next((item for item in records if str(item.get("name") or "") == target), None)
+        if target_record is not None:
+            sampled = [target_record] + [item for item in sampled if item is not target_record]
+        else:
+            nca = memory.setdefault("nca", {})
+            nca["active_tactic_design"] = None
+            nca["active_hypothesis_refactor"] = None
+    design_receipt: Optional[dict[str, Any]] = None
+    if directive and target_record is not None:
+        target_body = lra_inner.starting_tactics(
+            target_record,
+            out=args.out,
+            from_best=bool(getattr(args, "from_best", False)),
+        )
+        design_receipt = _run_tactic_design(
+            target_record,
+            body=target_body,
+            directive=directive,
+            memory=memory,
+            out=args.out,
+            timeout=float(getattr(args, "timeout", 180.0) or 180.0),
+        )
     lra_bind.save_memory(memory)
     sampled = rank_live_records(
         sampled,
@@ -943,7 +1352,6 @@ def run_live(args: argparse.Namespace) -> dict[str, Any]:
         )
         extra_139["cut"] = "cascade-best-139"
 
-    import typesafe_inner as lra_inner
     from jevops.walk import run_sampled
 
     canaries, lake_rows = run_sampled(
@@ -991,6 +1399,34 @@ def run_live(args: argparse.Namespace) -> dict[str, Any]:
         nca_status=nca_status,
         ledger=ledger,
     )
+    inner_analysis = [
+        {
+            "name": (row.get("analysis") or {}).get("name"),
+            "tokens": (row.get("analysis") or {}).get("n_tokens"),
+            "families": [item.get("family") for item in (row.get("analysis") or {}).get("families") or ()],
+            "n_mca_holes": (row.get("analysis") or {}).get("n_mca_holes"),
+            "n_drafts": row.get("n_drafts"),
+            "n_steps": row.get("n_steps"),
+            "lake_rows": len(row.get("lake") or ()),
+        }
+        for row in canaries
+    ]
+    memory.setdefault("nca", {})["inner_analysis"] = inner_analysis[:12]
+    if design_receipt is not None:
+        if str(design_receipt.get("action") or "") == "hypothesis_refactor":
+            payload["hypothesis_refactor"] = design_receipt
+        else:
+            payload["tactic_design"] = design_receipt
+    payload["inner_analysis_summary"] = inner_analysis[:12]
+    payload["historical_fixture_comparison"] = lra_sk_board.historical_fixture_comparison(
+        lra_sk_board.keep_best_board(args.out)
+    )
+    payload["historical_seed_manifest"] = (
+        memory.get("nca", {}).get("historical_seed_manifest") or {}
+    )
+    payload["historical_seed_enabled"] = seed_history
+    payload["historical_seeded_theorems"] = sorted(historical_catalog)
+    lra_bind.save_memory(memory)
     write_json_pair(args.out, payload, prefix="random-canary", latest="random-canary-latest.json")
     return payload
 

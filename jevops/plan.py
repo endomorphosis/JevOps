@@ -48,11 +48,15 @@ def seed_plan(memory: dict[str, Any], *, board: Optional[Mapping[str, Any]] = No
     loader = hooks.get("load_board") or hooks.try_import("board_graph", "load_lra_board")
     data = dict(board or (loader() if loader else {}))
     bg = hooks.try_import("board_graph")
+    # An explicitly supplied board is a test/caller boundary and must win over
+    # the process-wide LRA hook.  Otherwise a previously installed hook can
+    # silently replace an injected root (for example G-TEST with LRA-G000),
+    # making plan seeding order-dependent.
     root = str(
-        hooks.call("root_goal", default=None)
-        or getattr(bg, "ROOT_GOAL", None)
-        or data.get("root_goal")
+        data.get("root_goal")
         or ((data.get("goals") or [{}])[0].get("id") if data.get("goals") else None)
+        or hooks.call("root_goal", default=None)
+        or getattr(bg, "ROOT_GOAL", None)
         or "G000"
     )
     plan["goals"] = [

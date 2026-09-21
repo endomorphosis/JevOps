@@ -20,11 +20,44 @@ ACTIONS = (
     "run",
     "nest_inner",
     "mint",
+    "mint_tactic",
+    "repair_tactic",
+    "hypothesis_refactor",
     "skip_stem",
     "install_fold",
     "update_code",
     "patch",
     "stop",
+)
+
+# These are declarative design requests. They are intentionally kept here,
+# beside the outer action parser, so a model can choose a bounded tactic
+# search without being allowed to smuggle arbitrary code into the loop.
+TACTIC_DESIGN_STRATEGIES = (
+    "closed_tree",
+    "guided_mca",
+    "span_preserving",
+    "closed_edits",
+    "hammer_variants",
+    "drop_unused_haves",
+    "drop_rename_i",
+    "drop_have_after_induction",
+    "collapse_simp_at",
+    "drop_redundant_simp_at",
+    "collapse_rw_to_simp",
+    "join_consecutive_exacts",
+    "join_consecutive_applies",
+    "drop_last_simp_all",
+    "drop_bare_simp_all",
+    "try_simp_all",
+    "pca_prefix",
+    "keep_calc_only",
+    "shortcut_closers",
+    "goal_directed",
+    "hammer_sweep",
+    "compose_verified",
+    "ir_crossover",
+    "pca_mca_cross",
 )
 
 
@@ -272,7 +305,22 @@ def parse_action(text: str, *, actions: tuple[str, ...] = ACTIONS) -> dict[str, 
     if action not in actions:
         return {"action": "run", "reason": "unknown_action"}
     out = {"action": action, "reason": str(raw.get("reason") or "router")}
-    for key in ("stem", "name", "old", "new", "family", "path", "file", "diff"):
+    for key in (
+        "stem",
+        "name",
+        "old",
+        "new",
+        "family",
+        "strategy",
+        "target",
+        "hypothesis",
+        "constraints",
+        "evaluation",
+        "focus",
+        "path",
+        "file",
+        "diff",
+    ):
         if key in raw:
             out[key] = str(raw.get(key) or "")
     if "keep" in raw and isinstance(raw["keep"], list):
@@ -302,6 +350,7 @@ def deterministic_route(
     gaps: list[dict[str, Any]],
     last_lake: list[dict[str, Any]],
     stalled: bool,
+    memory: Optional[Mapping[str, Any]] = None,
 ) -> dict[str, Any]:
     """Closed-vocab next action from gaps + last oracle rows (no grok)."""
 
@@ -319,6 +368,78 @@ def deterministic_route(
             "name": str(failed[0].get("name") or ""),
             "reason": "lake_failed_port",
         }
+    # A blacklist is a negative observation, not a permanent ban.  Once a
+    # theorem has failed a portable fold, reserve one declarative repair pass
+    # before spending another outer turn on the same generic portfolio.  The
+    # inner loop supplies the concrete body and Lake is still the only gate.
+    prior_designs = list(((memory or {}).get("nca") or {}).get("tactic_design_history") or [])
+    attempted_repairs = {
+        (
+            str(row.get("name") or ""),
+            str(row.get("repair_stem") or "").removeprefix("port_"),
+        )
+        for row in prior_designs
+        if isinstance(row, Mapping)
+        and str(row.get("action") or "") == "repair_tactic"
+        and not int(row.get("verified_repairs") or 0)
+    }
+    for gap in gaps:
+        name = str(gap.get("name") or "")
+        if not name:
+            continue
+        for raw_stem in list(gap.get("failed_stems") or ()):
+            stem = str(raw_stem or "").strip()
+            if stem.startswith("port_"):
+                stem = stem[len("port_") :]
+            if not stem or (name, stem) in attempted_repairs:
+                continue
+            top_help = list(gap.get("top_help") or [])
+            residual = str(top_help[0].get("residual") or "") if top_help else ""
+            strategy = {
+                "use_then_exact": "join_consecutive_exacts",
+                "repeated_simp_list": "collapse_simp_at",
+                "intro_then_simp_all": "closed_edits",
+                "apply_seq_assumption": "join_consecutive_applies",
+            }.get(residual, "closed_edits")
+            return {
+                "action": "repair_tactic",
+                "name": name,
+                "stem": stem,
+                "family": residual or "search_space",
+                "strategy": strategy,
+                "focus": f"revalidate the blacklisted portable stem {stem}",
+                "reason": "revalidate_blacklisted_portable_stem",
+            }
+    # Once the normal tactic/fold portfolio has stalled, use the next outer
+    # turn for an explicit, testable hypothesis rather than silently repeating
+    # the same search.  The inner loop still owns candidate construction and
+    # Lake verification; this branch only supplies a bounded research prompt.
+    if stalled:
+        target = next(
+            (str(gap.get("name") or "") for gap in gaps if str(gap.get("name") or "")),
+            "",
+        )
+        gap = next(
+            (gap for gap in gaps if str(gap.get("name") or "") == target),
+            {},
+        )
+        top_help = list(gap.get("top_help") or [])
+        residual = str(top_help[0].get("residual") or "") if top_help else ""
+        if target:
+            return {
+                "action": "hypothesis_refactor",
+                "name": target,
+                "family": residual or "search_space",
+                "strategy": "guided_mca",
+                "hypothesis": (
+                    "A structure-preserving reduction around "
+                    f"{residual or 'the dominant residual'} may shorten the proof without changing its theorem shape."
+                ),
+                "constraints": "preserve the statement, binders, branch coverage, and no-sorry policy",
+                "evaluation": "Lake theorem/module success, no sorry, then body-token reduction",
+                "reason": "stalled_outer_hypothesis_probe",
+            }
+        return {"action": "stop", "reason": "no_token_cut"}
     for gap in gaps:
         mints = list((gap.get("proposed") or {}).get("mint") or gap.get("keep_structure") or [])
         if mints:
@@ -327,6 +448,20 @@ def deterministic_route(
                 "stem": str(mints[0]),
                 "name": str(gap.get("name") or ""),
                 "reason": "autoresearch_mint",
+            }
+    # The fold catalog is exhausted for this gap. Schedule a theorem-specific
+    # design pass; the inner compiler gate creates the actual tactic body.
+    for gap in gaps:
+        name = str(gap.get("name") or "")
+        if name:
+            top_help = list(gap.get("top_help") or [])
+            residual = str(top_help[0].get("residual") or "") if top_help else ""
+            return {
+                "action": "mint_tactic",
+                "name": name,
+                "family": residual,
+                "strategy": "closed_edits",
+                "reason": "autoresearch_design_pass",
             }
     if last_lake and all(str(row.get("skipped") or "") == "nca_budget" for row in last_lake):
         return {"action": "stop", "reason": "nca_budget"}
@@ -354,7 +489,12 @@ def route_next(
         return {"action": "stop", "reason": "nca_budget", "router": "nca"}
     if nca.get("halt"):
         return {"action": "stop", "reason": "nca_halt", "router": "nca"}
-    fallback = deterministic_route(gaps=gaps, last_lake=last_lake, stalled=stalled)
+    fallback = deterministic_route(
+        gaps=gaps,
+        last_lake=last_lake,
+        stalled=stalled,
+        memory=memory,
+    )
     if not llm or generate_fn is None:
         fallback["router"] = "deterministic"
         return fallback
@@ -369,6 +509,87 @@ def route_next(
     action = parse_action(str(text))
     action["router"] = "llm_router"
     action["raw_head"] = head_chars(text, 240)
+    if fallback.get("action") == "skip_stem" and action.get("action") not in {"skip_stem", "stop"}:
+        # A fresh Lake failure is an immediate quarantine signal.  Do not let
+        # the model spend the next turn repeating the same rejected draft.
+        original = dict(action)
+        action = dict(fallback)
+        action.update(
+            {
+                "source_action": str(original.get("action") or "run"),
+                "router": "llm_router",
+                "raw_head": original.get("raw_head") or head_chars(text, 240),
+                "reason": "lake_failure_quarantine_prioritized",
+            }
+        )
+    elif (
+        fallback.get("action") == "repair_tactic"
+        and action.get("action") not in {"repair_tactic", "stop"}
+    ):
+        # A model may prefer another generic mint after seeing a blacklist.
+        # That is useful only after the known negative stem has had a fresh
+        # compiler-backed repair attempt.  Promote the deterministic repair
+        # request while retaining the model's rationale as the diagnostic
+        # focus; the inner loop still decides whether any replacement works.
+        original = dict(action)
+        action = dict(fallback)
+        action.update(
+            {
+                "source_action": str(original.get("action") or "run"),
+                "router": "llm_router",
+                "raw_head": original.get("raw_head") or head_chars(text, 240),
+                "focus": str(
+                    original.get("focus")
+                    or fallback.get("focus")
+                    or "repair and recompile the known failed portable stem"
+                ),
+                "reason": "blacklist_repair_prioritized",
+            }
+        )
+    if stalled and action.get("action") not in {"stop", "hypothesis_refactor"}:
+        # A saturated model occasionally returns another mint/run action even
+        # after being told to form a hypothesis. Promote that rationale into a
+        # closed hypothesis request so the reserved outer turn cannot silently
+        # repeat an exhausted tactic portfolio. The inner loop remains the
+        # only component allowed to construct and verify Lean candidates.
+        fallback_hypothesis = deterministic_route(
+            gaps=gaps,
+            last_lake=last_lake,
+            stalled=True,
+            memory=memory,
+        )
+        if fallback_hypothesis.get("action") == "hypothesis_refactor":
+            original = dict(action)
+            strategy = str(action.get("strategy") or fallback_hypothesis.get("strategy") or "guided_mca")
+            if strategy not in TACTIC_DESIGN_STRATEGIES:
+                strategy = str(fallback_hypothesis.get("strategy") or "guided_mca")
+            action = dict(fallback_hypothesis)
+            action.update(
+                {
+                    "action": "hypothesis_refactor",
+                    "name": str(original.get("name") or fallback_hypothesis.get("name") or ""),
+                    "family": str(original.get("family") or fallback_hypothesis.get("family") or ""),
+                    "strategy": strategy,
+                    "hypothesis": str(
+                        original.get("hypothesis")
+                        or original.get("reason")
+                        or fallback_hypothesis.get("hypothesis")
+                        or "Test a new structure-preserving refactoring hypothesis."
+                    ),
+                    "constraints": str(
+                        original.get("constraints")
+                        or "preserve the theorem statement, binders, branches, and no-sorry policy"
+                    ),
+                    "evaluation": str(
+                        original.get("evaluation")
+                        or "Lake theorem/module success, no sorry, then body-token reduction"
+                    ),
+                    "source_action": str(original.get("action") or "run"),
+                    "router": "llm_router",
+                    "raw_head": original.get("raw_head") or head_chars(text, 240),
+                    "reason": "stalled_action_promoted_to_hypothesis",
+                }
+            )
     if isinstance(memory, dict):
         try:
             charger = charge_fn
@@ -607,6 +828,7 @@ def compact_gaps(gaps: Sequence[Mapping[str, Any]], *, help_n: int = 2) -> list[
             "name": item.get("name"),
             "proposed": item.get("proposed"),
             "keep_structure": item.get("keep_structure"),
+            "failed_stems": list(item.get("failed_stems") or [])[:8],
             "top_help": (item.get("top_help") or [])[: int(help_n)],
         }
         for item in gaps
@@ -1221,6 +1443,7 @@ def should_stop_outer(
     stalled_limit: int = 2,
     hard_stopped: bool = False,
     halt: Optional[Mapping[str, Any]] = None,
+    hypothesis_attempted: bool = False,
 ) -> str:
     """Closed stop reason, or empty to keep looping."""
 
@@ -1228,13 +1451,18 @@ def should_stop_outer(
         return str(action.get("reason") or "stop")
     if hard_stopped:
         return "ledger_hard_stop"
-    if int(stalled) >= int(stalled_limit):
-        return "no_token_cut"
     if halt:
         if halt.get("budget_dead"):
             return "nca_budget"
         if halt.get("halt"):
             return "nca_halt"
+    if int(stalled) >= int(stalled_limit):
+        # Reserve one additional outer turn for a hypothesis probe.  The
+        # caller marks it attempted when the closed hypothesis action is
+        # applied; after that probe, an unchanged board is terminal.
+        if not hypothesis_attempted:
+            return ""
+        return "no_token_cut"
     return ""
 
 
@@ -1329,6 +1557,7 @@ def run_steps(
     history: list[dict[str, Any]] = []
     board, best_total = board_fn()
     stalled = 0
+    hypothesis_attempted = False
     stop_reason = ""
     last_lake: list[dict[str, Any]] = []
     gaps = list(gaps_fn() or [])
@@ -1344,6 +1573,11 @@ def run_steps(
             or {}
         )
         applied = dict(apply_fn(memory, action) or {})
+        if (
+            str(action.get("action") or "") == "hypothesis_refactor"
+            and bool(applied.get("ok", True))
+        ):
+            hypothesis_attempted = True
         if persist_fn is not None:
             persist_fn(memory)
         payload: dict[str, Any] = {}
@@ -1356,7 +1590,16 @@ def run_steps(
             last_lake = list(payload.get("lake") or [])
             traces = [row.get("trace") for row in payload.get("canaries") or [] if row.get("trace")]
         board, total = board_fn()
-        best_total, stalled, improved = stall_after(total, best_total, stalled)
+        if int(best_total) <= 0 and int(total) > 0:
+            # A fresh artifact directory has no persisted board yet.  Treat
+            # the first observed verified board as the baseline; otherwise a
+            # legitimate shortening can never satisfy ``total < best_total``
+            # because the sentinel is zero.
+            best_total = int(total)
+            stalled = 0
+            improved = False
+        else:
+            best_total, stalled, improved = stall_after(total, best_total, stalled)
         row = history_row(
             step=step,
             llm=llm,
@@ -1385,9 +1628,12 @@ def run_steps(
             stalled_limit=stalled_limit,
             hard_stopped=bool(hard_stop_fn() if hard_stop_fn is not None else False),
             halt=halt,
+            hypothesis_attempted=hypothesis_attempted,
         )
         if stop_reason:
             break
+    if not stop_reason and stalled >= int(stalled_limit):
+        stop_reason = "no_token_cut"
     return {
         "history": history,
         "stop_reason": stop_reason,
@@ -1438,6 +1684,70 @@ def apply_action(
             }
         )
         return {"ok": True, "applied": "mint", "stem": stem}
+    if kind in {"mint_tactic", "repair_tactic", "hypothesis_refactor"}:
+        name = str(action.get("name") or action.get("target") or "").strip()[:160]
+        family = str(action.get("family") or "").strip()[:80]
+        strategy = str(action.get("strategy") or "closed_edits").strip().lower().replace("-", "_")
+        if not name:
+            return {"ok": False, "reason": "no_design_target"}
+        if strategy not in TACTIC_DESIGN_STRATEGIES:
+            return {"ok": False, "reason": "unknown_design_strategy", "strategy": strategy}
+        directive = {
+            "action": kind,
+            "name": name,
+            "family": family,
+            "strategy": strategy,
+            "repair_stem": str(action.get("stem") or "").strip()[:80],
+            "focus": str(action.get("focus") or action.get("reason") or "").strip()[:240],
+            "source": "outer_llm",
+            "status": "pending",
+        }
+        if kind == "hypothesis_refactor":
+            hypothesis = str(action.get("hypothesis") or action.get("focus") or "").strip()[:600]
+            if not hypothesis:
+                return {"ok": False, "reason": "no_refactor_hypothesis"}
+            directive.update(
+                {
+                    "hypothesis": hypothesis,
+                    "constraints": str(action.get("constraints") or "").strip()[:400],
+                    "evaluation": str(action.get("evaluation") or "").strip()[:400],
+                }
+            )
+        nca = memory.setdefault("nca", {})
+        queue = nca.get("tactic_design_queue")
+        if not isinstance(queue, list):
+            queue = []
+            nca["tactic_design_queue"] = queue
+        queue[:] = [
+            row
+            for row in queue
+            if not (
+                isinstance(row, Mapping)
+                and str(row.get("name") or "") == name
+                and str(row.get("strategy") or "") == strategy
+            )
+        ][-7:]
+        queue.append(directive)
+        nca["active_tactic_design"] = dict(directive)
+        if kind == "hypothesis_refactor":
+            hypothesis_queue = nca.get("hypothesis_queue")
+            if not isinstance(hypothesis_queue, list):
+                hypothesis_queue = []
+                nca["hypothesis_queue"] = hypothesis_queue
+            hypothesis_queue[:] = [
+                row
+                for row in hypothesis_queue
+                if not (
+                    isinstance(row, Mapping)
+                    and str(row.get("name") or "") == name
+                    and str(row.get("hypothesis") or "") == hypothesis
+                )
+            ][-7:]
+            hypothesis_queue.append(dict(directive))
+            nca["active_hypothesis_refactor"] = dict(directive)
+        else:
+            nca["active_hypothesis_refactor"] = None
+        return {"ok": True, "applied": kind, "directive": dict(directive)}
     if kind == "install_fold":
         install = hooks.resolve("install_fold", "binder_use", "install_memory_skill")
         if install is None:
@@ -1483,11 +1793,63 @@ def nca_status(memory: Optional[Mapping[str, Any]] = None) -> dict[str, Any]:
         plan = {}
     kern = dict((mem.get("nca") or {}).get("kernel") or {})
     stats = dict(kern.get("stats") or {})
+    nca_mem = dict(mem.get("nca") or {})
+    active_design = nca_mem.get("active_tactic_design")
+    if isinstance(active_design, Mapping):
+        active_design = {
+            key: active_design.get(key)
+            for key in ("action", "name", "family", "strategy", "repair_stem", "status")
+            if active_design.get(key)
+        }
+    else:
+        active_design = None
     return {
         "halt": bool(halt.get("halt")),
         "budget_dead": bool(halt.get("budget_dead")),
         "budget_energy": halt.get("budget_energy", budget.get("energy")),
         "n_hot_tasks": halt.get("n_hot_tasks"),
+        "active_tactic_design": active_design,
+        "tactic_design_queue_len": len(nca_mem.get("tactic_design_queue") or []),
+        "active_hypothesis_refactor": nca_mem.get("active_hypothesis_refactor")
+        if isinstance(nca_mem.get("active_hypothesis_refactor"), Mapping)
+        else None,
+        "hypothesis_queue_len": len(nca_mem.get("hypothesis_queue") or [])
+        if isinstance(nca_mem.get("hypothesis_queue"), list)
+        else 0,
+        "hypothesis_history": [
+            {
+                key: row.get(key)
+                for key in (
+                    "name",
+                    "hypothesis",
+                    "strategy",
+                    "accepted",
+                    "candidate_count",
+                    "lake_verified_count",
+                )
+                if row.get(key) is not None
+            }
+            for row in list(nca_mem.get("hypothesis_history") or [])[-4:]
+            if isinstance(row, Mapping)
+        ],
+        "inner_analysis": list(nca_mem.get("inner_analysis") or [])[:8],
+        "tactic_design_history": [
+            {
+                key: row.get(key)
+                for key in (
+                    "name",
+                    "strategy",
+                    "family",
+                    "repair_stem",
+                    "candidate_count",
+                    "lake_verified_count",
+                    "accepted",
+                )
+                if row.get(key) is not None
+            }
+            for row in list(nca_mem.get("tactic_design_history") or [])[-4:]
+            if isinstance(row, Mapping)
+        ],
         "board_window": head_seq(window, 6),
         "plan": plan,
         "kernel": {
@@ -2361,6 +2723,19 @@ def usage_tokens(usage: Mapping[str, Any], *, fallback_in: int = 0) -> tuple[int
     inn = int(usage.get("input_tokens") or usage.get("prompt_tokens") or fallback_in)
     out = int(usage.get("output_tokens") or usage.get("completion_tokens") or 0)
     return inn, out
+
+
+def usage_or_estimate(
+    usage: Mapping[str, Any],
+    *,
+    fallback_in: int,
+    estimate_fn: Callable[[Any], int],
+    text: Any = "",
+) -> tuple[int, int]:
+    """usage_tokens, with estimate_fn(text) when output tokens are missing."""
+
+    inn, out = usage_tokens(usage, fallback_in=int(fallback_in))
+    return inn, out or int(estimate_fn(text))
 
 
 def chat_choice_texts(payload: Mapping[str, Any]) -> tuple[str, list[str], Mapping[str, Any]]:
@@ -4780,6 +5155,19 @@ def coalesce_pair(
     return (primary if primary is not None else loaded_a), (secondary if secondary is not None else loaded_b)
 
 
+def fill_none(
+    primary: Any,
+    secondary: Any,
+    load_fn: Callable[[], tuple[Any, Any]],
+) -> tuple[Any, Any]:
+    """If primary is None, load a pair and fill missing members. Secondary may stay unset."""
+
+    if primary is not None:
+        return primary, secondary
+    loaded_a, loaded_b = load_fn()
+    return loaded_a, secondary if secondary is not None else loaded_b
+
+
 def apply_last(items: Sequence[Any], fn: Callable[[Any], Any]) -> Any:
     rows = list(items or ())
     if not rows:
@@ -5143,6 +5531,187 @@ def keyed_map(
     return out
 
 
+def take_keys(mapping: Mapping[str, Any], *keys: str) -> tuple[Any, ...]:
+    """Unpack mapping[key] for each key. Missing keys raise."""
+
+    return tuple(mapping[key] for key in keys)
+
+
+def either(cond: Any, yes_fn: Callable[[], Any], no_fn: Callable[[], Any]) -> Any:
+    """Call yes_fn when cond, else no_fn. Both stay lazy."""
+
+    return yes_fn() if cond else no_fn()
+
+
+def replace_if(cond: Any, replacement: Any, current: Any) -> Any:
+    """Return replacement when cond, else current."""
+
+    return replacement if cond else current
+
+
+def require_authorized(
+    ledger: Any,
+    kind: str,
+    estimated_in: int,
+    estimated_out: int,
+    *,
+    fixture: bool = False,
+    model: str = "",
+    error_cls: Any = RuntimeError,
+    fmt: str = "{reason}",
+) -> tuple[Any, str, Any]:
+    """Authorize spend or record a skip and raise. USD stays on the ledger."""
+
+    allowed, reason, cost = ledger.authorize(kind, int(estimated_in), int(estimated_out))
+    if allowed:
+        return allowed, reason, cost
+    ledger.record(
+        kind,
+        input_tokens=int(estimated_in),
+        output_tokens=int(estimated_out),
+        fixture=fixture,
+        model=model,
+    )
+    raise error_cls(fmt.format(reason=reason)) from None
+
+
+def pipe(value: Any, *fns: Callable[[Any], Any]) -> Any:
+    """Thread value through fns. Implementations stay injected."""
+
+    for fn in fns:
+        value = fn(value)
+    return value
+
+
+def raise_if(cond: Any, error_cls: Any, msg: str) -> None:
+    """Raise error_cls(msg) when cond."""
+
+    if cond:
+        raise error_cls(msg)
+
+
+def require_recorded(
+    line: Any,
+    error_cls: Any,
+    fmt: str = "spend refused after call: {reason}",
+) -> Any:
+    """Raise when a usage line was skipped after the call."""
+
+    if getattr(line, "skipped", False):
+        raise error_cls(fmt.format(reason=getattr(line, "reason", "")))
+    return line
+
+
+def assign_if(
+    mapping: dict[str, Any],
+    key: str,
+    cond: Any,
+    value: Any,
+) -> dict[str, Any]:
+    """Set mapping[key] when cond. value may be a thunk."""
+
+    if cond:
+        mapping[str(key)] = value() if callable(value) else value
+    return mapping
+
+
+def ranked_pairs(
+    mapping: Optional[Mapping[str, Any]] = None,
+    *,
+    reverse: bool = True,
+) -> list[tuple[Any, Any]]:
+    """Sort mapping items by value."""
+
+    return sorted(dict(mapping or {}).items(), key=lambda item: item[1], reverse=bool(reverse))
+
+
+def kind_startswith(prefix: str, *, key: str = "kind") -> Callable[[Any], bool]:
+    """Predicate: str(item[key]).startswith(prefix)."""
+
+    def pred(item: Any) -> bool:
+        row = item if isinstance(item, Mapping) else {}
+        return str(row.get(key) or "").startswith(str(prefix))
+
+    return pred
+
+
+def attr_or(obj: Any, name: str, default: Any = None) -> Any:
+    """getattr(obj, name) unless obj is None."""
+
+    return default if obj is None else getattr(obj, name)
+
+
+def get_str(mapping: Optional[Mapping[str, Any]], key: str, default: str = "") -> str:
+    """str(mapping[key] or default). None mapping is default."""
+
+    return str((mapping or {}).get(key) or default)
+
+
+def beam_shape(
+    mode: str,
+    beam: int,
+    *,
+    greedy: str = "greedy",
+    sample_cap: int,
+) -> tuple[int, int]:
+    """(beam_n, n_samples). Greedy is width 1."""
+
+    width = 1 if str(mode) == str(greedy) else max(1, int(beam))
+    samples = 1 if width <= 1 else min(width, int(sample_cap))
+    return width, samples
+
+
+def ignore_each(*fns: Callable[[], Any], error_cls: Any = Exception) -> None:
+    """Swallow typed errors from each fn. Used for optional overlays."""
+
+    for fn in fns:
+        ignore_error(fn, error_cls)
+
+
+def extend_if(
+    dest: list[Any],
+    extra: Any,
+    *,
+    cond: Any,
+    key_fn: Any,
+) -> list[Any]:
+    """unique_extend when cond. extra may be a thunk."""
+
+    if not cond:
+        return dest
+    rows = extra() if callable(extra) else extra
+    return unique_extend(dest, rows, key_fn=key_fn)
+
+
+def record_usage_line(
+    obj: Any,
+    cls: Any,
+    *,
+    allowed: bool,
+    reason: str,
+    cost: Any,
+    usd_fn: Callable[[Any], Any],
+    bump_fn: Optional[Callable[[], Any]] = None,
+    refresh_fn: Optional[Callable[[], Any]] = None,
+    **line_kwargs: Any,
+) -> Any:
+    """Append a skip or recorded usage line. USD conversion stays injected."""
+
+    if not allowed:
+        line = usage_line(cls, usd=usd_fn(cost), skipped=True, reason=reason, **line_kwargs)
+        obj.lines.append(line)
+        obj.skipped = True
+        obj.reason = reason
+        return line
+    if bump_fn is not None:
+        bump_fn()
+    if refresh_fn is not None:
+        refresh_fn()
+    line = usage_line(cls, usd=usd_fn(cost), skipped=False, reason="recorded", **line_kwargs)
+    obj.lines.append(line)
+    return line
+
+
 def ignore_error(
     fn: Callable[[], Any],
     error_cls: Any = Exception,
@@ -5351,6 +5920,58 @@ def load_named_pack(
         miss=miss or f"unknown name: {name}",
     )
     return record, list(records), str(digest)
+
+
+def load_and_clone(
+    load_fn: Callable[..., Any],
+    name: str,
+    state_root: Any,
+    *,
+    clone_fn: Callable[..., Any],
+    relpath_fn: Callable[[Mapping[str, Any]], Any],
+    error_cls: Any = RuntimeError,
+    miss: str = "",
+    extra: Any = None,
+    read_fn: Optional[Callable[[Any], bytes]] = None,
+    url_key: str = "url",
+) -> tuple[Any, list[Any], str, Any, Path, bytes]:
+    """load_named_pack then clone_restore. Does not compile Lean."""
+
+    record, records, digest = load_named_pack(
+        load_fn, name, error_cls=error_cls, miss=miss, extra=extra
+    )
+    clone, dest, restore = clone_restore(
+        record,
+        state_root,
+        clone_fn=clone_fn,
+        relpath_fn=relpath_fn,
+        read_fn=read_fn,
+        url_key=url_key,
+    )
+    return record, records, digest, clone, dest, restore
+
+
+def tagged_mapping(tag: str, obj: Any, *, key: str = "call") -> dict[str, Any]:
+    """Prefix a mapping with a tag. Prefers as_dict()."""
+
+    payload = obj.as_dict() if hasattr(obj, "as_dict") else dict(obj)
+    return {str(key): tag, **payload}
+
+
+def closed_skip_extra(
+    record: Optional[Mapping[str, Any]] = None,
+    extra: Optional[Mapping[str, Any]] = None,
+    **fields: Any,
+) -> dict[str, Any]:
+    """Fail-closed skip extras. Catalog flags stay in fields."""
+
+    out: dict[str, Any] = {"contaminates_track2": False}
+    if record is not None:
+        out["source"] = record.get("source")
+    out.update(fields)
+    if extra:
+        out.update(dict(extra))
+    return out
 
 
 def named_shots(

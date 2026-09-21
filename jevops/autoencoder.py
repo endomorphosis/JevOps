@@ -57,6 +57,23 @@ LEAN_IR_OPS = (
     "rfl",
     "trivial",
     "constructor",
+    # Structural and proof-search operations emitted by the bounded router.
+    # They are still only proposals: decode/compile admission decides whether
+    # a particular argumented form is meaningful in the current theorem.
+    "rintro",
+    "rcases",
+    "subst",
+    "ext",
+    "funext",
+    "all_goals",
+    "any_goals",
+    "first",
+    "try",
+    "solve_by_elim",
+    "exact_mod_cast",
+    "field_simp",
+    "positivity",
+    "simp_rw",
     "omega",
     "linarith",
     "nlinarith",
@@ -149,6 +166,19 @@ def _safe_script_arg(value: Any, *, max_chars: int = 320) -> str:
     return text
 
 
+def _safe_script_sequence(value: Any, *, max_chars: int = 480) -> str:
+    """Validate a one-line semicolon tactic sequence as separate commands."""
+
+    text = " ".join(str(value or "").replace("\x00", " ").split())[:max_chars]
+    protected = text.replace("<;>", "__LRA_ALL__")
+    if ";" not in protected:
+        return ""
+    parts = [part.strip().replace("__LRA_ALL__", "<;>") for part in protected.split(";")]
+    if len(parts) < 2 or any(not part or not _safe_script_arg(part) for part in parts):
+        return ""
+    return "; ".join(parts)
+
+
 def _script_nodes(text: str) -> list[dict[str, Any]]:
     """Parse a bounded tactic tree representation from a proof body.
 
@@ -173,6 +203,17 @@ def _script_nodes(text: str) -> list[dict[str, Any]]:
             bullet, content = "·", content[1:].strip()
         elif content.startswith("|") and (len(content) == 1 or content[1].isspace()):
             bullet, content = "|", content[1:].strip()
+        sequence = _safe_script_sequence(content)
+        if sequence:
+            nodes.append(
+                {
+                    "kind": "sequence",
+                    "indent": indent,
+                    "bullet": bullet,
+                    "text": sequence,
+                }
+            )
+            continue
         match = _SCRIPT_HEAD.fullmatch(content)
         kind = "tactic"
         if bullet == "|":
@@ -236,6 +277,15 @@ def _project_script(source_ir: Mapping[str, Any], ops: Sequence[tuple[str, Seque
         return None
     nodes = [dict(node) for node in raw_nodes if isinstance(node, Mapping)]
     wanted = [(str(op).lower(), tuple(str(arg) for arg in args)) for op, args in ops]
+    source_ops = [_op_item(item) for item in source_ir.get("ops") or ()]
+    source_ops = [(op, args) for op, args in source_ops if op]
+    if wanted == source_ops:
+        return nodes
+    if any(str(node.get("kind") or "") == "sequence" for node in nodes):
+        # Do not guess how a shortened sequence should distribute across
+        # semicolon control flow.  The flat fallback is intentionally subject
+        # to the verifier instead of silently changing proof structure.
+        return None
     available = _script_node_ops(nodes)
     if not wanted or len(wanted) > len(available):
         return None
@@ -500,6 +550,11 @@ def decode_lean_ir(ir: Mapping[str, Any]) -> str:
                 head = _safe_script_arg(raw_node.get("text") or "")
                 if not head:
                     continue
+            elif kind == "sequence":
+                head = _safe_script_sequence(raw_node.get("text") or "")
+                if not head:
+                    continue
+                saw_tactic = True
             else:
                 if not op or (raw_node.get("args") and not args):
                     continue
@@ -664,6 +719,70 @@ def _candidate_ir_variants(
     return variants[: max(1, int(limit))]
 
 
+def crossover_lean_ir(
+    left_ir: Mapping[str, Any],
+    right_ir: Mapping[str, Any],
+    *,
+    limit: int = 12,
+) -> list[dict[str, Any]]:
+    """Generate bounded order-preserving IR crossovers.
+
+    This is deliberately a proposal generator, not a semantic merger.  Each
+    output keeps the left theorem envelope and combines operation prefixes and
+    suffixes from two independently observed candidates.  The current Lean
+    compiler must admit the rendered result before it can affect ranking or
+    training.  Keeping this operation-level crossover separate from the
+    token-level model also makes high-score composition auditable.
+    """
+
+    cap = max(1, int(limit))
+    left_ops = [_op_item(item) for item in left_ir.get("ops") or ()]
+    right_ops = [_op_item(item) for item in right_ir.get("ops") or ()]
+    left_ops = [item for item in left_ops if item[0]] or [("trivial", ())]
+    right_ops = [item for item in right_ops if item[0]] or [("trivial", ())]
+    rows: list[dict[str, Any]] = []
+    seen: set[str] = set()
+
+    def add(ops: Sequence[tuple[str, Sequence[str]]]) -> None:
+        if len(rows) >= cap:
+            return
+        candidate = _ir_with_ops(
+            left_ir,
+            [
+                {"op": str(op), **({"args": list(args)} if args else {})}
+                for op, args in ops
+            ],
+        )
+        digest = str(candidate.get("ops_digest") or "")
+        if not digest or digest in seen:
+            return
+        seen.add(digest)
+        rows.append(candidate)
+
+    max_cut = min(len(left_ops), len(right_ops))
+    add([*left_ops, *right_ops])
+    add([*right_ops, *left_ops])
+    for cut in range(max_cut + 1):
+        add([*left_ops[:cut], *right_ops[cut:]])
+        if len(rows) >= cap:
+            break
+        add([*right_ops[:cut], *left_ops[cut:]])
+        if len(rows) >= cap:
+            break
+    # If the shorter sequence ended before the cap, probe its proper
+    # subsequences as well.  This gives the compiler a chance to validate a
+    # composition that is shorter than either teacher.
+    if len(rows) < cap:
+        for size in range(max(1, min(len(left_ops), len(right_ops)) - 1), 0, -1):
+            for start in range(0, min(len(left_ops), len(right_ops)) - size + 1):
+                add(left_ops[start : start + size])
+                if len(rows) >= cap:
+                    break
+            if len(rows) >= cap:
+                break
+    return rows
+
+
 def ir_diagnostics(left: Mapping[str, Any], right: Mapping[str, Any]) -> dict[str, int]:
     """IR-op CE and cosine. Diagnostic only — Jev is the loss."""
 
@@ -815,7 +934,11 @@ def roundtrip_once(
                 model = LeanIRAutoencoder.from_dict(training_state.get("training_state"))
                 model_step = model.step
                 if model_step > 0:
-                    packed = model.predict_ir(text, source_ir=packed, max_ops=max(1, int(max_tokens or model.config.max_ops)))
+                    packed = model.predict_ir(
+                        text,
+                        source_ir=packed,
+                        max_ops=(max(1, int(max_tokens)) if max_tokens is not None else None),
+                    )
                     z = [int(round(value * MILLE)) for value in model.predict_latent(text)]
         except Exception:
             # A malformed optional checkpoint must not break the portable
@@ -1174,23 +1297,55 @@ def teach_roundtrip(
 
             store = memory.setdefault("nca", {}).setdefault("autoencoder", {})
             model = LeanIRAutoencoder.from_dict(store.get("training_state"), config=AutoencoderConfig())
-            example = coerce_training_example({"text": source, "ir": base_ir, "problem": problem})
+            # A refactor is allowed to become a teacher only after the hard
+            # Lake boundary has accepted the exact rendered candidate.  This
+            # keeps a soft TypeSafe/fuzzy/NCA score, or an uncompiled shorter
+            # sequence, from becoming a reward-hacking training target.
+            verified_refactor = bool(
+                lake_ok is True and isinstance(winner.get("ir"), Mapping)
+            )
+            target_ir = dict(winner["ir"]) if verified_refactor else dict(base_ir)
+            example = coerce_training_example(
+                {
+                    "text": source,
+                    "source_ir": base_ir,
+                    "target_ir": target_ir,
+                    "problem": problem,
+                }
+            )
             prior_nca = nca_feedback_for_example(memory, example, candidate=winner)
             training_report = model.train_batch(
                 [example],
                 rewards={example.sample_id: float(winner.get("reward") or 0.0)},
                 nca_rewards={example.sample_id: prior_nca.reward} if prior_nca.active else None,
             )
+            # Keep the teacher candidate and the model prediction separate.
+            # Feeding ``winner["ir"]`` into this diagnostic would make
+            # cosine/exact-match look perfect by construction, even when the
+            # model has not learned the refactor yet.
+            model_prediction = model.predict_ir(source, source_ir=base_ir)
             training_report["loss"] = loss_for_example(
                 model,
                 example,
-                predicted_ir=winner.get("ir") if isinstance(winner.get("ir"), Mapping) else None,
+                predicted_ir=model_prediction,
                 verifier_reward=winner.get("verifier_reward"),
                 typesafe_reward=winner.get("typesafe_reward"),
                 fuzzy_prover_reward=winner.get("fuzzy_prover_reward"),
                 nca_memory=memory,
                 minimality_reward=winner.get("minimality_reward"),
             ).to_dict()
+            training_report["model_prediction_ops"] = len(_canonical_ops(model_prediction))
+            training_report["refactor_target"] = verified_refactor
+            training_report["source_ops"] = source_ops
+            training_report["target_ops"] = len(example.target_ops)
+            training_report["source_body_tokens"] = source_body_tokens
+            training_report["target_body_tokens"] = int(
+                winner.get("lake_body_tokens")
+                or winner.get("body_tokens")
+                or winner.get("lake_tokens")
+                or winner.get("n_tokens")
+                or source_body_tokens
+            ) if verified_refactor else source_body_tokens
             store["training_state"] = model.to_dict()
             winner["model_step"] = model.step
         except Exception as exc:
@@ -1432,6 +1587,8 @@ from .autoencoder_training import (  # noqa: E402  (intentional late import)
     advance_autoencoder_nca,
     nca_feedback_for_example,
     record_autoencoder_nca_feedback,
+    record_autoencoder_rule_feedback,
+    router_rule_id,
     score_candidate,
     split_training_examples,
     train_autoencoder,

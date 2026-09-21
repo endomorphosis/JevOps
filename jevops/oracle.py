@@ -92,7 +92,14 @@ def order_kinds(
 
 def noul_fire_all(ranked: Mapping[str, Any], by_kind: Mapping[str, Any]) -> bool:
     fired_skip = set(ranked.get("fired_leaves") or [])
-    unfired = [kind for kind in by_kind if kind not in fired_skip]
+    # A closed compiler probe must still receive one Lake verdict.  Noul is a
+    # soft routing prior; treating every probe as fired can make a stale
+    # residual prediction suppress the entire proof search.
+    unfired = [
+        kind
+        for kind, item in by_kind.items()
+        if kind not in fired_skip or bool(item.get("compiler_probe"))
+    ]
     return bool(ranked.get("fired") and not unfired)
 
 
@@ -244,7 +251,11 @@ def apply_round(
     )
     by_kind = {item["kind"]: item for item in drafts if "tactics" in item}
     fired_skip = set(ranked.get("fired_leaves") or [])
-    unfired = [kind for kind in by_kind if kind not in fired_skip]
+    unfired = [
+        kind
+        for kind, item in by_kind.items()
+        if kind not in fired_skip or bool(item.get("compiler_probe"))
+    ]
     if noul_fire_all(ranked, by_kind):
         lake.append(
             {
@@ -266,7 +277,7 @@ def apply_round(
     for kind in order:
         if kind in seen or kind not in by_kind:
             continue
-        if kind in fired_skip and unfired:
+        if kind in fired_skip and unfired and not bool(by_kind[kind].get("compiler_probe")):
             continue
         seen.add(str(kind))
         body = str(by_kind[kind]["tactics"])

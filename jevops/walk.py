@@ -1314,10 +1314,13 @@ def restrict_drafts(
         rows = [
             item
             for item in rows
-            if str(item.get("kind") or "") not in blocked
+            if bool(item.get("compiler_probe"))
+            or (
+                str(item.get("kind") or "") not in blocked
             and not any(
                 str(item.get("kind") or "").endswith(name) or name in str(item.get("kind") or "")
                 for name in (skip_port or ())
+            )
             )
         ]
     if allow_skills:
@@ -1325,7 +1328,8 @@ def restrict_drafts(
         rows = [
             item
             for item in rows
-            if str(item.get("kind") or "") in want
+            if bool(item.get("compiler_probe"))
+            or str(item.get("kind") or "") in want
             or str(item.get("kind") or "").replace("port_", "") in want
             or str(item.get("kind") or "").startswith("port_pipeline")
             or str(item.get("kind") or "") in verifier_backed
@@ -1831,3 +1835,19 @@ def bind_walk_defaults(
         if_none(tape, factory=tape_factory),
         if_none(stack, factory=stack_factory),
     )
+
+
+def recurse_walk(
+    fn: Callable[..., Any],
+    record: Any,
+    tactics: str,
+    base: Mapping[str, Any],
+    *,
+    node: str,
+    tape: Any,
+    stack: Any,
+    **extra: Any,
+) -> Any:
+    """Call a nested walker with shared child kwargs. Closures stay injected."""
+
+    return fn(record, tactics, **dict(base), node=node, tape=tape, stack=stack, **extra)

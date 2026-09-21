@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any, Mapping
 
 import _jevops_path  # noqa: F401
 from jevops import binders as _mod
@@ -29,3 +30,31 @@ def rehydrate_from_skill_analysis(memory: dict, *, path: Path | None = None) -> 
     """Rehydrate from the benchmark-local analysis fixture by default."""
 
     return _mod.rehydrate_from_skill_analysis(memory, path=path or SKILL_ANALYSIS_DEFAULT)
+
+
+def load_memory(path: Path | None = None) -> dict:
+    """Load mutable live memory from the configured artifact root.
+
+    ``jevops.binders.load_memory`` intentionally uses the generic
+    ``refactor-memory.json`` default.  The Arena adapter has a stricter
+    boundary: live runs must use ``MEMORY_DEFAULT`` while still rehydrating
+    from the checked-in skill-analysis fixture when that artifact is new.
+    """
+
+    from jevops.memory import load_memory as _load
+
+    target = Path(path) if path is not None else MEMORY_DEFAULT
+    return _load(
+        target,
+        rehydrate_path=None if path is not None else SKILL_ANALYSIS_DEFAULT,
+        patched_unban=_PATCHED_UNBAN,
+    )
+
+
+def save_memory(memory: Mapping[str, Any], path: Path | None = None) -> Path:
+    """Persist live memory under the configured artifact root."""
+
+    from jevops.memory import save_memory as _save
+
+    target = Path(path) if path is not None else MEMORY_DEFAULT
+    return _save(memory, target, patched_unban=_PATCHED_UNBAN)

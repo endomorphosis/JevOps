@@ -112,6 +112,11 @@ LEAN_TACTICS: tuple[str, ...] = (
     "apply",
     "refine",
     "constructor",
+    "rintro",
+    "rcases",
+    "subst",
+    "ext",
+    "funext",
     "assumption",
     "intro",
     "intros",
@@ -121,6 +126,15 @@ LEAN_TACTICS: tuple[str, ...] = (
     "exists",
     "rfl",
     "trivial",
+    "all_goals",
+    "any_goals",
+    "first",
+    "try",
+    "solve_by_elim",
+    "exact_mod_cast",
+    "field_simp",
+    "positivity",
+    "simp_rw",
     "grind",
     "omega",
     "decide",
@@ -848,6 +862,13 @@ def closer_variants(tactics: str) -> list[tuple[str, str]]:
         ("identity", tactics),
         ("simp_all", append_line(tactics, "  all_goals try simp_all")),
         ("omega", append_line(tactics, "  try omega")),
+        ("assumption", append_line(tactics, "  try assumption")),
+        ("solve_by_elim", append_line(tactics, "  try solve_by_elim")),
+        ("decide", append_line(tactics, "  try decide")),
+        ("norm_num", append_line(tactics, "  try norm_num")),
+        ("rfl", append_line(tactics, "  try rfl")),
+        ("aesop", append_line(tactics, "  try aesop")),
+        ("grind", append_line(tactics, "  try grind")),
     ]
 
 
@@ -867,6 +888,96 @@ def hammer_variants(
     )
     rows.extend((str(name), str(body)) for name, body in extras)
     return rows
+
+
+def shortcut_variants(tactics: str, *, cap: int = 24) -> list[tuple[str, str]]:
+    """Produce small, local tactic substitutions for the hammer sweep.
+
+    These edits intentionally make no validity claim.  They are useful
+    probes because they preserve surrounding layout and isolate one change;
+    Lake can then tell us whether a shorter high-score teacher survives.
+    """
+
+    text = str(tactics or "").strip("\n")
+    rows: list[tuple[str, str]] = []
+    seen: set[str] = {text}
+
+    def push(kind: str, lines: Sequence[str]) -> None:
+        candidate = "\n".join(lines).strip("\n")
+        if not candidate or candidate in seen or len(rows) >= max(1, int(cap)):
+            return
+        seen.add(candidate)
+        rows.append((kind, candidate))
+
+    source_lines = text.splitlines()
+    for index, line in enumerate(source_lines):
+        indent = line[: len(line) - len(line.lstrip())]
+        stripped = line.strip()
+        exact = re.match(r"exact\s+([A-Za-z_][A-Za-z0-9_'.]*)\s*$", stripped)
+        if exact:
+            for replacement in ("assumption", "solve_by_elim"):
+                edited = list(source_lines)
+                edited[index] = indent + replacement
+                push(f"replace_exact_{replacement}", edited)
+        apply = re.match(r"apply\s+And\.intro\s*$", stripped)
+        if apply:
+            edited = list(source_lines)
+            edited[index] = indent + "constructor"
+            push("apply_and_intro_to_constructor", edited)
+        if re.match(r"intros?(?:\s+[A-Za-z_][A-Za-z0-9_']*)+\s*$", stripped):
+            edited = list(source_lines)
+            edited[index] = indent + "rintro" + stripped[len(stripped.split()[0]) :]
+            push("intro_to_rintro", edited)
+        if stripped.startswith("simp ") and " at " not in stripped:
+            edited = list(source_lines)
+            edited[index] = indent + "simp_all" + stripped[4:]
+            push("simp_to_simp_all", edited)
+        if stripped.startswith("rw [") and stripped.endswith("]"):
+            edited = list(source_lines)
+            edited[index] = indent + "simp " + stripped[3:]
+            push("rw_to_simp", edited)
+    return rows[: max(1, int(cap))]
+
+
+def hammer_sweep_variants(
+    tactics: str,
+    reference: str = "",
+    extras: Sequence[tuple[str, str]] = (),
+    *,
+    cap: int = 32,
+) -> list[tuple[str, str, tuple[str, ...]]]:
+    """Sweep the closed tactic neighborhood before spending an LLM call.
+
+    The sweep is deterministic and bounded.  It combines closers, repair
+    hammers, local substitutions, closed-tree edits, and family-guided MCA
+    edits.  Every generated body is still only a compiler candidate.
+    """
+
+    rows: list[tuple[str, str, tuple[str, ...]]] = []
+    seen: set[str] = set()
+    budget = max(1, int(cap))
+
+    def push(kind: str, body: str, *ops: str) -> None:
+        text = str(body or "").strip("\n")
+        if not text or text in seen or len(rows) >= budget:
+            return
+        seen.add(text)
+        rows.append((str(kind), text, tuple(str(op) for op in ops)))
+
+    base = str(tactics or "").strip("\n")
+    for kind, body in hammer_variants(base, reference or base, extras=extras):
+        push(kind, body, "hammer", kind)
+    for kind, body in shortcut_variants(base, cap=budget):
+        push(kind, body, "shortcut", kind)
+    tree = str(reference or base)
+    for kind, body, ops in closed_tree_edits(tree, case_replace_cap=4):
+        push("tree_" + str(kind), body, "closed_tree", *ops)
+    for family, body, ops in guided_mca_edits(
+        base,
+        ("dead_code", "strength_reduction", "loop_invariant", "search_space", "algebraic_simplification"),
+    ):
+        push("mca_" + str(family), body, "guided_mca", *ops)
+    return rows[:budget]
 
 
 def random_mca_drafts(
@@ -909,7 +1020,7 @@ def random_mca_drafts(
         push("collapse_rw", collapse_rw_to_simp(body), {"family": "algebraic_simplification"})
     for kind, nxt, extra in early_extras:
         fam = str((extra or {}).get("family") or "")
-        if fam and not wanted(fam):
+        if fam and not wanted(fam) and not bool((extra or {}).get("compiler_probe")):
             continue
         if blocked(kind, nxt):
             continue
@@ -1366,6 +1477,85 @@ def closed_tree_edits(tactics: str, *, case_replace_cap: int = 8) -> list[tuple[
         push("simp_set", replace_case_body(reference, span, "simp_all"), ("replace_case", span.label, "simp_all"))
         push("aesop", replace_case_body(reference, span, "aesop"), ("replace_case", span.label, "aesop"))
     return rows
+
+
+def compose_tactic_bodies(
+    left: str,
+    right: str,
+    *,
+    cap: int = 12,
+) -> list[tuple[str, str, tuple[str, ...]]]:
+    """Compose two independently observed tactic bodies at stable boundaries.
+
+    Case-arm replacement is the primary crossover because it preserves the
+    principal case skeleton.  For flat proofs, a few line-boundary prefix /
+    suffix crossovers are also emitted.  The function is intentionally
+    syntax-preserving rather than clever; invalid combinations are expected
+    and must be rejected by Lake at the caller boundary.
+    """
+
+    left_text = str(left or "").strip("\n")
+    right_text = str(right or "").strip("\n")
+    budget = max(1, int(cap))
+    rows: list[tuple[str, str, tuple[str, ...]]] = []
+    seen: set[str] = {left_text, right_text}
+
+    def push(kind: str, body: str, *ops: str) -> None:
+        text = str(body or "").strip("\n")
+        if not text or text in seen or len(rows) >= budget:
+            return
+        seen.add(text)
+        rows.append((str(kind), text, tuple(str(op) for op in ops)))
+
+    left_spans = {span.label: span for span in case_spans(left_text)}
+    right_spans = {span.label: span for span in case_spans(right_text)}
+    common = [label for label in left_spans if label in right_spans]
+    for label in common:
+        left_body = left_text[left_spans[label].header_end : left_spans[label].end]
+        right_body = right_text[right_spans[label].header_end : right_spans[label].end]
+        push(
+            "case_splice_left",
+            replace_case_body(left_text, left_spans[label], right_body),
+            "compose_verified",
+            "case_splice",
+            label,
+            "left_skeleton",
+        )
+        push(
+            "case_splice_right",
+            replace_case_body(right_text, right_spans[label], left_body),
+            "compose_verified",
+            "case_splice",
+            label,
+            "right_skeleton",
+        )
+        if len(rows) >= budget:
+            return rows
+
+    # Flat proofs have no case labels to anchor a crossover.  Limit these to
+    # short line boundaries and preserve the original order on each side.
+    left_lines = left_text.splitlines()
+    right_lines = right_text.splitlines()
+    if not common and left_lines and right_lines:
+        max_cut = min(len(left_lines), len(right_lines))
+        for cut in range(1, max_cut):
+            push(
+                "flat_prefix_left_suffix_right",
+                "\n".join([*left_lines[:cut], *right_lines[cut:]]),
+                "compose_verified",
+                "flat_crossover",
+                f"cut_{cut}",
+            )
+            push(
+                "flat_prefix_right_suffix_left",
+                "\n".join([*right_lines[:cut], *left_lines[cut:]]),
+                "compose_verified",
+                "flat_crossover",
+                f"cut_{cut}",
+            )
+            if len(rows) >= budget:
+                break
+    return rows[:budget]
 
 
 def collect_tree_drafts(
@@ -2398,8 +2588,22 @@ def collect_random_draft_extras(
     early: list[tuple[str, str, dict[str, Any]]] = []
     for item in portable_items or ():
         fam = str(item.get("family") or "search_space")
+        # Closed-vocabulary folds are compiler probes, not model-authored
+        # edits. Keep them available even when TypeSafe routes the current
+        # residual to a different family; Lake remains the admission gate and
+        # a concrete failure is recorded by the caller. This is important
+        # after a fold implementation is repaired or extended while an older
+        # Noul snapshot still carries a stale family preference.
         early.append(
-            (str(item["kind"]), str(item["tactics"]), {"family": fam, "generator": "portable_rewrites"})
+            (
+                str(item["kind"]),
+                str(item["tactics"]),
+                {
+                    "family": fam,
+                    "generator": "portable_rewrites",
+                    "compiler_probe": True,
+                },
+            )
         )
     late: list[tuple[str, str, dict[str, Any]]] = []
     spans = list(symbol_spans or ())

@@ -39,7 +39,7 @@ def canonical_cell_id(cid: str, *, kind: str = "") -> str:
         return f"ptr://family/{raw.split(':', 1)[-1]}"
     if kind == "skill":
         return f"ptr://skill/{raw}"
-    if kind in {"goal", "subgoal", "task", "theorem", "codepath", "tool"}:
+    if kind in {"goal", "subgoal", "task", "theorem", "codepath", "tool", "rule"}:
         return f"ptr://{kind}/{raw}"
     return raw
 
@@ -174,7 +174,7 @@ def upsert_from_event(
 
     grid = _grid(memory)
     cid = canonical_cell_id(str(ptr or f"event:{kind}"), kind=kind)
-    cell_kind = kind if kind in {"skill", "goal", "subgoal", "task", "codepath", "theorem", "proof", "tool", "family", "residual"} else "cell"
+    cell_kind = kind if kind in {"skill", "goal", "subgoal", "task", "codepath", "theorem", "proof", "tool", "family", "residual", "rule"} else "cell"
     cell = _cell(grid, cid, kind=cell_kind)
     old = _energy_value(cell)
     mixed = _clip(0.7 * old + 0.3 * float(energy))

@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 
@@ -23,11 +24,27 @@ HERE = Path(__file__).resolve().parent
 PAPER_ROOT = HERE.parent
 PROTOCOL = "LRA/v1"
 PR_ID = "PR-9h"
-ACTIONS = ("run", "nest_inner", "mint", "skip_stem", "install_fold", "stop")
+ACTIONS = (
+    "run",
+    "nest_inner",
+    "mint",
+    "mint_tactic",
+    "repair_tactic",
+    "hypothesis_refactor",
+    "skip_stem",
+    "install_fold",
+    "stop",
+)
 KEEP_WORDS = ("intro", "intros", "constructor", "grind", "induction", "exact", "use")
 _JSON_OBJ = re.compile(r"\{.*\}", re.DOTALL)
 ROUTER_MAX_NEW = 256
-ROUTER_TIMEOUT = 90.0
+# A Grok CLI request can legitimately spend ~90 seconds on the frozen-board
+# prompt before emitting its single action.  Leave margin for process startup,
+# router IPC, and JSON normalisation; callers can tighten this for smoke runs.
+try:
+    ROUTER_TIMEOUT = max(1.0, float(os.environ.get("LRA_ROUTER_TIMEOUT", "180")))
+except ValueError:
+    ROUTER_TIMEOUT = 180.0
 
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
@@ -53,6 +70,59 @@ SMALL_NAMES = (
     "Cslib.SKI.parallelReduction_diamond",
     "Cslib.CCS.bisimilarity_congr_choice",
 )
+LEGACY_FIXTURE = PAPER_ROOT / "evidence" / "canaries" / "random-canary-latest.json"
+
+
+def historical_fixture_board() -> dict[str, int]:
+    """Read count-only historical canary sizes for comparison, never seeding."""
+
+    try:
+        payload = json.loads(LEGACY_FIXTURE.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if not isinstance(payload, Mapping):
+        return {}
+    board: dict[str, int] = {}
+    for row in payload.get("canaries") or ():
+        analysis = row.get("analysis") if isinstance(row, Mapping) else None
+        if not isinstance(analysis, Mapping):
+            continue
+        name = str(analysis.get("name") or "")
+        if name not in SMALL_NAMES:
+            continue
+        try:
+            board[name] = int(analysis.get("n_tokens"))
+        except (TypeError, ValueError):
+            continue
+    return board
+
+
+def historical_fixture_comparison(board: Mapping[str, int]) -> dict[str, Any]:
+    """Explain a regression without treating the historical fixture as proof evidence."""
+
+    legacy = historical_fixture_board()
+    current = {
+        name: int(board[name])
+        for name in SMALL_NAMES
+        if name in board and int(board[name]) > 0
+    }
+    delta = {
+        name: int(current[name]) - int(legacy[name])
+        for name in current
+        if name in legacy
+    }
+    return {
+        "schema": "lra-historical-count-comparison/v1",
+        "source": str(LEGACY_FIXTURE),
+        "evidence_kind": "count_only_fixture",
+        "usable_as_verified_seed": False,
+        "historical": legacy,
+        "current": current,
+        "delta_current_minus_historical": delta,
+        "historical_total": sum(legacy.values()),
+        "current_total": sum(current.values()),
+        "delta_total": sum(delta.values()),
+    }
 
 
 def keep_best_board(out: Path) -> dict[str, int]:
@@ -86,28 +156,36 @@ def router_prompt(
     last_lake: list[dict[str, Any]],
     *,
     nca_status: Optional[Mapping[str, Any]] = None,
+    stalled: bool = False,
 ) -> str:
     from jevops.outer import format_prompt
 
     return format_prompt(
         preamble=(
             "You are the OUTER Grok loop. Do not write Lean. TypeSafe is the INNER loop.\n"
-            "Reply with one JSON object only, keys: action, stem, name, old, new, keep, reason.\n"
+            "Reply with one JSON object only, keys: action, stem, name, family, strategy, hypothesis, constraints, evaluation, old, new, keep, reason.\n"
         ),
         actions=ACTIONS,
         extra=(
             "nest_inner: enter the TypeSafe inner loop, which keep-loops and recursively nests skill decision-tree children.\n"
             "run: same as nest_inner (TypeSafe still nests).\n"
+            "mint_tactic: choose a theorem name plus one allowlisted strategy/family; the inner loop will design, Lake-check, and record new tactic candidates. Do not put Lean text in the action.\n"
+            "repair_tactic: choose a previously failed stem plus theorem and strategy; the inner loop may reopen that stem only after a fresh Lake-verified replacement.\n"
+            "hypothesis_refactor: when the board has stalled, propose a testable structural refactoring hypothesis for one theorem. Include hypothesis, constraints, evaluation, family, and an allowlisted strategy; do not put Lean text in the action. The inner loop will assess it with real analysis and Lake.\n"
             "install_fold: literal old→new substring fold that keeps intro/constructor/grind/exact/use.\n"
             "skip_stem: ban a port_ skill that lake-failed.\n"
             "mint: enable a keep-structure stem already in the harness.\n"
             "stop: no remaining lake-valid cut. If nca.halt or nca.budget_dead is true, action must be stop.\n"
+            "Design strategies: closed_tree, guided_mca, span_preserving, closed_edits, hammer_variants, shortcut_closers, goal_directed, hammer_sweep, compose_verified, ir_crossover, pca_mca_cross, drop_unused_haves, drop_rename_i, drop_have_after_induction, collapse_simp_at, collapse_rw_to_simp, join_consecutive_exacts, join_consecutive_applies, try_simp_all, pca_prefix, keep_calc_only.\n"
+            "Use tactic_design_history and inner_analysis to avoid repeating a design that produced no new Lake-verified candidate; choose a different strategy or repair stem when evidence supports it.\n"
+            "When outer_stalled=true, prefer hypothesis_refactor over repeating mint_tactic or nest_inner.\n"
         ),
         board=board,
         gaps=gaps,
         last_lake=last_lake,
         nca_status=nca_status,
         total=board_total(board),
+        self_analysis={"outer_stalled": bool(stalled)},
     )
 
 
@@ -130,7 +208,7 @@ def route_next_action(
     if nca.get("budget_dead") or nca.get("halt"):
         llm = False
     if llm:
-        prompt = router_prompt(board, gaps, last_lake, nca_status=nca)
+        prompt = router_prompt(board, gaps, last_lake, nca_status=nca, stalled=stalled)
 
         def generate_fn(prompt: str) -> str:
             text, _identity, _line = lra_t1.generate_grok(
@@ -172,6 +250,8 @@ def canary_args(
     timeout: float,
     seed: int,
     nest_depth: int = 3,
+    seed_history: bool = True,
+    memory: Optional[dict[str, Any]] = None,
 ) -> argparse.Namespace:
     from jevops.outer import namespace
 
@@ -194,6 +274,8 @@ def canary_args(
         include_inits=True,
         quiet=True,
         nest_depth=int(nest_depth),
+        seed_history=bool(seed_history),
+        memory=memory,
     )
 
 
@@ -203,6 +285,27 @@ def self_check() -> dict[str, Any]:
     installed = apply_action(mem, parsed)
     fold_ok = bool(mem.get("skills"))
     skip = apply_action(mem, {"action": "skip_stem", "stem": "hoist_repeated_simp", "name": "P"})
+    design = apply_action(
+        mem,
+        {
+            "action": "mint_tactic",
+            "name": "P",
+            "family": "search_space",
+            "strategy": "closed_edits",
+        },
+    )
+    hypothesis = apply_action(
+        mem,
+        {
+            "action": "hypothesis_refactor",
+            "name": "P",
+            "family": "search_space",
+            "strategy": "guided_mca",
+            "hypothesis": "test whether the induction-local simplification can be compressed",
+            "constraints": "preserve binders and theorem statement",
+            "evaluation": "Lake plus token count",
+        },
+    )
     det = deterministic_route(
         gaps=[{"name": "P", "keep_structure": ["trailing_tuple_comma"], "proposed": {"mint": ["trailing_tuple_comma"]}}],
         last_lake=[],
@@ -223,6 +326,10 @@ def self_check() -> dict[str, Any]:
             and installed.get("ok") is True
             and fold_ok
             and skip.get("ok") is True
+            and design.get("ok") is True
+            and hypothesis.get("ok") is True
+            and (mem.get("nca") or {}).get("active_tactic_design", {}).get("name") == "P"
+            and (mem.get("nca") or {}).get("active_hypothesis_refactor", {}).get("name") == "P"
             and det.get("action") == "mint"
             and budget_stop.get("action") == "stop"
             and budget_stop.get("reason") == "nca_budget"
@@ -254,6 +361,7 @@ def run_loop(
     run_inner: Optional[Callable[[argparse.Namespace], dict[str, Any]]] = None,
     memory: Optional[dict[str, Any]] = None,
     persist_memory: bool = True,
+    seed_history: bool = True,
 ) -> dict[str, Any]:
     """OUTER Grok (llm_router). INNER TypeSafe keep-loop + recursive skill-tree nests."""
 
@@ -305,6 +413,8 @@ def run_loop(
                 timeout=timeout,
                 seed=seed + step,
                 nest_depth=nest_depth,
+                seed_history=seed_history,
+                memory=memory,
             )
         )
 
@@ -345,6 +455,10 @@ def run_loop(
         ledger=ledger,
         protocol=PROTOCOL,
         pr_id=PR_ID,
+        extra={
+            "historical_fixture_comparison": historical_fixture_comparison(keep_best_board(out)),
+            "historical_seed_manifest": (memory.get("nca") or {}).get("historical_seed_manifest") or {},
+        },
     )
 
 
@@ -360,6 +474,13 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument("--timeout", type=float, default=180.0)
     parser.add_argument("--seed", type=int, default=lra_rand.DEFAULT_SEED)
     parser.add_argument("--out", type=Path, default=OUT_DEFAULT)
+    parser.add_argument(
+        "--no-seed-history",
+        dest="seed_history",
+        action="store_false",
+        default=True,
+        help="disable read-only historical Git teacher proposals in the inner loop",
+    )
     args = parser.parse_args(argv)
     if args.self_check or not args.live:
         from jevops.outer import print_ok
@@ -374,6 +495,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         drafts=int(args.drafts),
         timeout=float(args.timeout),
         seed=int(args.seed),
+        seed_history=bool(args.seed_history),
     )
     from jevops.outer import write_json_pair
 

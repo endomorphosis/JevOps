@@ -187,6 +187,41 @@ def test_nca_feedback_is_auxiliary_and_records_verified_outcomes() -> None:
     assert ["ptr://skill/port_autoencoder", "ptr://theorem/P"] in memory["nca"]["board_edges"]
 
 
+def test_router_rule_feedback_is_auditable_and_nca_connected() -> None:
+    memory: dict = {"nca": {"grid": {}, "board_edges": []}}
+    proposal = ae.record_autoencoder_rule_feedback(
+        memory,
+        problem="P",
+        rule={
+            "kind": "router_ir",
+            "ops": [{"op": "simp"}],
+            "origin": "llm_router_ir",
+            "rationale_digest": "abc",
+        },
+    )
+    assert proposal["ok"] is True
+    rule_id = proposal["rule_id"]
+    assert rule_id.startswith("rule-")
+    assert memory["nca"]["router_rules"][0]["training_eligible"] is False
+
+    observed = ae.record_autoencoder_rule_feedback(
+        memory,
+        problem="P",
+        rule={"rule_id": rule_id, "kind": "router_ir", "ops": [{"op": "simp"}]},
+        outcome={"lake_ok": True, "body_tokens": 3, "reward": 0.9},
+    )
+    assert observed["record"]["training_eligible"] is True
+    assert observed["record"]["verified_count"] == 1
+    assert f"ptr://rule/{rule_id}" in memory["nca"]["grid"]
+    assert ["ptr://skill/port_autoencoder", f"ptr://rule/{rule_id}"] in memory["nca"]["board_edges"]
+
+    example = ae.coerce_training_example(
+        {"id": "rule-example", "text": "simp", "rule_id": rule_id}
+    )
+    feedback = ae.nca_feedback_for_example(memory, example)
+    assert f"ptr://rule/{rule_id}" in feedback.cells
+
+
 def test_fuzzy_typesafe_prover_is_typed_soft_advice_only() -> None:
     class FakeClient:
         def system_one(self, state, questions):
@@ -286,7 +321,34 @@ def test_teach_roundtrip_verifies_all_current_candidates_before_admission() -> N
     assert result["admission"] == "verified"
     assert 1 <= len(calls) <= 4
     assert result["training"]["sample_count"] == 1
+    assert result["training"]["refactor_target"] is True
+    assert result["training"]["target_ops"] < result["training"]["source_ops"]
+    # The loss must use an independent model decode, not the verified teacher
+    # candidate; otherwise IR exact-match/cosine can be perfect by construction.
+    assert result["training"]["model_prediction_ops"] == result["training"]["source_ops"]
+    assert result["training"]["loss"]["ir_exact_match"] == 0.0
+    assert result["training"]["loss"]["cosine_similarity"] < 1.0
     assert memory["nca"]["autoencoder"]["training_state"]["step"] == 1
+
+
+def test_unverified_shorter_candidate_cannot_become_training_target() -> None:
+    memory: dict = {"nca": {}}
+
+    def compile_fn(lean: str, problem: str = ""):
+        del lean, problem
+        return {"theorem_ok": False}
+
+    result = ae.refactor_smallest(
+        memory,
+        "theorem guarded (h : True) : True := by\n  exact h",
+        problem="guarded",
+        compile_fn=compile_fn,
+        n_variations=8,
+        train=True,
+    )
+    assert result["lake_ok"] is False
+    assert result["training"]["refactor_target"] is False
+    assert result["training"]["target_ops"] == result["training"]["source_ops"]
 
 
 def test_invalid_shorter_candidate_cannot_beat_verified_longer_candidate() -> None:

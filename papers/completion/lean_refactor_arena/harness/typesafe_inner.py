@@ -73,6 +73,32 @@ def apply_lake_round(
         return repaired_body
 
     def _on_ok(row: Mapping[str, Any], body: str, draft: Mapping[str, Any], *, better: bool) -> None:
+        # Carry teacher provenance into the Lake receipt.  The current
+        # compiler result, not the historical filename, is the admission
+        # authority; this metadata only makes the path auditable.
+        for key in (
+            "seed_provenance",
+            "seed_commit",
+            "seed_path",
+            "claimed_tokens",
+            "actual_tokens",
+            "body_digest",
+        ):
+            if draft.get(key) is not None:
+                row[key] = draft.get(key)
+        if draft.get("body_digest"):
+            try:
+                from historical_seeds import record_seed_outcome
+
+                record_seed_outcome(
+                    memory,
+                    str(record.get("name") or ""),
+                    str(draft.get("body_digest") or ""),
+                    lake_ok=True,
+                    tokens=int(row.get("tokens") or 0),
+                )
+            except Exception:
+                pass
         lra_bind.remember_success(
             memory,
             name=str(record.get("name") or ""),
@@ -116,7 +142,19 @@ def apply_lake_round(
         compiled: Mapping[str, Any],
         kind: str,
     ) -> None:
-        del draft
+        if draft.get("body_digest"):
+            try:
+                from historical_seeds import record_seed_outcome
+
+                record_seed_outcome(
+                    memory,
+                    str(record.get("name") or ""),
+                    str(draft.get("body_digest") or ""),
+                    lake_ok=False,
+                    tokens=int(row.get("tokens") or 0),
+                )
+            except Exception:
+                pass
         lra_bind.remember_failure(
             memory,
             name=str(record.get("name") or ""),
@@ -480,6 +518,19 @@ def starting_tactics(record: Mapping[str, Any], *, out: Any = None, from_best: b
         str(record.get("name") or "canary"),
         extras={"Core.InitsUpdatesComm": "cascade-best-130.lean"},
     )
+    if selected == tactics:
+        # Before runtime artifacts were isolated, keep-best bodies were often
+        # left as untracked files under the curated evidence directory.  A
+        # fresh runtime root must be able to migrate those actual proof bodies
+        # read-only; the count-only JSON fixture is intentionally not used as
+        # a substitute.  Every migrated body still goes through the Lake gate
+        # before it can become a new runtime keep-best.
+        legacy_root = HERE.parent / "evidence" / "canaries"
+        selected = starting_body(
+            tactics,
+            legacy_root,
+            str(record.get("name") or "canary"),
+        )
     if selected != tactics or str(record.get("name") or "") != "Core.InitsUpdatesComm":
         return selected
     # A disposable outer-loop --out directory does not contain the curated

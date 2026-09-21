@@ -4,10 +4,10 @@
 | --- | --- |
 | **Title** | As-built TypeSafe Neural Cellular Automaton for Lean Refactor Arena |
 | **Author** | Benjamin Barber (`starworks5@gmail.com`) |
-| **Date** | 2026-09-18 |
-| **Status** | Current (landed 2026-09-18) |
+| **Date** | 2026-09-21 |
+| **Status** | Current (outer repair/hypothesis hardening) |
 | **Protocol** | `LRA/v1` |
-| **Worktree** | `/home/barberb/lift_coding/.worktrees/vericodegen-lean_refactor_arena-2026` |
+| **Worktree** | `/home/barberb/lift_coding/JevOps` |
 | **Harness** | `papers/completion/lean_refactor_arena/harness/` |
 | **Kind** | As-built documentation of an implemented system, not a greenfield proposal |
 | **Audience** | (1) coding agents that must operate the loop without violating LRA constraints; (2) software engineers who extend or debug the harness |
@@ -19,9 +19,9 @@
 
 > **Operate the TypeSafe NCA as a gate, not a generator.**
 >
-> 1. **Grok outer does not write Lean.** `skill_improve_loop.py` emits a closed JSON `action` (`run` / `nest_inner` / `mint` / `skip_stem` / `install_fold` / `stop`). TypeSafe inner walks the skill tree, spends Jev budget, and only mutates Lean via lake-ok portable folds.
+> 1. **Grok outer does not write Lean.** `skill_improve_loop.py` emits a closed JSON `action` (`run` / `nest_inner` / `mint` / `mint_tactic` / `repair_tactic` / `hypothesis_refactor` / `skip_stem` / `install_fold` / `stop`). TypeSafe inner walks the skill tree, performs residual analysis and data collection, and only mutates Lean via lake-ok portable folds or compiler-gated router candidates. A fresh Lake failure is quarantined before another generic mint; a repair action can reopen a blacklist only after the exact replacement stem passes Lake.
 > 2. **Jev does not write Lean.** `TypeSafeClient.system_one` answers Choice / Score / Noul. Code owns control flow (`typesafe_inner.inner_typesafe_walk`). Noul `true` = P(wrong) (SDE cookbook).
-> 3. **`lake compile` is the only Lean oracle.** A shorter draft that does not compile is a retained failure. Accepted body for `--from-best` is: shortest `evidence/canaries/random-best-{safe}-*.lean` if present, else Inits `cascade-best-139.lean`, else the frozen JSONL tactic suffix. CCS (296) and Fsub (519) currently have **no** `random-best-*.lean`; those token counts are local warmup/keep sizes from `random-canary-latest.json`, not lake-cut artifacts.
+> 3. **`lake compile` is the only Lean oracle.** A shorter draft that does not compile is a retained failure. Accepted body for `--from-best` is: shortest runtime-artifact `canaries/random-best-{safe}-*.lean` if present, else the curated Inits `cascade-best-139.lean`, else the frozen JSONL tactic suffix. The checked-in `random-canary-latest.json` is a count-only historical fixture; it is never used as a proof body or as verified evidence. CCS (296) and Fsub (519) have no checked-in random-best body.
 > 4. **Never docker0.** Do not call `172.17.0.1` / `127.0.0.1:8080` from NCA instruct. Hosted Labs Leanstral is `labs-leanstral-1-5` (`track1_mistral_leanstral.py`, `hardware_class=mistral_labs_api`). Spark NVFP4 is `spark_gb10` only. Never conflate them.
 > 5. **Live pass command** (from repo root, worktree above):
 >
@@ -33,9 +33,12 @@
 >    Tests: `test_skill_improve_loop.py`, `test_random_canary.py`. `persist_memory=False` inhibits **every** `save_memory` in `run_loop` (per-step and final) so `memory={}` fixtures cannot wipe live `evidence/canaries/refactor-memory.json`. Covered by `test_persist_memory_false_never_writes`.
 > 6. **Instruct is per canary**, stored in `observations.no_drafts_tree_by[name]` / `observations.no_drafts_instructed_by[name]`. There is no global `no_drafts` flag. `run_live` resets those maps at the start of a pass.
 > 7. **Do not** rewrite original manuscripts, invent Arena / Track 2 scores, flip BLOCKED tasks (`LRA-S09`/`S10`, `LRA-024`/`025`/`027`) to completed, write the campaign DuckDB (`control.duckdb`), or claim unrun stages complete.
-> 8. **Keep-bests as of last live pass** (local tokenizer; remaining_cut = warmup_tokens − keep tokens): subst 392, extracted 260, Inits 139, SKI 540, CCS 296, Fsub 519. On-disk lake-cut files exist for subst/extracted/Inits/SKI (`random-best-*-{392,260,139,540}.lean` plus Inits `cascade-best-139.lean`). Small canaries are those with warmup body ≤ 700 tokens (`MAX_LIVE_TOKENS`).
-> 9. **Halt does not fire on a cold seed.** `should_halt` requires `ever_ran` (`program_state.last_ran` or journal events `call`/`instruct`/`jev`/`jev_pick`/`grok`) **or** `budget_dead`. Idle + never-ran is not halt (`test_cold_seed_does_not_halt`). Inner walk **logs** `nca_halt` but only **breaks** on `budget_dead`, so leftover-ranked small canaries still all run on a shared memory. Outer `run_loop` / `route_next_action` stop on full `should_halt`. `run_live` skips remaining canaries only on `budget_dead`. Inner halt-break would skip later canaries because `last_ran`/journal are shared.
-> 10. **Exclusive DuckDB CAS is campaign-owned.** NCA overlay is read-only (`campaign_write=False`, `DatabaseTaskSource(..., install_schema=False)`). Sidecar AST DuckDB is `evidence/canaries/nca-ast.duckdb`, never `control.duckdb`. Overlay behind `LRA_NCA_READY_TASKS=1` is **already in tree**, not remaining work.
+> 8. **Historical fixture versus current run.** The checked-in count-only fixture records subst 392, extracted 260, Inits 139, SKI 540, CCS 296, Fsub 519 (total 2146). It does not contain the subst/extracted/SKI proof bodies, so a fresh runtime artifact directory cannot reconstruct those candidates. Runtime keep-bests are written under `LRA_CANARY_ROOT` and are compared against that fixture for diagnosis only; they never seed the autoencoder as verified targets. Small canaries are those with warmup body ≤ 700 tokens (`MAX_LIVE_TOKENS`).
+> 9. **Pinned Git teachers are proposals, not evidence.** With historical seeding enabled (the default for live canaries), `harness/historical_seeds.py` reads the shortest `random-best-*` bodies from parent-repository commit `5eecbf7b7e6566a7de02f52467f88c5761683313`. It stores commit/path/body-digest provenance and `unverified` status; the current theorem/Lake compiler must re-admit each body before it can win or train the autoencoder. `--no-seed-history` disables this path.
+> 10. **Router rules are first-class NCA observations.** The bounded `jevops.router_tuning` parser turns LLM strategies, IR operations, and tactic proposals into normalized rule records. Rejected proposals remain negative observations; only Lake-verified strict cuts become autoencoder teachers. Rule cells are linked to `ptr://skill/port_autoencoder` and the theorem cell, while model CE/cosine diagnostics remain separate from the verified teacher loss.
+> 11. **The hammer is broad but bounded.** Each router round can enumerate all allowlisted local strategies, shortcut/closer variants, PCA/MCA edits, and operation-level IR variants under `max_hammer_candidates`. Separately, only Lake-admitted teachers may participate in case-arm, flat-boundary, or IR crossover; parent rule IDs are retained so a shorter composition is attributable to its two teachers. A bounded verified-teacher buffer can replay LLM/composition wins on later rounds, but every replay is recompiled by the current Lake before it can enter training.
+> 12. **Halt does not fire on a cold seed.** `should_halt` requires `ever_ran` (`program_state.last_ran` or journal events `call`/`instruct`/`jev`/`jev_pick`/`grok`) **or** `budget_dead`. Idle + never-ran is not halt (`test_cold_seed_does_not_halt`). Inner walk **logs** `nca_halt` but only **breaks** on `budget_dead`, so leftover-ranked small canaries still all run on a shared memory. Outer `run_loop` / `route_next_action` stop on full `should_halt`. `run_live` skips remaining canaries only on `budget_dead`. Inner halt-break would skip later canaries because `last_ran`/journal are shared.
+> 13. **Exclusive DuckDB CAS is campaign-owned.** NCA overlay is read-only (`campaign_write=False`, `DatabaseTaskSource(..., install_schema=False)`). Sidecar AST DuckDB is `evidence/canaries/nca-ast.duckdb`, never `control.duckdb`. Overlay behind `LRA_NCA_READY_TASKS=1` is **already in tree**, not remaining work.
 
 ---
 
@@ -59,6 +62,8 @@ All paths relative to `papers/completion/lean_refactor_arena/harness/` unless no
 | `typesafe_tools.py` | Closed tool catalog, MCP++ describe-only, `compose_decision_tree`, `register_subloop` | Live P2P; docker-hub submit |
 | `portable_rewrites.py` | Keep-structure folds, `PIPELINE`, `SKILL_RESIDUAL`, `compose_pipeline`, `analyze_residuals` | Add folds that drop intro/constructor/grind/`<;>` without lake |
 | `random_canary.py` | AutoResearch entry, `typesafe_intent`, `rank_live_records`, `run_live` | Rank by leftover work using the name `remaining_cut` |
+| `historical_seeds.py` | Read-only pinned Git teacher catalog; seed provenance and current-run admission state | Treat filename token claims as Lake evidence; persist an unverified seed as a target |
+| `autoencoder_bridge.py` / `jevops/router_tuning.py` | Statement-bound router proposals, normalized rules, hammer sweep, teacher composition, IR crossover, bounded Lake-revalidated teacher replay, CE/cosine diagnostics, and verified strict-cut teachers | Let router confidence or NCA energy admit a proof; collapse model loss into candidate loss |
 | `binder_use.py` | Memory, blacklist, binder-safe drops, `rehydrate_from_skill_analysis` | Persist empty memory over live `refactor-memory.json` |
 | `track1_ledger.py` | USD/Jev budget, fail-closed grok (`provider=grok`, no local fallback) | Mix Track 1 receipts into Track 2 / warmup trees; exceed US$3/problem |
 | `typesafe_router.py` | Loop-v1 TypeSafe distill router (`LRA_TYPESAFE=off\|distill\|inloop`); frozen `ROUTE_QUESTION_SPEC` | Call Jev on official Track 2; mix Score with Noul as probabilities |
@@ -97,8 +102,9 @@ The NCA is that store: a cell grid unified with a neural tape and a CALL/RETURN 
 - Frozen warm-up JSONL SHA-256 `6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804` (15 problems, 36 tag-cells, 113 826 bytes).
 - Native Quack campaign root: `/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra`. Campaign DuckDB: `…/lean_refactor_arena/control.duckdb`. NCA never writes it.
 - Lake clones: `~/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake` (`random_canary.DEFAULT_STATE`).
-- Live memory: `papers/completion/lean_refactor_arena/evidence/canaries/refactor-memory.json`.
-- Small canary keep-bests (last live pass, local tokenizer): see Agent operating contract.
+- Live memory: `${LRA_ARTIFACT_ROOT}/refactor-memory.json` (default under the configured LRA state root).
+- Runtime canary keep-bests and receipts: `${LRA_CANARY_ROOT}`. Curated evidence remains read-only.
+- The historical count-only fixture is not a substitute for those runtime proof bodies.
 - Hosted Labs Leanstral (`labs-leanstral-1-5`, `hardware_class=mistral_labs_api`) is the NCA instruct generator. Spark NVFP4 docker0 (`172.17.0.1:8080`, `spark_gb10`) is the loop-v1 `run_warmup.py` generator and is **out of band** for NCA instruct.
 - BLOCKED board cells: `LRA-S09`, `LRA-S10`, `LRA-024`, `LRA-025`, `LRA-027` (`board_graph.BLOCKED`). Energy clipped to ≤ 0.05, `do_not_fork=True`.
 

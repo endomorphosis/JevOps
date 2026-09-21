@@ -11,12 +11,16 @@ from typing import Any, Mapping, Optional
 
 _EXACT_HYP = re.compile(r"\bexact ([A-Za-z][A-Za-z0-9']{0,6})\b")
 _USE_EXACT = re.compile(r"use ([^;\n]+); exact ⟨")
-_USE_EXACT_NL = re.compile(r"use ([^;\n]+)\n([ \t]*)exact ⟨")
+_USE_EXACT_NL = re.compile(
+    r"(?m)^(?P<indent>[ \t]*)use (?P<term>[^;\n]+)\n"
+    r"(?P=indent)exact ⟨"
+)
 _INTRO_SIMP = re.compile(
     r"(?m)^(?P<ind>[ \t]*)intro\n(?:[ \t]*\n)*(?P=ind)simp_all$"
 )
 _USE_EXACT_BLOCK = re.compile(
-    r"use (?P<term>[^;\n]+)\n(?P<ind>[ \t]*)exact ⟨(?P<body>[^⟩]*)⟩"
+    r"(?m)^(?P<ind>[ \t]*)use (?P<term>[^;\n]+)\n"
+    r"(?P=ind)exact ⟨(?P<body>[^⟩]*)⟩"
 )
 _CTOR_PAIR = re.compile(
     r"(?m)^(?P<indent>[ \t]*)constructor\n"
@@ -63,7 +67,10 @@ def fold_use_exact(tactics: str) -> str:
     from jevops.mask import subn_changed
 
     nxt = subn_changed(tactics, _USE_EXACT, r"exact ⟨\1, ")
-    return subn_changed(nxt, _USE_EXACT_NL, r"\2exact ⟨\1, ")
+    # Include the indentation in the match.  The old expression matched from
+    # ``use`` onward and then prepended the next line's indentation again,
+    # producing invalid over-indented nested case arms.
+    return subn_changed(nxt, _USE_EXACT_NL, r"\g<indent>exact ⟨\g<term>, ")
 
 
 def fold_use_exact_reuse(tactics: str) -> str:
@@ -141,6 +148,11 @@ SHORTEN_IDENTS: tuple[tuple[str, str, str], ...] = (
     ("list_subset_app", "List.Subset.app", "Subset.app"),
     ("hasvars_getvars", "Imperative.HasVarsPure.getVars", "HasVarsPure.getVars"),
 )
+
+# Bump when a portable fold is repaired or its compiler-probe policy changes.
+# Live memories use this marker to revalidate stale fuzzy-prior bans; fixture
+# callers without the marker retain the historical filtering behavior.
+PORTABLE_PROBE_REVISION = "folds-20260921-indent-probes-v2"
 
 
 def fold_shorten_ident(tactics: str, old: str, new: str) -> str:

@@ -15,6 +15,7 @@ import argparse
 import ast
 import json
 import os
+import shlex
 import shutil
 import sys
 import tempfile
@@ -80,7 +81,10 @@ FAIL_CLOSED_KWARGS: dict[str, Any] = {
 }
 # Isolated leader so a nested grok CLI does not attach to this TUI session.
 DEFAULT_GROK_LEADER_SOCKET = str(Path.home() / ".grok" / "leader-lra-track1.sock")
-DEFAULT_GROK_CLI_MAX_TURNS = 4
+# Frozen-board outer prompts routinely need several reasoning turns before
+# returning the closed-vocabulary action.  A too-small ceiling causes a
+# transport error (and zero ledger call) rather than a scored decision.
+DEFAULT_GROK_CLI_MAX_TURNS = 16
 DEFAULT_GROK_FILE_MAX_TURNS = 8
 GROK_TACTICS_FILENAME = "tactics.lean"
 GROK_FILE_STUB = "-- REPLACE_THIS_FILE\n"
@@ -545,12 +549,12 @@ def _load_router():
 
 
 def _live_grok_kwargs() -> dict[str, Any]:
-    """Fail-closed grok kwargs plus an isolated grok CLI leader socket.
+    """Fail-closed grok kwargs plus an isolated single-turn CLI adapter.
 
-    This TUI session already owns ``~/.grok/leader.sock``. A nested
-    ``grok --max-turns 1`` that attaches there returns ``max turns reached``
-    without generating. Pin a ``leader-lra-*.sock`` and a small CLI turn
-    budget (not extra Track 1 generate_grok calls).
+    The installed CLI's prompt-file mode can attach to an exhausted TUI
+    leader and return ``max turns reached`` without generating.  Route the
+    outer call through the local single-turn wrapper instead; it still uses
+    the requested Grok model and never enables tools or provider fallback.
     """
 
     from jevops.outer import env_int, env_str, which_bin
@@ -562,7 +566,20 @@ def _live_grok_kwargs() -> dict[str, Any]:
     grok_bin = which_bin("grok")
     if grok_bin:
         socket = env_str("LRA_GROK_LEADER_SOCKET", DEFAULT_GROK_LEADER_SOCKET)
-        kwargs["grok_cli_cmd"] = [grok_bin, "--leader-socket", socket]
+        wrapper = HERE / "grok_single.py"
+        kwargs["grok_cli_cmd"] = " ".join(
+            (
+                shlex.quote(sys.executable),
+                shlex.quote(str(wrapper)),
+                "--model",
+                "{model}",
+                "--leader-socket",
+                shlex.quote(socket),
+                "--prompt",
+                "{prompt}",
+            )
+        )
+        kwargs["grok_bin"] = grok_bin
     return kwargs
 
 

@@ -222,9 +222,17 @@ def harness_call_graph(*, refresh: bool = False) -> dict[str, Any]:
     try:
         from jevops.nca import call_graph_from_paths
 
+        paths = sorted(HERE.glob("*.py"))
+        # The portable rewrite module is the inner-loop rule library.  It is
+        # alphabetically just beyond the old cap, which made the sidecar omit
+        # every ``fold_*`` symbol and left the NCA with no real tactic graph.
+        # Keep the scan bounded, but reserve this analysis-critical module.
+        portable = HERE / "portable_rewrites.py"
+        if portable.is_file() and portable not in paths[:40]:
+            paths = [*paths[:39], portable, *paths[39:]]
         _HARNESS_CROSS = call_graph_from_paths(
-            sorted(HERE.glob("*.py")),
-            cap_files=40,
+            paths,
+            cap_files=80,
             cap_neighbors=MAX_NEIGHBORS,
         )
     except Exception:

@@ -92,6 +92,60 @@ class RandomCanaryTests(unittest.TestCase):
         self.assertEqual(len(a), 3)
         self.assertNotEqual(a, c)
 
+    def test_git_history_seed_is_unverified_until_current_lake_admission(self) -> None:
+        import historical_seeds as lra_history
+        import run_warmup as lra_loop
+
+        root = lra_history.find_history_root()
+        if root is None:
+            self.skipTest("pinned lift_coding history is not available in this checkout")
+        rows = lra_history.load_historical_seeds(
+            "CallElimCorrect.substOldPostSubset",
+            root=root,
+            token_fn=lra_loop.token_count,
+        )
+        self.assertTrue(rows)
+        self.assertEqual(rows[0]["claimed_tokens"], 392)
+        self.assertEqual(rows[0]["actual_tokens"], 392)
+        self.assertEqual(rows[0]["admission"], "unverified")
+        self.assertFalse(rows[0]["lake_verified"])
+        self.assertIn("random-best-CallElimCorrect.substOldPostSubset-392.lean", rows[0]["path"])
+
+    def test_historical_seed_enters_bounded_random_queue_with_provenance(self) -> None:
+        import random as py_random
+
+        body = "  intro x\n  exact x\n"
+        memory = {
+            "nca": {
+                "historical_seed_candidates": {
+                    "P": [
+                        {
+                            "body": "  exact x\n",
+                            "provenance": "git_history",
+                            "commit": "abc",
+                            "path": "seed.lean",
+                            "claimed_tokens": 2,
+                            "actual_tokens": 2,
+                            "body_digest": "digest",
+                        }
+                    ]
+                }
+            },
+            "blacklist": [],
+            "failures": [],
+        }
+        drafts = lra_rand.random_drafts(body, py_random.Random(1), n=2, name="P", memory=memory)
+        seed = next(row for row in drafts if row.get("seed_provenance") == "git_history")
+        self.assertEqual(seed["seed_commit"], "abc")
+        self.assertEqual(seed["claimed_tokens"], 2)
+        self.assertTrue(seed["compiler_probe"])
+        lra_history = __import__("historical_seeds")
+        lra_history.record_seed_outcome(memory, "P", "digest", lake_ok=True, tokens=1)
+        self.assertEqual(
+            memory["nca"]["historical_seed_candidates"]["P"][0]["admission"],
+            "verified",
+        )
+
     def test_analyze_has_mca_and_tokens(self) -> None:
         _raw, _digest, records = lra_splice.load_warmup_records()
         rows = [lra_pca.feature_row(item) for item in records]
@@ -212,6 +266,7 @@ class RandomCanaryTests(unittest.TestCase):
         self.assertIn(".refl _", nxt)
         self.assertLess(lra_loop.token_count(nxt), lra_loop.token_count(src))
         self.assertNotIn("use ", nxt)
+        self.assertNotIn("            exact", nxt)
 
     def test_general_use_exact_and_ctor_pair(self) -> None:
         import portable_rewrites as lra_port

@@ -1515,6 +1515,50 @@ def invoke_then_project(
     return project_fn(result, wall_ms, choices, nouls, scores, unpacked or usage)
 
 
+def invoke_or_skip(
+    *,
+    invoke_fn: Callable[[], tuple[Any, float]],
+    project_fn: Callable[..., Any],
+    skip_fn: Callable[[BaseException], Any],
+    record_fn: Optional[Callable[..., Any]] = None,
+    unpack_fn: Optional[Callable[[Any], tuple[Any, Any, Any, Any]]] = None,
+    model: str = "",
+    error_cls: Any = Exception,
+) -> Any:
+    """invoke_then_project, or skip_fn(exc) on typed failure. Catalogs stay injected."""
+
+    try:
+        return invoke_then_project(
+            invoke_fn=invoke_fn,
+            project_fn=project_fn,
+            record_fn=record_fn,
+            unpack_fn=unpack_fn,
+            model=model,
+        )
+    except error_cls as exc:
+        return skip_fn(exc)
+
+
+def charge_packed(
+    packed: Mapping[str, Any],
+    ledger: Any,
+    *,
+    model: str,
+    kind: str = "jev",
+    fallback_in: int = 200,
+    redact_fn: Optional[Callable[[Mapping[str, Any]], Any]] = None,
+) -> Any:
+    """Charge a ledger from packed usage. USD/catalogs stay on the consumer."""
+
+    from jevops.outer import usage_tokens
+
+    row = dict(packed or {})
+    if ledger is not None:
+        inn, out = usage_tokens(row.get("usage") or {}, fallback_in=int(fallback_in))
+        ledger.record(kind, input_tokens=inn, output_tokens=out, model=model)
+    return redact_fn(row) if redact_fn is not None else row
+
+
 def route_or_skip(
     *,
     enabled: bool,

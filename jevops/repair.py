@@ -586,6 +586,19 @@ def align_generated(
     return flatten_fn(reference, match_fn(reference, extract_fn(text)))
 
 
+def align_then_compile(
+    text: str,
+    reference: str,
+    *,
+    align_fn: Callable[[str, str], str],
+    compile_fn: Callable[[str], Any],
+) -> tuple[str, Any]:
+    """Align generated tactics to the reference, then compile. Lake still admits."""
+
+    repaired = align_fn(reference, text)
+    return repaired, compile_fn(repaired)
+
+
 def flatten_overindent(
     reference: str,
     tactics: str,

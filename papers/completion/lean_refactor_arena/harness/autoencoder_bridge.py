@@ -5,10 +5,14 @@ This module deliberately sits beside, rather than inside, the frozen LRA/v1
 loop.  The official warm-up harness keeps TypeSafe and learned scoring off and
 uses Lake as its only authority.  This adapter adds the JevOps
 text -> Lean IR -> text model and router-guided search for research, but it
-does not turn a search result into an Arena score.
+does not turn a search result into an Arena score.  Its compiler callback
+uses the same theorem-span splice/restore authority as the local Track 1
+keep-best benchmark, so the JSONL theorem body is never mistaken for a
+standalone Lean file with imports omitted.
 
 The important boundary is the compiler callback: a router winner is only a
-training target after every listed version pin compiles without ``sorryAx``.
+training target after the theorem-span Lake gate accepts it without a
+theorem-local ``sorry``.
 The autoencoder's own CE/cosine diagnostics are retained separately from the
 verified target diagnostics, so a short search candidate cannot masquerade as
 an emitted model prediction.
@@ -17,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Callable, Mapping, MutableMapping, Optional, Sequence
@@ -28,8 +33,10 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
 import _jevops_path  # noqa: E402,F401
+import binder_use as lra_bind  # noqa: E402
 import run_warmup as lra_loop  # noqa: E402
 import splice as lra_splice  # noqa: E402
+import track1_keepbest as lra_keepbest  # noqa: E402
 
 from jevops.router_tuning import RouterTuningConfig, tune_autoencoder_with_router  # noqa: E402
 from jevops.outer import select_limit, select_named  # noqa: E402
@@ -37,6 +44,10 @@ from jevops.outer import select_limit, select_named  # noqa: E402
 
 BRIDGE_SCHEMA = "jevops-lra-autoencoder-bridge/v1"
 PROTOCOL = "LRA/v1"
+# Keep the bridge on the exact pinned Lake workspace used by random_canary.
+# Passing LRA_STATE_ROOT itself points one directory too high and makes the
+# compile worker report a missing cached clone under network=deny.
+DEFAULT_STATE_ROOT = _jevops_path.LRA_STATE_ROOT / "track1-lake"
 
 
 def load_records(path: Optional[Path] = None) -> tuple[bytes, str, list[dict[str, Any]]]:
@@ -68,7 +79,13 @@ def compiler_for_record(
     network: str = "deny",
     skip_checkout: bool = True,
 ) -> Callable[..., Mapping[str, Any]]:
-    """Build a RouterTuning-compatible compiler backed by all LRA pins."""
+    """Build a RouterTuning-compatible compiler backed by the LRA splice oracle."""
+
+    resolved_state_root = (
+        Path(state_root).expanduser().resolve()
+        if state_root is not None
+        else DEFAULT_STATE_ROOT
+    )
 
     def compile_candidate(candidate_source: str, problem: str = "") -> dict[str, Any]:
         del problem
@@ -81,24 +98,57 @@ def compiler_for_record(
                 "token_count": lra_loop.token_count(str(candidate_source or "")),
             }
         try:
-            receipts = lra_loop.compile_tactics(
+            # The warm-up JSONL stores the frozen theorem body, not module
+            # imports. Track1 keep-best replaces only that body inside the
+            # checked-out source file, compiles it with Lake, and restores the
+            # file. Feeding theorem-only text to run_warmup.compile_tactics
+            # would erase imports and produce false failures.
+            clone = lra_keepbest.lra_cw.clone_dir(
+                str(record.get("url") or ""), resolved_state_root
+            )
+            dest = clone / lra_keepbest.lra_cw.source_relpath(record)
+            if not dest.is_file():
+                return {
+                    "theorem_ok": False,
+                    "lake_ok": False,
+                    "reason": "cached_source_missing",
+                    "token_count": lra_loop.token_count(tactics),
+                }
+            relpath = str(lra_keepbest.lra_cw.source_relpath(record))
+            # A failed prior canary may have left the isolated clone with a
+            # theorem-only candidate. Recover the pinned checkout bytes from
+            # Git before invoking the splice/restore compiler.
+            original = subprocess.run(
+                ["git", "-C", str(clone), "show", f"HEAD:{relpath}"],
+                capture_output=True,
+                check=False,
+            )
+            restore = original.stdout if original.returncode == 0 else dest.read_bytes()
+            result = lra_keepbest.compile_tactics(
                 record,
                 tactics,
+                state_root=resolved_state_root,
                 timeout=compile_timeout,
-                state_root=state_root,
-                elan_home=elan_home,
-                network=network,
-                skip_checkout=skip_checkout,
+                restore=restore,
             )
-            tags_ok = lra_loop._all_tags_ok(record, receipts)
+            # ``sorryAx`` may occur elsewhere in a large source module; the
+            # benchmark's theorem-span gate is the authority for this local
+            # track. Preserve both values for auditability.
+            tags_ok = bool(result.get("theorem_ok")) and not bool(
+                result.get("sorry_in_theorem")
+            )
             return {
                 "theorem_ok": bool(tags_ok),
                 "lake_ok": bool(tags_ok),
-                "token_count": lra_loop.token_count(tactics),
+                "token_count": int(
+                    result.get("token_count") or lra_loop.token_count(tactics)
+                ),
                 "body_tokens": lra_loop.token_count(tactics),
-                "compile_receipts": [item.to_dict() for item in receipts],
+                "compile_receipts": [dict(result)],
                 "all_tags_ok": bool(tags_ok),
-                "sorryAx": any(bool(item.sorryAx) for item in receipts),
+                "sorryAx": bool(result.get("sorryAx")),
+                "sorry_in_theorem": bool(result.get("sorry_in_theorem")),
+                "compile": dict(result),
             }
         except Exception as exc:  # compile failures are retained, never rewarded
             return {
@@ -153,6 +203,8 @@ def run_record(
     compile_fn: Optional[Callable[..., Mapping[str, Any]]] = None,
     router_generate: Optional[Callable[[str], Any]] = None,
     router: Any = None,
+    seed_candidates: Optional[Sequence[Any]] = None,
+    design_hint: Optional[Mapping[str, Any]] = None,
     compile_timeout: float = lra_loop.WARMUP_TAG_TIMEOUT_SECONDS,
     state_root: Optional[Path] = None,
     elan_home: Optional[Path] = None,
@@ -178,6 +230,8 @@ def run_record(
         config=config,
         router_generate=router_generate,
         router=router,
+        seed_candidates=seed_candidates,
+        design_hint=design_hint,
     )
     return _bind_result(record, result)
 
@@ -192,6 +246,9 @@ def run_benchmark(
     compile_fn_factory: Optional[Callable[[Mapping[str, Any]], Callable[..., Mapping[str, Any]]]] = None,
     router_generate: Optional[Callable[[str], Any]] = None,
     router: Any = None,
+    seed_candidates: Optional[Sequence[Any]] = None,
+    seed_history: bool = False,
+    design_hint: Optional[Mapping[str, Any]] = None,
     compile_timeout: float = lra_loop.WARMUP_TAG_TIMEOUT_SECONDS,
     state_root: Optional[Path] = None,
     elan_home: Optional[Path] = None,
@@ -214,6 +271,20 @@ def run_benchmark(
     results: list[dict[str, Any]] = []
     for record in selected:
         injected = compile_fn_factory(record) if compile_fn_factory is not None else None
+        record_seeds: list[Any] = list(seed_candidates or ())
+        if seed_history:
+            try:
+                from historical_seeds import load_historical_seeds
+
+                record_seeds = [
+                    *load_historical_seeds(
+                        str(record.get("name") or ""),
+                        token_fn=lra_loop.token_count,
+                    ),
+                    *record_seeds,
+                ]
+            except Exception:
+                pass
         results.append(
             run_record(
                 record,
@@ -222,6 +293,8 @@ def run_benchmark(
                 compile_fn=injected,
                 router_generate=router_generate,
                 router=router,
+                seed_candidates=record_seeds,
+                design_hint=design_hint,
                 compile_timeout=compile_timeout,
                 state_root=state_root,
                 elan_home=elan_home,
@@ -243,6 +316,17 @@ def run_benchmark(
         "jsonl_bytes": len(raw),
         "n_selected": len(selected),
         "n_results": len(results),
+        "historical_seed_enabled": bool(seed_history),
+        "historical_seeded_results": sum(
+            1
+            for row in results
+            if any(
+                str(candidate.get("seed_provenance") or "") == "git_history"
+                for history in row.get("history") or ()
+                for candidate in history.get("candidates") or ()
+                if isinstance(candidate, Mapping)
+            )
+        ),
         "n_verified": len(verified),
         "source_body_tokens_total": sum(int(row.get("source_body_tokens") or 0) for row in results),
         "best_body_tokens_total": sum(int(row.get("best_body_tokens") or 0) for row in verified),
@@ -282,18 +366,43 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--rounds", type=int, default=2)
     parser.add_argument("--no-train", action="store_true")
+    parser.add_argument(
+        "--memory-path",
+        type=Path,
+        default=None,
+        help="persist the autoencoder/NCA state outside the curated benchmark tree",
+    )
+    parser.add_argument(
+        "--teacher",
+        type=Path,
+        action="append",
+        default=[],
+        help="verified tactic-body file(s) to re-admit as teacher candidates",
+    )
+    parser.add_argument(
+        "--seed-history",
+        action="store_true",
+        help="read shortest bodies from the pinned lift_coding Git history as untrusted teacher proposals",
+    )
     parser.add_argument("--plan", action="store_true", help="print the frozen benchmark plan")
     args = parser.parse_args(list(argv) if argv is not None else None)
     if args.plan:
         print(json.dumps(lra_loop.plan_loop(args.jsonl), indent=2, sort_keys=True))
         return 0
     config = RouterTuningConfig(rounds=args.rounds, train=not args.no_train)
+    teachers = [path.read_text(encoding="utf-8") for path in args.teacher]
+    memory = lra_bind.load_memory(args.memory_path) if args.memory_path else None
     result = run_benchmark(
         jsonl=args.jsonl,
         names=args.name or None,
         limit=args.limit,
         config=config,
+        seed_candidates=teachers,
+        seed_history=args.seed_history,
+        memory=memory,
     )
+    if args.memory_path:
+        result["memory_path"] = str(lra_bind.save_memory(result["memory"], args.memory_path))
     print(json.dumps(result, indent=2, sort_keys=True, default=str))
     return 0 if result["reward_hacking_checks"]["official_scores_null"] else 1
 

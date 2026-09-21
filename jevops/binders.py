@@ -234,6 +234,9 @@ _PATCHED_UNBAN = (
     "port_ccs_choiceL_exact",
     "port_ccs_choiceL_hr1",
     "port_ccs_choiceR_exact",
+    # ``use``/``exact`` newline folds now preserve the matched line indent;
+    # old bans were generated from the over-indented implementation.
+    "port_use_exact_reuse",
 )
 
 
@@ -303,7 +306,24 @@ def remember_research(
 def failed_skill_stems(memory: Mapping[str, Any], name: str) -> set[str]:
     from jevops.memory import failed_skill_stems as _fn
 
-    return _fn(memory, name)
+    # A fold implementation can be repaired without deleting its negative
+    # history.  Re-open the patched stems for a new Lake probe; only a
+    # verified repair receipt removes the active failure permanently.
+    return _fn(memory, name, ignore_stems=_PATCHED_UNBAN)
+
+
+def repair_blacklist(
+    memory: dict[str, Any],
+    *,
+    name: str,
+    stem: str,
+    receipt: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Re-open a failed port stem only after a caller's compiler receipt."""
+
+    from jevops.memory import repair_blacklist as _fn
+
+    return _fn(memory, name=name, stem=stem, receipt=receipt)
 
 
 # Drop residuals that AutoResearch marked do_not_cut mint these keep-structure skills.
@@ -332,6 +352,7 @@ def skill_gap_report(memory: Mapping[str, Any]) -> list[dict[str, Any]]:
         memory,
         keep_mints=KEEP_MINTS,
         compose_plan_fn=lambda name: [stem for stem, _fn in lra_port.pipeline_order(dict(memory), name=name)],
+        ignore_stems=_PATCHED_UNBAN,
     )
 
 

@@ -222,6 +222,9 @@ class KernelBoundaryTests(unittest.TestCase):
         self.assertEqual(folds.fold_exact_hyp("exact Hin"), "assumption")
         self.assertEqual(folds.fold_trailing_tuple_comma("exact ⟨a, b,⟩"), "exact ⟨a, b⟩")
         self.assertEqual(folds.fold_exact_hyp("exact Lemma.foo"), "exact Lemma.foo")
+        packed = folds.fold_use_exact("case nested =>\n  use witness\n  exact ⟨left, right⟩\n")
+        self.assertIn("  exact ⟨witness, left, right⟩", packed)
+        self.assertNotIn("    exact ⟨witness", packed)
         self.assertEqual(binders.binders_from_line("rename_i x y"), ["x", "y"])
         self.assertIn("this", binders.binders_from_line("have der' : T := der"))
         dropped = binders.drop_unused_binders("rename_i ghost\nexact Hin\n")
@@ -651,6 +654,243 @@ class KernelBoundaryTests(unittest.TestCase):
         self.assertTrue(seeded["ok"])
         self.assertEqual(seeded["source"], "harness_ast")
         self.assertEqual(seeded["n_edges"], 1)
+        ok, value, exc = outer.call_caught(lambda: 7)
+        self.assertTrue(ok)
+        self.assertEqual(value, 7)
+        self.assertIsNone(exc)
+        ok, value, exc = outer.call_caught(lambda: (_ for _ in ()).throw(ValueError("x")), ValueError)
+        self.assertFalse(ok)
+        self.assertEqual(str(exc), "x")
+        bag = outer.set_if({}, True, "k", 1)
+        self.assertEqual(bag["k"], 1)
+        self.assertEqual(outer.first_call((False, lambda: 1), (True, lambda: 2)), 2)
+        self.assertEqual(
+            outer.keyed_map(
+                [{"k": "a", "v": 1}, {"k": "b", "v": 2}],
+                key_fn=lambda row: row["k"],
+                val_fn=lambda row: row["v"],
+                pred=lambda row: row["k"] != "b",
+            ),
+            {"a": 1},
+        )
+        shot = lra_search.pack_shot_candidate(
+            kind="leanstral_few_shot",
+            generator="labs-leanstral-1-5",
+            tactics="  simp\n",
+            shots=[{"name": "P", "ratio": 0.5, "filled_tokens": 1, "ref_tokens": 2}],
+            pack_fn=lra_search.pack_generated_candidate,
+        )
+        self.assertEqual(shot["n_shots"], 1)
+        self.assertEqual(shot["shot_scores"][0]["name"], "P")
+        from jevops import walk as lra_walk
+
+        compile_one, research, pick, steps, tape, stack = lra_walk.bind_walk_defaults(
+            compile_one=None,
+            research_fn=None,
+            pick_fn=None,
+            steps=None,
+            tape=None,
+            stack=None,
+            default_compile="c",
+            default_research="r",
+            default_pick="p",
+            tape_factory=lambda: "tape",
+            stack_factory=lambda: "stack",
+        )
+        self.assertEqual((compile_one, research, pick, steps, tape, stack), ("c", "r", "p", [0], "tape", "stack"))
+        self.assertEqual(outer.either(True, lambda: 1, lambda: 2), 1)
+        self.assertEqual(outer.either(False, lambda: 1, lambda: 2), 2)
+        seen: list[str] = []
+        outer.ignore_each(lambda: seen.append("a"), lambda: (_ for _ in ()).throw(ValueError("x")))
+        self.assertEqual(seen, ["a"])
+        dest = [{"kind": "a"}]
+        outer.extend_if(dest, lambda: [{"kind": "b"}], cond=True, key_fn=lambda item: item["kind"])
+        self.assertEqual([row["kind"] for row in dest], ["a", "b"])
+        outer.extend_if(dest, lambda: [{"kind": "c"}], cond=False, key_fn=lambda item: item["kind"])
+        self.assertEqual([row["kind"] for row in dest], ["a", "b"])
+        bag = type("L", (), {"lines": [], "skipped": False, "reason": ""})()
+        skipped = outer.record_usage_line(
+            bag,
+            dict,
+            allowed=False,
+            reason="no",
+            cost=0,
+            usd_fn=lambda _c: 0,
+            kind="jev",
+            input_tokens=1,
+            output_tokens=0,
+            call_index=0,
+            fixture=True,
+            model="m",
+        )
+        self.assertTrue(skipped["skipped"])
+        self.assertTrue(bag.skipped)
+        bumped = []
+        recorded = outer.record_usage_line(
+            bag,
+            dict,
+            allowed=True,
+            reason="x",
+            cost=2,
+            usd_fn=lambda c: c,
+            bump_fn=lambda: bumped.append(1),
+            refresh_fn=lambda: bumped.append(2),
+            kind="jev",
+            input_tokens=1,
+            output_tokens=0,
+            call_index=1,
+            fixture=False,
+            model="m",
+        )
+        self.assertFalse(recorded["skipped"])
+        self.assertEqual(bumped, [1, 2])
+        self.assertEqual(
+            lra_jev.invoke_or_skip(
+                invoke_fn=lambda: (_ for _ in ()).throw(ValueError("no")),
+                project_fn=lambda *_a: {},
+                skip_fn=lambda exc: {"skipped": True, "reason": str(exc)},
+            ),
+            {"skipped": True, "reason": "no"},
+        )
+        nested = lra_walk.recurse_walk(
+            lambda rec, tactics, **kw: {"rec": rec, "tactics": tactics, **kw},
+            "P",
+            "  simp\n",
+            {"args": 1},
+            node="root",
+            tape="t",
+            stack="s",
+            allow_families={"dead_code"},
+        )
+        self.assertEqual(nested["node"], "root")
+        self.assertEqual(nested["allow_families"], {"dead_code"})
+        rows, ok = lra_search.after_compile_row(
+            [],
+            {"kind": "k"},
+            {"theorem_ok": False},
+            row_fn=lambda item, compiled: {**item, **compiled},
+            hammer_fn=lambda: ([{"kind": "h"}], "", [], True),
+        )
+        self.assertEqual(rows[0]["kind"], "k")
+        self.assertEqual(rows[1]["kind"], "h")
+        self.assertTrue(ok)
+        ok_rows, compiled_ok = lra_search.after_compile_row(
+            [],
+            {"kind": "k"},
+            {"theorem_ok": True},
+            row_fn=lambda item, compiled: {**item, **compiled},
+            hammer_fn=lambda: (_ for _ in ()).throw(AssertionError("no hammer")),
+        )
+        self.assertEqual(ok_rows[0]["kind"], "k")
+        self.assertTrue(compiled_ok)
+        rec, recs, digest, clone, dest, restore = outer.load_and_clone(
+            lambda: (b"raw", "abc", [{"name": "P", "url": "https://example.com", "file": "A.lean"}]),
+            "P",
+            "/tmp/state",
+            clone_fn=lambda url, root: Path(root) / "clone",
+            relpath_fn=lambda item: item["file"],
+            read_fn=lambda _path: b"keep",
+        )
+        self.assertEqual(rec["name"], "P")
+        self.assertEqual(digest, "abc")
+        self.assertEqual(dest.name, "A.lean")
+        self.assertEqual(restore, b"keep")
+        self.assertEqual(outer.tagged_mapping("draft", {"a": 1}), {"call": "draft", "a": 1})
+        self.assertEqual(
+            outer.closed_skip_extra({"source": "strata"}, default_mode="off", is_default_winning_path=False),
+            {
+                "contaminates_track2": False,
+                "source": "strata",
+                "default_mode": "off",
+                "is_default_winning_path": False,
+            },
+        )
+        charged: list[tuple] = []
+
+        class _Ledger:
+            def record(self, kind, **kwargs):
+                charged.append((kind, kwargs))
+
+        packed = lra_jev.charge_packed(
+            {"usage": {"input_tokens": 3, "output_tokens": 4}, "ok": True},
+            _Ledger(),
+            model="jev-latest",
+        )
+        self.assertTrue(packed["ok"])
+        self.assertEqual(charged[0][0], "jev")
+        self.assertEqual(charged[0][1]["input_tokens"], 3)
+        self.assertEqual(outer.take_keys({"a": 1, "b": 2}, "b", "a"), (2, 1))
+        self.assertEqual(outer.replace_if(True, "new", "old"), "new")
+        self.assertEqual(outer.replace_if(False, "new", "old"), "old")
+
+        class _Auth:
+            def authorize(self, kind, inn, out):
+                return False, "no", 0
+
+            def record(self, kind, **kwargs):
+                charged.append((kind, kwargs))
+
+        with self.assertRaises(ValueError) as raised:
+            outer.require_authorized(_Auth(), "grok", 1, 2, model="m", error_cls=ValueError, fmt="refused: {reason}")
+        self.assertEqual(str(raised.exception), "refused: no")
+        from jevops import repair as lra_repair
+
+        repaired, compiled = lra_repair.align_then_compile(
+            "simp",
+            "  simp\n",
+            align_fn=lambda ref, text: ref,
+            compile_fn=lambda body: {"ok": True, "tactics": body},
+        )
+        self.assertEqual(repaired, "  simp\n")
+        self.assertTrue(compiled["ok"])
+        with lean.planted_session(
+            "jev-plant-",
+            tags=("v4.26.0",),
+            plant_fn=lambda root, tag: Path(root).mkdir(parents=True, exist_ok=True),
+            clone_fn=lambda state: Path(state) / "clone",
+        ) as planted:
+            self.assertEqual(planted["clone"].name, "clone")
+            self.assertTrue(planted["elan_home"].is_dir() or planted["elan_home"].parent.exists())
+        self.assertEqual(outer.pipe(1, lambda n: n + 1, lambda n: n * 3), 6)
+        with self.assertRaises(ValueError):
+            outer.raise_if(True, ValueError, "no")
+        outer.raise_if(False, ValueError, "no")
+        skipped_line = type("L", (), {"skipped": True, "reason": "cap"})()
+        with self.assertRaises(RuntimeError) as spent:
+            outer.require_recorded(skipped_line, RuntimeError)
+        self.assertIn("cap", str(spent.exception))
+        bag = outer.assign_if({}, "k", True, lambda: 7)
+        self.assertEqual(bag["k"], 7)
+        self.assertEqual(outer.ranked_pairs({"b": 1, "a": 3})[0][0], "a")
+        self.assertTrue(outer.kind_startswith("grok")({"kind": "grok_file_foo"}))
+        self.assertFalse(outer.kind_startswith("grok")({"kind": "leanstral"}))
+        packed_file = lean.pack_file_result(
+            dict,
+            tactics="  simp\n",
+            identity={"m": 1},
+            line={"skipped": False},
+            chat="ack",
+            dest="/tmp/tactics.lean",
+            workspace="/tmp/ws",
+            head_fn=lambda text, n: text[:n],
+        )
+        self.assertTrue(packed_file["used_file"])
+        self.assertTrue(packed_file["chat_ignored"])
+        self.assertFalse(packed_file["called_docker0"])
+        gen, tr = outer.fill_none("g", None, lambda: ("G", "T"))
+        self.assertEqual((gen, tr), ("g", None))
+        gen, tr = outer.fill_none(None, "t", lambda: ("G", "T"))
+        self.assertEqual((gen, tr), ("G", "t"))
+        gen, tr = outer.fill_none(None, None, lambda: ("G", "T"))
+        self.assertEqual((gen, tr), ("G", "T"))
+        inn, out = outer.usage_or_estimate({}, fallback_in=9, estimate_fn=lambda text: len(text), text="abcd")
+        self.assertEqual((inn, out), (9, 4))
+        self.assertIsNone(outer.attr_or(None, "tactics"))
+        self.assertEqual(outer.attr_or(type("D", (), {"tactics": "  simp\n"})(), "tactics"), "  simp\n")
+        self.assertEqual(outer.get_str({"best_first_draft": "d01"}, "best_first_draft"), "d01")
+        self.assertEqual(outer.beam_shape("greedy", 4, sample_cap=8), (1, 1))
+        self.assertEqual(outer.beam_shape("beam", 4, sample_cap=8), (4, 4))
+        self.assertEqual(outer.beam_shape("beam", 12, sample_cap=8), (12, 8))
         putnam_dir = lean.project_dir_for_record(
             {"name": "Q", "source": "putnambench", "url": ""},
             lean.VersionPin(lean_tag="v4.26.0", git_commit="abc"),
@@ -2942,6 +3182,11 @@ class KernelBoundaryTests(unittest.TestCase):
             allow_skills={"unrelated_skill"},
         )
         self.assertEqual([d["kind"] for d in kept_kernel], ["inits_best"])
+        kept_probe = walk.restrict_drafts(
+            [{"kind": "port_use_exact", "compiler_probe": True}],
+            allow_skills={"unrelated_skill"},
+        )
+        self.assertEqual([d["kind"] for d in kept_probe], ["port_use_exact"])
         self.assertEqual(jev.noul_value({"noul": 0.2}), 0.2)
         choice, conf, _probs = jev.choice_value({"choice": "v0", "confidence": 0.9})
         self.assertEqual(choice, "v0")
@@ -3124,6 +3369,93 @@ class KernelBoundaryTests(unittest.TestCase):
         )
         self.assertEqual(llm["action"], "mint")
         self.assertEqual(llm["router"], "llm_router")
+        promoted = outer.route_next(
+            gaps=[{"name": "P", "top_help": [{"residual": "repeated_simp_list"}]}],
+            last_lake=[],
+            stalled=True,
+            llm=True,
+            generate_fn=lambda _prompt: '{"action":"mint","name":"P","reason":"try a different tree"}',
+        )
+        self.assertEqual(promoted["action"], "hypothesis_refactor")
+        self.assertEqual(promoted["source_action"], "mint")
+        self.assertIn("try a different tree", promoted["hypothesis"])
+        design = outer.parse_action(
+            '{"action":"mint_tactic","name":"P","family":"search_space",'
+            '"strategy":"closed_edits"}'
+        )
+        design_mem: dict = {"nca": {"tactic_design_queue": None}}
+        design_receipt = outer.apply_action(design_mem, design)
+        self.assertTrue(design_receipt["ok"])
+        self.assertEqual(
+            design_mem["nca"]["active_tactic_design"]["strategy"],
+            "closed_edits",
+        )
+        hypothesis = outer.parse_action(
+            '{"action":"hypothesis_refactor","name":"P","family":"search_space",'
+            '"strategy":"guided_mca","hypothesis":"compress repeated local simplification",'
+            '"constraints":"preserve binders","evaluation":"Lake then token count"}'
+        )
+        hypothesis_mem: dict = {}
+        hypothesis_receipt = outer.apply_action(hypothesis_mem, hypothesis)
+        self.assertTrue(hypothesis_receipt["ok"])
+        self.assertEqual(
+            hypothesis_mem["nca"]["active_hypothesis_refactor"]["hypothesis"],
+            "compress repeated local simplification",
+        )
+        stalled_hypothesis = outer.deterministic_route(
+            gaps=[{"name": "P", "top_help": [{"residual": "repeated_simp_list"}]}],
+            last_lake=[],
+            stalled=True,
+        )
+        self.assertEqual(stalled_hypothesis["action"], "hypothesis_refactor")
+        self.assertIn("hypothesis", stalled_hypothesis)
+        repair = outer.deterministic_route(
+            gaps=[
+                {
+                    "name": "P",
+                    "failed_stems": ["port_unused_intros"],
+                    "top_help": [{"residual": "intro_then_simp_all"}],
+                }
+            ],
+            last_lake=[],
+            stalled=False,
+            memory={"nca": {"tactic_design_history": []}},
+        )
+        self.assertEqual(repair["action"], "repair_tactic")
+        self.assertEqual(repair["stem"], "unused_intros")
+        prioritized = outer.route_next(
+            gaps=[
+                {
+                    "name": "P",
+                    "failed_stems": ["port_unused_intros"],
+                    "top_help": [{"residual": "intro_then_simp_all"}],
+                }
+            ],
+            last_lake=[],
+            stalled=False,
+            llm=True,
+            memory={"nca": {"tactic_design_history": []}},
+            generate_fn=lambda _prompt: '{"action":"mint_tactic","name":"P"}',
+        )
+        self.assertEqual(prioritized["action"], "repair_tactic")
+        self.assertEqual(prioritized["reason"], "blacklist_repair_prioritized")
+        self.assertEqual(prioritized["source_action"], "mint_tactic")
+        quarantined = outer.route_next(
+            gaps=[],
+            last_lake=[
+                {"name": "P", "kind": "port_unused_intros", "ok": False}
+            ],
+            stalled=False,
+            llm=True,
+            generate_fn=lambda _prompt: '{"action":"mint_tactic","name":"P"}',
+        )
+        self.assertEqual(quarantined["action"], "skip_stem")
+        self.assertEqual(quarantined["reason"], "lake_failure_quarantine_prioritized")
+        bad_design = outer.apply_action(
+            {},
+            {"action": "mint_tactic", "name": "P", "strategy": "run_python"},
+        )
+        self.assertFalse(bad_design["ok"])
         status = outer.nca_status(mem)
         self.assertIn("kernel", status)
         skipped = outer.apply_action(mem, {"action": "skip_stem", "stem": "cache_put", "name": "P"})
@@ -3176,6 +3508,19 @@ class KernelBoundaryTests(unittest.TestCase):
         )
         self.assertEqual(accepted, "simp")
         self.assertTrue(rows[0]["ok"])
+        probe = [{"kind": "port_probe", "tactics": "exact h", "compiler_probe": True}]
+        self.assertFalse(oracle.noul_fire_all({"fired": True, "fired_leaves": ["port_probe"]}, {"port_probe": probe[0]}))
+        accepted_probe, probe_rows = oracle.apply_round(
+            memory={"nca": {}},
+            name="P",
+            drafts=probe,
+            intent={"skill": "keep", "compose": "single"},
+            ranked={"beam_kinds": [], "fired": True, "fired_leaves": ["port_probe"]},
+            compile_fn=lambda _k, _t: {"theorem_ok": True, "token_count": 2, "errors": []},
+            from_tokens=9,
+        )
+        self.assertEqual(accepted_probe, "exact h")
+        self.assertTrue(probe_rows[0]["ok"])
         from jevops import jev, memory as lra_mem
 
         truncated = jev.truncate_middle("a\n" * 200, head_lines=2, tail_lines=2, char_budget=10)
@@ -3331,6 +3676,46 @@ class KernelBoundaryTests(unittest.TestCase):
         )
         self.assertEqual(stepped["stop_reason"], "done")
         self.assertEqual(len(stepped["history"]), 1)
+        fresh_board = [({}, 0), ({"P": 5}, 5), ({"P": 4}, 4)]
+        fresh_index = {"value": 0}
+        fresh = run_steps(
+            n=2,
+            memory={},
+            llm=False,
+            gaps_fn=lambda: [],
+            route_fn=lambda **_k: {"action": "nest_inner"},
+            apply_fn=lambda _m, _a: {"ok": True, "applied": "nest_inner"},
+            inner_fn=lambda _step: {},
+            board_fn=lambda: (
+                fresh_board[min(fresh_index["value"], len(fresh_board) - 1)][0],
+                (fresh_index.__setitem__("value", fresh_index["value"] + 1) or 0)
+                or fresh_board[min(fresh_index["value"] - 1, len(fresh_board) - 1)][1],
+            ),
+        )
+        self.assertEqual(fresh["best_total"], 4)
+        self.assertTrue(fresh["history"][-1]["improved"])
+        seen_stalled: list[bool] = []
+        hypothesis_steps = run_steps(
+            n=3,
+            memory={},
+            llm=True,
+            gaps_fn=lambda: [{"name": "P", "top_help": [{"residual": "dead_code"}]}],
+            route_fn=lambda **kw: (
+                seen_stalled.append(bool(kw["stalled"]))
+                or (
+                    {"action": "hypothesis_refactor", "name": "P", "hypothesis": "test a new closed tree"}
+                    if kw["stalled"]
+                    else {"action": "nest_inner"}
+                )
+            ),
+            apply_fn=lambda mem, action: outer.apply_action(mem, action),
+            inner_fn=lambda _step: {},
+            board_fn=lambda: ({"P": 3}, 3),
+        )
+        self.assertEqual(len(hypothesis_steps["history"]), 3)
+        self.assertEqual(hypothesis_steps["history"][-1]["action"]["action"], "hypothesis_refactor")
+        self.assertEqual(hypothesis_steps["stop_reason"], "no_token_cut")
+        self.assertTrue(seen_stalled[-1])
         from jevops.pick import ensure_named, filter_by_tokens, pin_prefix, shorter_bag
         from jevops.walk import run_sampled, slim_canary
         from jevops.repair import classify_text, join_errors
@@ -3540,6 +3925,22 @@ class KernelBoundaryTests(unittest.TestCase):
         lra_mem.remember_success(store, name="P", kind="port_a", family="x", from_tokens=10, to_tokens=8)
         lra_mem.remember_failure(store, name="P", kind="port_b", error_class="unknown_identifier")
         self.assertTrue(lra_mem.is_blacklisted(store, "P", "port_b"))
+        reopened = lra_mem.repair_blacklist(
+            store,
+            name="P",
+            stem="b",
+            receipt={"theorem_ok": True, "token_count": 7},
+        )
+        self.assertTrue(reopened["ok"])
+        self.assertFalse(lra_mem.is_blacklisted(store, "P", "port_b"))
+        self.assertNotIn("b", lra_mem.failed_skill_stems(store, "P"))
+        from tempfile import TemporaryDirectory
+
+        with TemporaryDirectory() as tmp:
+            path = Path(tmp) / "memory.json"
+            lra_mem.save_memory(store, path)
+            restored = lra_mem.load_memory(path)
+            self.assertEqual(restored["repairs"][-1]["stem"], "b")
         lra_mem.install_memory_skill(store, {"stem": "comma", "old": "a,⟩", "new": "a⟩", "keep": ["exact"]})
         self.assertEqual(store["skills"][0]["stem"], "comma")
         from jevops.memory import apply_literal_fold, research_help, stem_win_loss

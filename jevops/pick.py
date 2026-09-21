@@ -1136,8 +1136,16 @@ def filter_unsafe_drafts(
     unsafe: Optional[Mapping[str, Any]] = None,
     residual_map: Optional[Mapping[str, str]] = None,
     fire_t: float = FIRE_T_RESIDUAL,
+    revalidate_portable: bool = False,
 ) -> list[Mapping[str, Any]]:
-    """Drop blacklisted or Noul-unsafe leftover drafts. No Lean."""
+    """Drop blacklisted or Noul-unsafe leftover drafts. No Lean.
+
+    ``revalidate_portable`` keeps an unblacklisted closed-vocabulary fold in
+    the compiler queue even when an older TypeSafe/Noul snapshot marked its
+    residual unsafe.  Noul is a routing prior, not a proof; this lets a fixed
+    fold or a new implementation revision get a fresh Lake verdict while
+    ``is_blocked`` still suppresses a candidate with a concrete failure.
+    """
 
     mapping = dict(residual_map or {})
     scores = dict(unsafe or {})
@@ -1147,8 +1155,22 @@ def filter_unsafe_drafts(
         if is_blocked is not None and is_blocked(kind):
             continue
         stem = kind[len("port_") :] if kind.startswith("port_") else kind
-        residual = mapping.get(stem, "")
-        if residual and float(scores.get(residual) or 0.0) >= float(fire_t):
+        stems = {stem}
+        # A composed fold is named ``port_pipeline_<stem>_<stem>``.  Treat
+        # each component as an independent residual gate; otherwise one
+        # unsafe component can hide inside a pipeline name and survive the
+        # same Noul filter that correctly removes its standalone draft.
+        if stem.startswith("pipeline_"):
+            encoded = f"_{stem[len('pipeline_') :]}_"
+            stems.update(
+                candidate
+                for candidate in mapping
+                if f"_{candidate}_" in encoded
+            )
+        residuals = {mapping[candidate] for candidate in stems if mapping.get(candidate)}
+        if (
+            not revalidate_portable or not kind.startswith("port_")
+        ) and any(float(scores.get(residual) or 0.0) >= float(fire_t) for residual in residuals):
             continue
         out.append(item)
     return out

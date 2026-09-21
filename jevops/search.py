@@ -2539,3 +2539,28 @@ def pack_shot_candidate(
     if extra:
         row_extra.update(dict(extra))
     return dict(pack_fn(kind=kind, generator=generator, tactics=tactics, extra=row_extra))
+
+
+def after_compile_row(
+    rows: list[Any],
+    item: Mapping[str, Any],
+    compiled: Mapping[str, Any],
+    *,
+    row_fn: Callable[[Mapping[str, Any], Mapping[str, Any]], Any],
+    ok_key: str = "theorem_ok",
+    hammer_fn: Optional[Callable[[], Any]] = None,
+) -> tuple[list[Any], bool]:
+    """Append a compile row, then optional hammer rows. Lake still admits."""
+
+    rows.append(row_fn(item, compiled))
+    if compiled.get(ok_key):
+        return rows, True
+    if hammer_fn is None:
+        return rows, False
+    extra = hammer_fn()
+    if isinstance(extra, tuple):
+        hammer_rows, *rest = extra
+        rows.extend(list(hammer_rows or ()))
+        return rows, bool(rest[-1] if rest else False)
+    rows.extend(list(extra or ()))
+    return rows, False

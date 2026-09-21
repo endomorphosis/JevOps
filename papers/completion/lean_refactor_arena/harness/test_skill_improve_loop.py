@@ -6,6 +6,7 @@ import argparse
 import unittest
 from pathlib import Path
 import sys
+from tempfile import TemporaryDirectory
 
 HERE = Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
@@ -25,6 +26,19 @@ class SkillImproveLoopTests(unittest.TestCase):
         self.assertFalse(check["jev_writes_lean"])
         self.assertFalse(check["grok_writes_lean"])
 
+    def test_historical_fixture_is_comparison_only(self) -> None:
+        comparison = lra_loop_sk.historical_fixture_comparison(
+            {"CallElimCorrect.substOldPostSubset": 408}
+        )
+        self.assertEqual(comparison["historical_total"], 2146)
+        self.assertEqual(
+            comparison["delta_current_minus_historical"][
+                "CallElimCorrect.substOldPostSubset"
+            ],
+            16,
+        )
+        self.assertFalse(comparison["usable_as_verified_seed"])
+
     def test_outer_canary_args_force_the_high_score_inits_target(self) -> None:
         args = lra_loop_sk.canary_args(
             out=HERE.parent / "evidence" / "canaries",
@@ -37,10 +51,35 @@ class SkillImproveLoopTests(unittest.TestCase):
         self.assertTrue(args.include_inits)
         self.assertTrue(args.init_139)
 
+    def test_outer_mint_tactic_passes_shared_memory_to_inner(self) -> None:
+        memory = {"nca": {"active_tactic_design": {"name": "P"}}}
+        args = lra_loop_sk.canary_args(
+            out=HERE.parent / "evidence" / "canaries",
+            rounds=1,
+            lake_top=1,
+            drafts=2,
+            timeout=1.0,
+            seed=1,
+            memory=memory,
+        )
+        self.assertIs(args.memory, memory)
+
     def test_parse_action_extracts_json(self) -> None:
         text = 'Sure.\n{"action": "stop", "reason": "saturated"}\n'
         self.assertEqual(lra_loop_sk.parse_action(text)["action"], "stop")
         self.assertEqual(lra_loop_sk.parse_action("not json")["action"], "run")
+
+    def test_grok_transport_preserves_hypothesis_action_fields(self) -> None:
+        import grok_single
+
+        action = grok_single._first_outer_action(
+            '{"action":"hypothesis_refactor","name":"P",'
+            '"strategy":"guided_mca","hypothesis":"test a closed tree",'
+            '"constraints":"preserve binders","evaluation":"Lake"}'
+        )
+        self.assertIsNotNone(action)
+        self.assertEqual(action["action"], "hypothesis_refactor")
+        self.assertEqual(action["hypothesis"], "test a closed tree")
 
     def test_install_fold_keeps_intro(self) -> None:
         mem: dict = {"skills": []}
@@ -174,6 +213,38 @@ class SkillImproveLoopTests(unittest.TestCase):
         self.assertEqual(action["action"], "skip_stem")
         self.assertEqual(action["stem"], "hoist_repeated_simp")
 
+    def test_deterministic_route_reopens_failed_stem_for_repair(self) -> None:
+        action = lra_loop_sk.deterministic_route(
+            gaps=[
+                {
+                    "name": "CallElimCorrect.substOldPostSubset",
+                    "failed_stems": ["port_drop_intro_before_simp_all"],
+                    "top_help": [{"residual": "intro_then_simp_all"}],
+                }
+            ],
+            last_lake=[],
+            stalled=False,
+            memory={"nca": {"tactic_design_history": []}},
+        )
+        self.assertEqual(action["action"], "repair_tactic")
+        self.assertEqual(action["stem"], "drop_intro_before_simp_all")
+        self.assertEqual(action["strategy"], "closed_edits")
+
+    def test_patched_portable_stem_is_probeable_again(self) -> None:
+        memory = {
+            "blacklist": [
+                "P::port_unused_intros",
+                "P::port_drop_intro_before_simp_all",
+            ],
+            "failures": [
+                {"name": "P", "kind": "port_unused_intros"},
+                {"name": "P", "kind": "port_drop_intro_before_simp_all"},
+            ],
+        }
+        stems = lra_bind.failed_skill_stems(memory, "P")
+        self.assertNotIn("unused_intros", stems)
+        self.assertIn("drop_intro_before_simp_all", stems)
+
     def test_outer_grok_runs_before_inner_typesafe(self) -> None:
         order: list[str] = []
 
@@ -212,6 +283,62 @@ class SkillImproveLoopTests(unittest.TestCase):
         self.assertEqual(payload["history"][0]["outer"], "grok")
         self.assertEqual(payload["history"][0]["inner"], "typesafe_nested")
         self.assertEqual(payload["history"][0]["max_trace_depth"], 1)
+
+    def test_stalled_outer_requests_hypothesis_for_inner_assessment(self) -> None:
+        from tempfile import TemporaryDirectory
+
+        prompts: list[str] = []
+
+        def fake_generate(prompt: str, **_kwargs: object) -> str:
+            prompts.append(str(prompt))
+            if '"outer_stalled": true' in str(prompt):
+                return (
+                    '{"action":"hypothesis_refactor","name":"P",'
+                    '"family":"search_space","strategy":"guided_mca",'
+                    '"hypothesis":"compress a repeated local simplification",'
+                    '"constraints":"preserve binders","evaluation":"Lake then token count"}'
+                )
+            return '{"action":"nest_inner","reason":"collect evidence"}'
+
+        def fake_inner(args: argparse.Namespace) -> dict:
+            # Keep the NCA state non-idle so the test can exercise the
+            # controller's reserved hypothesis turn rather than halting the
+            # synthetic campaign after its first empty inner payload.
+            args.memory.setdefault("nca", {})["program_state"] = {
+                "ops": [{"op": "HYPOTHESIS_PROBE"}],
+                "last_ran": [],
+            }
+            if len(prompts) >= 3:
+                self.assertEqual(
+                    (args.memory.get("nca") or {}).get("active_hypothesis_refactor", {}).get("name"),
+                    "P",
+                )
+            return {
+                "skill_analysis": [],
+                "lake": [],
+                "ledger": {"jev_calls": 0},
+                "called_docker0": False,
+            }
+
+        with TemporaryDirectory() as tmp:
+            payload = lra_loop_sk.run_loop(
+                outer=3,
+                llm=True,
+                out=Path(tmp),
+                rounds=1,
+                lake_top=1,
+                drafts=2,
+                timeout=1.0,
+                seed=1,
+                generate=fake_generate,
+                run_inner=fake_inner,
+                memory={},
+                persist_memory=False,
+            )
+        self.assertEqual(len(payload["history"]), 3)
+        self.assertEqual(payload["history"][-1]["action"]["action"], "hypothesis_refactor")
+        self.assertEqual(payload["stop_reason"], "no_token_cut")
+        self.assertTrue(any('"outer_stalled": true' in prompt for prompt in prompts))
 
     def test_decision_tree_and_nested_walk(self) -> None:
         import typesafe_inner as lra_inner
@@ -1573,6 +1700,7 @@ class SkillImproveLoopTests(unittest.TestCase):
     def test_rank_live_and_rehydrate_gaps(self) -> None:
         import random_canary as lra_rand
         import splice as lra_splice
+        from jevops.memory import load_memory as load_generic_memory
 
         mem: dict = {"blacklist": [], "research": [], "failures": [], "nca": {"grid": {}}}
         restored = lra_bind.rehydrate_from_skill_analysis(mem)
@@ -1595,6 +1723,18 @@ class SkillImproveLoopTests(unittest.TestCase):
         leftover = (mem.get("nca") or {}).get("grid") or {}
         inits = leftover.get("ptr://theorem/Core.InitsUpdatesComm") or {}
         self.assertGreaterEqual(int(inits.get("remaining_cut") or 0), 100)
+
+        with TemporaryDirectory() as tmp:
+            fixture = Path(tmp) / "skill-analysis.json"
+            fixture.write_text(
+                '{"gaps":[{"name":"P","failed_stems":["port_unused_intros"]}]}'
+            )
+            loaded = load_generic_memory(
+                Path(tmp) / "memory.json",
+                rehydrate_path=fixture,
+                patched_unban=("port_unused_intros",),
+            )
+            self.assertNotIn("P::port_unused_intros", loaded["blacklist"])
 
     def test_no_drafts_instruct_is_per_canary(self) -> None:
         import splice as lra_splice

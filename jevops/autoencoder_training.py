@@ -289,6 +289,10 @@ class TrainingExample:
     # source IR, never from ``target_ir``; otherwise paired refactor examples
     # can report artificially perfect reconstruction.
     source_ir: Mapping[str, Any] = field(default_factory=dict)
+    # Auxiliary provenance for router/NCA teachers.  This is not proof
+    # evidence; the compiler gate still decides whether a target is usable.
+    rule_id: str = ""
+    rule_features: tuple[str, ...] = ()
 
     def to_dict(self, *, include_text: bool = False) -> dict[str, Any]:
         out: dict[str, Any] = {
@@ -297,6 +301,8 @@ class TrainingExample:
             "source_digest": self.source_digest,
             "source_ir_digest": _digest(self.source_ir),
             "target_ir_digest": _digest(self.target_ir),
+            "rule_id": self.rule_id,
+            "rule_features": list(self.rule_features),
             "target_ops": [
                 {"op": op, **({"args": list(args)} if args else {})}
                 for op, args in self.target_ops
@@ -338,6 +344,9 @@ def coerce_training_example(value: Any, index: int = 0) -> TrainingExample:
     sample_id = str(row.get("sample_id") or row.get("id") or "").strip() if isinstance(row, Mapping) else ""
     if not sample_id:
         sample_id = _text_digest(text)[:24] or f"sample-{index:08d}"
+    raw_rule_features = row.get("rule_features") if isinstance(row, Mapping) else ()
+    if isinstance(raw_rule_features, str):
+        raw_rule_features = (raw_rule_features,)
     return TrainingExample(
         sample_id=sample_id,
         text=text,
@@ -346,6 +355,16 @@ def coerce_training_example(value: Any, index: int = 0) -> TrainingExample:
         source_digest=_text_digest(text),
         problem=str(row.get("problem") or "") if isinstance(row, Mapping) else "",
         source_ir=source_ir,
+        rule_id=str(row.get("rule_id") or "") if isinstance(row, Mapping) else "",
+        rule_features=(
+            tuple(
+                str(item)[:80]
+                for item in (raw_rule_features or ())
+                if str(item).strip()
+            )[:16]
+            if isinstance(row, Mapping)
+            else ()
+        ),
     )
 
 
@@ -720,11 +739,13 @@ class LeanIRAutoencoder:
         source_ir: Optional[Mapping[str, Any]] = None,
         max_ops: Optional[int] = None,
     ) -> dict[str, Any]:
-        """Decode a bounded operation sequence while preserving source symbols.
+        """Decode an operation sequence while preserving source symbols.
 
         Operation selection is learned; arguments are copied only from the
         parsed source IR and are independently sanitized by the renderer.  We
         never let a model hallucinate arbitrary Lean text into the output.
+        Normal evaluation preserves the complete observed sequence; callers
+        doing bounded candidate generation must pass ``max_ops`` explicitly.
         """
 
         source = dict(source_ir or _ae().encode_lean_ir(text))
@@ -734,7 +755,10 @@ class LeanIRAutoencoder:
         features = self.feature_vector(text)
         selected: list[tuple[str, tuple[str, ...]]] = []
         previous = "<bos>"
-        limit = max(1, min(int(max_ops or self.config.max_ops), self.config.max_ops))
+        if max_ops is None:
+            limit = len(target)
+        else:
+            limit = max(1, min(int(max_ops), self.config.max_ops))
         for op, args in target[:limit]:
             logits = self._logits(features, previous)
             op_score = logits.get(op, -60.0)
@@ -1103,6 +1127,9 @@ def nca_feedback_for_example(
         cells.append(nca_kernel.canonical_cell_id("port_autoencoder", kind="skill"))
         if problem_text:
             cells.append(nca_kernel.canonical_cell_id(f"proof:{problem_text}", kind="theorem"))
+        rule_id = str(row.get("rule_id") or example.rule_id or "").strip()
+        if rule_id:
+            cells.append(nca_kernel.canonical_cell_id(rule_id, kind="rule"))
         # NCA context is derived from observed source structure, not target
         # labels; this keeps the auxiliary signal from reintroducing the
         # source→target leakage that the explicit source_ir field prevents.
@@ -1192,6 +1219,162 @@ def nca_feedback_for_example(
     )
 
 
+def router_rule_id(rule: Mapping[str, Any]) -> str:
+    """Return a stable id for a normalized router/NCA rule description."""
+
+    parent_rule_ids = rule.get("parent_rule_ids") or ()
+    if isinstance(parent_rule_ids, str):
+        parent_rule_ids = (parent_rule_ids,)
+    normalized = {
+        "kind": str(rule.get("kind") or "router_rule")[:80],
+        "strategy": str(rule.get("strategy") or "")[:80],
+        "ops": list(rule.get("ops") or ())[:32],
+        "candidate_digest": str(rule.get("candidate_digest") or "")[:80],
+        "rationale_digest": str(rule.get("rationale_digest") or "")[:80],
+        "plan_digest": str(rule.get("plan_digest") or "")[:80],
+        "origin": str(rule.get("origin") or "")[:80],
+        "commit": str(rule.get("commit") or "")[:80],
+        "path": str(rule.get("path") or "")[:240],
+        "parent_rule_ids": [str(item)[:80] for item in list(parent_rule_ids)[:8]],
+    }
+    return "rule-" + _digest(normalized)[:24]
+
+
+def record_autoencoder_rule_feedback(
+    memory: Optional[MutableMapping[str, Any]],
+    *,
+    problem: str = "",
+    rule: Optional[Mapping[str, Any]] = None,
+    outcome: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Persist a bounded proposal/outcome record and connect it to NCA.
+
+    Rules are an auditable bridge between the router and the autoencoder.  The
+    record contains normalized operation/strategy metadata and digests, never
+    executable model text.  A rule becomes training-eligible only when the
+    current compiler reports ``lake_ok``; proposal and rejection observations
+    remain useful NCA data but cannot become a target.
+    """
+
+    if not isinstance(memory, MutableMapping):
+        return {"ok": False, "reason": "memory_required"}
+    raw = dict(rule or {})
+    parent_rule_ids = raw.get("parent_rule_ids") or ()
+    if isinstance(parent_rule_ids, str):
+        parent_rule_ids = (parent_rule_ids,)
+    normalized: dict[str, Any] = {
+        "kind": str(raw.get("kind") or "router_rule")[:80],
+        "strategy": str(raw.get("strategy") or "")[:80],
+        "ops": [
+            dict(item)
+            if isinstance(item, Mapping)
+            else str(item)[:160]
+            for item in list(raw.get("ops") or ())[:32]
+        ],
+        "candidate_digest": str(raw.get("candidate_digest") or "")[:80],
+        "rationale_digest": str(raw.get("rationale_digest") or "")[:80],
+        "plan_digest": str(raw.get("plan_digest") or "")[:80],
+        "origin": str(raw.get("origin") or "")[:80],
+        "commit": str(raw.get("commit") or "")[:80],
+        "path": str(raw.get("path") or "")[:240],
+        "parent_rule_ids": [str(item)[:80] for item in list(parent_rule_ids)[:8]],
+    }
+    supplied_id = str(raw.get("rule_id") or "").strip()
+    rule_id = supplied_id if supplied_id.startswith("rule-") else router_rule_id(normalized)
+    normalized["rule_id"] = rule_id
+    normalized["problem"] = str(problem or "")[:160]
+    store = memory.setdefault("nca", {})
+    rules = store.setdefault("router_rules", [])
+    if not isinstance(rules, list):
+        rules = []
+        store["router_rules"] = rules
+    existing = next(
+        (row for row in rules if isinstance(row, Mapping) and str(row.get("rule_id") or "") == rule_id),
+        None,
+    )
+    if existing is None:
+        row: dict[str, Any] = {
+            **normalized,
+            "proposal_count": 0,
+            "observation_count": 0,
+            "verified_count": 0,
+            "rejected_count": 0,
+            "training_eligible": False,
+            "best_tokens": None,
+        }
+        rules.append(row)
+    else:
+        row = dict(existing)
+        row.update(
+            {
+                key: value
+                for key, value in normalized.items()
+                if value is not None and value != "" and value != []
+            }
+        )
+        for index, item in enumerate(rules):
+            if item is existing:
+                rules[index] = row
+                break
+    row["proposal_count"] = int(row.get("proposal_count") or 0) + (0 if outcome else 1)
+    if outcome is not None:
+        result = dict(outcome)
+        lake_ok = bool(result.get("lake_ok") or result.get("theorem_ok"))
+        tokens = max(0, int(result.get("body_tokens") or result.get("tokens") or 0))
+        reward = _clip01(result.get("reward"), 0.0)
+        row["observation_count"] = int(row.get("observation_count") or 0) + 1
+        row["verified_count"] = int(row.get("verified_count") or 0) + int(lake_ok)
+        row["rejected_count"] = int(row.get("rejected_count") or 0) + int(not lake_ok)
+        row["lake_verified"] = lake_ok
+        row["training_eligible"] = bool(row.get("training_eligible") or lake_ok)
+        old_tokens = row.get("best_tokens")
+        if lake_ok and tokens and (old_tokens is None or tokens < int(old_tokens)):
+            row["best_tokens"] = tokens
+        row["last_reward"] = reward
+        row["last_body_tokens"] = tokens
+        row["last_outcome"] = "verified" if lake_ok else "rejected"
+    row["rule_digest"] = _digest(normalized)
+    store["router_rules"] = rules[-512:]
+    try:
+        from . import nca as nca_kernel
+
+        rule_ptr = nca_kernel.canonical_cell_id(rule_id, kind="rule")
+        lake_ok = None if outcome is None else bool(dict(outcome).get("lake_ok") or dict(outcome).get("theorem_ok"))
+        reward = 0.5 if outcome is None else _clip01(dict(outcome).get("reward"), 0.5)
+        tokens = 0 if outcome is None else int(dict(outcome).get("body_tokens") or dict(outcome).get("tokens") or 0)
+        theorem_ptr = (
+            nca_kernel.canonical_cell_id(f"proof:{problem}", kind="theorem")
+            if problem
+            else ""
+        )
+        nca_kernel.upsert_from_event(
+            memory,
+            ptr=rule_ptr,
+            kind="rule",
+            energy=reward,
+            theorem_ok=lake_ok,
+            tokens=tokens,
+            parent_ptr=theorem_ptr,
+        )
+        edges = store.setdefault("board_edges", [])
+        for edge in (
+            ["ptr://skill/port_autoencoder", rule_ptr],
+            [rule_ptr, theorem_ptr] if theorem_ptr else None,
+        ):
+            if edge and edge not in edges:
+                edges.append(edge)
+        nca_kernel.journal_event(
+            memory,
+            event="router_rule_observation" if outcome is not None else "router_rule_proposal",
+            ptr=rule_ptr,
+            op="RULE_OBSERVE" if outcome is not None else "RULE_PROPOSE",
+            extra={"problem": str(problem or "")[:160], "lake_ok": lake_ok},
+        )
+    except Exception as exc:
+        row["nca_error"] = type(exc).__name__
+    return {"ok": True, "rule_id": rule_id, "record": dict(row)}
+
+
 def advance_autoencoder_nca(
     memory: Optional[MutableMapping[str, Any]],
     *,
@@ -1262,6 +1445,7 @@ def record_autoencoder_nca_feedback(
                 "id": candidate.get("id") if isinstance(candidate, Mapping) else "",
                 "ir": candidate.get("ir_digest") if isinstance(candidate, Mapping) else "",
                 "n_tokens": candidate.get("n_tokens") if isinstance(candidate, Mapping) else tokens,
+                "rule_id": candidate.get("rule_id") if isinstance(candidate, Mapping) else "",
             }
         ),
     }
@@ -1287,6 +1471,22 @@ def record_autoencoder_nca_feedback(
             edge = [skill_ptr, parent]
             if edge not in edges:
                 edges.append(edge)
+        rule_id = str((candidate or {}).get("rule_id") or "").strip() if isinstance(candidate, Mapping) else ""
+        if rule_id:
+            rule_ptr = nca_kernel.canonical_cell_id(rule_id, kind="rule")
+            nca_kernel.upsert_from_event(
+                memory,
+                ptr=rule_ptr,
+                kind="rule",
+                energy=reward_value,
+                theorem_ok=theorem_ok,
+                tokens=max(0, int(tokens)),
+                parent_ptr=parent,
+            )
+            edges = memory.setdefault("nca", {}).setdefault("board_edges", [])
+            for edge in ([skill_ptr, rule_ptr], [rule_ptr, parent] if parent else None):
+                if edge and edge not in edges:
+                    edges.append(edge)
         if advance_nca:
             tick_result = advance_autoencoder_nca(memory, problem=problem)
             feedback["nca_tick"] = int(tick_result.get("tick") or 0)
@@ -1341,9 +1541,10 @@ def loss_for_example(
     nca_signal = nca_feedback_for_example(
         nca_memory,
         example,
-        candidate={
+            candidate={
             "verifier_reward": verifier_reward,
             "typesafe_reward": typesafe_reward,
+            "rule_id": example.rule_id,
         },
     )
     nca_reward = nca_signal.reward if nca_signal.active else None

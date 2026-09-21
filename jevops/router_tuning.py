@@ -42,6 +42,8 @@ from .autoencoder_training import (
     nca_feedback_for_example,
     advance_autoencoder_nca,
     record_autoencoder_nca_feedback,
+    record_autoencoder_rule_feedback,
+    router_rule_id,
 )
 from .outer import head_chars, make_llm_router_generate
 
@@ -50,7 +52,7 @@ _BY_MARKER = re.compile(r":=\s*by\b", re.IGNORECASE)
 _OP_HEAD = re.compile(r"^(?P<op>[A-Za-z_][A-Za-z0-9_']*)(?:\s+(?P<args>.*))?$", re.DOTALL)
 _BANNED_TACTIC_TEXT = re.compile(
     r"(?:\b(?:sorry|admit|unsafe|run_tac|elab|macro|quote|import|namespace|open|set_option|theorem|lemma|example)\b"
-    r"|#(?:eval|check|print|reduce)\b|\b(?:exact|apply)\?\b|:=)",
+    r"|#(?:eval|check|print|reduce)\b|\b(?:exact|apply)\?\b)",
     re.IGNORECASE,
 )
 _BANNED_IR_ARG = re.compile(
@@ -80,6 +82,12 @@ ROUTER_STRATEGIES = (
     "keep_calc_only",
     "hammer_variants",
     "closed_edits",
+    "shortcut_closers",
+    "goal_directed",
+    "hammer_sweep",
+    "compose_verified",
+    "ir_crossover",
+    "pca_mca_cross",
 )
 _ROUTER_STRATEGY_SET = frozenset(ROUTER_STRATEGIES)
 _MCA_FAMILIES = (
@@ -126,10 +134,17 @@ class RouterTuningConfig:
     max_candidate_chars: int = 12_000
     max_prompt_chars: int = 16_000
     n_variations: int = 8
-    strategy_cap: int = 12
+    strategy_cap: int = 16
+    hammer_sweep: bool = True
+    max_hammer_candidates: int = 24
+    max_composed_candidates: int = 12
+    max_composition_sources: int = 6
+    teacher_replay: bool = True
+    max_replay_teachers: int = 8
     seed: int = 17
     train: bool = True
     strict_router: bool = True
+    design_hint: Mapping[str, Any] = field(default_factory=dict)
     router_kwargs: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -145,9 +160,16 @@ class RouterTuningConfig:
             "max_prompt_chars",
             "n_variations",
             "strategy_cap",
+            "max_hammer_candidates",
+            "max_composed_candidates",
+            "max_composition_sources",
+            "max_replay_teachers",
         ):
             object.__setattr__(self, name, max(1, int(getattr(self, name))))
         object.__setattr__(self, "seed", int(self.seed))
+        object.__setattr__(self, "hammer_sweep", bool(self.hammer_sweep))
+        object.__setattr__(self, "teacher_replay", bool(self.teacher_replay))
+        object.__setattr__(self, "design_hint", dict(self.design_hint or {}))
         object.__setattr__(self, "router_kwargs", dict(self.router_kwargs or {}))
 
     def to_dict(self) -> dict[str, Any]:
@@ -163,9 +185,16 @@ class RouterTuningConfig:
             "max_prompt_chars": self.max_prompt_chars,
             "n_variations": self.n_variations,
             "strategy_cap": self.strategy_cap,
+            "hammer_sweep": self.hammer_sweep,
+            "max_hammer_candidates": self.max_hammer_candidates,
+            "max_composed_candidates": self.max_composed_candidates,
+            "max_composition_sources": self.max_composition_sources,
+            "teacher_replay": self.teacher_replay,
+            "max_replay_teachers": self.max_replay_teachers,
             "seed": self.seed,
             "train": self.train,
             "strict_router": self.strict_router,
+            "design_hint": dict(self.design_hint),
         }
 
     def llm_kwargs(self) -> dict[str, Any]:
@@ -202,8 +231,16 @@ def _render_source(prefix: str, body: str, *, has_theorem: bool) -> str:
     return str(prefix).rstrip() + "\n" + clean + ("\n" if clean else "")
 
 
-def _tactic_body(value: Any, config: RouterTuningConfig) -> Optional[str]:
-    text = str(value or "").replace("\x00", "").strip()
+def _tactic_body(
+    value: Any,
+    config: RouterTuningConfig,
+    *,
+    max_lines: Optional[int] = None,
+) -> Optional[str]:
+    # Preserve leading indentation until common-indent normalisation below;
+    # stripping only newlines avoids making the first tactic shallower than
+    # its sibling lines.
+    text = str(value or "").replace("\x00", "").strip("\n")
     if text.startswith("by\n"):
         text = text[3:].lstrip("\n")
     elif text.startswith("by "):
@@ -215,7 +252,19 @@ def _tactic_body(value: Any, config: RouterTuningConfig) -> Optional[str]:
     if _BANNED_TACTIC_TEXT.search(text):
         return None
     lines = text.splitlines()
-    if len(lines) > config.max_tactic_lines:
+    # Candidate files often carry the theorem's two-space base indent.  A
+    # plain ``str.strip`` removes it only from the first line and shifts all
+    # continuation tactics one level deeper, which can change Lean's layout
+    # semantics.  Remove the common indentation while preserving nesting;
+    # ``_render_source`` adds the theorem-body base indent back.
+    indents = [len(line) - len(line.lstrip()) for line in lines if line.strip()]
+    if indents:
+        common = min(indents)
+        if common:
+            lines = [line[common:] if line.strip() else line for line in lines]
+            text = "\n".join(lines)
+    line_limit = config.max_tactic_lines if max_lines is None else max(1, int(max_lines))
+    if len(lines) > line_limit:
         return None
     # Tactic candidates may contain normal Lean combinators, but they may not
     # smuggle a second declaration or a command into the theorem body.
@@ -383,6 +432,25 @@ def _strategy_body(name: str, body: str, rng: random.Random) -> list[tuple[str, 
         return [(str(family), str(candidate), "span_preserving") for family, candidate, _ops in tactic_ops.span_preserving_edits(text)]
     if name == "hammer_variants":
         return [(str(family), str(candidate), "hammer_variants") for family, candidate in tactic_ops.hammer_variants(text, text)]
+    if name == "hammer_sweep":
+        return [
+            (str(family), str(candidate), "hammer_sweep")
+            for family, candidate, _ops in tactic_ops.hammer_sweep_variants(text, text, cap=32)
+        ]
+    if name == "shortcut_closers":
+        return [
+            (str(family), str(candidate), "shortcut_closers")
+            for family, candidate in tactic_ops.shortcut_variants(text, cap=24)
+        ]
+    if name == "goal_directed":
+        return [
+            (str(family), str(candidate), "goal_directed")
+            for family, candidate in tactic_ops.closer_variants(text)
+        ]
+    if name == "pca_mca_cross":
+        rows = tactic_ops.closed_tree_edits(text, case_replace_cap=4)
+        rows.extend(tactic_ops.guided_mca_edits(text, _MCA_FAMILIES))
+        return [(str(family), str(candidate), "pca_mca_cross") for family, candidate, _ops in rows]
     if name == "closed_edits":
         return [
             (str(row.get("kind") or "closed_edit"), str(row.get("tactics") or ""), "closed_edits")
@@ -421,6 +489,7 @@ def _router_prompt(
     analysis: Mapping[str, Any],
     history: Sequence[Mapping[str, Any]],
     config: RouterTuningConfig,
+    design_hint: Optional[Mapping[str, Any]] = None,
 ) -> str:
     payload = {
         "problem": str(problem or "")[:160],
@@ -431,6 +500,7 @@ def _router_prompt(
         "recent_rounds": list(history)[-3:],
         "allowed_ir_ops": list(ae.LEAN_IR_OPS),
         "allowed_strategies": list(ROUTER_STRATEGIES),
+        "outer_design_directive": dict(design_hint or {}),
     }
     preamble = (
         "You are the proof-shortening advisor inside a Lean autoencoder loop.\n"
@@ -439,6 +509,7 @@ def _router_prompt(
         "The primary objective is the smallest verified proof-body token count. Preserve the theorem "
         "statement and binders. Never use sorry, admit, unsafe, run_tac, imports, declarations, exact?, "
         "or apply?. Do not return Python or source-code patches.\n\n"
+        "The outer controller may provide a design directive. Treat it as a focused search hint, not proof evidence; still return bounded candidates and let Lake decide.\n"
         "Use this schema (all fields optional except the object itself):\n"
         '{"focus":"...","strategies":["drop_unused_haves"],'
         '"candidates":[{"kind":"ir","ops":[{"op":"simp"}]},'
@@ -461,6 +532,13 @@ def _compact_row(row: Mapping[str, Any]) -> dict[str, Any]:
         "ir_ce_m": row.get("ir_ce_m"),
         "rationale": row.get("rationale"),
         "reason": row.get("reason"),
+        "rule_id": row.get("rule_id"),
+        "rule_kind": row.get("rule_kind"),
+        "seed_provenance": row.get("seed_provenance"),
+        "claimed_tokens": row.get("claimed_tokens"),
+        "seed_commit": row.get("seed_commit"),
+        "seed_path": row.get("seed_path"),
+        "composition_parent_ids": row.get("composition_parent_ids"),
     }
 
 
@@ -477,6 +555,8 @@ class RouterTuningLoop:
         config: Optional[RouterTuningConfig] = None,
         router_generate: Optional[Callable[[str], Any]] = None,
         router: Any = None,
+        seed_candidates: Optional[Sequence[Any]] = None,
+        design_hint: Optional[Mapping[str, Any]] = None,
         rng: Optional[random.Random] = None,
     ) -> None:
         self.memory = memory
@@ -484,6 +564,7 @@ class RouterTuningLoop:
         self.problem = str(problem or "")
         self.compile_fn = compile_fn
         self.config = config or RouterTuningConfig()
+        self.design_hint = dict(design_hint or self.config.design_hint or {})
         self.rng = rng or random.Random(self.config.seed)
         self.router_generate = router_generate or make_llm_router_generate(
             router=router,
@@ -492,6 +573,17 @@ class RouterTuningLoop:
             verify_route=self.config.strict_router,
             **self.config.llm_kwargs(),
         )
+        # Teacher candidates still pass through the compiler below before
+        # they can win or become a training target.  This lets a verified
+        # shorter refactor improve the autoencoder without leaking the target
+        # into the model's own prediction/loss diagnostics.
+        seed_specs: list[dict[str, Any]] = []
+        for item in seed_candidates or ():
+            spec = self._normalise_seed_candidate(item)
+            if spec.get("body"):
+                seed_specs.append(spec)
+        self.seed_candidates = tuple(seed_specs[: self.config.max_candidate_pool])
+        self._rules: dict[str, dict[str, Any]] = {}
         self._compile_cache: dict[str, dict[str, Any]] = {}
         self._source_prefix, self._source_body, self._has_theorem = _source_parts(self.source)
         self._source_ir = ae.encode_lean_ir(self.source)
@@ -516,7 +608,57 @@ class RouterTuningLoop:
         self._compile_cache[key] = dict(result)
         return dict(result)
 
-    def _row(self, candidate: str, *, origin: str, kind: str, rationale: str = "") -> dict[str, Any]:
+    @staticmethod
+    def _normalise_seed_candidate(value: Any) -> dict[str, Any]:
+        if isinstance(value, Mapping):
+            body = value.get("body")
+            if body is None:
+                body = value.get("tactics")
+            if body is None:
+                body = value.get("source")
+            metadata = {
+                key: value.get(key)
+                for key in (
+                    "schema",
+                    "source",
+                    "provenance",
+                    "commit",
+                    "path",
+                    "claimed_tokens",
+                    "actual_tokens",
+                    "body_digest",
+                    "seed_digest",
+                )
+                if value.get(key) not in (None, "")
+            }
+            return {"body": str(body or ""), "metadata": metadata}
+        return {"body": str(value or ""), "metadata": {}}
+
+    def _register_rule(self, rule: Mapping[str, Any]) -> str:
+        normalized = dict(rule)
+        supplied_id = str(normalized.get("rule_id") or "")
+        normalized["rule_id"] = supplied_id if supplied_id.startswith("rule-") else router_rule_id(normalized)
+        rule_id = str(normalized["rule_id"])
+        self._rules[rule_id] = normalized
+        try:
+            record_autoencoder_rule_feedback(
+                self.memory,
+                problem=self.problem,
+                rule=normalized,
+            )
+        except Exception:
+            pass
+        return rule_id
+
+    def _row(
+        self,
+        candidate: str,
+        *,
+        origin: str,
+        kind: str,
+        rationale: str = "",
+        metadata: Optional[Mapping[str, Any]] = None,
+    ) -> dict[str, Any]:
         candidate = str(candidate or "")
         candidate_ir = ae.encode_lean_ir(candidate)
         compile_result = self._compile(candidate)
@@ -549,7 +691,7 @@ class RouterTuningLoop:
             verifier_reward=1.0 if lake_ok else 0.0,
             minimality_reward=minimality,
         )
-        return {
+        row = {
             "id": "v-" + hashlib.sha256(candidate.encode("utf-8")).hexdigest()[:12],
             "origin": origin,
             "kind": kind,
@@ -568,23 +710,116 @@ class RouterTuningLoop:
             "reward": float(scored.get("reward") or 0.0),
             "admission": "verified" if lake_ok else "rejected",
         }
+        for key, value in dict(metadata or {}).items():
+            if key not in {
+                "rule_id",
+                "rule_kind",
+                "seed_provenance",
+                "seed_commit",
+                "seed_path",
+                "claimed_tokens",
+                "actual_tokens",
+                "body_digest",
+                "seed_digest",
+                "composition_parent_ids",
+            }:
+                continue
+            if value is None or value == "":
+                continue
+            if key in {"claimed_tokens", "actual_tokens"}:
+                row[key] = int(value)
+            elif key == "composition_parent_ids":
+                parent_ids = value if isinstance(value, (list, tuple)) else (value,)
+                row[key] = [str(item)[:80] for item in parent_ids[:8] if str(item).strip()]
+            else:
+                row[key] = str(value)[:320]
+        return row
 
-    def _push(self, rows: list[dict[str, Any]], seen: set[str], candidate: Any, *, origin: str, kind: str, rationale: str = "") -> None:
-        body = _tactic_body(candidate, self.config)
+    def _push(
+        self,
+        rows: list[dict[str, Any]],
+        seen: set[str],
+        candidate: Any,
+        *,
+        origin: str,
+        kind: str,
+        rationale: str = "",
+        metadata: Optional[Mapping[str, Any]] = None,
+    ) -> None:
+        seed_lines = self.config.max_tactic_lines
+        rule_kind = str((metadata or {}).get("rule_kind") or "")
+        if (
+            str((metadata or {}).get("seed_provenance") or "") == "git_history"
+            or rule_kind in {"verified_composition", "ir_crossover", "teacher_replay"}
+        ):
+            # Historical keep-bests and their compiler-gated compositions may
+            # contain harmless layout lines beyond the tighter LLM response
+            # budget.  Keep the exception bounded and apply the same
+            # unsafe-text/declaration checks.
+            seed_lines = min(160, max(seed_lines, seed_lines + 64))
+        body = _tactic_body(candidate, self.config, max_lines=seed_lines)
         if body is None:
             return
         rendered = _render_source(self._source_prefix, body, has_theorem=self._has_theorem)
         digest = hashlib.sha256(rendered.encode("utf-8")).hexdigest()
-        if digest in seen or len(rows) >= self.config.max_candidate_pool:
+        if digest in seen:
+            # A router proposal can be textually identical to an
+            # autoencoder/local proposal.  Do not lose the rule observation
+            # merely because candidate deduplication kept one proof row.
+            rule_id = str((metadata or {}).get("rule_id") or "")
+            if rule_id:
+                for existing in rows:
+                    if str(existing.get("id") or "") == "v-" + digest[:12]:
+                        existing.setdefault("rule_id", rule_id)
+                        existing.setdefault("rule_kind", (metadata or {}).get("rule_kind"))
+                        break
+            return
+        if len(rows) >= self.config.max_candidate_pool:
             return
         seen.add(digest)
-        rows.append(self._row(rendered, origin=origin, kind=kind, rationale=rationale))
+        rows.append(
+            self._row(
+                rendered,
+                origin=origin,
+                kind=kind,
+                rationale=rationale,
+                metadata=metadata,
+            )
+        )
 
-    def _push_ir(self, rows: list[dict[str, Any]], seen: set[str], ir: Mapping[str, Any], *, origin: str, kind: str, rationale: str = "") -> None:
+    def _seed_body(self, value: Any) -> str:
+        """Accept either a tactic body or this theorem's complete source."""
+
+        if isinstance(value, Mapping):
+            value = value.get("body") or value.get("tactics") or value.get("source")
+        text = str(value or "").strip("\n")
+        if self._has_theorem and text.startswith(self._source_prefix.rstrip()):
+            return text[len(self._source_prefix) :].lstrip("\n")
+        return text
+
+    def _push_ir(
+        self,
+        rows: list[dict[str, Any]],
+        seen: set[str],
+        ir: Mapping[str, Any],
+        *,
+        origin: str,
+        kind: str,
+        rationale: str = "",
+        metadata: Optional[Mapping[str, Any]] = None,
+    ) -> None:
         body = _ir_body(ir)
         if body is None:
             return
-        self._push(rows, seen, body, origin=origin, kind=kind, rationale=rationale)
+        self._push(
+            rows,
+            seen,
+            body,
+            origin=origin,
+            kind=kind,
+            rationale=rationale,
+            metadata=metadata,
+        )
 
     def _local_rows(self, body: str, strategies: Sequence[str]) -> list[tuple[str, str, str]]:
         names = list(strategies or ())
@@ -634,22 +869,473 @@ class RouterTuningLoop:
         current: str,
     ) -> None:
         current_ir = ae.encode_lean_ir(current)
+        plan_digest = str(plan.get("response_digest") or plan.get("raw_digest") or "")
         for item in list(plan.get("candidates") or ()):
             if not isinstance(item, Mapping):
                 continue
             rationale = str(item.get("rationale") or "")
             kind = str(item.get("kind") or "router_candidate")
             if item.get("strategy"):
+                strategy = str(item["strategy"])
+                rule_id = self._register_rule(
+                    {
+                        "kind": "router_strategy",
+                        "strategy": strategy,
+                        "origin": "llm_router_strategy",
+                        "rationale_digest": _digest(rationale),
+                        "plan_digest": plan_digest,
+                    }
+                )
                 for strategy_kind, body, origin in _strategy_body(str(item["strategy"]), _source_parts(current)[1], self.rng):
-                    self._push(rows, seen, body, origin="router_strategy:" + origin, kind=strategy_kind, rationale=rationale)
+                    self._push(
+                        rows,
+                        seen,
+                        body,
+                        origin="router_strategy:" + origin,
+                        kind=strategy_kind,
+                        rationale=rationale,
+                        metadata={"rule_id": rule_id, "rule_kind": "router_strategy"},
+                    )
             if item.get("ops") is not None:
                 ops = _normalise_ir_ops(item.get("ops"), self.config)
                 if ops is not None:
+                    rule_id = self._register_rule(
+                        {
+                            "kind": kind,
+                            "ops": ops,
+                            "origin": "llm_router_ir",
+                            "rationale_digest": _digest(rationale),
+                            "plan_digest": plan_digest,
+                        }
+                    )
                     candidate_ir = dict(current_ir)
                     candidate_ir["ops"] = ops
-                    self._push_ir(rows, seen, candidate_ir, origin="llm_router_ir", kind=kind, rationale=rationale)
+                    self._push_ir(
+                        rows,
+                        seen,
+                        candidate_ir,
+                        origin="llm_router_ir",
+                        kind=kind,
+                        rationale=rationale,
+                        metadata={"rule_id": rule_id, "rule_kind": "llm_router_ir"},
+                    )
             if item.get("tactics") is not None:
-                self._push(rows, seen, item.get("tactics"), origin="llm_router_tactic", kind=kind, rationale=rationale)
+                tactic_text = str(item.get("tactics") or "")
+                rule_id = self._register_rule(
+                    {
+                        "kind": kind,
+                        "candidate_digest": _digest(tactic_text),
+                        "origin": "llm_router_tactic",
+                        "rationale_digest": _digest(rationale),
+                        "plan_digest": plan_digest,
+                    }
+                )
+                self._push(
+                    rows,
+                    seen,
+                    tactic_text,
+                    origin="llm_router_tactic",
+                    kind=kind,
+                    rationale=rationale,
+                    metadata={"rule_id": rule_id, "rule_kind": "llm_router_tactic"},
+                )
+
+    def _verified_sources(self, rows: Sequence[Mapping[str, Any]], current: str) -> list[dict[str, Any]]:
+        """Return distinct Lake-admitted teachers in shortest-first order."""
+
+        candidates = [
+            dict(row)
+            for row in rows
+            if row.get("lake_ok") and str(row.get("source") or "").strip()
+        ]
+        if str(current or "").strip() and not any(str(row.get("source") or "") == str(current) for row in candidates):
+            current_row = self._row(current, origin="current", kind="composition_source")
+            if current_row.get("lake_ok"):
+                candidates.append(current_row)
+        candidates.sort(
+            key=lambda row: (
+                int(row.get("body_tokens") or 10**9),
+                int(row.get("token_count") or 10**9),
+                str(row.get("id") or ""),
+            )
+        )
+        distinct: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        for row in candidates:
+            digest = hashlib.sha256(str(row.get("source") or "").encode("utf-8")).hexdigest()
+            if digest in seen:
+                continue
+            seen.add(digest)
+            distinct.append(row)
+            if len(distinct) >= self.config.max_composition_sources:
+                break
+        return distinct
+
+    def _compose_verified_rows(
+        self,
+        rows: list[dict[str, Any]],
+        seen: set[str],
+        current: str,
+    ) -> int:
+        """Crossover separately Lake-admitted high-score teachers."""
+
+        before = len(rows)
+        sources = self._verified_sources(rows, current)
+        for left_index, left in enumerate(sources):
+            for right in sources[left_index + 1 :]:
+                left_body = _source_parts(str(left.get("source") or ""))[1]
+                right_body = _source_parts(str(right.get("source") or ""))[1]
+                parent_ids = [
+                    str(left.get("rule_id") or left.get("id") or "")[:80],
+                    str(right.get("rule_id") or right.get("id") or "")[:80],
+                ]
+                for kind, body, ops in tactic_ops.compose_tactic_bodies(
+                    left_body,
+                    right_body,
+                    cap=self.config.max_composed_candidates,
+                ):
+                    digest = _digest(body)
+                    rule_id = self._register_rule(
+                        {
+                            "kind": "verified_composition",
+                            "strategy": "compose_verified",
+                            "ops": list(ops),
+                            "origin": "verified_composition",
+                            "candidate_digest": digest,
+                            "parent_rule_ids": parent_ids,
+                        }
+                    )
+                    self._push(
+                        rows,
+                        seen,
+                        body,
+                        origin="composition:" + str(kind),
+                        kind="verified_composition",
+                        rationale="crossover of two independently Lake-admitted teachers",
+                        metadata={
+                            "rule_id": rule_id,
+                            "rule_kind": "verified_composition",
+                            "composition_parent_ids": parent_ids,
+                        },
+                    )
+                    if len(rows) - before >= self.config.max_composed_candidates:
+                        return len(rows) - before
+        return len(rows) - before
+
+    def _crossover_ir_rows(
+        self,
+        rows: list[dict[str, Any]],
+        seen: set[str],
+        current: str,
+    ) -> int:
+        """Crossover operation sequences from distinct verified teachers."""
+
+        before = len(rows)
+        sources = self._verified_sources(rows, current)
+        for left_index, left in enumerate(sources):
+            left_ir = left.get("ir") if isinstance(left.get("ir"), Mapping) else ae.encode_lean_ir(str(left.get("source") or ""))
+            for right in sources[left_index + 1 :]:
+                right_ir = right.get("ir") if isinstance(right.get("ir"), Mapping) else ae.encode_lean_ir(str(right.get("source") or ""))
+                parent_ids = [
+                    str(left.get("rule_id") or left.get("id") or "")[:80],
+                    str(right.get("rule_id") or right.get("id") or "")[:80],
+                ]
+                for candidate_ir in ae.crossover_lean_ir(
+                    left_ir,
+                    right_ir,
+                    limit=self.config.max_composed_candidates,
+                ):
+                    rule_id = self._register_rule(
+                        {
+                            "kind": "ir_crossover",
+                            "strategy": "ir_crossover",
+                            "ops": list(candidate_ir.get("ops") or ())[:32],
+                            "origin": "verified_ir_crossover",
+                            "candidate_digest": str(candidate_ir.get("ops_digest") or ""),
+                            "parent_rule_ids": parent_ids,
+                        }
+                    )
+                    self._push_ir(
+                        rows,
+                        seen,
+                        candidate_ir,
+                        origin="ir_crossover",
+                        kind="ir_crossover",
+                        metadata={
+                            "rule_id": rule_id,
+                            "rule_kind": "ir_crossover",
+                            "composition_parent_ids": parent_ids,
+                        },
+                    )
+                    if len(rows) - before >= self.config.max_composed_candidates:
+                        return len(rows) - before
+        return len(rows) - before
+
+    def _hammer_sweep_rows(
+        self,
+        rows: list[dict[str, Any]],
+        seen: set[str],
+        current: str,
+        *,
+        requested: Sequence[str] = (),
+    ) -> int:
+        """Explore all bounded local strategies over the best admitted bases."""
+
+        if not self.config.hammer_sweep:
+            return 0
+        before = len(rows)
+        sources = self._verified_sources(rows, current)
+        remaining = max(0, int(self.config.max_hammer_candidates))
+        if not sources or remaining <= 0:
+            return 0
+        strategy_names = [
+            str(name)
+            for name in requested
+            if str(name) not in {"hammer_sweep", "compose_verified", "ir_crossover"}
+        ]
+        strategy_names.extend(
+            name
+            for name in ROUTER_STRATEGIES
+            if name not in {"hammer_sweep", "compose_verified", "ir_crossover"}
+            and name not in strategy_names
+        )
+        for base in sources:
+            body = _source_parts(str(base.get("source") or ""))[1]
+            generated = tactic_ops.hammer_sweep_variants(
+                body,
+                body,
+                cap=min(remaining, 32),
+            )
+            for kind, candidate, ops in generated:
+                rule_id = self._register_rule(
+                    {
+                        "kind": "hammer_sweep",
+                        "strategy": "hammer_sweep",
+                        "ops": list(ops),
+                        "origin": "bounded_hammer",
+                        "candidate_digest": _digest(candidate),
+                        "parent_rule_ids": [str(base.get("rule_id") or base.get("id") or "")[:80]],
+                    }
+                )
+                self._push(
+                    rows,
+                    seen,
+                    candidate,
+                    origin="hammer:" + str(kind),
+                    kind="hammer_sweep",
+                    metadata={"rule_id": rule_id, "rule_kind": "hammer_sweep"},
+                )
+                remaining = int(self.config.max_hammer_candidates) - (len(rows) - before)
+                if remaining <= 0:
+                    return len(rows) - before
+            # Now visit every direct allowlisted strategy, with the outer
+            # model's requested choices first.  The global row budget keeps
+            # this exhaustive enumeration from multiplying compiler calls.
+            for strategy in strategy_names:
+                for kind, candidate, origin in _strategy_body(strategy, body, self.rng):
+                    rule_id = self._register_rule(
+                        {
+                            "kind": "hammer_strategy",
+                            "strategy": strategy,
+                            "origin": "bounded_hammer_strategy",
+                            "candidate_digest": _digest(candidate),
+                            "parent_rule_ids": [str(base.get("rule_id") or base.get("id") or "")[:80]],
+                        }
+                    )
+                    self._push(
+                        rows,
+                        seen,
+                        candidate,
+                        origin="hammer_strategy:" + str(origin),
+                        kind=str(kind),
+                        metadata={"rule_id": rule_id, "rule_kind": "hammer_strategy"},
+                    )
+                    remaining = int(self.config.max_hammer_candidates) - (len(rows) - before)
+                    if remaining <= 0:
+                        return len(rows) - before
+        return len(rows) - before
+
+    def _teacher_source_digest(self) -> str:
+        """Identify the theorem envelope used by the persisted teacher rows."""
+
+        return hashlib.sha256(self.source.encode("utf-8")).hexdigest()
+
+    def _remember_verified_teachers(self, rows: Sequence[Mapping[str, Any]]) -> int:
+        """Persist a bounded set of compiler-admitted strict-cut teachers.
+
+        The buffer is deliberately a candidate cache, not proof authority.  It
+        stores only enough data to propose a body again; ``_replay_teacher_rows``
+        sends that body through the current compiler before it becomes a row or
+        a training target.  Keying by the exact theorem source prevents a proof
+        body learned for one declaration from silently becoming a target for a
+        different declaration with similar text.
+        """
+
+        source_tokens = max(1, ae.proof_body_token_count(self.source))
+        source_digest = self._teacher_source_digest()
+        store = self.memory.setdefault("nca", {}).setdefault("autoencoder", {})
+        buffer = store.setdefault("teacher_buffer", [])
+        if not isinstance(buffer, list):
+            buffer = []
+        entries: dict[tuple[str, str, str], dict[str, Any]] = {}
+        for item in buffer:
+            if not isinstance(item, Mapping):
+                continue
+            problem = str(item.get("problem") or "")[:160]
+            digest = str(item.get("source_digest") or "")[:80]
+            candidate_digest = str(item.get("candidate_digest") or "")[:80]
+            if digest and candidate_digest:
+                entries[(problem, digest, candidate_digest)] = dict(item)
+
+        added = 0
+        for row in rows:
+            if not row.get("lake_ok") or not isinstance(row.get("ir"), Mapping):
+                continue
+            try:
+                body_tokens = int(row.get("body_tokens") or 0)
+            except (TypeError, ValueError):
+                continue
+            if body_tokens <= 0 or body_tokens >= source_tokens:
+                continue
+            source = str(row.get("source") or "")
+            if not source.strip():
+                continue
+            body = _source_parts(source)[1].strip("\n")
+            if not body or len(body) > self.config.max_candidate_chars:
+                continue
+            candidate_digest = _digest(body)
+            key = (self.problem[:160], source_digest, candidate_digest)
+            entry = {
+                "schema": "jevops-router-teacher/v1",
+                "problem": self.problem[:160],
+                "source_digest": source_digest,
+                "candidate_digest": candidate_digest,
+                "body": body[: self.config.max_candidate_chars],
+                "body_tokens": body_tokens,
+                "rule_id": str(row.get("rule_id") or "")[:80],
+                "rule_kind": str(row.get("rule_kind") or row.get("kind") or "verified_teacher")[:80],
+                "origin": str(row.get("origin") or "")[:120],
+                "seed_provenance": str(row.get("seed_provenance") or "")[:80],
+                "composition_parent_ids": [
+                    str(item)[:80]
+                    for item in (
+                        row.get("composition_parent_ids")
+                        if isinstance(row.get("composition_parent_ids"), (list, tuple))
+                        else ((row.get("composition_parent_ids"),) if row.get("composition_parent_ids") else ())
+                    )[:8]
+                    if str(item).strip()
+                ],
+            }
+            if key not in entries:
+                added += 1
+            entries[key] = entry
+        ordered = sorted(
+            entries.values(),
+            key=lambda item: (
+                int(item.get("body_tokens") or 10**9),
+                str(item.get("problem") or ""),
+                str(item.get("candidate_digest") or ""),
+            ),
+        )
+        # Keep enough history for a theorem family while preventing a long
+        # outer run from turning the persistent memory into an unbounded corpus.
+        store["teacher_buffer"] = ordered[:512]
+        store["teacher_buffer_schema"] = "jevops-router-teacher/v1"
+        return added
+
+    def _replay_teacher_rows(
+        self,
+        rows: list[dict[str, Any]],
+        seen: set[str],
+    ) -> int:
+        """Re-admit persisted teachers through the current compiler.
+
+        Replaying a body never trusts its old ``lake_ok`` bit.  This is the
+        guard against stale Lake environments, changed imports, or a bad
+        historical receipt becoming a training target merely because it was
+        once successful.
+        """
+
+        if not self.config.teacher_replay:
+            return 0
+        store = ((self.memory.get("nca") or {}).get("autoencoder") or {})
+        buffer = store.get("teacher_buffer") if isinstance(store, Mapping) else None
+        if not isinstance(buffer, list):
+            return 0
+        source_digest = self._teacher_source_digest()
+        source_tokens = max(1, ae.proof_body_token_count(self.source))
+        candidates: list[dict[str, Any]] = []
+        for item in buffer:
+            if not isinstance(item, Mapping):
+                continue
+            if str(item.get("problem") or "")[:160] != self.problem[:160]:
+                continue
+            if str(item.get("source_digest") or "") != source_digest:
+                continue
+            body = str(item.get("body") or "").strip("\n")
+            try:
+                body_tokens = int(item.get("body_tokens") or 0)
+            except (TypeError, ValueError):
+                continue
+            if not body or body_tokens <= 0 or body_tokens >= source_tokens:
+                continue
+            candidate = dict(item)
+            candidate["body"] = body
+            candidate["body_tokens"] = body_tokens
+            candidates.append(candidate)
+        candidates.sort(
+            key=lambda item: (
+                int(item.get("body_tokens") or 10**9),
+                str(item.get("candidate_digest") or ""),
+            )
+        )
+        before = len(rows)
+        for item in candidates[: self.config.max_replay_teachers]:
+            source_rule_id = str(item.get("rule_id") or "")[:80]
+            candidate_digest = str(item.get("candidate_digest") or _digest(item.get("body")))[:80]
+            replay_rule_id = "rule-" + _digest(
+                {
+                    "kind": "teacher_replay",
+                    "problem": self.problem[:160],
+                    "source_digest": source_digest,
+                    "candidate_digest": candidate_digest,
+                    "source_rule_id": source_rule_id,
+                }
+            )[:24]
+            parent_ids = [source_rule_id] if source_rule_id else []
+            stored_parents = item.get("composition_parent_ids") or ()
+            if isinstance(stored_parents, str):
+                stored_parents = (stored_parents,)
+            parent_ids.extend(
+                str(value)[:80]
+                for value in stored_parents
+                if str(value).strip() and str(value)[:80] not in parent_ids
+            )
+            rule_id = self._register_rule(
+                {
+                    "rule_id": replay_rule_id,
+                    "kind": "teacher_replay",
+                    "strategy": "teacher_replay",
+                    "origin": "teacher_replay",
+                    "candidate_digest": candidate_digest,
+                    "parent_rule_ids": parent_ids[:8],
+                }
+            )
+            self._push(
+                rows,
+                seen,
+                item.get("body"),
+                origin="teacher_replay",
+                kind="teacher_replay",
+                rationale="persisted teacher re-admitted by the current compiler",
+                metadata={
+                    "rule_id": rule_id,
+                    "rule_kind": "teacher_replay",
+                    "seed_provenance": item.get("seed_provenance"),
+                    "composition_parent_ids": parent_ids[:8],
+                },
+            )
+        return len(rows) - before
 
     def _analysis(self, body: str) -> dict[str, Any]:
         try:
@@ -709,8 +1395,22 @@ class RouterTuningLoop:
         }
 
     def _train(self, winner: Optional[Mapping[str, Any]], rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+        """Record every outcome, then train only on verified strict cuts.
+
+        The winner remains the primary teacher.  Other shorter, verified
+        router/seed rules become bounded contrastive teachers, which gives the
+        autoencoder more than a scalar reward while keeping failed proposals
+        out of the target set.
+        """
+
         for row in rows:
             reward = float(row.get("reward") or 0.0) if row.get("lake_ok") else 0.0
+            candidate = {
+                "id": row.get("id"),
+                "ir_digest": _digest(row.get("ir") or {}),
+                "n_tokens": row.get("body_tokens"),
+                "rule_id": row.get("rule_id"),
+            }
             try:
                 record_autoencoder_nca_feedback(
                     self.memory,
@@ -718,62 +1418,203 @@ class RouterTuningLoop:
                     reward=reward,
                     theorem_ok=bool(row.get("lake_ok")),
                     tokens=int(row.get("body_tokens") or 0),
-                    candidate={"id": row.get("id"), "ir_digest": _digest(row.get("ir") or {}), "n_tokens": row.get("body_tokens")},
+                    candidate=candidate,
                     advance_nca=False,
                 )
+                rule_id = str(row.get("rule_id") or "")
+                if rule_id:
+                    record_autoencoder_rule_feedback(
+                        self.memory,
+                        problem=self.problem,
+                        rule=self._rules.get(rule_id, {"rule_id": rule_id, "kind": row.get("kind")}),
+                        outcome={
+                            "lake_ok": bool(row.get("lake_ok")),
+                            "body_tokens": int(row.get("body_tokens") or 0),
+                            "reward": reward,
+                        },
+                    )
             except Exception:
+                # A policy-memory write must never turn a compiler receipt into
+                # a false failure.  The row itself remains in the receipt.
                 pass
         nca_step = advance_autoencoder_nca(self.memory, problem=self.problem)
+        source_tokens = max(1, ae.proof_body_token_count(self.source))
+        teacher_buffer_added = 0
+        if winner is not None and winner.get("lake_ok"):
+            try:
+                if int(winner.get("body_tokens") or source_tokens) < source_tokens:
+                    teacher_buffer_added = self._remember_verified_teachers(rows)
+            except (TypeError, ValueError):
+                teacher_buffer_added = 0
         if not self.config.train or winner is None or not winner.get("lake_ok"):
             return {
                 "ok": True,
                 "trained": False,
                 "reason": "no_verified_winner_or_training_disabled",
                 "nca": nca_step,
+                "teacher_buffer_added": teacher_buffer_added,
+            }
+        if int(winner.get("body_tokens") or source_tokens) >= source_tokens:
+            return {
+                "ok": True,
+                "trained": False,
+                "reason": "no_strict_shortening",
+                "nca": nca_step,
+                "teacher_buffer_added": teacher_buffer_added,
             }
         try:
             store = self.memory.setdefault("nca", {}).setdefault("autoencoder", {})
             model = LeanIRAutoencoder.from_dict(store.get("training_state"), config=AutoencoderConfig())
-            example = coerce_training_example(
-                {
-                    "id": self.problem or "router-tuning",
-                    "text": self.source,
-                    "source_ir": self._source_ir,
-                    "target_ir": winner.get("ir"),
-                    "problem": self.problem,
+            eligible: list[Mapping[str, Any]] = [
+                row
+                for row in rows
+                if row.get("lake_ok")
+                and isinstance(row.get("ir"), Mapping)
+                and int(row.get("body_tokens") or source_tokens) < source_tokens
+            ]
+            eligible.sort(
+                key=lambda row: (
+                    int(row.get("body_tokens") or 10**9),
+                    -float(row.get("reward") or 0.0),
+                    str(row.get("id") or ""),
+                )
+            )
+            teacher_rows: list[Mapping[str, Any]] = []
+            seen_ir: set[str] = set()
+            # Always put the chosen winner first; at most four additional
+            # verified cuts provide rule supervision without a batch explosion.
+            for row in [winner, *eligible]:
+                if not isinstance(row, Mapping):
+                    continue
+                digest = _digest(row.get("ir") or {})
+                if digest in seen_ir:
+                    continue
+                seen_ir.add(digest)
+                teacher_rows.append(row)
+                if len(teacher_rows) >= 5:
+                    break
+            examples = [
+                coerce_training_example(
+                    {
+                        "id": f"{self.problem or 'router-tuning'}:{index}:{row.get('id')}",
+                        "text": self.source,
+                        "source_ir": self._source_ir,
+                        "target_ir": row.get("ir"),
+                        "problem": self.problem,
+                        "rule_id": row.get("rule_id") or "",
+                        "rule_features": [
+                            str(row.get("kind") or "")[:80],
+                            str(row.get("origin") or "")[:80],
+                        ],
+                    },
+                    index,
+                )
+                for index, row in enumerate(teacher_rows)
+            ]
+            if not examples:
+                return {
+                    "ok": True,
+                    "trained": False,
+                    "reason": "no_verified_teacher_examples",
+                    "nca": nca_step,
+                    "teacher_buffer_added": teacher_buffer_added,
                 }
-            )
-            feedback = nca_feedback_for_example(
-                self.memory,
-                example,
-                candidate={"verifier_reward": 1.0, "typesafe_reward": None},
-            )
-            reward = _clip01(0.75 + 0.25 * _clip01(winner.get("compression")))
-            before = self._model_diagnostics(model, example, phase="before")
+            feedback_by_id: dict[str, Any] = {}
+            rewards: dict[str, float] = {}
+            nca_rewards: dict[str, float] = {}
+            for example, row in zip(examples, teacher_rows):
+                feedback = nca_feedback_for_example(
+                    self.memory,
+                    example,
+                    candidate={
+                        "verifier_reward": 1.0,
+                        "typesafe_reward": None,
+                        "rule_id": example.rule_id,
+                    },
+                )
+                feedback_by_id[example.sample_id] = feedback
+                rewards[example.sample_id] = _clip01(0.75 + 0.25 * _clip01(row.get("compression")))
+                if feedback.active:
+                    nca_rewards[example.sample_id] = feedback.reward
+            primary = examples[0]
+            model_snapshot = model.to_dict()
+            before = self._model_diagnostics(model, primary, phase="before")
             train_report = model.train_batch(
-                [example],
-                rewards={example.sample_id: reward},
-                nca_rewards={example.sample_id: feedback.reward} if feedback.active else None,
+                examples,
+                rewards=rewards,
+                nca_rewards=nca_rewards or None,
             )
-            after = self._model_diagnostics(model, example, phase="after")
+            after = self._model_diagnostics(model, primary, phase="after")
+            before_loss = before["loss"]
+            after_loss = after["loss"]
+            ce_rise = float(after_loss.get("cross_entropy") or 0.0) - float(
+                before_loss.get("cross_entropy") or 0.0
+            )
+            cosine_drop = float(before_loss.get("cosine_similarity") or 0.0) - float(
+                after_loss.get("cosine_similarity") or 0.0
+            )
+            update_accepted = ce_rise <= 0.02 and cosine_drop <= 0.02
+            if not update_accepted:
+                # A high verifier reward must not hide a representation
+                # regression.  Roll back decoder/latent weights and keep the
+                # failed update as an auditable training attempt.
+                model = LeanIRAutoencoder.from_dict(model_snapshot, config=AutoencoderConfig())
+                after = self._model_diagnostics(model, primary, phase="rollback")
+                train_report["update_rejection"] = {
+                    "cross_entropy_rise": ce_rise,
+                    "cosine_drop": cosine_drop,
+                    "cross_entropy_tolerance": 0.02,
+                    "cosine_tolerance": 0.02,
+                }
             # This is intentionally named separately: it measures the
             # verified candidate used as the teacher target, not the model's
             # prediction.  The public ``loss`` below is always ``after``.
             candidate_loss = loss_for_example(
                 model,
-                example,
+                primary,
                 predicted_ir=winner.get("ir") if isinstance(winner.get("ir"), Mapping) else None,
                 verifier_reward=1.0,
                 nca_memory=self.memory,
                 minimality_reward=winner.get("minimality_reward"),
             )
+            rule_examples = []
+            for example, row in zip(examples, teacher_rows):
+                target_loss = loss_for_example(
+                    model,
+                    example,
+                    predicted_ir=row.get("ir") if isinstance(row.get("ir"), Mapping) else None,
+                    verifier_reward=1.0,
+                    nca_memory=self.memory,
+                    minimality_reward=row.get("minimality_reward"),
+                )
+                rule_examples.append(
+                    {
+                        "sample_id": example.sample_id,
+                        "rule_id": example.rule_id,
+                        "kind": row.get("kind"),
+                        "origin": row.get("origin"),
+                        "body_tokens": row.get("body_tokens"),
+                        "loss": target_loss.to_dict(),
+                        "nca": feedback_by_id[example.sample_id].to_dict(),
+                    }
+                )
             train_report["loss"] = after["loss"]
             train_report["model_loss_before"] = before["loss"]
             train_report["candidate_target_loss"] = candidate_loss.to_dict()
             train_report["model_prediction"] = _compact_row(before["row"])
             train_report["model_prediction_after"] = _compact_row(after["row"])
+            train_report["update_accepted"] = update_accepted
+            train_report["teacher_example_count"] = len(examples)
+            train_report["teacher_buffer_added"] = teacher_buffer_added
+            train_report["rule_examples"] = rule_examples
             store["training_state"] = model.to_dict()
-            return {"ok": True, "trained": True, "step": model.step, "nca": nca_step, **train_report}
+            return {
+                "ok": True,
+                "trained": bool(update_accepted),
+                "step": model.step,
+                "nca": nca_step,
+                **train_report,
+            }
         except Exception as exc:
             return {"ok": False, "trained": False, "reason": type(exc).__name__}
 
@@ -806,6 +1647,7 @@ class RouterTuningLoop:
                 analysis=analysis,
                 history=history,
                 config=self.config,
+                design_hint=self.design_hint,
             )
             try:
                 raw_response = self.router_generate(prompt)
@@ -827,12 +1669,74 @@ class RouterTuningLoop:
                 route_attestation = None
             rows: list[dict[str, Any]] = []
             seen: set[str] = set()
+            composition_count = 0
+            ir_crossover_count = 0
+            hammer_count = 0
+            replay_count = 0
             self._push(rows, seen, current_body, origin="current", kind="current")
+            for seed in self.seed_candidates:
+                seed_body = self._seed_body(seed.get("body"))
+                seed_meta = dict(seed.get("metadata") or {})
+                seed_rule_id = self._register_rule(
+                    {
+                        "kind": "historical_seed" if seed_meta.get("provenance") == "git_history" else "teacher_seed",
+                        "origin": str(seed_meta.get("provenance") or "teacher_seed"),
+                        "candidate_digest": str(seed_meta.get("body_digest") or _digest(seed_body)),
+                        "commit": str(seed_meta.get("commit") or ""),
+                        "path": str(seed_meta.get("path") or ""),
+                    }
+                )
+                seed_metadata = {
+                    "rule_id": seed_rule_id,
+                    "rule_kind": "historical_seed" if seed_meta.get("provenance") == "git_history" else "teacher_seed",
+                    "seed_provenance": str(seed_meta.get("provenance") or seed_meta.get("source") or "teacher"),
+                    "seed_commit": str(seed_meta.get("commit") or ""),
+                    "seed_path": str(seed_meta.get("path") or ""),
+                    "claimed_tokens": seed_meta.get("claimed_tokens"),
+                    "actual_tokens": seed_meta.get("actual_tokens"),
+                    "body_digest": seed_meta.get("body_digest") or _digest(seed_body),
+                }
+                self._push(
+                    rows,
+                    seen,
+                    seed_body,
+                    origin="verified_seed",
+                    kind="teacher_refactor",
+                    rationale="candidate must re-pass the compiler before training",
+                    metadata=seed_metadata,
+                )
+            replay_count = self._replay_teacher_rows(rows, seen)
+            self._router_rows(plan, rows, seen, current)
+            composition_count = self._compose_verified_rows(rows, seen, current)
+            ir_crossover_count = self._crossover_ir_rows(rows, seen, current)
+            hammer_count = self._hammer_sweep_rows(
+                rows,
+                seen,
+                current,
+                requested=plan.get("strategies") or (),
+            )
             for kind, body, origin in self._local_rows(current_body, plan.get("strategies") or ()):
-                self._push(rows, seen, body, origin="local:" + origin, kind=kind)
+                rule_id = self._register_rule(
+                    {
+                        "kind": "local_strategy",
+                        "strategy": origin,
+                        "origin": "local_strategy",
+                    }
+                )
+                self._push(
+                    rows,
+                    seen,
+                    body,
+                    origin="local:" + origin,
+                    kind=kind,
+                    metadata={"rule_id": rule_id, "rule_kind": "local_strategy"},
+                )
+            # Keep model-generated IR in the same bounded pool, but after the
+            # verified-teacher crossover and hammer probes.  A tiny diagnostic
+            # run must not crowd out the very compositions it is meant to
+            # evaluate; the model still receives the admitted winner below.
             for candidate_ir in self._autoencoder_irs(current):
                 self._push_ir(rows, seen, candidate_ir, origin="autoencoder", kind="ir_model")
-            self._router_rows(plan, rows, seen, current)
             verified = [row for row in rows if row.get("lake_ok")]
             round_winner = min(
                 verified,
@@ -876,9 +1780,27 @@ class RouterTuningLoop:
                     },
                     "candidate_count": len(rows),
                     "verified_count": len(verified),
+                    "search": {
+                        "hammer_enabled": self.config.hammer_sweep,
+                        "hammer_candidates": hammer_count,
+                        "composed_candidates": composition_count,
+                        "ir_crossover_candidates": ir_crossover_count,
+                        "replay_teachers": replay_count,
+                    },
                     "round_winner": _compact_row(round_winner) if round_winner else None,
                     "accepted": improved,
                     "training": train_report,
+                    "rules": [
+                        {
+                            "rule_id": row.get("rule_id"),
+                            "kind": row.get("rule_kind"),
+                            "origin": row.get("origin"),
+                            "lake_ok": row.get("lake_ok"),
+                            "body_tokens": row.get("body_tokens"),
+                        }
+                        for row in rows
+                        if row.get("rule_id")
+                    ],
                     "candidates": [_compact_row(row) for row in rows],
                 }
             )
@@ -889,8 +1811,23 @@ class RouterTuningLoop:
             {
                 "problem": self.problem,
                 "rounds": len(history),
+                "seed_candidate_count": len(self.seed_candidates),
+                "rule_count": len(self._rules),
                 "accepted_rounds": sum(1 for row in history if row.get("accepted")),
                 "router_errors": router_errors,
+                "hammer_sweep": bool(self.config.hammer_sweep),
+                "composed_candidates": sum(
+                    int((row.get("search") or {}).get("composed_candidates") or 0) for row in history
+                ),
+                "ir_crossover_candidates": sum(
+                    int((row.get("search") or {}).get("ir_crossover_candidates") or 0) for row in history
+                ),
+                "hammer_candidates": sum(
+                    int((row.get("search") or {}).get("hammer_candidates") or 0) for row in history
+                ),
+                "replay_teachers": sum(
+                    int((row.get("search") or {}).get("replay_teachers") or 0) for row in history
+                ),
                 "best_body_tokens": int(best.get("body_tokens") or 0),
                 "best_digest": hashlib.sha256(str(best.get("source") or "").encode("utf-8")).hexdigest(),
             }
@@ -919,6 +1856,21 @@ class RouterTuningLoop:
             ),
             "model_loss_after": model_loss_after,
             "history": history,
+            "search_summary": {
+                "hammer_sweep": bool(self.config.hammer_sweep),
+                "composed_candidates": sum(
+                    int((row.get("search") or {}).get("composed_candidates") or 0) for row in history
+                ),
+                "ir_crossover_candidates": sum(
+                    int((row.get("search") or {}).get("ir_crossover_candidates") or 0) for row in history
+                ),
+                "hammer_candidates": sum(
+                    int((row.get("search") or {}).get("hammer_candidates") or 0) for row in history
+                ),
+                "replay_teachers": sum(
+                    int((row.get("search") or {}).get("replay_teachers") or 0) for row in history
+                ),
+            },
             "memory": self.memory,
         }
 
@@ -932,6 +1884,8 @@ def tune_autoencoder_with_router(
     config: Optional[RouterTuningConfig] = None,
     router_generate: Optional[Callable[[str], Any]] = None,
     router: Any = None,
+    seed_candidates: Optional[Sequence[Any]] = None,
+    design_hint: Optional[Mapping[str, Any]] = None,
     rng: Optional[random.Random] = None,
 ) -> dict[str, Any]:
     """Convenience wrapper for :class:`RouterTuningLoop`."""
@@ -944,6 +1898,8 @@ def tune_autoencoder_with_router(
         config=config,
         router_generate=router_generate,
         router=router,
+        seed_candidates=seed_candidates,
+        design_hint=design_hint,
         rng=rng,
     ).run()
 

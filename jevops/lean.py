@@ -7,6 +7,7 @@ Not Arena scores. Not Track 2.
 from __future__ import annotations
 
 import re
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Mapping, Optional, Sequence
@@ -2836,6 +2837,23 @@ def planted_workspace(
     }
 
 
+@contextmanager
+def planted_session(
+    prefix: str,
+    *,
+    tags: Sequence[str],
+    plant_fn: Callable[[Any, str], Any],
+    clone_fn: Callable[[Any], Any],
+    parent: Any = None,
+) -> Any:
+    """temp_dir + planted_workspace. Yields the planted dirs. Not a live bake."""
+
+    from jevops.outer import temp_dir
+
+    with temp_dir(prefix=prefix, parent=parent) as tmp:
+        yield planted_workspace(tmp, tags=tags, plant_fn=plant_fn, clone_fn=clone_fn)
+
+
 def probe_pins(
     tags: Sequence[str],
     *,
@@ -3609,6 +3627,37 @@ def grok_file_prompt(
         f"The file currently contains a stub `{str(stub).strip()}`. Replace it completely.\n\n"
         + str(body or "")
     )
+
+
+def pack_file_result(
+    cls: Any,
+    *,
+    tactics: str,
+    identity: Any,
+    line: Any,
+    chat: str,
+    dest: Any,
+    workspace: Any,
+    head_fn: Callable[..., str],
+    extra: Optional[Mapping[str, Any]] = None,
+) -> Any:
+    """File-writing generate result. Chat is not the deliverable. Never docker0."""
+
+    payload: dict[str, Any] = {
+        "tactics": tactics,
+        "identity": identity,
+        "line": line,
+        "chat_head": head_fn(chat or "", 240),
+        "tactics_path": str(dest),
+        "workspace": str(workspace),
+        "used_file": True,
+        "chat_ignored": True,
+        "called_docker0": False,
+        "arena_score": None,
+    }
+    if extra:
+        payload.update(dict(extra))
+    return cls(**payload)
 
 
 def grok_file_argv(

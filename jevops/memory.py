@@ -34,6 +34,7 @@ def empty_memory() -> dict[str, Any]:
     return {
         "successes": [],
         "failures": [],
+        "repairs": [],
         "blacklist": [],
         "research": [],
         "expanded": [],
@@ -109,6 +110,10 @@ def load_memory(
     scrub_blacklist(data, patched_unban=patched_unban)
     if rehydrate_path is not None:
         rehydrate_from_gaps(data, path=rehydrate_path)
+        # Rehydration is historical evidence, not an authority that can
+        # restore a stem explicitly reopened by the current implementation.
+        # Apply the same patch-unban policy after importing the fixture.
+        scrub_blacklist(data, patched_unban=patched_unban)
     return data
 
 
@@ -120,6 +125,7 @@ def save_memory(
     payload = {
         "successes": list(cleaned.get("successes") or []),
         "failures": list(cleaned.get("failures") or []),
+        "repairs": list(cleaned.get("repairs") or [])[-32:],
         "blacklist": list(cleaned.get("blacklist") or []),
         "research": list(cleaned.get("research") or []),
         "expanded": list(cleaned.get("expanded") or []),
@@ -262,7 +268,29 @@ def prior_research(memory: Mapping[str, Any], name: str) -> dict[str, Any]:
     return dict(rows[-1]) if rows else {}
 
 
-def failed_skill_stems(memory: Mapping[str, Any], name: str) -> set[str]:
+def failed_skill_stems(
+    memory: Mapping[str, Any],
+    name: str,
+    *,
+    ignore_stems: Sequence[str] = (),
+) -> set[str]:
+    """Return active failed portable stems for one theorem.
+
+    ``failures`` is deliberately retained as audit history.  Callers that
+    have changed a fold implementation can pass its repaired stem in
+    ``ignore_stems`` so an old failure does not permanently suppress a fresh
+    compiler probe.  A successful :func:`repair_blacklist` remains the
+    stronger, receipt-backed way to reopen a stem and marks the row itself as
+    repaired.
+    """
+
+    ignored = set()
+    for raw in ignore_stems or ():
+        stem = str(raw or "").strip()
+        if stem.startswith("port_"):
+            stem = stem[len("port_") :]
+        if stem:
+            ignored.update({stem, f"port_{stem}"})
     stems: set[str] = set()
     prefix = f"{name}::"
     for key in memory.get("blacklist") or []:
@@ -270,16 +298,76 @@ def failed_skill_stems(memory: Mapping[str, Any], name: str) -> set[str]:
             continue
         kind = str(key).split("::")[1]
         if kind.startswith("port_"):
+            if kind in ignored:
+                continue
             stems.add(kind[len("port_") :])
             stems.add(kind)
     for row in memory.get("failures") or []:
         if row.get("name") != name:
             continue
+        if str(row.get("status") or "") == "repaired":
+            continue
         kind = str(row.get("kind") or "")
         if kind.startswith("port_"):
+            if kind in ignored:
+                continue
             stems.add(kind[len("port_") :].split("_pipeline")[0])
             stems.add(kind)
     return stems
+
+
+def repair_blacklist(
+    memory: dict[str, Any],
+    *,
+    name: str,
+    stem: str,
+    receipt: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Re-open one failed port stem after a fresh Lake-verified design pass.
+
+    Failure rows remain as audit history, but active blacklist keys and future
+    ``failed_skill_stems`` calculations no longer suppress the repaired
+    implementation.  The caller is responsible for proving the replacement
+    with Lake before invoking this function.
+    """
+
+    raw = str(stem or "").strip()
+    if raw.startswith("port_"):
+        raw = raw[len("port_") :]
+    if not raw:
+        return {"ok": False, "reason": "no_stem"}
+    prefixes = {raw, f"port_{raw}"}
+    before = list(memory.get("blacklist") or [])
+    removed: list[str] = []
+    kept: list[str] = []
+    for key in before:
+        parts = str(key).split("::")
+        kind = parts[1] if len(parts) > 1 else ""
+        same_name = not name or not parts or parts[0] in {"", name}
+        is_target = same_name and (kind in prefixes or any(kind.startswith(item + "_") for item in prefixes))
+        if is_target:
+            removed.append(str(key))
+        else:
+            kept.append(str(key))
+    memory["blacklist"] = kept
+    repaired = 0
+    for row in memory.get("failures") or []:
+        if row.get("name") != name:
+            continue
+        kind = str(row.get("kind") or "")
+        if kind in prefixes or any(kind.startswith(item + "_") for item in prefixes):
+            row["status"] = "repaired"
+            row["repair_receipt"] = dict(receipt or {})
+            repaired += 1
+    event = {
+        "name": name,
+        "stem": raw,
+        "removed_keys": removed,
+        "repaired_failures": repaired,
+        "receipt": dict(receipt or {}),
+    }
+    memory.setdefault("repairs", []).append(event)
+    return {"ok": True, **event}
 
 
 def remember_success(
@@ -428,6 +516,7 @@ def gap_report(
     keep_mints: Optional[Mapping[str, Sequence[str]]] = None,
     compose_plan_fn: Optional[Any] = None,
     unsafe_cut: float = 0.45,
+    ignore_stems: Sequence[str] = (),
 ) -> list[dict[str, Any]]:
     """Per-name next-skill notes from AutoResearch snapshots + bans. No Lean."""
 
@@ -463,7 +552,9 @@ def gap_report(
                 "keep_constructor": "ctor_lone" in unsafe,
                 "keep_structure": list(prop.get("mint") or []),
                 "compose_plan": plan,
-                "failed_stems": sorted(failed_skill_stems(memory, name)),
+                "failed_stems": sorted(
+                    failed_skill_stems(memory, name, ignore_stems=ignore_stems)
+                ),
                 "top_help": [
                     {
                         "residual": key,
