@@ -8,7 +8,7 @@ tables in this module. Jev does not write Lean. Never docker0.
 from __future__ import annotations
 
 import re
-from typing import Any, Mapping, Optional, Sequence
+from typing import Any, Callable, Mapping, Optional, Sequence
 
 _WORD = re.compile(r"\S+")
 
@@ -1066,6 +1066,181 @@ def around_lines(text: str, index: int, *, radius: int = 4) -> str:
     start = max(0, cursor - int(radius))
     end = min(len(lines), cursor + int(radius) + 1)
     return "\n".join(lines[start:end])
+
+
+def collect_literal_holes(
+    tactics: str,
+    *,
+    phrases: Sequence[str],
+    operators: Sequence[str],
+    ident_fn: Optional[Callable[..., Sequence[Mapping[str, Any]]]] = None,
+    from_row_fn: Optional[Callable[[Mapping[str, Any]], Any]] = None,
+    rehole_fn: Optional[Callable[[Any, int], Any]] = None,
+    max_holes: int = 24,
+    id_prefix: str = "SYM_",
+) -> list[Any]:
+    """Phrase then operator then ident holes. Vocab/ident/rehole are injected."""
+
+    occupied: list[tuple[int, int]] = []
+    phrase_rows = find_literals(
+        tactics,
+        phrases,
+        kind="phrase",
+        max_holes=max_holes,
+        occupied=occupied,
+        id_prefix=id_prefix,
+    )
+    occupied.extend((int(row["start"]), int(row["end"])) for row in phrase_rows)
+    op_rows = find_literals(
+        tactics,
+        operators,
+        kind="operator",
+        max_holes=max(0, int(max_holes) - len(phrase_rows)),
+        occupied=occupied,
+        id_prefix=id_prefix,
+    )
+    occupied.extend((int(row["start"]), int(row["end"])) for row in op_rows)
+    convert = from_row_fn or (lambda row: row)
+    holes = [convert(row) for row in phrase_rows + op_rows]
+    if ident_fn is not None:
+        ident_rows = list(
+            ident_fn(
+                tactics,
+                occupied=occupied,
+                max_holes=max(0, int(max_holes) - len(holes)),
+                id_prefix=id_prefix,
+            )
+            or ()
+        )
+        holes.extend(convert(row) if isinstance(row, Mapping) else row for row in ident_rows)
+        occupied.extend(
+            (int(row["start"]), int(row["end"])) for row in ident_rows if isinstance(row, Mapping)
+        )
+    if rehole_fn is not None:
+        holes = reindex_holes(holes, rehole_fn=rehole_fn)
+    return list(holes)[: int(max_holes)]
+
+
+def closed_with_replay(
+    tactics: str,
+    holes: Sequence[Any],
+    *,
+    fills_fn: Callable[..., Sequence[str]],
+    token_fn: Callable[[str], int],
+    as_row_fn: Callable[[Any], Mapping[str, Any]],
+    replay_fn: Optional[Callable[[str], str]] = None,
+    max_candidates: int = 32,
+    generator: str = "closed_lean_vocab",
+) -> list[dict[str, Any]]:
+    """Shorter closed fills, optional replay prepend. Replay is injected."""
+
+    rows = shorter_fills(
+        tactics,
+        [as_row_fn(item) for item in holes],
+        fills_fn=fills_fn,
+        token_fn=token_fn,
+        max_candidates=max_candidates,
+        generator=generator,
+    )
+    if replay_fn is None:
+        return rows[: int(max_candidates)]
+    try:
+        replayed = str(replay_fn(tactics) or "").strip("\n")
+    except Exception:
+        return rows[: int(max_candidates)]
+    tok = int(token_fn(replayed))
+    seen = {str(row.get("tactics") or "") for row in rows}
+    if replayed and replayed not in seen and tok < int(token_fn(tactics)):
+        rows.insert(
+            0,
+            {
+                "kind": "inits_replay",
+                "hole_id": "replay",
+                "hole_kind": "phrase",
+                "original": "full-script",
+                "fill": "268→139 kernel sequence",
+                "tactics": replayed,
+                "token_count": tok,
+                "generator": generator,
+                "llm": "off",
+            },
+        )
+    return rows[: int(max_candidates)]
+
+
+def pack_leanstral_fill_rows(
+    *,
+    tactics: str,
+    holes: Sequence[Any],
+    text: str,
+    fills: Mapping[str, str],
+    token_fn: Callable[[str], int],
+    extract_fn: Callable[[str], str],
+    schedule_id: str,
+    n_shots: int,
+    head_fn: Callable[[str, int], str],
+    start_fn: Callable[[Any], int] = lambda hole: int(getattr(hole, "start", 0)),
+    end_fn: Callable[[Any], int] = lambda hole: int(getattr(hole, "end", 0)),
+    hole_id_fn: Callable[[Any], str] = lambda hole: str(getattr(hole, "hole_id", hole)),
+) -> list[dict[str, Any]]:
+    """Pack Leanstral hole fills. Generation stays in the consumer. Lake still admits."""
+
+    blob = str(text or "")
+    if not fills:
+        extracted = str(extract_fn(blob) or "") if blob else ""
+        if extracted and "<<<SYM_" not in extracted and "<<<" not in extracted:
+            tok = int(token_fn(extracted.strip("\n")))
+            if tok < int(token_fn(tactics)):
+                return [
+                    {
+                        "kind": f"leanstral_{schedule_id}_fullblock",
+                        "tactics": extracted.strip("\n"),
+                        "token_count": tok,
+                        "generator": "labs_leanstral",
+                        "llm": "on",
+                        "raw_head": head_fn(blob, 240),
+                        "n_shots": int(n_shots),
+                        "n_masks": len(list(holes or ())),
+                        "schedule_id": schedule_id,
+                        "few_shot": bool(n_shots),
+                    }
+                ]
+        return [
+            {
+                "kind": f"leanstral_{schedule_id}_unparsed",
+                "generator": "labs_leanstral",
+                "llm": "on",
+                "raw_head": head_fn(blob, 240),
+                "n_shots": int(n_shots),
+                "schedule_id": schedule_id,
+                "few_shot": bool(n_shots),
+            }
+        ]
+    body = str(tactics or "")
+    for hole in sorted(holes or (), key=start_fn, reverse=True):
+        fill = fills.get(hole_id_fn(hole))
+        if fill is None:
+            continue
+        body = body[: start_fn(hole)] + fill + body[end_fn(hole) :]
+    body = body.strip("\n")
+    tok = int(token_fn(body))
+    if tok >= int(token_fn(tactics)) or "<<<" in body:
+        return []
+    return [
+        {
+            "kind": f"leanstral_{schedule_id}_shot{int(n_shots)}",
+            "tactics": body,
+            "token_count": tok,
+            "generator": "labs_leanstral",
+            "llm": "on",
+            "fills": dict(fills),
+            "raw_head": head_fn(blob, 240),
+            "n_shots": int(n_shots),
+            "n_masks": len(list(holes or ())),
+            "schedule_id": schedule_id,
+            "few_shot": bool(n_shots),
+        }
+    ]
 
 
 def map_span_bodies(

@@ -2221,3 +2221,30 @@ def finish_mca_problem(
             extra=extra_fn(grok_ok=grok_ok, grok_tactics=grok_tactics, grok_errors=grok_errors),
         )
     )
+
+
+def line_swap_from_text(
+    *,
+    tactics: str,
+    index: int,
+    text: str,
+    parse_fn: Callable[[str], str],
+    looks_fn: Callable[[str], bool],
+    replace_fn: Callable[[str, int, str], str],
+    stop: str,
+    target: str,
+    head_fn: Callable[[str, int], str],
+) -> Optional[dict[str, str]]:
+    """Swap one tactic line from generated text. Generation stays injected."""
+
+    nxt = str(parse_fn(text) or "")
+    if nxt == stop or not looks_fn(nxt):
+        return None
+    if nxt.strip() == str(target).strip():
+        return None
+    body = replace_fn(tactics, int(index), nxt)
+    return {
+        "kind": "leanstral_swap",
+        "tactics": body,
+        "note": f"leanstral {head_fn(str(target).strip(), 40)} -> {head_fn(nxt.strip(), 40)}",
+    }

@@ -3854,6 +3854,66 @@ def pack_owner_exec(
     )
 
 
+def run_owner_exec(
+    *,
+    execute: bool,
+    argv: Sequence[str],
+    argv_relative: Sequence[str],
+    pack_fn: Callable[..., Any],
+    target: Any = None,
+    run_fn: Optional[Callable[..., Mapping[str, Any]]] = None,
+    env: Optional[Mapping[str, str]] = None,
+    timeout: float = 5.0,
+) -> Any:
+    """Optionally exec the owner script. This process still does not take EX."""
+
+    argv = list(argv or ())
+    rel = list(argv_relative or ())
+    if not execute:
+        return pack_fn(attempted=False, executed=False, argv=argv, argv_relative=rel)
+    dest = Path(target if target is not None else (argv[2] if len(argv) > 2 else ""))
+    if not dest.is_file():
+        return pack_fn(
+            attempted=True,
+            executed=False,
+            argv=argv,
+            argv_relative=rel,
+            error=f"owner script missing: {dest}",
+        )
+    if run_fn is None:
+        return pack_fn(attempted=True, executed=False, argv=argv, argv_relative=rel, error="run_fn missing")
+    try:
+        ran = dict(run_fn(argv, env=env, timeout=float(timeout)) or {})
+    except OSError as exc:
+        from jevops.outer import exc_text
+
+        return pack_fn(
+            attempted=True,
+            executed=False,
+            argv=argv,
+            argv_relative=rel,
+            error=exc_text(exc),
+        )
+    if ran.get("timeout"):
+        return pack_fn(
+            attempted=True,
+            executed=True,
+            argv=argv,
+            argv_relative=rel,
+            pid=ran.get("pid"),
+            error=str(ran.get("error") or "TimeoutExpired"),
+        )
+    code = ran.get("exit_code")
+    return pack_fn(
+        attempted=True,
+        executed=True,
+        argv=argv,
+        argv_relative=rel,
+        returncode=int(code) if code is not None else None,
+        error="" if ran.get("ok") else (ran.get("stderr") or ran.get("stdout") or f"exit {code}"),
+    )
+
+
 @dataclass(frozen=True)
 class ClientSession:
     action: str

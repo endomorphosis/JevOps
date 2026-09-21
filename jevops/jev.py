@@ -1482,3 +1482,95 @@ def featurize_or_skip(
         "features": features,
         "jev_generated_lean": False,
     }
+
+
+def complete_choice_round(
+    *,
+    configured: bool,
+    criteria: Mapping[str, Any],
+    invoke_fn: Callable[[], tuple[Any, float]],
+    pack_fn: Callable[..., Mapping[str, Any]],
+    redact_fn: Callable[[Mapping[str, Any]], Any],
+    skip_fn: Callable[..., Mapping[str, Any]],
+    empty_reason: str = "no_holes",
+    no_key_reason: str = "no_key",
+    skip_extra: Optional[Mapping[str, Any]] = None,
+    pack_kwargs: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Skip or invoke a Choice round. Question catalogs stay in the consumer."""
+
+    extra = dict(skip_extra or {})
+    if not configured:
+        return dict(skip_fn(no_key_reason, **extra))
+    if not criteria:
+        return dict(skip_fn(empty_reason, **extra))
+    result, wall_ms = invoke_fn()
+    packed = pack_fn(result, wall_ms=wall_ms, **dict(pack_kwargs or {}))
+    return redact_fn(packed)
+
+
+def rank_proposals_or_skip(
+    *,
+    proposals: Sequence[Any],
+    load_fn: Callable[[], Any],
+    skip_fn: Callable[..., Mapping[str, Any]],
+    invoke_fn: Callable[[Any], tuple[Any, float]],
+    pack_fn: Callable[..., Mapping[str, Any]],
+    record_fn: Callable[[Any], Any],
+    choice_key: str = "next_edit",
+    noul_key: str = "likely_compiles",
+    score_key: str = "likely_shorter",
+) -> dict[str, Any]:
+    """Rank MCMC proposals. Catalogs stay in the consumer. Jev does not write Lean."""
+
+    rows = list(proposals or ())
+    if not rows:
+        return dict(skip_fn("no_proposals", order=[]))
+    module = load_fn()
+    if module is None:
+        return dict(skip_fn("no_key", order=list(range(len(rows)))))
+    try:
+        result, _wall = invoke_fn(module)
+    except Exception as exc:  # noqa: BLE001
+        return dict(skip_fn(exc, order=list(range(len(rows)))))
+    record_fn(result)
+    return dict(
+        pack_fn(
+            result,
+            choice_key=choice_key,
+            n=len(rows),
+            noul_key=noul_key,
+            score_key=score_key,
+        )
+    )
+
+
+def pack_fill_rank(
+    result: Any,
+    wall_ms: float,
+    *,
+    schedule_fn: Callable[..., Mapping[str, Any]],
+    usage: Any = None,
+) -> dict[str, Any]:
+    """Project a masked-fill Choice plus CFG schedule. Never includes generated Lean."""
+
+    packed = unpack_response(result)
+    choices, nouls, scores, unpacked = packed
+    usage = usage if usage is not None else unpacked
+    best = (choices or {}).get("best_fill")
+    cfg_answer = (scores or {}).get("cfg_mask")
+    noul_answer = (nouls or {}).get("prefer_few_shot")
+    cfg_score = getattr(cfg_answer, "score", None)
+    return {
+        "skipped": False,
+        "best_fill": getattr(best, "choice", None),
+        "confidence": getattr(best, "confidence", None),
+        "probabilities": dict(getattr(best, "probabilities", None) or {}),
+        "cfg_score": cfg_score,
+        "cfg_schedule": schedule_fn(cfg_score if cfg_score is not None else 0),
+        "prefer_few_shot_noul": getattr(noul_answer, "noul", None),
+        "usage": usage,
+        "wall_ms": wall_ms,
+        "jev_generated_lean": False,
+        "arena_score": None,
+    }
