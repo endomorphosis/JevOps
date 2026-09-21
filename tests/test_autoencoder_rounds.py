@@ -157,6 +157,7 @@ def test_three_rounds_beat_frozen_local_proxy_without_leaking_oracle_text() -> N
                 "step": model.step,
                 "score": _proxy_score(report),
                 "cross_entropy": float(report["cross_entropy"]),
+                "cosine_similarity": float(report["cosine_similarity"]),
                 "verifier_success_rate": float(report["verifier_success_rate"] or 0.0),
             }
         )
@@ -164,6 +165,7 @@ def test_three_rounds_beat_frozen_local_proxy_without_leaking_oracle_text() -> N
     assert [row["step"] for row in rounds] == [3, 6, 9]
     assert all(row["verifier_success_rate"] == 1.0 for row in rounds)
     assert rounds[-1]["cross_entropy"] < rounds[0]["cross_entropy"]
+    assert rounds[-1]["cosine_similarity"] >= rounds[0]["cosine_similarity"]
     assert rounds[-1]["score"] > float(baseline["score"])
     assert rounds[-1]["score"] > rounds[0]["score"]
     assert len(client.states) == 9

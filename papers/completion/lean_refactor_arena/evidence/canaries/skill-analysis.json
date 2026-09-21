@@ -1,0 +1,96 @@
+{
+  "schema": "lra-skill-analysis-fixture/v1",
+  "gaps": [
+    {
+      "name": "CallElimCorrect.substOldPostSubset",
+      "failed_stems": [
+        "drop_intro_before_simp_all",
+        "hoist_repeated_simp",
+        "port_drop_intro_before_simp_all",
+        "port_hoist_repeated_simp",
+        "port_semi_assumption",
+        "port_shorten_hasvars_getvars",
+        "port_shorten_list_subset_app",
+        "port_shorten_list_subset_trans",
+        "port_shorten_llexpr_getvars",
+        "semi_assumption",
+        "shorten_hasvars_getvars",
+        "shorten_list_subset_app",
+        "shorten_list_subset_trans",
+        "shorten_llexpr_getvars"
+      ],
+      "top_help": [
+        {"residual": "intro_then_simp_all", "help": 0.81, "unsafe": 0.56},
+        {"residual": "repeated_simp_list", "help": 0.45, "unsafe": 0.44},
+        {"residual": "intros_x_Hin", "help": 0.21, "unsafe": 0.64}
+      ]
+    },
+    {
+      "name": "CallElimCorrect.extractedOldExprInVars",
+      "failed_stems": [
+        "drop_intro_before_simp_all",
+        "drop_unfold_before_split",
+        "port_drop_intro_before_simp_all",
+        "port_drop_unfold_before_split",
+        "port_shorten_hasvars_getvars",
+        "port_shorten_list_subset_app",
+        "port_shorten_list_subset_trans",
+        "port_shorten_llexpr_getvars",
+        "shorten_hasvars_getvars",
+        "shorten_list_subset_app",
+        "shorten_list_subset_trans",
+        "shorten_llexpr_getvars",
+        "port_redundant_inner_simp",
+        "port_exact_hyp",
+        "port_pipeline_redundant_inner_simp_drop_unfold_before_split_exact_hyp_unused_intros",
+        "port_pipeline_unused_intros_redundant_inner_simp_drop_unfold_before_split_exact_hyp"
+      ],
+      "top_help": [
+        {"residual": "intro_then_simp_all", "help": 0.71, "unsafe": 0.54},
+        {"residual": "ctor_lone", "help": 0.06, "unsafe": 0.35},
+        {"residual": "intros_x_Hin", "help": 0.17, "unsafe": 0.64}
+      ]
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "failed_stems": [],
+      "top_help": [
+        {"residual": "ctor_lone", "help": 0.33, "unsafe": 0.50},
+        {"residual": "intro_then_simp_all", "help": 0.20, "unsafe": 0.42},
+        {"residual": "have", "help": 0.13, "unsafe": 0.60}
+      ]
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "failed_stems": [],
+      "top_help": [
+        {"residual": "grind", "help": 0.72, "unsafe": 0.58},
+        {"residual": "have", "help": 0.27, "unsafe": 0.52},
+        {"residual": "ctor_lone", "help": 0.15, "unsafe": 0.51}
+      ]
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "failed_stems": [
+        "port_use_exact_reuse",
+        "use_exact_reuse",
+        "port_trailing_tuple_comma",
+        "port_ctor_pair_exacts",
+        "port_repeat_par_grind",
+        "port_pipeline_use_exact_repeat_par_grind_ctor_pair_exacts_trailing_tuple_comma"
+      ],
+      "top_help": [
+        {"residual": "use_then_exact", "help": 0.29, "unsafe": 0.74},
+        {"residual": "grind", "help": 0.25, "unsafe": 0.42}
+      ]
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "failed_stems": ["port_trim_intro_names", "trim_intro_names"],
+      "top_help": [
+        {"residual": "apply_seq_assumption", "help": 0.34, "unsafe": 0.57},
+        {"residual": "ctor_lone", "help": 0.27, "unsafe": 0.49}
+      ]
+    }
+  ]
+}

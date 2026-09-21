@@ -295,6 +295,40 @@ def overlay_or_empty(
     )
 
 
+def replica_from_ready(
+    path: Any,
+    *,
+    page_fn: Callable[[str], Any],
+    prefix: str = "",
+    endpoint_keys: Sequence[str] = ("quack_endpoint", "database_path"),
+) -> dict[str, Any]:
+    """Read-only ready-task page from a ready.json blob. Never install_schema."""
+
+    from pathlib import Path
+
+    from jevops.outer import exc_name, read_json, tagged_exc
+
+    ready = Path(path)
+    if not ready.is_file():
+        return replica_page(ok=False, reason="no_ready_json")
+    try:
+        blob = read_json(ready)
+    except Exception as exc:
+        return replica_page(ok=False, reason=exc_name(exc))
+    endpoint = ""
+    for key in endpoint_keys:
+        endpoint = str(blob.get(key) or endpoint or "")
+        if endpoint:
+            break
+    if not endpoint:
+        return replica_page(ok=False, reason="no_endpoint")
+    try:
+        page = page_fn(endpoint)
+        return replica_page(ok=True, reason="replica", tasks=aliases_from_page(page, prefix=prefix))
+    except Exception as exc:
+        return replica_page(ok=False, reason=tagged_exc("source_failed", exc))
+
+
 def replica_page(
     *,
     ok: bool,
@@ -538,6 +572,31 @@ def credit_result(
         if warm:
             cell["remaining_cut"] = max(0, warm - int(tokens))
     return {"ok": True, "task": task_ptr, "subgoal": sub_ptr, "theorem": thm_ptr, "theorem_ok": theorem_ok}
+
+
+def credit_mapped(
+    memory: dict[str, Any],
+    theorem: str,
+    catalog: Mapping[str, str],
+    *,
+    subgoal_fn: Callable[[str], str],
+    theorem_ok: bool,
+    tokens: int = 0,
+) -> dict[str, Any]:
+    """Credit a theorem whose task id comes from an injected catalog."""
+
+    name = str(theorem or "")
+    task_id = str(catalog.get(name) or "")
+    if not task_id:
+        return {"ok": False, "reason": "unmapped_theorem", "theorem": theorem}
+    return credit_result(
+        memory,
+        theorem=name,
+        task_id=task_id,
+        subgoal_id=str(subgoal_fn(task_id) or ""),
+        theorem_ok=theorem_ok,
+        tokens=tokens,
+    )
 
 
 def link_entity(

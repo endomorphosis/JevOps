@@ -1,0 +1,13 @@
+{
+  "schema": "lean-refactor-arena-import/v1",
+  "imported_at": "2026-09-21T05:07:46Z",
+  "source_url": "https://delta-lab-ai-lean-refactor-arena.hf.space/gradio_api/file=/tmp/gradio/3389f2fbc0397df3689218ee1bc68f1c47c0721bae28e0e7aaa5a5ea503b4e94/benchmark_data_warmup.jsonl",
+  "arena_space": "https://huggingface.co/spaces/delta-lab-ai/lean-refactor-arena",
+  "workshop": "https://vericodegen.github.io/",
+  "local_path": "papers/completion/lean_refactor_arena/data/benchmark_data_warmup.jsonl",
+  "sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+  "bytes": 113826,
+  "n_problems": 15,
+  "gradio_tmp_url_ephemeral": true,
+  "frozen_copy_authoritative": true
+}

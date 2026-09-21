@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from jevops.outer import make_llm_router_generate
 from jevops.router_tuning import (
     RouterTuningConfig,
     _lean_compiler,
@@ -34,6 +35,39 @@ def test_router_plan_is_bounded_and_rejects_unsafe_candidates() -> None:
     assert plan["unknown_strategies"] == ["run_python"]
     assert len(plan["candidates"]) == 1
     assert plan["rejected_candidates"] == 2
+
+
+def test_strict_router_adapter_rejects_an_unexpected_provider_trace() -> None:
+    class TracedRouter:
+        __name__ = "ipfs_accelerate_py.llm_router"
+
+        @staticmethod
+        def generate_text(prompt: str, **kwargs: object) -> str:
+            del prompt, kwargs
+            return '{"candidates":[{"tactic":"by trivial"}]}'
+
+        @staticmethod
+        def get_last_generation_trace() -> dict[str, str]:
+            return {
+                "effective_provider_name": "openai",
+                "effective_model_name": "gpt-5.6-luna",
+            }
+
+    generate = make_llm_router_generate(
+        router=TracedRouter,
+        model_name="gpt-5.6-luna",
+        provider="codex_cli",
+        verify_route=True,
+    )
+    with pytest.raises(RuntimeError, match="route mismatch"):
+        generate("return JSON")
+    assert generate.last_route_attestation["verified"] is False
+
+
+def test_router_plan_accepts_compact_singular_tactic_field() -> None:
+    plan = parse_router_plan('{"tactics":"by trivial"}')
+    assert plan["ok"] is True
+    assert plan["candidates"][0]["tactics"] == "trivial"
 
 
 def test_router_loop_uses_gpt_luna_route_and_trains_from_verified_shortening() -> None:
@@ -82,6 +116,14 @@ def test_router_loop_uses_gpt_luna_route_and_trains_from_verified_shortening() -
     assert memory["nca"]["autoencoder"]["training_state"]["step"] >= 1
     assert memory["nca"]["autoencoder"]["feedback"]["count"] > 0
     assert any(row["router"]["rejected_candidates"] == 1 for row in result["history"])
+    first_training = result["history"][0]["training"]
+    assert "candidate_target_loss" in first_training
+    assert first_training["loss"]["ir_exact_match"] == 0.0
+    assert first_training["loss"]["cosine_similarity"] < first_training["candidate_target_loss"]["cosine_similarity"]
+    assert first_training["candidate_target_loss"]["ir_exact_match"] == 1.0
+    assert first_training["model_prediction_after"]["body_tokens"] > result["best_body_tokens"]
+    assert result["model_body_tokens_after"] == first_training["model_prediction_after"]["body_tokens"]
+    assert result["model_body_tokens_after"] > result["best_body_tokens"]
 
 
 def test_router_loop_requires_a_proof_compiler_before_accepting() -> None:

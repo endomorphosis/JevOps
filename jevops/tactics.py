@@ -1059,6 +1059,44 @@ def mca_one_hole_prompt(record: Mapping[str, Any], tactics: str, hole: Hole) -> 
     )
 
 
+def collect_mcmc_proposal_extras(
+    tactics: str,
+    extra: Sequence[Mapping[str, Any]] = (),
+    *,
+    propose_fn: Optional[Callable[[str], Sequence[Mapping[str, Any]]]] = None,
+    replay_fn: Optional[Callable[[str], str]] = None,
+    extras_fn: Optional[Callable[[str], Sequence[Mapping[str, Any]]]] = None,
+    replay_note: str = "apply the full kernel sequence",
+) -> list[dict[str, Any]]:
+    """Assemble MCMC extras. Inits propose/replay stay injected. No LLM."""
+
+    extras: list[dict[str, Any]] = []
+    if extra:
+        extras.extend(dict(item) for item in extra)
+    if propose_fn is not None:
+        for item in propose_fn(tactics) or ():
+            extras.append(
+                {
+                    "kind": item["kind"],
+                    "tactics": item["tactics"],
+                    "note": item.get("note") or "",
+                    "lock": False,
+                }
+            )
+    if replay_fn is not None:
+        extras.append(
+            {
+                "kind": "inits_replay",
+                "tactics": replay_fn(tactics),
+                "note": replay_note,
+                "lock": False,
+            }
+        )
+    if extras_fn is not None:
+        extras.extend(dict(item) for item in extras_fn(tactics) or ())
+    return extras
+
+
 def propose_closed_edits(
     tactics: str,
     reference: str,
@@ -2392,3 +2430,30 @@ def collect_random_draft_extras(
         )
         late.append((f"pca_{family}_{draft_id}", tactics, {"family": family}))
     return early, late
+
+
+def collect_symbol_ops(
+    closed_rows: Sequence[Mapping[str, Any]],
+    kernel_rows: Sequence[Mapping[str, Any]],
+    *,
+    family: str = "symbol_diffuse",
+    kernel_cap: int = 8,
+) -> list[tuple[str, str, tuple[str, ...]]]:
+    """Phrase/kernel fill ops for PCA/MCA extras. No LLM."""
+
+    from jevops.outer import head_seq
+
+    rows: list[tuple[str, str, tuple[str, ...]]] = []
+    for item in closed_rows or ():
+        kind = str(item.get("kind") or "")
+        if item.get("hole_kind") == "phrase" or kind == "inits_replay":
+            rows.append((family, str(item["tactics"]), (family, kind, "closed_vocab")))
+    for item in head_seq(kernel_rows, kernel_cap):
+        rows.append(
+            (
+                family,
+                str(item.get("tactics") or ""),
+                (family, str(item.get("kind") or "kernel"), "one_hole"),
+            )
+        )
+    return rows

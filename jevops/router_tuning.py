@@ -171,7 +171,12 @@ class RouterTuningConfig:
         kwargs = dict(self.router_kwargs)
         kwargs.setdefault("reasoning_effort", self.reasoning_effort)
         if self.strict_router:
-            kwargs.setdefault("allow_cross_provider_fallback", False)
+            # ``allow_cross_provider_fallback`` is understood by some router
+            # versions, but older accelerator releases accept it through
+            # ``**kwargs`` without enforcing it.  Set both controls and let
+            # the adapter attest the route actually used.
+            kwargs["allow_cross_provider_fallback"] = False
+            kwargs["allow_local_fallback"] = False
         return kwargs
 
 
@@ -200,6 +205,8 @@ def _tactic_body(value: Any, config: RouterTuningConfig) -> Optional[str]:
     text = str(value or "").replace("\x00", "").strip()
     if text.startswith("by\n"):
         text = text[3:].lstrip("\n")
+    elif text.startswith("by "):
+        text = text[3:].lstrip()
     elif text == "by":
         return None
     if not text or len(text) > config.max_candidate_chars:
@@ -302,6 +309,8 @@ def parse_router_plan(text: Any, *, config: Optional[RouterTuningConfig] = None)
         raw_candidates = []
         raw_candidates.extend(raw.get("ir_candidates") or ())
         raw_candidates.extend(raw.get("tactic_candidates") or ())
+        if not raw_candidates and raw.get("tactics") is not None:
+            raw_candidates.append({"kind": "router_tactic", "tactics": raw.get("tactics")})
     if isinstance(raw_candidates, Mapping):
         raw_candidates = [raw_candidates]
     candidates: list[dict[str, Any]] = []
@@ -327,8 +336,11 @@ def parse_router_plan(text: Any, *, config: Optional[RouterTuningConfig] = None)
                 rejected += 1
                 continue
             row["ops"] = ops
-        if item.get("tactics") is not None or item.get("body") is not None:
-            body = _tactic_body(item.get("tactics") if item.get("tactics") is not None else item.get("body"), cfg)
+        tactic_value = item.get("tactics")
+        if tactic_value is None:
+            tactic_value = item.get("tactic")
+        if tactic_value is not None or item.get("body") is not None:
+            body = _tactic_body(tactic_value if tactic_value is not None else item.get("body"), cfg)
             if body is None:
                 rejected += 1
                 continue
@@ -476,6 +488,7 @@ class RouterTuningLoop:
             router=router,
             model_name=self.config.model_name,
             provider=self.config.provider,
+            verify_route=self.config.strict_router,
             **self.config.llm_kwargs(),
         )
         self._compile_cache: dict[str, dict[str, Any]] = {}
@@ -657,6 +670,43 @@ class RouterTuningLoop:
             "ir_ops": [str(row.get("op") or "") for row in self._source_ir.get("ops") or ()][:32],
         }
 
+    def _model_diagnostics(
+        self,
+        model: LeanIRAutoencoder,
+        example: Any,
+        *,
+        phase: str,
+    ) -> dict[str, Any]:
+        """Measure the autoencoder's own prediction, never a search winner.
+
+        A verified router/local candidate can be used as the supervised target,
+        but passing that candidate as ``predicted_ir`` would turn CE/cosine
+        into target diagnostics rather than model diagnostics.  Decode and
+        compile the model's actual prediction so the training receipt cannot
+        reward a prediction the model did not make.
+        """
+
+        predicted_ir = model.predict_ir(example.text, source_ir=self._source_ir)
+        predicted_source = ae.decode_lean_ir(predicted_ir)
+        row = self._row(
+            predicted_source,
+            origin="autoencoder:" + str(phase),
+            kind="model_prediction",
+        )
+        loss = loss_for_example(
+            model,
+            example,
+            predicted_ir=predicted_ir,
+            verifier_reward=1.0 if row.get("lake_ok") else 0.0,
+            nca_memory=self.memory,
+            minimality_reward=row.get("minimality_reward"),
+        )
+        return {
+            "loss": loss.to_dict(),
+            "row": row,
+            "prediction": predicted_ir,
+        }
+
     def _train(self, winner: Optional[Mapping[str, Any]], rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         for row in rows:
             reward = float(row.get("reward") or 0.0) if row.get("lake_ok") else 0.0
@@ -691,12 +741,17 @@ class RouterTuningLoop:
                 candidate={"verifier_reward": 1.0, "typesafe_reward": None},
             )
             reward = _clip01(0.75 + 0.25 * _clip01(winner.get("compression")))
+            before = self._model_diagnostics(model, example, phase="before")
             train_report = model.train_batch(
                 [example],
                 rewards={example.sample_id: reward},
                 nca_rewards={example.sample_id: feedback.reward} if feedback.active else None,
             )
-            loss = loss_for_example(
+            after = self._model_diagnostics(model, example, phase="after")
+            # This is intentionally named separately: it measures the
+            # verified candidate used as the teacher target, not the model's
+            # prediction.  The public ``loss`` below is always ``after``.
+            candidate_loss = loss_for_example(
                 model,
                 example,
                 predicted_ir=winner.get("ir") if isinstance(winner.get("ir"), Mapping) else None,
@@ -704,7 +759,11 @@ class RouterTuningLoop:
                 nca_memory=self.memory,
                 minimality_reward=winner.get("minimality_reward"),
             )
-            train_report["loss"] = loss.to_dict()
+            train_report["loss"] = after["loss"]
+            train_report["model_loss_before"] = before["loss"]
+            train_report["candidate_target_loss"] = candidate_loss.to_dict()
+            train_report["model_prediction"] = _compact_row(before["row"])
+            train_report["model_prediction_after"] = _compact_row(after["row"])
             store["training_state"] = model.to_dict()
             return {"ok": True, "trained": True, "step": model.step, **train_report}
         except Exception as exc:
@@ -725,6 +784,8 @@ class RouterTuningLoop:
         current = self.source
         history: list[dict[str, Any]] = []
         router_errors = 0
+        model_prediction_after: Optional[dict[str, Any]] = None
+        model_loss_after: Optional[dict[str, Any]] = None
         for round_index in range(self.config.rounds):
             current_body = _source_parts(current)[1]
             current_row = best or baseline
@@ -751,6 +812,11 @@ class RouterTuningLoop:
                     "candidates": [],
                     "strategies": [],
                 }
+            route_attestation = getattr(self.router_generate, "last_route_attestation", None)
+            if isinstance(route_attestation, Mapping):
+                route_attestation = dict(route_attestation)
+            else:
+                route_attestation = None
             rows: list[dict[str, Any]] = []
             seen: set[str] = set()
             self._push(rows, seen, current_body, origin="current", kind="current")
@@ -780,6 +846,10 @@ class RouterTuningLoop:
                 current = str(round_winner["source"])
                 improved = True
             train_report = self._train(round_winner, rows)
+            if isinstance(train_report.get("model_prediction_after"), Mapping):
+                model_prediction_after = dict(train_report["model_prediction_after"])
+            if isinstance(train_report.get("loss"), Mapping):
+                model_loss_after = dict(train_report["loss"])
             history.append(
                 {
                     "round": round_index + 1,
@@ -794,6 +864,7 @@ class RouterTuningLoop:
                         "response_digest": plan.get("response_digest"),
                         "response_head": plan.get("response_head"),
                         "reason": plan.get("reason"),
+                        "route_attestation": route_attestation,
                     },
                     "candidate_count": len(rows),
                     "verified_count": len(verified),
@@ -834,6 +905,11 @@ class RouterTuningLoop:
             "lake_ok": best.get("lake_ok"),
             "best_source": best.get("source"),
             "best_ir": best.get("ir"),
+            "model_prediction_after": model_prediction_after,
+            "model_body_tokens_after": (
+                None if model_prediction_after is None else model_prediction_after.get("body_tokens")
+            ),
+            "model_loss_after": model_loss_after,
             "history": history,
             "memory": self.memory,
         }

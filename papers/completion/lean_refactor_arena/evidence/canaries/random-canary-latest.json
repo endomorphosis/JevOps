@@ -1,0 +1,15 @@
+{
+  "schema": "lra-random-canary-fixture/v1",
+  "arena_score": null,
+  "official_track2": null,
+  "called_docker0": false,
+  "warmup_jsonl_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+  "canaries": [
+    {"analysis": {"name": "Core.InitsUpdatesComm", "n_tokens": 139}},
+    {"analysis": {"name": "CallElimCorrect.substOldPostSubset", "n_tokens": 392}},
+    {"analysis": {"name": "CallElimCorrect.extractedOldExprInVars", "n_tokens": 260}},
+    {"analysis": {"name": "Cslib.SKI.parallelReduction_diamond", "n_tokens": 540}},
+    {"analysis": {"name": "Cslib.CCS.bisimilarity_congr_choice", "n_tokens": 296}},
+    {"analysis": {"name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress", "n_tokens": 519}}
+  ]
+}

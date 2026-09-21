@@ -1121,3 +1121,36 @@ def audit_source(
         "called_docker0": False,
         "call_func_names": sorted(calls),
     }
+
+
+def pack_call_audit(
+    out: Mapping[str, Any],
+    *,
+    required_calls: Sequence[str] = (),
+    forbidden_call_names: Sequence[str] = (),
+    extra: Optional[Mapping[str, Any]] = None,
+    extra_ok: Sequence[bool] = (),
+    flag_prefix: str = "uses_",
+) -> dict[str, Any]:
+    """Overlay required/forbidden Call names onto an AST audit. Live Calls stay in the consumer."""
+
+    calls = set(out.get("call_names") or ())
+    flags = {f"{flag_prefix}{name}": name in calls for name in required_calls}
+    packed = {
+        "imported_names": out.get("imported_names"),
+        "forbidden_imports": out.get("forbidden_imports"),
+        "forbidden_calls": out.get("forbidden_calls"),
+        "score_assignments": list(out.get("score_keys") or ()),
+        **flags,
+        **dict(extra or {}),
+    }
+    packed["ok"] = bool(
+        not out.get("forbidden_imports")
+        and not out.get("forbidden_calls")
+        and not out.get("forbidden_attrs")
+        and not packed["score_assignments"]
+        and all(name in calls for name in required_calls)
+        and all(name not in calls for name in forbidden_call_names)
+        and all(extra_ok)
+    )
+    return packed

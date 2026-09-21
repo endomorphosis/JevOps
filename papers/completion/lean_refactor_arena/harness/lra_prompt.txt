@@ -1,0 +1,20 @@
+Lean Refactor Arena rewrite. You propose an untrusted tactic block. Lean is the only checker.
+
+Return ONLY the tactic block that follows `:= by`.
+Do not repeat the theorem or lemma statement.
+Do not add imports. Any header imports are already applied by the harness.
+Do not invent axioms.
+Do not emit sorry, admit, theorem, lemma, import, or open in the proof text.
+aesop, nlinarith, omega, simp, rw, exact, apply, and project lemmas are allowed.
+
+Problem name: {{name}}
+Source: {{source}}
+
+Header already present in the lake file (do not emit):
+{{header}}
+
+Frozen statement (preserve byte-for-byte; do not rewrite):
+{{statement}}
+
+Reference src (statement prefix plus the current proof body):
+{{src}}

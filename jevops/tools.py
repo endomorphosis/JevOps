@@ -244,7 +244,7 @@ def skill_knowledge_graph(memory: Optional[Mapping[str, Any]] = None) -> dict[st
     }
 
 
-def harness_ast(*, modules: Optional[list[str]] = None) -> dict[str, Any]:
+def harness_ast(*, modules: Optional[list[str]] = None, root: Optional[Path] = None) -> dict[str, Any]:
     """Function/class names from harness skill modules (navigate, do not exec)."""
 
     from jevops import hooks
@@ -253,8 +253,8 @@ def harness_ast(*, modules: Optional[list[str]] = None) -> dict[str, Any]:
     extra = hooks.get("tool:ast_harness")
     if extra is not None:
         return extra(modules=modules)
-    root = _harness_dir()
-    if root is None:
+    harness_root = Path(root) if root is not None else _harness_dir()
+    if harness_root is None:
         return {"files": [], "called_docker0": False, "reason": "no_harness_dir"}
     names = modules or [
         "portable_rewrites.py",
@@ -265,7 +265,7 @@ def harness_ast(*, modules: Optional[list[str]] = None) -> dict[str, Any]:
     ]
     files: list[dict[str, Any]] = []
     for name in names:
-        path = root / name
+        path = harness_root / name
         if not path.is_file():
             continue
         try:
@@ -551,6 +551,7 @@ def run_tool(
     memory: Optional[Mapping[str, Any]] = None,
     problem: str = "",
     observations: Optional[Mapping[str, Any]] = None,
+    harness_dir: Optional[Path] = None,
 ) -> dict[str, Any]:
     """Dispatch a catalog tool. Never docker0. Never writes Lean via Jev."""
 
@@ -568,7 +569,7 @@ def run_tool(
     if key == "kg_skills":
         payload = skill_knowledge_graph(memory)
     elif key == "ast_harness":
-        payload = harness_ast()
+        payload = harness_ast(root=harness_dir)
     elif key == "pkg_exports":
         payload = harness_exports()
     elif key == "mcp_catalog":

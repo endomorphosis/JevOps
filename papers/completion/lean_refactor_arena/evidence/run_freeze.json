@@ -1,0 +1,256 @@
+{
+  "schema": "lra-run-freeze/v1",
+  "protocol": "LRA/v1",
+  "loop_version": "v1",
+  "frozen_at": "2026-09-17T12:00:00+00:00",
+  "hardware_class": "spark_gb10",
+  "resource": "spark_gb10",
+  "n_problems": 15,
+  "official_track2": false,
+  "official_score": null,
+  "arena_score": null,
+  "arena_score_tokens": null,
+  "arena_score_elab": null,
+  "score": null,
+  "token_savings": null,
+  "writes_arena_scores_into_manuscript": false,
+  "tiny_byte_lm": false,
+  "gates": "off",
+  "hammers": "off",
+  "typesafe": "off",
+  "generator": "leanstral",
+  "requested_provider": "leanstral_local",
+  "requested_model": "Leanstral",
+  "completing_this_freeze_is_not_official_track2": true,
+  "jsonl": {
+    "path": "papers/completion/lean_refactor_arena/data/benchmark_data_warmup.jsonl",
+    "sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+    "bytes": 113826,
+    "n_problems": 15,
+    "n_jsonl_fields": 12,
+    "n_version_pins": 36,
+    "import_receipt_path": "papers/completion/lean_refactor_arena/evidence/import_receipt.json",
+    "import_receipt_sha256": "7feca8bca5961c67f14e8ec7ec79ea0c66d7d141b0f832828a9f0bdcc35eefc3",
+    "warmup_summary_sha256": "dae95eed5c68d7708e478772f096dde790a12b9b036a6c0776037bf53e55b2c5",
+    "names": [
+      "CallElimCorrect.substOldPostSubset",
+      "CallElimCorrect.extractedOldExprInVars",
+      "Core.InitsUpdatesComm",
+      "fundamental_theorem_of_variational_calculus'",
+      "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema",
+      "FieldSpecification.WickAlgebra.ι_timeOrderF_superCommuteF_eq_time",
+      "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "Cslib.SKI.parallelReduction_diamond",
+      "Cslib.CCS.bisimilarity_congr_choice",
+      "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "interleaved_affine_gaps_imply_tensor_gaps",
+      "putnam_1964_a4",
+      "putnam_1964_b2",
+      "putnam_1995_a3"
+    ]
+  },
+  "code": {
+    "workspace_git_head": "800fe3d162221e58285014dcd3c1bb3d4ada52de",
+    "ipfs_accelerate_git_head": "ef2415689acbd142a8e8e57e70e3e29b608b1c0f",
+    "ipfs_datasets_git_head": "34d5a079902887e8d796d98443bce8206458cfbf",
+    "protocol_md_sha256": "c87dbd14c22d6dc63efb29e8953a77d27fa49cf9ce68d9b5059bcad7034e36f7",
+    "code_manifest_sha256": "5960caa6168311be0c181cb38cc31a71baaa6b614b4186fa305c82c915459359",
+    "files": {
+      "papers/completion/lean_refactor_arena/harness/bake_oleans.py": "d83b79e474f7c11d57887449298d9a02e1125a9cb67c33f8b0a089324709e5f6",
+      "papers/completion/lean_refactor_arena/harness/compile_worker.py": "045b2b3c95df7053bd969524f994cffa0df5b0758eefe795015e9c44a176e430",
+      "papers/completion/lean_refactor_arena/harness/docker0_client.py": "c06b78a7bc3f851b98847977de89313f42cdb11c0549f67520b38a5bba9affc0",
+      "papers/completion/lean_refactor_arena/harness/generate_text.py": "1ca049a30976863a939865139defb5713b2dbef09363376cd443e2695f24f670",
+      "papers/completion/lean_refactor_arena/harness/lra_prompt.txt": "57036f2bb94d8d8b38d77096ad92a2e615571addee7d01c72e104edaacfee96a",
+      "papers/completion/lean_refactor_arena/harness/receipt_store.py": "7123e1d5cf3a9b50ce9eb7acb13040e78785004cf6bbf319339a1b9f7eba7f98",
+      "papers/completion/lean_refactor_arena/harness/retrieve.py": "5aa5e42eb356ee517116923117e218c70bcf02dee7280cef52e521b992e73e42",
+      "papers/completion/lean_refactor_arena/harness/run_warmup.py": "c9fbade6602684a515793822d640774c6c07cec13986de3b2d499c5a8177b4a7",
+      "papers/completion/lean_refactor_arena/harness/splice.py": "834bf2186d0b0ab475901262d10a936ad91cdb739253a9cd17befc609f5473f4",
+      "papers/completion/lean_refactor_arena/tools/verify_lra_batch.py": "bbae452ef0e05e69bc1009a6498a9907509e3cc8fa0adbfbd5bb9868353a801d"
+    }
+  },
+  "policy_json": {
+    "path": "papers/completion/lean_refactor_arena/policy/open_policy_v1.json",
+    "exists": false,
+    "sha256": null,
+    "not_applicable_digest": "976d6318e648acaaeed99e18fd1db5e11190ffaac0d9f67c831078ac53dc8cd2",
+    "status": "not-applicable",
+    "note": "Loop v1 has LRA_TYPESAFE=off and no heuristic table. Distill after v1 writes this file. Official Track 2 would load only that file."
+  },
+  "weight_identity": {
+    "huggingface_repo": "Frosty40/Leanstral-1.5-119B-A6B-GGUF-NVFP4",
+    "revision": "abcc5ce2528c6375148d41dac6dce20f06c339f4",
+    "cid": "bafkreicgnd6su3jhmtpckbejqurdb2lchdvvydluswdg5m5zy3cpvroh3i",
+    "filename": "Leanstral-1.5-119B-A6B-NVFP4.gguf",
+    "local_path": "~/.cache/ipfs_accelerate_py/llama_cpp/models/cid-v1/bafkreicgnd6su3jhmtpckbejqurdb2lchdvvydluswdg5m5zy3cpvroh3i/Leanstral-1.5-119B-A6B-NVFP4.gguf",
+    "nvfp4_bytes": 67135119264,
+    "nvfp4_gib_approx": 62.52,
+    "format": "NVFP4",
+    "architecture": "Blackwell GB10",
+    "hardware_class": "spark_gb10",
+    "sm80_derivative_sha256": null,
+    "sm80_legal": false,
+    "unpublished_sha_3fe4e64d_cited": false,
+    "llama_server_flags": null,
+    "vllm_flags": null,
+    "run_leanstral_ephemeral_py_present": false,
+    "note": "NVFP4-on-Spark is resource=spark_gb10 only. A new SM80 SHA is recorded here only if LRA-024 lands a derivative of this Frosty40 file. Do not cite unpublished SHA 3fe4e64d."
+  },
+  "elan_toolchains": {
+    "layout": "{ELAN_HOME}/toolchains/leanprover--lean4---<tag>/bin/{lean,lake}",
+    "kernel_command_template": "{lake} env {lean} --json {source_file}",
+    "measurement_max_heartbeats": 400000,
+    "lean_num_threads": 1,
+    "path_lean_fallback": false,
+    "unique_tags_sorted": [
+      "v4.25.0",
+      "v4.26.0",
+      "v4.27.0",
+      "v4.28.0",
+      "v4.29.0",
+      "v4.29.1",
+      "v4.30.0",
+      "v4.31.0",
+      "v4.32.0",
+      "v4.33.0-rc2"
+    ],
+    "n_unique_tags": 10,
+    "n_version_pins": 36
+  },
+  "putnam": {
+    "module": "Putnam.Candidate",
+    "candidate_relpath": "Putnam/Candidate.lean",
+    "package": "putnam_lake",
+    "putnambench_url": null,
+    "tmp_lean": false,
+    "mathlib_git": "https://github.com/leanprover-community/mathlib4.git",
+    "aesop_git": "https://github.com/leanprover-community/aesop.git",
+    "pins": [
+      {
+        "lean_tag": "v4.25.0",
+        "mathlib_rev": "v4.25.0",
+        "aesop_rev": "v4.25.0",
+        "jsonl_version_pin": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+        "lakefile_sha256": "4282f118f461df29a3aad995b185fd9f709d011ca36caebc03a70d67924d76fc",
+        "lean_toolchain_sha256": "dbbf063fc415c8e718172605f23a8f86679a3c320eff6d3890cc009534452925",
+        "pins_json_sha256": "668edf5ae7411ed003da4a5ca9391b0e854a950138fa3c3511efccda8ea3bc0a"
+      },
+      {
+        "lean_tag": "v4.26.0",
+        "mathlib_rev": "v4.26.0",
+        "aesop_rev": "v4.26.0",
+        "jsonl_version_pin": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+        "lakefile_sha256": "6b5ff8933a43d0fc32fb7d9ee0964dfe6dde9612bc7b9ec44d9377f4c7514082",
+        "lean_toolchain_sha256": "e8173aad377a6d70041e5f7a5d8895ed587628f5cab243c53a18c40a1b7b6bf8",
+        "pins_json_sha256": "904134b5650915e6c224d4da4cd2b222181eea4dde9b097b3dfa4b7b060bc39a"
+      },
+      {
+        "lean_tag": "v4.27.0",
+        "mathlib_rev": "v4.27.0",
+        "aesop_rev": "v4.27.0",
+        "jsonl_version_pin": "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+        "lakefile_sha256": "11b8e6fcf536c30e56aac04cb70e5ff8ca9255a0ccdd98714f8983e06a8a2fb7",
+        "lean_toolchain_sha256": "d55ca0039a5479db5b38919d005b2c427b89b3be4f0184a20f2f4eae931f5bdb",
+        "pins_json_sha256": "d8621077a90694da7399c2c3f817c8fcf5c4a5a79af5c12bec128c0fd0226be2"
+      }
+    ],
+    "note": "Mathlib/Aesop revisions are the Lean tags. JSONL git commits are jsonl_version_pin only, not a PutnamBench clone. If organizers later publish SHAs, replace these pins and rebake."
+  },
+  "typesafe": {
+    "lra_typesafe": "off",
+    "model_id": null,
+    "not_applicable_digest": "976d6318e648acaaeed99e18fd1db5e11190ffaac0d9f67c831078ac53dc8cd2",
+    "route_questions_frozen": false,
+    "official_track2_stays_off": true
+  },
+  "prompt_templates": {
+    "lra_prompt_txt": {
+      "path": "papers/completion/lean_refactor_arena/harness/lra_prompt.txt",
+      "sha256": "57036f2bb94d8d8b38d77096ad92a2e615571addee7d01c72e104edaacfee96a",
+      "bytes": 702
+    }
+  },
+  "manuscript": {
+    "main_tex": "papers/completion/lean_refactor_arena/manuscript/main.tex",
+    "main_tex_sha256": "f871de146fbd152e42c85e80fa7216f4d51ea3a14fdda9604c94418e63b12466",
+    "warmup_table_tex": "papers/completion/lean_refactor_arena/manuscript/warmup_table.tex",
+    "warmup_table_tex_sha256": "f67e4f6e2ebac1dacd4adcd412fb2708713e06a173a80c46731b99ee60112f7e",
+    "main_pdf": "papers/completion/lean_refactor_arena/manuscript/main.pdf",
+    "main_pdf_sha256": "11a2813b17dfb702ee400c08c9274abaccc18932a04a8fc6ea77e17536e32ffe",
+    "arena_scores_written": false,
+    "note": "This freeze and runbook do not write Arena scores into the manuscript. warmup_table.tex is the imported-reference characterization."
+  },
+  "operator_command": {
+    "n_problems": 15,
+    "hardware_class": "spark_gb10",
+    "cwd": ".",
+    "env": {
+      "IPFS_ACCELERATE_LLAMA_CPP_AUTOSTART": "0",
+      "LRA_HARDWARE": "spark_gb10",
+      "LRA_TYPESAFE": "off",
+      "LRA_GENERATOR": "leanstral"
+    },
+    "argv": [
+      "/usr/bin/python3.12",
+      "papers/completion/lean_refactor_arena/harness/run_warmup.py",
+      "--run",
+      "--receipts-dir",
+      "papers/completion/lean_refactor_arena/submissions/warmup",
+      "--network",
+      "deny"
+    ],
+    "receipts_dir": "papers/completion/lean_refactor_arena/submissions/warmup",
+    "docker0_health_url": "http://172.17.0.1:8080/health",
+    "lock_ex": false,
+    "llama_server_started": false
+  },
+  "completion_authority": {
+    "tool": "papers/completion/lean_refactor_arena/tools/verify_lra_batch.py",
+    "command_flag": "--require-complete",
+    "required_status": "PASS",
+    "required_complete": true,
+    "required_exit_code": 0,
+    "argv": [
+      "/usr/bin/python3.12",
+      "papers/completion/lean_refactor_arena/tools/verify_lra_batch.py",
+      "--receipts-dir",
+      "papers/completion/lean_refactor_arena/submissions/warmup",
+      "--require-complete"
+    ],
+    "gates": [
+      "digest",
+      "statement_bind",
+      "all_tags",
+      "no_sorry",
+      "complete"
+    ],
+    "imports_law_to_action_verify_batch": false,
+    "incomplete_is_not_success": true
+  },
+  "freeze_binding": {
+    "schema": "lra-freeze-binding/v1",
+    "warmup_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+    "protocol": "LRA/v1",
+    "n_problems": 15,
+    "hardware_class": "spark_gb10",
+    "arena_score": null,
+    "score": null,
+    "tiny_byte_lm": false
+  },
+  "lrah_documentation_ids": [
+    "LRAH-001",
+    "LRAH-002",
+    "LRAH-003",
+    "LRAH-004",
+    "LRAH-005",
+    "LRAH-006",
+    "LRAH-007",
+    "LRAH-008",
+    "LRAH-009",
+    "LRAH-010",
+    "LRAH-011"
+  ],
+  "lrah_are_documentation_ids": true,
+  "added_to_paper_supervisors_papers": false,
+  "local_filesystem_receipts_only": true
+}

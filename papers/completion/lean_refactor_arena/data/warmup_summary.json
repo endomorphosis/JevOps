@@ -1,0 +1,310 @@
+{
+  "schema": "lean-refactor-arena-warmup-summary/v1",
+  "source_url": "https://delta-lab-ai-lean-refactor-arena.hf.space/gradio_api/file=/tmp/gradio/3389f2fbc0397df3689218ee1bc68f1c47c0721bae28e0e7aaa5a5ea503b4e94/benchmark_data_warmup.jsonl",
+  "arena_space": "https://huggingface.co/spaces/delta-lab-ai/lean-refactor-arena",
+  "arena_site": "https://leanrefactor.github.io/",
+  "workshop": "https://vericodegen.github.io/",
+  "sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+  "bytes": 113826,
+  "n_problems": 15,
+  "n_jsonl_fields": 12,
+  "sources": {
+    "strata": 3,
+    "physlib": 3,
+    "cslib": 3,
+    "arklib": 3,
+    "putnambench": 3
+  },
+  "proof_length_min": 222,
+  "proof_length_max": 4085,
+  "proof_length_mean": 1173,
+  "num_lines_min": 55,
+  "num_lines_max": 294,
+  "num_lines_mean": 142.9,
+  "src_chars_min": 1727,
+  "src_chars_max": 13801,
+  "src_chars_mean": 6183,
+  "n_with_repo_url": 12,
+  "n_putnam_without_path": 3,
+  "problems": [
+    {
+      "name": "CallElimCorrect.substOldPostSubset",
+      "source": "strata",
+      "file_path": "Strata/Transform/CallElimCorrect.lean",
+      "url": "https://github.com/strata-org/Strata",
+      "num_lines": 97,
+      "proof_length": 313,
+      "src_chars": 2638,
+      "statement_chars": 225,
+      "has_header": false,
+      "start_line": 2964,
+      "end_line": 3060,
+      "n_toolchains": 1,
+      "lean_versions": [
+        "v4.26.0"
+      ]
+    },
+    {
+      "name": "CallElimCorrect.extractedOldExprInVars",
+      "source": "strata",
+      "file_path": "Strata/Transform/CallElimCorrect.lean",
+      "url": "https://github.com/strata-org/Strata",
+      "num_lines": 82,
+      "proof_length": 222,
+      "src_chars": 1952,
+      "statement_chars": 157,
+      "has_header": false,
+      "start_line": 2733,
+      "end_line": 2814,
+      "n_toolchains": 1,
+      "lean_versions": [
+        "v4.26.0"
+      ]
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "source": "strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "url": "https://github.com/strata-org/Strata",
+      "num_lines": 55,
+      "proof_length": 224,
+      "src_chars": 1990,
+      "statement_chars": 284,
+      "has_header": false,
+      "start_line": 950,
+      "end_line": 1004,
+      "n_toolchains": 3,
+      "lean_versions": [
+        "v4.29.1",
+        "v4.27.0",
+        "v4.26.0"
+      ]
+    },
+    {
+      "name": "fundamental_theorem_of_variational_calculus'",
+      "source": "physlib",
+      "file_path": "Physlib/Mathematics/VariationalCalculus/Basic.lean",
+      "url": "https://github.com/leanprover-community/physlib",
+      "num_lines": 126,
+      "proof_length": 851,
+      "src_chars": 6662,
+      "statement_chars": 254,
+      "has_header": false,
+      "start_line": 99,
+      "end_line": 224,
+      "n_toolchains": 1,
+      "lean_versions": [
+        "v4.32.0"
+      ]
+    },
+    {
+      "name": "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema",
+      "source": "physlib",
+      "file_path": "Physlib/Electromagnetism/Dynamics/IsExtrema.lean",
+      "url": "https://github.com/leanprover-community/physlib",
+      "num_lines": 126,
+      "proof_length": 1372,
+      "src_chars": 6238,
+      "statement_chars": 480,
+      "has_header": false,
+      "start_line": 376,
+      "end_line": 501,
+      "n_toolchains": 1,
+      "lean_versions": [
+        "v4.32.0"
+      ]
+    },
+    {
+      "name": "FieldSpecification.WickAlgebra.ι_timeOrderF_superCommuteF_eq_time",
+      "source": "physlib",
+      "file_path": "Physlib/QFT/PerturbationTheory/WickAlgebra/TimeOrder.lean",
+      "url": "https://github.com/leanprover-community/physlib",
+      "num_lines": 117,
+      "proof_length": 1217,
+      "src_chars": 6553,
+      "statement_chars": 253,
+      "has_header": false,
+      "start_line": 162,
+      "end_line": 278,
+      "n_toolchains": 1,
+      "lean_versions": [
+        "v4.32.0"
+      ]
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "source": "cslib",
+      "file_path": "Cslib/Languages/LambdaCalculus/LocallyNameless/Fsub/Safety.lean",
+      "url": "https://github.com/leanprover/cslib",
+      "num_lines": 83,
+      "proof_length": 408,
+      "src_chars": 2080,
+      "statement_chars": 70,
+      "has_header": false,
+      "start_line": 76,
+      "end_line": 158,
+      "n_toolchains": 3,
+      "lean_versions": [
+        "v4.33.0-rc2",
+        "v4.32.0",
+        "v4.31.0"
+      ]
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "source": "cslib",
+      "file_path": "Cslib/Languages/CombinatoryLogic/Confluence.lean",
+      "url": "https://github.com/leanprover/cslib",
+      "num_lines": 64,
+      "proof_length": 407,
+      "src_chars": 1904,
+      "statement_chars": 61,
+      "has_header": false,
+      "start_line": 142,
+      "end_line": 205,
+      "n_toolchains": 4,
+      "lean_versions": [
+        "v4.33.0-rc2",
+        "v4.32.0",
+        "v4.31.0",
+        "v4.30.0"
+      ]
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "source": "cslib",
+      "file_path": "Cslib/Languages/CCS/BehaviouralTheory.lean",
+      "url": "https://github.com/leanprover/cslib",
+      "num_lines": 62,
+      "proof_length": 251,
+      "src_chars": 1727,
+      "statement_chars": 117,
+      "has_header": false,
+      "start_line": 311,
+      "end_line": 372,
+      "n_toolchains": 3,
+      "lean_versions": [
+        "v4.33.0-rc2",
+        "v4.32.0",
+        "v4.31.0"
+      ]
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "source": "arklib",
+      "file_path": "ArkLib/ProofSystem/Binius/BinaryBasefold/Prelude.lean",
+      "url": "https://github.com/Verified-zkEVM/ArkLib",
+      "num_lines": 209,
+      "proof_length": 1463,
+      "src_chars": 11388,
+      "statement_chars": 437,
+      "has_header": false,
+      "start_line": 1265,
+      "end_line": 1473,
+      "n_toolchains": 4,
+      "lean_versions": [
+        "v4.31.0",
+        "v4.30.0",
+        "v4.29.0",
+        "v4.28.0"
+      ]
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "source": "arklib",
+      "file_path": "ArkLib/ProofSystem/Binius/BinaryBasefold/Prelude.lean",
+      "url": "https://github.com/Verified-zkEVM/ArkLib",
+      "num_lines": 184,
+      "proof_length": 1906,
+      "src_chars": 9795,
+      "statement_chars": 1215,
+      "has_header": false,
+      "start_line": 815,
+      "end_line": 998,
+      "n_toolchains": 3,
+      "lean_versions": [
+        "v4.31.0",
+        "v4.30.0",
+        "v4.29.0"
+      ]
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "source": "arklib",
+      "file_path": "ArkLib/Data/CodingTheory/ProximityGap/DG25/MainResults.lean",
+      "url": "https://github.com/Verified-zkEVM/ArkLib",
+      "num_lines": 177,
+      "proof_length": 1353,
+      "src_chars": 10254,
+      "statement_chars": 503,
+      "has_header": false,
+      "start_line": 1207,
+      "end_line": 1383,
+      "n_toolchains": 3,
+      "lean_versions": [
+        "v4.31.0",
+        "v4.30.0",
+        "v4.29.0"
+      ]
+    },
+    {
+      "name": "putnam_1964_a4",
+      "source": "putnambench",
+      "file_path": "",
+      "url": "",
+      "num_lines": 186,
+      "proof_length": 1769,
+      "src_chars": 6934,
+      "statement_chars": 313,
+      "has_header": true,
+      "start_line": null,
+      "end_line": null,
+      "n_toolchains": 3,
+      "lean_versions": [
+        "v4.25.0",
+        "v4.26.0",
+        "v4.27.0"
+      ]
+    },
+    {
+      "name": "putnam_1964_b2",
+      "source": "putnambench",
+      "file_path": "",
+      "url": "",
+      "num_lines": 294,
+      "proof_length": 1754,
+      "src_chars": 8829,
+      "statement_chars": 205,
+      "has_header": true,
+      "start_line": null,
+      "end_line": null,
+      "n_toolchains": 2,
+      "lean_versions": [
+        "v4.25.0",
+        "v4.26.0"
+      ]
+    },
+    {
+      "name": "putnam_1995_a3",
+      "source": "putnambench",
+      "file_path": "",
+      "url": "",
+      "num_lines": 282,
+      "proof_length": 4085,
+      "src_chars": 13801,
+      "statement_chars": 456,
+      "has_header": true,
+      "start_line": null,
+      "end_line": null,
+      "n_toolchains": 3,
+      "lean_versions": [
+        "v4.25.0",
+        "v4.26.0",
+        "v4.27.0"
+      ]
+    }
+  ],
+  "arena_scores_claimed": false,
+  "refactoring_run_executed": false,
+  "official_track2_run_executed": false
+}

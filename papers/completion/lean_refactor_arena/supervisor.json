@@ -1,0 +1,42 @@
+{
+  "schema": "vericodegen-paper-supervisor/v1",
+  "paper_id": "lean_refactor_arena",
+  "title": "Warm-up Characterization and an Open-Weight Harness for Lean Refactor Arena",
+  "track": "competition",
+  "pdf": "papers/completion/lean_refactor_arena/manuscript/main.pdf",
+  "todo_path": "papers/completion/lean_refactor_arena/paper.todo.md",
+  "objective_path": "papers/completion/lean_refactor_arena/paper.objectives.md",
+  "review_path": "papers/completion/lean_refactor_arena/review.md",
+  "manifest_path": "papers/completion/lean_refactor_arena/tasks.json",
+  "task_prefix": "LRA-",
+  "root_goal_id": "LRA-G000",
+  "board_namespace": "vericodegen-2026-lean_refactor_arena",
+  "state_prefix": "paper_lean_refactor_arena",
+  "submodule_paths": [
+    "external/ipfs_accelerate",
+    "external/ipfs_datasets",
+    "external/ipfs_kit"
+  ],
+  "research_template_paths": [
+    "papers/neurips_2026_vericode_workshop_competition.tex",
+    "papers/neurips_2026_vericode_competition.sty"
+  ],
+  "runtime_authority": "native DatabaseTaskSource through dedicated Quack owner; fail closed",
+  "refill_policy": "fixed reviewed board; split/discover follow-ups explicitly with lineage",
+  "native_campaign_registered": true,
+  "campaign_state_root": "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra",
+  "campaign_note": "Dedicated LRA campaign. Default three-paper campaign PAPERS unchanged. Start with --papers lean_refactor_arena --state-root campaign_state_root.",
+  "sources": {
+    "warmup_jsonl": "https://delta-lab-ai-lean-refactor-arena.hf.space/gradio_api/file=/tmp/gradio/3389f2fbc0397df3689218ee1bc68f1c47c0721bae28e0e7aaa5a5ea503b4e94/benchmark_data_warmup.jsonl",
+    "arena_space": "https://huggingface.co/spaces/delta-lab-ai/lean-refactor-arena",
+    "workshop": "https://vericodegen.github.io/",
+    "arena_site": "https://leanrefactor.github.io/"
+  },
+  "frozen_warmup_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+  "arena_scores_claimed": false,
+  "refactoring_run_executed": false,
+  "implementation_timeout_seconds": 7200,
+  "max_task_attempts": 3,
+  "primary_generator": "leanstral_local@172.17.0.1:8080",
+  "primary_control_plane": "papers/completion/lean_refactor_arena/harness/run_warmup.py"
+}

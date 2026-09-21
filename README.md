@@ -150,7 +150,12 @@ the Lean IR autoencoder only from the verified winner. The default route is
 `provider="codex_cli"`, `model_name="gpt-5.6-luna"`, and strict
 cross-provider fallback is off. The router is advisory; Lean/Lake remains the
 admission authority and verified proof-body token count is the primary search
-key.
+key. Strict mode also checks `llm_router`'s effective provider/model trace and
+fails closed on a silent fallback; each round records that route attestation.
+Training receipts distinguish the actual autoencoder `loss` from the verified
+candidate's `candidate_target_loss`, so a perfect target match cannot masquerade
+as a perfect model prediction. Results also expose `model_body_tokens_after`
+separately from the verified-search `best_body_tokens`.
 
 ```python
 from jevops.router_tuning import RouterTuningConfig, tune_autoencoder_with_router
@@ -310,3 +315,23 @@ The invariant argument and its assumptions are documented in
 Portable Lean folds, `lake env`, random canaries, TypeSafe Jev HTTP, Track 1/2,
 LRA `tasks.json` board, and the implementation-specific inner TypeSafe lake
 walker.
+
+## Lean Refactor Arena benchmark integration
+
+The frozen 15-problem warm-up corpus and the executable harness are under
+`papers/completion/lean_refactor_arena/`. The harness keeps statement-prefix
+binding, tag-pinned Lake compilation, `sorryAx` rejection, retained failures,
+and null official-score fields. The experimental
+`harness/autoencoder_bridge.py` connects those records to the router-guided
+text → Lean IR → text loop; it reports the verified search winner separately
+from the model's own prediction and its cross-entropy/cosine diagnostics.
+
+```bash
+python papers/completion/lean_refactor_arena/harness/run_warmup.py --plan
+python papers/completion/lean_refactor_arena/tools/verify_lra_batch.py --schedule
+python papers/completion/lean_refactor_arena/harness/autoencoder_bridge.py --plan
+```
+
+These commands are unscored protocol checks. A full run requires the listed
+source clones and every pinned toolchain/cache; missing infrastructure stays a
+failure and never becomes a PATH-Lean or Arena-score fallback.

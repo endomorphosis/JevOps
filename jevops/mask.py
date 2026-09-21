@@ -1618,6 +1618,33 @@ def shot_fill_prompt(
     )
 
 
+def collect_one_hole_closed_rows(
+    tactics: str,
+    spans: Sequence[int],
+    *,
+    prefer_fn: Callable[[str, int], Sequence[Any]],
+    closed_fn: Callable[..., Optional[Mapping[str, Any]]],
+    n_shots: int = 6,
+    cfg_scale: float = 1.5,
+) -> list[dict[str, Any]]:
+    """One closed fill per preferred span window. Vocab stays injected."""
+
+    rows: list[dict[str, Any]] = []
+    for span in spans or ():
+        for index, hole in enumerate(prefer_fn(tactics, int(span)) or ()):
+            row = closed_fn(tactics, [hole], schedule_id=f"span{span}_p{index}")
+            if not row:
+                continue
+            packed = dict(row)
+            packed["span"] = int(span)
+            packed["n_masks"] = 1
+            packed["n_shots"] = int(n_shots)
+            packed["cfg_scale"] = float(cfg_scale)
+            packed["original"] = getattr(hole, "original", packed.get("original"))
+            rows.append(packed)
+    return rows
+
+
 def closed_multihole_row(
     text: str,
     holes: Sequence[Any],

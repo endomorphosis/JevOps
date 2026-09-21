@@ -79,7 +79,13 @@ The optional `RouterTuningLoop` adds an LLM proposal layer through
 JSON plan is parsed into an allowlisted tactic/IR vocabulary; the model cannot
 write files or admit proofs. Local MCA/PCA tactic families are expanded beside
 the router proposals, all candidates are compiled once with a cache, and only
-the shortest verified result becomes a positive autoencoder target. Failed
+the shortest verified result becomes a positive autoencoder target. Strict
+routing disables local fallback and verifies the accelerator router's effective
+provider/model trace before accepting its response. Failed
 router candidates still produce bounded negative NCA/verifier feedback, so
 the loop learns which tactic families are unsafe without treating an LLM
-confidence score as theorem evidence.
+confidence score as theorem evidence. Its receipt keeps the autoencoder's
+actual prediction loss separate from the verified candidate-target loss; the
+latter is never used as a proxy for model CE/cosine quality. Result records
+also keep `model_body_tokens_after` separate from the shortest verified search
+candidate.

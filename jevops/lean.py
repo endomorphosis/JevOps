@@ -558,6 +558,30 @@ def render_lean_toolchain(tag: str) -> str:
     return f"leanprover/lean4:{tag}\n"
 
 
+def render_package_lakefile(
+    *,
+    package: str,
+    lib: str,
+    max_heartbeats: int,
+    server_args: bool = False,
+) -> str:
+    """Minimal lake package. Not a Mathlib/Aesop lakefile and not Tmp.lean."""
+
+    server = (
+        f'  moreServerArgs := #["-DmaxHeartbeats={int(max_heartbeats)}"]\n' if server_args else ""
+    )
+    return (
+        "import Lake\n"
+        "open Lake DSL\n"
+        "\n"
+        f"package «{package}» where\n"
+        f'  moreLeanArgs := #["-DmaxHeartbeats={int(max_heartbeats)}"]\n'
+        f"{server}"
+        "\n"
+        f"lean_lib «{lib}»\n"
+    )
+
+
 def render_mathlib_aesop_lakefile(
     *,
     package: str,
@@ -2406,6 +2430,23 @@ def coalesce_limits(
     return int(max_new), float(timeout)
 
 
+def overlay_generate_kwargs(
+    base: Mapping[str, Any],
+    *,
+    temperature: Optional[float] = None,
+    stop: Optional[Sequence[str]] = None,
+    stop_fn: Optional[Callable[[Sequence[str]], Sequence[str]]] = None,
+) -> dict[str, Any]:
+    """Fail-closed generate kwargs plus optional temperature/stop. No HTTP."""
+
+    call_kwargs = dict(base or {})
+    if temperature is not None:
+        call_kwargs["temperature"] = float(temperature)
+    if stop:
+        call_kwargs["stop"] = list(stop_fn(stop) if stop_fn is not None else stop)
+    return call_kwargs
+
+
 def stamp_measured_receipt(
     receipt: Any,
     *,
@@ -2664,6 +2705,100 @@ def plant_synthetic_clone(clone: Any, files: Mapping[str, str]) -> Path:
     from jevops.outer import plant_git_skeleton
 
     return plant_git_skeleton(clone, files=files)
+
+
+def write_sorry_or_tactic(
+    dest: Any,
+    *,
+    tactic: str,
+    sorry: str,
+    sorry_fn: Callable[[], str],
+    tactic_fn: Callable[[], str],
+    write_fn: Callable[..., Any],
+    refuse: str = "",
+    error_cls: type[BaseException] = ValueError,
+    refuse_fmt: str = "refusing to write {name}",
+) -> Any:
+    """Write sorry-hole or tactic lake source. Never Tmp.lean."""
+
+    text = sorry_fn() if tactic == sorry else tactic_fn()
+    return write_fn(dest, text, refuse=refuse, error_cls=error_cls, refuse_fmt=refuse_fmt)
+
+
+def pins_for_source(
+    record: Mapping[str, Any],
+    *,
+    putnam_source: str,
+    putnam_fn: Callable[[Mapping[str, Any]], Any],
+    default_fn: Callable[[Mapping[str, Any]], Any],
+) -> Any:
+    """Putnam pins vs installed clone pins. Never PATH lean."""
+
+    if str(record.get("source") or "") == putnam_source:
+        return putnam_fn(record)
+    return default_fn(record)
+
+
+def toolchain_gap_note(
+    exc: BaseException,
+    types: tuple[type[BaseException], ...],
+    note: str,
+) -> str:
+    """Capability-gap suffix. Not PATH lean usability."""
+
+    if isinstance(exc, types):
+        return note
+    return ""
+
+
+def supervisor_env(
+    state_root: Any,
+    toolchain: Any,
+    *,
+    tmp_name: str,
+    threads: Any,
+    process_env_key: str,
+    env_copy_fn: Callable[..., Mapping[str, str]],
+    under_fn: Callable[..., Any],
+    fields_fn: Callable[..., Mapping[str, str]],
+) -> Mapping[str, str]:
+    """Tag-pinned lake env overlay. IndependentKernelVerifier is unused."""
+
+    supervisor_dir = under_fn(state_root, "process-supervisor", tmp_name=tmp_name)
+    return env_copy_fn(
+        fields_fn(
+            threads=threads,
+            elan_home=getattr(toolchain, "elan_home", toolchain),
+            supervisor_dir=supervisor_dir,
+            process_env_key=process_env_key,
+        )
+    )
+
+
+def planted_workspace(
+    tmp: Any,
+    *,
+    tags: Sequence[str],
+    plant_fn: Callable[[Any, str], Any],
+    clone_fn: Callable[[Any], Any],
+) -> dict[str, Any]:
+    """Elan + clone + receipts dirs under an existing temp root. Not a live bake."""
+
+    from jevops.outer import plant_named_tags
+
+    root = Path(tmp)
+    elan_home = root / "elan"
+    state_root = root / "state"
+    receipts_dir = root / "receipts"
+    plant_named_tags(elan_home, tags, plant_fn)
+    clone = Path(clone_fn(state_root))
+    return {
+        "root": root,
+        "elan_home": elan_home,
+        "state_root": state_root,
+        "receipts_dir": receipts_dir,
+        "clone": clone,
+    }
 
 
 def probe_pins(
@@ -3981,4 +4116,454 @@ def fill_timed_attempt(
         result=result,
         wall_ms=wall_ms,
         cpu_ms=cpu_ms,
+    )
+
+
+def pack_statement_report(**fields: Any) -> dict[str, Any]:
+    """Prefix-bind / admission report overlay. Bind literals stay in the consumer."""
+
+    out = dict(fields)
+    out["arena_score"] = None
+    return out
+
+
+def pack_retrieval_report(
+    retrieval: Any,
+    *,
+    records: Sequence[Mapping[str, Any]],
+    lemma_cap: int,
+    prompt_neighbors: Sequence[Mapping[str, Any]],
+    asdict_fn: Callable[[Any], Mapping[str, Any]],
+) -> dict[str, Any]:
+    """JSONL-neighbor retrieval report. Not a score. Bind check stays in the consumer."""
+
+    neighbors = list(getattr(retrieval, "neighbors", ()) or ())
+    lemmas = list(getattr(retrieval, "src_lemmas", ()) or ())
+    neighbor_names = [item.name for item in neighbors]
+    all_names = [str(item.get("name") or "") for item in records]
+    query = getattr(retrieval, "query", None)
+    expected = [name for name in all_names if name != query]
+    query_src = ""
+    for row in records:
+        if row.get("name") == query:
+            query_src = str(row.get("src") or "")
+            break
+    lemma_in_src = all(item.name in query_src for item in lemmas)
+    tactics = sorted({item.tactic for item in lemmas})
+    families = {item.tactic for item in lemmas}
+    return {
+        "name": getattr(retrieval, "query", None),
+        "source": getattr(retrieval, "source", None),
+        "n_neighbors": len(neighbors),
+        "neighbor_names": neighbor_names,
+        "neighbors_are_the_other_fourteen": neighbor_names == expected,
+        "self_excluded": getattr(retrieval, "query", None) not in neighbor_names,
+        "full_src_retrieved": all(
+            item.src == next(r["src"] for r in records if r["name"] == item.name) for item in neighbors
+        ),
+        "prefix_bind_neighbors": all(item.src.startswith(item.statement) for item in neighbors),
+        "n_src_lemmas": len(lemmas),
+        "n_src_lemmas_uncapped": getattr(retrieval, "n_src_lemmas_uncapped", 0),
+        "src_lemma_cap_held": len(lemmas) <= int(lemma_cap),
+        "src_lemmas": [dict(asdict_fn(item)) for item in lemmas],
+        "src_lemma_names": [item.name for item in lemmas],
+        "src_lemma_tactics": tactics,
+        "has_simp": "simp" in families,
+        "has_rw": "rw" in families,
+        "has_exact": "exact" in families,
+        "has_apply": "apply" in families,
+        "lemmas_mentioned_in_src": lemma_in_src,
+        "lemma_id_digest": getattr(retrieval, "lemma_id_digest", ""),
+        "lemma_id_digest_hex64": len(str(getattr(retrieval, "lemma_id_digest", "") or "")) == 64,
+        "n_lemma_ids": len(getattr(retrieval, "lemma_ids", ()) or ()),
+        "arena_score": getattr(retrieval, "arena_score", None),
+        "score": None,
+        "relevance_score": None,
+        "corpus_manifest_ingest": getattr(retrieval, "corpus_manifest_ingest", False),
+        "mathlib_ingest": getattr(retrieval, "mathlib_ingest", False),
+        "prompt_neighbor_names": [item["name"] for item in prompt_neighbors],
+    }
+
+
+def pack_lemma_cap_fixture(
+    *,
+    names: Sequence[str],
+    lemmas: Sequence[Any],
+    uncapped: int,
+    cap: int,
+    extra_name: str = "ExtraIdent",
+) -> dict[str, Any]:
+    """Self-check view of lemma-id capping. Not a score."""
+
+    lemma_names = [item.name for item in lemmas]
+    return {
+        "uncapped": uncapped,
+        "returned": len(lemmas),
+        "names": lemma_names,
+        "first": lemma_names[0] if lemma_names else "",
+        "last": lemma_names[-1] if lemma_names else "",
+        "includes_extra_apply": extra_name in lemma_names,
+        "tactics": sorted({item.tactic for item in lemmas}),
+        f"capped_at_{int(cap)}": len(lemmas) == int(cap) and lemma_names == list(names)[: int(cap)],
+        "uncapped_has_all_twenty_plus_extra": int(uncapped) == len(list(names)) + 1,
+    }
+
+
+def synthetic_proof_receipt(
+    receipt_cls: Any,
+    paths_cls: Any,
+    *,
+    name: str,
+    lean_tag: str,
+    verdict: str,
+    body: str,
+    digest_fn: Callable[[bytes], str],
+    premises_digest: str = "",
+    git_commit: str = "",
+    token_count: int = 1,
+) -> tuple[Any, str]:
+    """Build a tiny proof receipt for self-check. Body is not admitted Lean."""
+
+    digest = digest_fn(str(body).encode("utf-8"))
+    receipt = receipt_cls(
+        name=name,
+        lean_tag=lean_tag,
+        body_digest=digest,
+        verdict=verdict,
+        executable_paths=paths_cls(
+            lean=f"/elan/toolchains/leanprover--lean4---{lean_tag}/bin/lean",
+            lake=f"/elan/toolchains/leanprover--lean4---{lean_tag}/bin/lake",
+        ),
+        premises_digest=premises_digest,
+        git_commit=git_commit,
+        lean_version=lean_tag,
+        token_count=int(token_count),
+        elab_proxy=None,
+    )
+    return receipt, body
+
+
+def pack_inits_replay_receipt(
+    *,
+    name: str,
+    source_tokens: int,
+    replay_tokens: int,
+    target_tokens: int,
+    n_kernels: int,
+    stamp: str,
+    digest: str,
+    schema: str = "lra-inits-updates-replay/v1",
+    hardware_class: str = "spark_gb10",
+) -> dict[str, Any]:
+    """Closed InitsUpdatesComm replay receipt. Lake still admits."""
+
+    return {
+        "schema": schema,
+        "observed_at": stamp,
+        "name": name,
+        "source_tokens": int(source_tokens),
+        "replay_tokens": int(replay_tokens),
+        "target_tokens": int(target_tokens),
+        "n_kernels": int(n_kernels),
+        "called_llm": False,
+        "arena_score": None,
+        "official_track2": False,
+        "hardware_class": hardware_class,
+        "warmup_jsonl_sha256": digest,
+    }
+
+
+def pack_compile_plan(
+    first: Mapping[str, Any],
+    first_pins: Sequence[Any],
+    *,
+    frozen_warmup_sha256: str,
+    jsonl_bytes: int,
+    n_records: int,
+    first_source: str,
+    first_tag: str,
+    first_commit: str,
+    first_file: str,
+    first_url: str,
+    kernel_command_template: str,
+    measurement_argv_template: str,
+    measurement_max_heartbeats: int,
+    ikv_timeout: float,
+    official_timeout: float,
+    warmup_timeout: float,
+) -> dict[str, Any]:
+    """Compile-plan JSON. Arena score stays None."""
+
+    pin = first_pins[0] if first_pins else None
+    tag = str(getattr(pin, "lean_tag", "") or "")
+    commit = str(getattr(pin, "git_commit", "") or "")
+    source = str(first.get("source") or "")
+    file_path = str(first.get("file_path") or "")
+    url = str(first.get("url") or "")
+    return {
+        "arena_score": None,
+        "expand_after_first_green": True,
+        "first_commit": commit,
+        "first_file": file_path,
+        "first_is_strata": source == first_source,
+        "first_is_strata_v4_26": (
+            source == first_source
+            and bool(first_pins)
+            and tag == first_tag
+            and commit == first_commit
+            and file_path == first_file
+            and url == first_url
+        ),
+        "first_name": str(first.get("name") or ""),
+        "first_tag": tag,
+        "first_url": url,
+        "frozen_warmup_sha256": frozen_warmup_sha256,
+        "independent_kernel_verifier_default_timeout_seconds": ikv_timeout,
+        "independent_kernel_verifier_is_lake_oracle": False,
+        "jsonl_bytes": int(jsonl_bytes),
+        "kernel_command_template": kernel_command_template,
+        "measurement_argv_template": measurement_argv_template,
+        "measurement_maxHeartbeats": int(measurement_max_heartbeats),
+        "n_records": int(n_records),
+        "newest_tag_first": True,
+        "official_timeout_seconds": official_timeout,
+        "score": None,
+        "warmup_timeout_seconds": warmup_timeout,
+    }
+
+
+def pack_bake_plan(
+    jobs: Sequence[Any],
+    first: Any,
+    *,
+    frozen_warmup_sha256: str,
+    jsonl_bytes: int,
+    n_records: int,
+    bake_argv_template: str,
+    kernel_command_template: str,
+    measurement_max_heartbeats: int,
+    first_source: str,
+    first_tag: str,
+    first_commit: str,
+    putnam_module: str,
+    putnam_tags: Sequence[str],
+    strata_first_tag: str,
+) -> dict[str, Any]:
+    """Bake-plan JSON. Arena score stays None."""
+
+    from jevops.outer import count_where
+
+    return {
+        "arena_score": None,
+        "bake_argv_template": bake_argv_template,
+        "first_is_strata_v4_26": (
+            getattr(first, "kind", "") == "repo"
+            and getattr(first, "source", "") == first_source
+            and getattr(first, "lean_tag", "") == first_tag
+            and getattr(first, "git_commit", "") == first_commit
+        ),
+        "first_job": first.to_dict() if hasattr(first, "to_dict") else dict(first),
+        "frozen_warmup_sha256": frozen_warmup_sha256,
+        "jsonl_bytes": int(jsonl_bytes),
+        "jobs": [job.to_dict() if hasattr(job, "to_dict") else dict(job) for job in jobs],
+        "kernel_command_template": kernel_command_template,
+        "measurement_maxHeartbeats": int(measurement_max_heartbeats),
+        "n_jobs": len(list(jobs)),
+        "n_putnam_jobs": count_where(jobs, lambda job: getattr(job, "kind", "") == "putnam"),
+        "n_records": int(n_records),
+        "n_repo_jobs": count_where(jobs, lambda job: getattr(job, "kind", "") == "repo"),
+        "putnam_module": putnam_module,
+        "putnam_not_tmp_lean": True,
+        "putnam_tags": list(putnam_tags),
+        "score": None,
+        "strata_first_tag": strata_first_tag,
+    }
+
+
+def putnam_bake_job(
+    *,
+    lean_tag: str,
+    putnam_source: str,
+    putnam_relpath: str,
+    putnam_module: str,
+    git_commit: str = "",
+    name: str = "",
+    url: str = "",
+    cache_key: Optional[str] = None,
+    phase: int = 2,
+) -> BakeJob:
+    """Putnam lake-project job. Never Tmp.lean."""
+
+    tag = str(lean_tag)
+    return BakeJob(
+        kind="putnam",
+        source=putnam_source,
+        lean_tag=tag,
+        git_commit=str(git_commit or ""),
+        url=str(url or ""),
+        cache_key=str(cache_key or f"putnam/{tag}"),
+        phase=int(phase),
+        record_names=(str(name),) if name else (),
+        file_paths=(putnam_relpath,),
+        module=putnam_module,
+        lakefile_required=True,
+    )
+
+
+def pack_olean_receipt(
+    job: Any,
+    *,
+    schema: str = "lra-olean-bake/v1",
+    synthetic: bool = True,
+) -> dict[str, Any]:
+    """Dummy olean-cache receipt. Not a live lake bake."""
+
+    return {
+        "schema": schema,
+        "cache_key": getattr(job, "cache_key", ""),
+        "kind": getattr(job, "kind", ""),
+        "lean_tag": getattr(job, "lean_tag", ""),
+        "synthetic": bool(synthetic),
+        "lake_build_executed": False,
+        "arena_score": None,
+    }
+
+
+def finalize_proof_receipt(
+    receipt: Any,
+    *,
+    body: Optional[str] = None,
+    digest_fn: Callable[[bytes], str],
+    project_fn: Callable[[Any], Mapping[str, str]],
+    key_fn: Callable[[Any, Mapping[str, str]], str],
+    now_fn: Callable[[], float],
+    error_cls: type[BaseException] = ValueError,
+    empty: str = "body_digest must be sha256 hex",
+) -> Any:
+    """Fill digest/cid/dimensions/key. Filesystem still owns the body."""
+
+    if getattr(receipt, "executable_paths", None) is None:
+        raise error_cls("executable_paths required")
+    from jevops.outer import ensure_digest
+
+    receipt.body_digest = ensure_digest(
+        receipt.body_digest,
+        data=body.encode("utf-8") if body is not None else None,
+        digest_fn=digest_fn,
+        error_cls=error_cls,
+        empty=empty,
+    )
+    if not receipt.candidate_cid:
+        receipt.candidate_cid = receipt.body_digest
+    receipt.created_at = receipt.created_at or now_fn()
+    receipt.dimensions = dict(project_fn(receipt))
+    receipt.key_digest = key_fn(receipt, receipt.dimensions)
+    return receipt
+
+
+def pack_compile_extra(
+    receipt: Mapping[str, Any],
+    *,
+    lean_tag: str,
+    start_line: int,
+    end_line: int,
+    stdout: str,
+    errors_in: Sequence[Mapping[str, Any]],
+    errors_out: Sequence[Mapping[str, Any]],
+    wall: float,
+    tail_fn: Callable[[Any, int], Any],
+    head_fn: Callable[[Sequence[Any], int], Sequence[Any]],
+) -> dict[str, Any]:
+    """Keep-best compile overlay. Lake still admits."""
+
+    stderr = receipt.get("stderr")
+    return {
+        "error": receipt.get("error") or receipt.get("stderr_digest"),
+        "lean_tag": lean_tag,
+        "theorem_span": [int(start_line), int(end_line)],
+        "argv": receipt.get("argv"),
+        "compile_wall_ms_outer": wall,
+        "stdout_tail": tail_fn(stdout, 400) if stdout else None,
+        "stderr_tail": tail_fn(stderr, 400) if isinstance(stderr, str) else None,
+        "errors": list(errors_in or head_fn(errors_out, 6)),
+    }
+
+
+def identity_from_mapping(
+    cls: Any,
+    mapping: Mapping[str, Any],
+    *,
+    requested_provider: str,
+    requested_model: str,
+) -> Any:
+    """Rebuild a provider identity from a mapping. Chat is not Lean."""
+
+    payload = dict(mapping or {})
+    return cls(
+        requested_provider=str(payload.get("requested_provider") or requested_provider),
+        requested_model=str(payload.get("requested_model") or requested_model),
+        resolved_provider=str(payload.get("resolved_provider") or ""),
+        resolved_model=str(payload.get("resolved_model") or ""),
+        fallback_used=bool(payload.get("fallback_used")),
+        arena_score=None,
+    )
+
+
+def grok_cli_identity(
+    cls: Any,
+    *,
+    requested_provider: str,
+    requested_model: str,
+) -> Any:
+    """Resolved grok CLI identity. Chat is not Lean."""
+
+    return cls(
+        requested_provider=requested_provider,
+        requested_model=requested_model,
+        resolved_provider="grok_cli",
+        resolved_model=requested_model,
+        fallback_used=False,
+        arena_score=None,
+    )
+
+
+def healthy_probe(
+    cls: Any,
+    *,
+    url: str,
+    alias_url: str,
+    autostart: str = "0",
+    status_code: int = 200,
+) -> Any:
+    """Health probe that is already up. Does not start a server."""
+
+    return cls(
+        ok=True,
+        url=url,
+        alias_ok=False,
+        alias_url=alias_url,
+        status_code=status_code,
+        error="",
+        autostart=autostart,
+    )
+
+
+def forced_unhealthy(
+    cls: Any,
+    *,
+    url: str,
+    alias_url: str,
+    error: str,
+    autostart: str,
+) -> Any:
+    """Health probe that is already closed. Does not start a server."""
+
+    return cls(
+        ok=False,
+        url=url,
+        alias_ok=False,
+        alias_url=alias_url,
+        status_code=None,
+        error=error,
+        autostart=autostart,
     )

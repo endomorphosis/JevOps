@@ -367,6 +367,50 @@ def resolve_mode(
     return mode
 
 
+def resolve_opt_in_mode(
+    *,
+    flag: Optional[str] = None,
+    env: Optional[Mapping[str, str]] = None,
+    official: bool = False,
+    closed: str = "off",
+    default: str = "off",
+    allowed: Sequence[str] = ("off",),
+    truthy_env: str = "",
+    generator_env: str = "",
+    default_generator: str = "",
+    generator_aliases: Sequence[str] = (),
+    mode_env: str = "",
+    aliases: Optional[Mapping[str, str]] = None,
+    error_cls: type[BaseException] = JevError,
+    error_fmt: str = "unknown mode {mode!r}; expected {allowed}",
+) -> str:
+    """Opt-in mode: official stays closed; generator aliases map onto allowed modes."""
+
+    from jevops.jev import env_truthy
+
+    source = dict(env or {})
+    if official:
+        return str(closed)
+    if flag is not None:
+        raw = flag
+    elif truthy_env and env_truthy(source.get(truthy_env)):
+        raw = next((item for item in allowed if item != default), default)
+    else:
+        generator = str(source.get(generator_env, default_generator) or default_generator).strip().lower()
+        if generator_env and generator in set(generator_aliases):
+            raw = next((item for item in allowed if item != default), default)
+        else:
+            raw = source.get(mode_env, default) if mode_env else default
+    if raw is None or str(raw).strip() == "":
+        raw = default
+    mode = str(raw).strip().lower()
+    mapped = dict(aliases or {})
+    mode = str(mapped.get(mode, mode))
+    if mode not in set(allowed):
+        raise error_cls(error_fmt.format(mode=mode, allowed=tuple(allowed)))
+    return mode
+
+
 def record_state(
     record: Mapping[str, Any],
     *,
@@ -1053,6 +1097,33 @@ def project_live_answers(
     return out
 
 
+def rank_live_choice_row(
+    result: Any,
+    wall_ms: float,
+    *,
+    rank_fn: Callable[[Mapping[str, Any], Sequence[Any]], Any],
+    drafts: Sequence[Any],
+    choice_map: Optional[Mapping[str, str]] = None,
+    noul_map: Optional[Mapping[str, str]] = None,
+    score_map: Optional[Mapping[str, str]] = None,
+    best_key: str = "best_first_draft",
+) -> dict[str, Any]:
+    """Project a live Choice/Noul/Score round and attach ranked ``top``."""
+
+    live_row = project_live_answers(
+        result,
+        choice_map=choice_map,
+        noul_map=noul_map,
+        score_map=score_map,
+        best_key=best_key,
+    )
+    best = live_row.pop("_best", None)
+    probabilities = dict(getattr(best, "probabilities", None) or {})
+    live_row["wall_ms"] = wall_ms
+    live_row["top"] = rank_fn(probabilities, drafts)
+    return live_row
+
+
 def hosted_run_payload(
     *,
     name: str,
@@ -1573,4 +1644,207 @@ def pack_fill_rank(
         "wall_ms": wall_ms,
         "jev_generated_lean": False,
         "arena_score": None,
+    }
+
+
+def pack_cfg_score(
+    result: Any,
+    wall_ms: float,
+    *,
+    table: Sequence[Mapping[str, Any]],
+    schedule_fn: Callable[..., Mapping[str, Any]],
+    one_hole: bool,
+    eligible: Any,
+    usage: Any = None,
+) -> dict[str, Any]:
+    """Project CFG Score + schedule Choice. Catalogs stay in the consumer."""
+
+    choices, _nouls, scores, unpacked = unpack_response(result)
+    usage = usage if usage is not None else unpacked
+    cfg_answer = (scores or {}).get("cfg_mask")
+    choice = (choices or {}).get("best_schedule")
+    cfg_score = getattr(cfg_answer, "score", None)
+    picked = getattr(choice, "choice", None)
+    schedule = next((dict(item) for item in table if item.get("id") == picked), None)
+    if schedule is None:
+        schedule = dict(schedule_fn(cfg_score if cfg_score is not None else 0, one_hole=one_hole) or {})
+    return {
+        "skipped": False,
+        "one_hole": bool(one_hole),
+        "cfg_score": cfg_score,
+        "cfg_confidence": getattr(cfg_answer, "confidence", None),
+        "best_schedule": picked,
+        "schedule_probabilities": dict(getattr(choice, "probabilities", None) or {}),
+        "cfg_schedule": schedule,
+        "eligible_spans": eligible,
+        "usage": usage,
+        "wall_ms": wall_ms,
+        "jev_generated_lean": False,
+        "arena_score": None,
+    }
+
+
+def questions_from_specs(
+    specs: Sequence[Any],
+    *,
+    noul_ctor: Callable[..., Any],
+    score_ctor: Callable[..., Any],
+    score_criteria: Sequence[Any],
+) -> dict[str, Any]:
+    """Build Noul/Score questions from (name, kind, question) rows. Catalogs stay injected."""
+
+    questions: dict[str, Any] = {}
+    for name, kind, question in specs or ():
+        if kind == "noul":
+            questions[str(name)] = noul_ctor(instructions=question)
+        else:
+            questions[str(name)] = score_ctor(instructions=question, criteria=list(score_criteria))
+    return questions
+
+
+def proposal_feature_state(
+    record: Mapping[str, Any],
+    current: str,
+    proposal: Mapping[str, Any],
+    *,
+    token_fn: Callable[[str], int],
+    tail_fn: Callable[[str, int], str],
+    tail_n: int = 500,
+    goal: str = "Judge this MCMC edit of a lake-valid Lean 4 proof. Do not write Lean.",
+) -> dict[str, Any]:
+    """Compact TypeSafe state for one MCMC edit. Jev does not write Lean."""
+
+    proposed = str(proposal.get("tactics") or "")
+    return {
+        "problem": record.get("name"),
+        "current_tokens": token_fn(current),
+        "current_tail": tail_fn(current, int(tail_n)),
+        "edit_kind": proposal.get("kind"),
+        "edit_note": proposal.get("note"),
+        "proposed_tokens": token_fn(proposed),
+        "proposed_tail": tail_fn(proposed, int(tail_n)),
+        "goal": goal,
+    }
+
+
+def fill_rank_criteria(
+    drafts: Sequence[Mapping[str, Any]],
+    *,
+    head_fn: Callable[[str, int], str],
+    cap: int = 16,
+) -> dict[str, str]:
+    """One criterion string per fill draft id. Catalog wording stays injected via head_fn."""
+
+    from jevops.outer import head_seq
+
+    return {
+        str(item.get("kind") or ""): head_fn(
+            f"{item.get('generator')}; sched={item.get('schedule_id')}; "
+            f"shots={item.get('n_shots')}; masks={item.get('n_masks')}; "
+            f"{item.get('original')!s} -> {item.get('fill')!s}; "
+            f"{item.get('token_count')} tok",
+            180,
+        )
+        for item in head_seq(drafts, cap)
+        if item.get("kind")
+    }
+
+
+def fill_rank_state(
+    record: Mapping[str, Any],
+    drafts: Sequence[Mapping[str, Any]],
+    *,
+    head_fn: Callable[[str, int], str],
+    cap: int = 16,
+    goal: str = "",
+) -> dict[str, Any]:
+    """TypeSafe state for ranking masked fills. Goal catalog stays in the consumer."""
+
+    from jevops.outer import head_seq
+
+    return {
+        "problem": record.get("name"),
+        "goal": goal,
+        "drafts": [
+            {
+                "id": item.get("kind"),
+                "head": head_fn(item.get("tactics") or "", 220),
+                "tokens": item.get("token_count"),
+                "schedule_id": item.get("schedule_id"),
+                "n_shots": item.get("n_shots"),
+                "n_masks": item.get("n_masks"),
+                "few_shot": item.get("few_shot"),
+            }
+            for item in head_seq(drafts, cap)
+        ],
+    }
+
+
+def cfg_score_criteria(table: Sequence[Mapping[str, Any]], eligible: Mapping[str, Any]) -> dict[str, str]:
+    """One criterion per CFG schedule id. Table catalog stays in the consumer."""
+
+    return {
+        str(item.get("id") or ""): (
+            f"{item.get('n_masks')} hole(s) × {item.get('span')} tokens; "
+            f"{item.get('n_shots')} few-shot; cfg_scale={item.get('cfg_scale')}; "
+            f"eligible_span_{item.get('span')}={eligible.get(f'span_{item.get('span')}', 0)}"
+        )
+        for item in table or ()
+        if item.get("id")
+    }
+
+
+def cfg_score_state(
+    record: Mapping[str, Any],
+    tactics: str,
+    *,
+    token_fn: Callable[[str], int],
+    eligible: Mapping[str, Any],
+    one_hole: bool,
+    head_fn: Callable[[str, int], str],
+    goal: str,
+) -> dict[str, Any]:
+    """TypeSafe state for a CFG mask Score. Goal catalog stays in the consumer."""
+
+    return {
+        "problem": record.get("name"),
+        "tokens": token_fn(tactics),
+        "eligible_spans": dict(eligible or {}),
+        "one_hole": bool(one_hole),
+        "goal": goal,
+        "head": head_fn(tactics, 400),
+    }
+
+
+def pack_fanout_live_row(
+    result: Any,
+    wall_ms: float,
+    *,
+    unpack_fn: Callable[[Any], tuple[Any, Any, Any, Any]],
+    rank_fn: Callable[[Mapping[str, Any], Sequence[Any]], Any],
+    drafts: Sequence[Any],
+    choice_key: str = "best_first_draft",
+    noul_any_key: str = "any_draft_likely_compiles",
+    noul_spend_key: str = "spend_llm_after_fanout",
+    score_key: str = "likely_token_cut",
+) -> dict[str, Any]:
+    """Project a live fan-out Choice/Noul/Score round. Jev does not write Lean."""
+
+    choices, nouls, scores, usage = unpack_fn(result)
+    best = (choices or {}).get(choice_key)
+    noul_any = (nouls or {}).get(noul_any_key)
+    spend = (nouls or {}).get(noul_spend_key)
+    shorter = (scores or {}).get(score_key)
+    probabilities = dict(getattr(best, "probabilities", None) or {})
+    return {
+        "live": True,
+        "model": getattr(result, "model", None),
+        "usage": usage,
+        "wall_ms": wall_ms,
+        "best_first_draft": getattr(best, "choice", None),
+        "best_confidence": getattr(best, "confidence", None),
+        noul_any_key: getattr(noul_any, "noul", None),
+        noul_spend_key: getattr(spend, "noul", None),
+        score_key: getattr(shorter, "score", None),
+        "top": rank_fn(probabilities, drafts),
     }

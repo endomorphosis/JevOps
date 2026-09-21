@@ -2248,3 +2248,173 @@ def line_swap_from_text(
         "tactics": body,
         "note": f"leanstral {head_fn(str(target).strip(), 40)} -> {head_fn(nxt.strip(), 40)}",
     }
+
+
+def pack_failed_candidate(
+    *,
+    kind: str,
+    generator: str,
+    reason: str,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Skipped/failed candidate row. Lake still admits."""
+
+    out: dict[str, Any] = {
+        "kind": str(kind),
+        "generator": str(generator),
+        "n_chars": 0,
+        "tactics_head": "",
+        "n_holes": 0,
+        "ok": False,
+        "theorem_ok": False,
+        "module_exit_0": False,
+        "exit_code": None,
+        "token_count": None,
+        "errors": [{"pos": None, "data": str(reason)}],
+        "wall_ms": None,
+        "skipped": True,
+        "reason": str(reason),
+    }
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def pack_generated_candidate(
+    *,
+    kind: str,
+    generator: str,
+    tactics: str,
+    holes: Sequence[Any] = (),
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Label a generated tactic candidate. Generation stays in the consumer."""
+
+    out: dict[str, Any] = {
+        "kind": str(kind),
+        "generator": str(generator),
+        "tactics": tactics,
+        "holes": list(holes or ()),
+    }
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def merge_labeled_candidates(
+    base: Sequence[Mapping[str, Any]],
+    *groups: Sequence[Mapping[str, Any]],
+    extra_rows: Sequence[Optional[Mapping[str, Any]]] = (),
+    unique_fn: Optional[Callable[..., Any]] = None,
+) -> list[dict[str, Any]]:
+    """Concat labeled candidate groups. unique_fn is injected."""
+
+    rows = [dict(item) for item in base or ()]
+    for group in groups:
+        extra = [dict(item) for item in group or ()]
+        if unique_fn is not None and extra:
+            unique_fn(rows, extra, key_fn=lambda item: item.get("kind"))
+        else:
+            rows.extend(extra)
+    for item in extra_rows:
+        if item is not None:
+            rows.append(dict(item))
+    return rows
+
+
+def collect_grok_fanout_extras(
+    seed: str,
+    reference: str,
+    *,
+    tactician_fn: Callable[[str, str], Sequence[Mapping[str, Any]]],
+    feature_fn: Callable[[str], Mapping[str, Any]],
+    family_fn: Callable[..., Sequence[Any]],
+    draft_fn: Callable[..., Sequence[Any]],
+    model: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    """Tactician + PCA drafts from a grok seed. Jev does not write Lean."""
+
+    extras = [dict(item) for item in tactician_fn(seed, reference) or ()]
+    features = dict(feature_fn(seed) or {})
+    families = list(family_fn(features, model) or ())
+    for draft in draft_fn(seed, families, features) or ():
+        extras.append(
+            {
+                "kind": f"pca_{getattr(draft, 'draft_id', '')}_{getattr(draft, 'family', '')}",
+                "generator": "pca_mca_fanout",
+                "tactics": getattr(draft, "tactics", ""),
+                "holes": [],
+                "ops": list(getattr(draft, "ops", ()) or ()),
+                "source": "grok-file+pca_mca",
+            }
+        )
+    return extras
+
+
+def run_vector_search(
+    query: str,
+    *,
+    snapshot: Optional[Mapping[str, Any]] = None,
+    search_fn: Optional[Callable[..., Any]] = None,
+    load_fn: Optional[Callable[[], Any]] = None,
+    hit_fn: Callable[..., dict[str, Any]],
+    cap: int = 12,
+    vector_weight: float = 1.0,
+) -> tuple[list[dict[str, Any]], str]:
+    """Advisory vector-index search. Loader/search stay injected. Never writes Lean."""
+
+    if snapshot is None:
+        return [], "no_vector_snapshot"
+    fn = search_fn
+    if fn is None:
+        if load_fn is None:
+            return [], "vector_index_unavailable"
+        try:
+            fn = load_fn()
+        except Exception:
+            return [], "vector_index_unavailable"
+        if fn is None:
+            return [], "vector_index_unavailable"
+    try:
+        result = fn(snapshot, {"query_text": query, "max_results": int(cap)})
+    except Exception as exc:
+        from jevops.outer import tagged_exc
+
+        return [], tagged_exc("vector_search_failed", exc)
+    return (
+        vector_hits_from_result(
+            result,
+            query=query,
+            hit_fn=hit_fn,
+            cap=cap,
+            vector_weight=float(vector_weight),
+        ),
+        "vector",
+    )
+
+
+def sidecar_hit_row(
+    row: Mapping[str, Any],
+    *,
+    source: str = "sidecar",
+    score: float = 0.72,
+) -> dict[str, Any]:
+    """Project a sidecar symbol row. Advisory only."""
+
+    return {
+        "symbol": row.get("symbol"),
+        "source": source,
+        "path": row.get("path"),
+        "score": float(score),
+        "ptr": "",
+    }
+
+
+def eligible_span_counts(
+    tactics: str,
+    spans: Sequence[int],
+    window_fn: Callable[[str, int], Sequence[Any]],
+) -> dict[str, int]:
+    """Count eligible non-PCA windows per span length."""
+
+    return {f"span_{span}": len(list(window_fn(tactics, int(span)) or ())) for span in spans or ()}

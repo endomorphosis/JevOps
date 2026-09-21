@@ -912,6 +912,24 @@ def first_existing_file(
     return None
 
 
+def codepath_rel_candidates(module: str, *, here: Any, accel: Any) -> list[Path]:
+    """Candidate files for a harness/accelerate module stem. First existing wins."""
+
+    rel = str(module or "").replace("harness.", "").replace(".", "/")
+    here_p = Path(here)
+    accel_p = Path(accel)
+    candidates = [
+        here_p / f"{Path(rel).name}.py" if "/" not in rel.replace("harness/", "") else here_p / Path(rel).name,
+        here_p / Path(rel).with_suffix(".py").name,
+        here_p / f"{rel.split('/')[-1]}.py",
+        accel_p / Path(*rel.split("/")).with_suffix(".py"),
+    ]
+    if rel.endswith(".py"):
+        candidates.append(here_p / Path(rel).name)
+        candidates.append(accel_p / rel)
+    return candidates
+
+
 def inspect_python(
     path: str | Path,
     *,
@@ -1521,3 +1539,96 @@ def fill_sidecar_duckdb(
         "called_docker0": False,
         "campaign_write": False,
     }
+
+
+def pack_cross_slice(
+    *,
+    symbol: str,
+    callees: Sequence[str],
+    callers: Sequence[str],
+    source: str = "",
+    n_defs: Any = None,
+    cap: int = 12,
+) -> dict[str, Any]:
+    """Cross-module callers/callees. Ids only; no source bodies."""
+
+    callees = list(callees or ())[: int(cap)]
+    callers = list(callers or ())[: int(cap)]
+    prefix = str(symbol).split(":")[0] + ":" if ":" in str(symbol) else ""
+    cross = any(":" in item and not str(item).startswith(prefix) for item in callees + callers)
+    out: dict[str, Any] = {
+        "ok": True,
+        "symbol": symbol,
+        "callees": callees,
+        "callers": callers,
+        "cross_module": bool(cross) or any(":" in item for item in callees),
+        "source_bodies": False,
+        "called_docker0": False,
+        "campaign_write": False,
+        "complete": True,
+    }
+    if source:
+        out["source"] = source
+    if n_defs is not None:
+        out["n_defs"] = n_defs
+    return out
+
+
+def slice_cross_or_local(
+    name: str,
+    *,
+    inspect_fn: Callable[[str], Mapping[str, Any]],
+    inspect_only_fn: Callable[[str], bool],
+    db_hits_fn: Callable[[str], Sequence[Any]],
+    match_fn: Callable[..., Any],
+    callees_fn: Callable[..., Sequence[str]],
+    callers_fn: Callable[..., Sequence[str]],
+    graph_fn: Callable[[], Mapping[str, Any]],
+    pick_fn: Callable[..., Any],
+    local_fn: Callable[[str], Mapping[str, Any]],
+    cap: int = 12,
+    strip_prefixes: Sequence[str] = ("harness.",),
+) -> dict[str, Any]:
+    """DuckDB sidecar first, then AST graph, then local slice. No source bodies."""
+
+    if inspect_only_fn(name):
+        sliced = dict(inspect_fn(name) or {})
+        sliced["cross_module"] = False
+        return sliced
+    raw_name = str(name or "").replace("ptr://codepath/", "")
+    db_hits = list(db_hits_fn(raw_name.rsplit(":", 1)[-1]) or ())
+    q_db = match_fn(db_hits, raw_name)
+    if q_db:
+        db_callees = list(callees_fn(q_db) or ())
+        db_callers = list(callers_fn(q_db) or ())
+        if db_callees or db_callers:
+            packed = pack_cross_slice(
+                symbol=str(q_db),
+                callees=db_callees,
+                callers=db_callers,
+                source="sidecar_duckdb",
+                cap=cap,
+            )
+            packed["cross_module"] = any(
+                ":" in item and item.split(":")[0] != str(q_db).split(":")[0]
+                for item in db_callees + db_callers
+            )
+            return packed
+    graph = dict(graph_fn() or {})
+    qname = pick_fn(name, graph.get("defs") or {}, graph.get("calls") or {}, strip_prefixes=strip_prefixes)
+    if not qname:
+        local = dict(local_fn(name) or {})
+        local["cross_module"] = False
+        return local
+    calls = graph.get("calls") or {}
+    callees = list(calls.get(qname) or [])[: int(cap)]
+    callers = [
+        fn for fn, kids in calls.items() if qname in kids or str(qname).rsplit(":", 1)[-1] in kids
+    ][: int(cap)]
+    return pack_cross_slice(
+        symbol=str(qname),
+        callees=callees,
+        callers=callers,
+        n_defs=graph.get("n_defs"),
+        cap=cap,
+    )

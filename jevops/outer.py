@@ -480,13 +480,19 @@ def make_llm_router_generate(
     router: Any = None,
     model_name: Optional[str] = None,
     provider: Optional[str] = None,
+    verify_route: bool = False,
     **kwargs: Any,
 ) -> Any:
     """Return a ``generate(prompt)`` callable backed by ipfs_accelerate_py.
 
     The import is lazy.  This makes the callable suitable for ``route_next``
     and for tests that inject a fixture router without installing optional
-    accelerator dependencies.
+    accelerator dependencies.  When ``verify_route`` is true and the router
+    exposes ``get_last_generation_trace()``, the requested provider/model are
+    checked against the route actually used.  This matters for proof search:
+    an unverified fallback response must not be mistaken for a response from
+    the configured tuning model.  Fixture routers without a trace remain
+    usable for offline tests.
     """
 
     def generate(prompt: str) -> str:
@@ -496,8 +502,69 @@ def make_llm_router_generate(
             call_kwargs.setdefault("model_name", model_name)
         if provider is not None:
             call_kwargs.setdefault("provider", provider)
-        return _router_text(module.generate_text(str(prompt), **call_kwargs))
+        result = _router_text(module.generate_text(str(prompt), **call_kwargs))
+        trace_getter = getattr(module, "get_last_generation_trace", None)
+        trace: Mapping[str, Any] = {}
+        if callable(trace_getter):
+            try:
+                candidate_trace = trace_getter()
+            except Exception:
+                candidate_trace = {}
+            if isinstance(candidate_trace, Mapping):
+                trace = dict(candidate_trace)
 
+        expected_provider = str(provider or "").strip().lower().replace("-", "_")
+        actual_provider = str(
+            trace.get("effective_provider_name")
+            or trace.get("provider_name")
+            or ""
+        ).strip().lower().replace("-", "_")
+        provider_aliases = {"codex": "codex_cli", "copilot": "copilot_cli"}
+        expected_provider = provider_aliases.get(expected_provider, expected_provider)
+        actual_provider = provider_aliases.get(actual_provider, actual_provider)
+        expected_model = str(model_name or "").strip()
+        actual_model = str(
+            trace.get("effective_model_name")
+            or trace.get("model_name")
+            or ""
+        ).strip()
+
+        attestation: dict[str, Any] = {
+            "requested_provider": expected_provider or None,
+            "requested_model": expected_model or None,
+            "actual_provider": actual_provider or None,
+            "actual_model": actual_model or None,
+            "trace_available": bool(trace),
+            "verified": False,
+        }
+        if verify_route:
+            # The production accelerator router is expected to expose a
+            # trace.  A fixture callback may omit it, so only enforce this
+            # requirement for the real module (or a router that supplied a
+            # trace).  A supplied trace with a mismatch always fails closed.
+            is_accelerate_router = str(getattr(module, "__name__", "")) == "ipfs_accelerate_py.llm_router"
+            if trace or is_accelerate_router:
+                provider_ok = not expected_provider or actual_provider == expected_provider
+                model_ok = not expected_model or actual_model == expected_model
+                attestation["verified"] = bool(provider_ok and model_ok)
+                if not attestation["verified"]:
+                    generate.last_route_attestation = attestation
+                    raise RuntimeError(
+                        "llm router route mismatch: "
+                        f"requested {expected_provider or 'auto'}/{expected_model or 'default'}, "
+                        f"used {actual_provider or 'unknown'}/{actual_model or 'unknown'}"
+                    )
+        generate.last_route_attestation = attestation
+        return result
+
+    generate.last_route_attestation = {
+        "requested_provider": str(provider or "").strip() or None,
+        "requested_model": str(model_name or "").strip() or None,
+        "actual_provider": None,
+        "actual_model": None,
+        "trace_available": False,
+        "verified": False,
+    }
     return generate
 
 
@@ -2520,6 +2587,22 @@ def git_checkout(
     }
 
 
+def git_clone_if_missing(
+    url: Any,
+    dest: Any,
+    *,
+    git_bin: str = "git",
+    error_cls: Any = OSError,
+    miss_cls: Optional[Any] = None,
+) -> Path:
+    """Clone url into dest when dest/.git is missing."""
+
+    clone = Path(dest)
+    if not (clone / ".git").is_dir():
+        git_clone(url, clone, git_bin=git_bin, error_cls=error_cls, miss_cls=miss_cls)
+    return clone
+
+
 def git_clone(
     url: str,
     dest: Any,
@@ -3805,6 +3888,42 @@ def insert_ignore_conflict(
         raise error_cls(fail_fmt.format(exc=exc)) from exc
 
 
+def pack_receipt_insert_params(
+    receipt: Any,
+    *,
+    schema: str,
+    dumps_fn: Callable[[Any], str],
+    tiny_fn: Callable[[Mapping[str, Any]], str],
+) -> tuple[Any, ...]:
+    """Tiny INSERT params. SQL strings stay in the consumer."""
+
+    payload = {
+        "candidate_cid": getattr(receipt, "candidate_cid", None),
+        "generator": getattr(receipt, "generator", None),
+        "hardware_class": getattr(receipt, "hardware_class", None),
+        "kernel_command_template": getattr(receipt, "kernel_command_template", None),
+        "key_digest": getattr(receipt, "key_digest", None),
+        "schema": schema,
+    }
+    blob = tiny_fn(payload)
+    paths = getattr(receipt, "executable_paths", None)
+    paths_dict = paths.to_dict() if hasattr(paths, "to_dict") else dict(paths or {})
+    return (
+        getattr(receipt, "key_digest", None),
+        getattr(receipt, "name", None),
+        getattr(receipt, "lean_tag", None),
+        getattr(receipt, "body_digest", None),
+        getattr(receipt, "candidate_cid", None),
+        getattr(receipt, "verdict", None),
+        getattr(receipt, "token_count", None),
+        getattr(receipt, "elab_proxy", None),
+        dumps_fn(getattr(receipt, "dimensions", None) or {}),
+        dumps_fn(paths_dict),
+        blob,
+        getattr(receipt, "created_at", None),
+    )
+
+
 @dataclass(frozen=True)
 class LockInspection:
     path: str
@@ -4613,3 +4732,538 @@ def unique_append(seq: list[Any], item: Any) -> bool:
         return False
     seq.append(item)
     return True
+
+
+def overlay_named_run_payload(
+    result: Mapping[str, Any],
+    *,
+    digest: str,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """CI/live named-run overlay. Catalog extras stay in the consumer."""
+
+    payload = dict(result)
+    payload["ok"] = True
+    payload["warmup_jsonl_sha256"] = digest
+    if extra:
+        payload.update(dict(extra))
+    return payload
+
+
+def coalesce_pair(
+    primary: Any,
+    secondary: Any,
+    load_fn: Callable[[], tuple[Any, Any]],
+) -> tuple[Any, Any]:
+    """Keep provided pair members; load the rest. Used for generate/trace."""
+
+    if primary is not None and secondary is not None:
+        return primary, secondary
+    loaded_a, loaded_b = load_fn()
+    return (primary if primary is not None else loaded_a), (secondary if secondary is not None else loaded_b)
+
+
+def apply_last(items: Sequence[Any], fn: Callable[[Any], Any]) -> Any:
+    rows = list(items or ())
+    if not rows:
+        return None
+    return fn(rows[-1])
+
+
+def call_if(cond: Any, fn: Callable[[], Any], default: Any = None) -> Any:
+    if cond:
+        return fn()
+    return default
+
+
+def reraise_as(
+    fn: Callable[[], Any],
+    from_types: tuple[type[BaseException], ...],
+    error_cls: type[BaseException],
+    *,
+    missing: str = "",
+) -> Any:
+    """Reraise typed failures with a consumer error class."""
+
+    try:
+        return fn()
+    except FileNotFoundError as exc:
+        if FileNotFoundError in from_types:
+            raise error_cls(missing or str(exc)) from exc
+        raise
+    except from_types as exc:
+        raise error_cls(str(exc)) from exc
+
+
+def overlay_if_status(
+    payload: Mapping[str, Any],
+    status: str,
+    extra: Mapping[str, Any],
+) -> dict[str, Any]:
+    out = dict(payload)
+    if out.get("status") == status:
+        out.update(dict(extra))
+    return out
+
+
+def lock_view(
+    cls: Any,
+    *,
+    path: str,
+    exists: bool,
+    held: bool,
+    pid: Any = None,
+    method: str = "",
+    error: str = "",
+) -> Any:
+    """Lock inspection constructor. Never LOCK_EX."""
+
+    return cls(path=path, exists=exists, held=held, pid=pid, method=method, error=error)
+
+
+def detail_with_file(
+    exc: BaseException,
+    path: Any,
+    *,
+    read_fn: Callable[..., str],
+    max_chars: int = 400,
+) -> str:
+    """Append a file head onto an exception message when the file exists."""
+
+    target = Path(path)
+    if not target.is_file():
+        return str(exc)
+    head = read_fn(target, max_chars=max_chars)
+    if not head:
+        return str(exc)
+    return f"{exc}; {target.name}={head!r}"
+
+
+def pack_captured_generate(
+    result: Any,
+    captured: Mapping[str, Any],
+    fail_closed: Mapping[str, Any],
+    *,
+    asdict_fn: Callable[[Any], Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Self-check view of a client generate call. Never LOCK_EX."""
+
+    kwargs = dict(captured.get("kwargs") or {})
+    identity = getattr(result, "identity", None)
+    return {
+        "skipped": bool(getattr(result, "skipped", False)),
+        "text": getattr(result, "text", ""),
+        "identity": dict(asdict_fn(identity) if identity is not None else {}),
+        "call_kwargs": {key: kwargs.get(key) for key in fail_closed},
+        "call_kwargs_match": all(
+            kwargs.get(key) == value for key, value in dict(fail_closed).items()
+        ),
+        "autostart_during_generate": captured.get("autostart"),
+        "lock_ex_taken_by_client": False,
+    }
+
+
+def result_from_ledger(
+    cls: Any,
+    ledger: Any,
+    *,
+    skipped: bool,
+    reason: str,
+    mode: str,
+    name: Any = None,
+    used_fixture: bool = False,
+    official_track2: bool = False,
+    extra: Optional[Mapping[str, Any]] = None,
+    remaining_default: Any = 0,
+) -> Any:
+    """Build a named-run result from a ledger. USD field names stay on the class."""
+
+    payload = {
+        "skipped": skipped,
+        "reason": reason,
+        "mode": mode,
+        "official_track2": official_track2,
+        "name": name,
+        "used_fixture": used_fixture,
+        "grok_calls": getattr(ledger, "grok_calls", 0) if ledger is not None else 0,
+        "jev_calls": getattr(ledger, "jev_calls", 0) if ledger is not None else 0,
+        "spent_usd": getattr(ledger, "spent_usd", 0) if ledger is not None else 0,
+        "remaining_usd": (
+            getattr(ledger, "remaining_usd", remaining_default) if ledger is not None else remaining_default
+        ),
+        "hard_stopped": bool(getattr(ledger, "hard_stopped", False)) if ledger is not None else False,
+        "ledger": ledger.as_dict() if ledger is not None and hasattr(ledger, "as_dict") else None,
+        "contaminates_track2": False,
+        "is_default_winning_path": False,
+    }
+    payload.update(dict(extra or {}))
+    return cls(**payload)
+
+
+def overlay_skipped(
+    result: Any,
+    *,
+    digest: str,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Skip overlay for a named run. Ledger fields stay on the result."""
+
+    payload = result.as_dict() if hasattr(result, "as_dict") else dict(result)
+    return overlay_named_run_payload(payload, digest=digest, extra=extra)
+
+
+def all_rows(rows: Sequence[Any], pred: Callable[[Any], bool]) -> bool:
+    return all(pred(item) for item in rows or ())
+
+
+def any_row(rows: Sequence[Any], pred: Callable[[Any], bool]) -> bool:
+    return any(pred(item) for item in rows or ())
+
+
+def all_where(
+    rows: Sequence[Any],
+    pred: Callable[[Any], bool],
+    check: Optional[Callable[[Any], bool]] = None,
+) -> bool:
+    selected = [item for item in rows or () if pred(item)]
+    fn = check or (lambda _item: True)
+    return all(fn(item) for item in selected)
+
+
+def collect_where(
+    rows: Sequence[Any],
+    pred: Callable[[Any], bool],
+    getter: Callable[[Any], Any],
+) -> list[Any]:
+    return [getter(item) for item in rows or () if pred(item)]
+
+
+def field_eq_all(rows: Sequence[Mapping[str, Any]], key: str, value: Any) -> bool:
+    return all(item.get(key) == value for item in rows or ())
+
+
+def kwargs_match_all(
+    calls: Sequence[Mapping[str, Any]],
+    expected: Mapping[str, Any],
+    *,
+    kwargs_key: str = "kwargs",
+) -> bool:
+    return bool(calls) and all(
+        all(dict(call.get(kwargs_key) or {}).get(key) == value for key, value in dict(expected).items())
+        for call in calls
+    )
+
+
+def first_line_value(text: str, *, prefix: str, default: str = "") -> str:
+    """Value after a line prefix such as ``Source:``. Empty prefix is not stripped."""
+
+    for line in str(text or "").splitlines():
+        if line.startswith(prefix):
+            return line[len(prefix) :].strip()
+    return default
+
+
+def catch_error(fn: Callable[[], Any], error_cls: Any) -> tuple[bool, str]:
+    """(raised, message). Used for fail-closed probes that keep the error text."""
+
+    try:
+        fn()
+    except error_cls as exc:
+        return True, str(exc)
+    return False, ""
+
+
+def map_collect(
+    items: Sequence[Any],
+    fn: Callable[[Any], Any],
+    *,
+    after_fn: Optional[Callable[[Any], Sequence[Any]]] = None,
+) -> tuple[list[Any], list[Any]]:
+    """Map fn over items, optionally flattening after_fn(result) into a second list."""
+
+    results: list[Any] = []
+    extra: list[Any] = []
+    for item in items or ():
+        result = fn(item)
+        results.append(result)
+        if after_fn is not None:
+            extra.extend(list(after_fn(result) or ()))
+    return results, extra
+
+
+def finalize_ok(report: Mapping[str, Any], *flags: Any) -> dict[str, Any]:
+    """Set report['ok'] from injected flags. Catalog predicates stay in the consumer."""
+
+    out = dict(report)
+    out["ok"] = bool(all(flags))
+    return out
+
+
+def relative_or_str(path: Any, root: Any) -> str:
+    """Path relative to root, else str(path)."""
+
+    raw = Path(path)
+    try:
+        return str(raw.relative_to(root))
+    except ValueError:
+        return str(raw)
+
+
+def any_contains(items: Sequence[Any], needle: str) -> bool:
+    return any(str(needle) in str(item) for item in items or ())
+
+
+def none_stripped_startswith(items: Sequence[Any], prefix: str) -> bool:
+    return not any(str(item).strip().startswith(prefix) for item in items or ())
+
+
+def rank_named_rows(
+    names: Sequence[str],
+    records: Sequence[Mapping[str, Any]],
+    rank_fn: Callable[[Mapping[str, Any]], Any],
+    *,
+    miss: str = "unknown warm-up problem",
+) -> list[Any]:
+    """Lookup each name and rank. Missing names stay fail-closed rows."""
+
+    from jevops.outer import lookup_named
+
+    rows: list[Any] = []
+    for name in names or ():
+        record = lookup_named(records, name)
+        if record is None:
+            rows.append({"name": name, "error": miss, "arena_score": None})
+            continue
+        rows.append(rank_fn(record))
+    return rows
+
+
+def pack_live_rank(
+    *,
+    schema: str,
+    digest: str,
+    canaries: Sequence[Any],
+    wall_ms: float,
+    extra: Optional[Mapping[str, Any]] = None,
+    redact_fn: Optional[Callable[[Mapping[str, Any]], Any]] = None,
+) -> dict[str, Any]:
+    """Live TypeSafe rank overlay. Catalog fields stay in extra."""
+
+    from jevops.outer import utc_stamp
+
+    payload: dict[str, Any] = {
+        "schema": schema,
+        "observed_at": utc_stamp(),
+        "live": True,
+        "warmup_jsonl_sha256": digest,
+        "jev_generated_lean": False,
+        "typesafe_key_in_receipt": False,
+        "lock_ex": False,
+        "llama_server_started": False,
+        "official_track2": False,
+        "arena_score": None,
+        "wall_ms": wall_ms,
+        "canaries": list(canaries or ()),
+    }
+    if extra:
+        payload.update(dict(extra))
+    if redact_fn is not None:
+        return redact_fn(payload)
+    return payload
+
+
+def closed_on_error(fn: Callable[[], Any], error_cls: Any) -> bool:
+    """True when fn raises error_cls. Used for fail-closed probes."""
+
+    try:
+        fn()
+    except error_cls:
+        return True
+    return False
+
+
+def persist_named_rows(
+    rows: Sequence[Any],
+    dest: Any,
+    persist: Any,
+    write_fn: Callable[[Sequence[Any], Any], Sequence[str]],
+) -> tuple[list[str], list[str]]:
+    """Write rows to dest, then optionally to persist."""
+
+    written = list(write_fn(rows, dest) or ())
+    persisted = list(write_fn(rows, persist) or ()) if persist is not None else []
+    return written, persisted
+
+
+def plant_named_tags(root: Any, tags: Sequence[str], plant_fn: Callable[[Any, str], Any]) -> Any:
+    """Plant one fake toolchain per tag under root."""
+
+    for tag in tags or ():
+        plant_fn(root, str(tag))
+    return root
+
+
+def coalesce_chat_text(
+    chat_out: str,
+    ran: Mapping[str, Any],
+    parse_fn: Callable[[str], Mapping[str, Any]],
+) -> str:
+    """Prefer parsed payload text unless the process timed out."""
+
+    if ran.get("timeout"):
+        return str(chat_out or "")
+    payload = dict(parse_fn(str(chat_out or "")) or {})
+    if payload.get("text"):
+        return str(payload.get("text") or chat_out)
+    return str(chat_out or "")
+
+
+def generate_text_and_usage(
+    raw: Optional[Mapping[str, Any]],
+    *,
+    fallback_in: int = 200,
+) -> tuple[str, int, int]:
+    """Extract text plus input/output tokens from a chat/generate payload."""
+
+    payload = dict(raw or {})
+    text = str(payload.get("text") or "")
+    if not text:
+        text, _texts, usage = chat_choice_texts(payload)
+    else:
+        usage = payload.get("usage") if isinstance(payload.get("usage"), Mapping) else {}
+    usage = dict(usage or {})
+    inn = int(
+        payload.get("input_tokens")
+        or usage.get("prompt_tokens")
+        or usage.get("input_tokens")
+        or fallback_in
+    )
+    out = int(
+        payload.get("output_tokens")
+        or usage.get("completion_tokens")
+        or usage.get("output_tokens")
+        or 0
+    )
+    return text, inn, out
+
+
+def write_cli_run_artifacts(
+    workspace: Any,
+    *,
+    prompt: str,
+    cmd: Sequence[Any],
+    ran: Mapping[str, Any],
+    write_text_fn: Callable[..., Any],
+    write_json_fn: Callable[..., Any],
+) -> tuple[str, str, str]:
+    """Persist prompt/argv/stdout/stderr/returncode under a workspace. Chat is not Lean."""
+
+    root = Path(workspace)
+    write_text_fn(root / "PROMPT.txt", str(prompt))
+    write_json_fn(root / "grok.argv.json", list(cmd or ()))
+    chat_out = str(ran.get("stdout") or "")
+    stderr = str(ran.get("stderr") or "")
+    code = "timeout" if ran.get("timeout") else str(ran.get("exit_code"))
+    write_text_fn(root / "grok.stdout", chat_out)
+    write_text_fn(root / "grok.stderr", stderr)
+    write_text_fn(root / "grok.returncode", code)
+    return chat_out, stderr, code
+
+
+def count_where(items: Sequence[Any], pred: Any) -> int:
+    return sum(1 for item in items or () if pred(item))
+
+
+def where(items: Sequence[Any], pred: Any) -> list[Any]:
+    return [item for item in items or () if pred(item)]
+
+
+def pack_unscored(**fields: Any) -> dict[str, Any]:
+    """Report overlay with arena_score/score closed. ``ok`` stays caller-owned."""
+
+    out = dict(fields)
+    out.setdefault("arena_score", None)
+    out.setdefault("score", None)
+    return out
+
+
+def pack_ledger_receipt(
+    ledger: Any,
+    *,
+    schema: str,
+    protocol: str,
+    pr: str,
+    lrah: str,
+    track: str,
+) -> dict[str, Any]:
+    """Track-1-style ledger receipt. Official Track 2 stays false."""
+
+    payload = ledger.as_dict() if hasattr(ledger, "as_dict") else dict(ledger)
+    return {
+        "schema": schema,
+        "protocol": protocol,
+        "pr": pr,
+        "lrah": lrah,
+        "track": track,
+        "official_track2": False,
+        "contaminates_track2": False,
+        "is_default_winning_path": False,
+        "arena_score": None,
+        "ledger": payload,
+        "api_key_present_in_record": False,
+    }
+
+
+def false_when(value: Any, *preds: Any) -> bool:
+    """Keep value unless any predicate is true, then False."""
+
+    if any(bool(item) for item in preds):
+        return False
+    return bool(value)
+
+
+def quoted_group(
+    text: str,
+    pattern: str,
+    *,
+    error_cls: type[BaseException] = ValueError,
+    miss: str = "",
+    empty: str = "",
+    flags: int = re.S,
+) -> tuple[str, ...]:
+    """Parse quoted names from the first capturing group of ``pattern``."""
+
+    match = re.search(pattern, str(text or ""), flags)
+    if match is None:
+        raise error_cls(miss or "assigned tuple missing")
+    names = quoted_strings(match.group(1))
+    if not names:
+        raise error_cls(empty or "assigned tuple parsed empty")
+    return names
+
+
+def require_file_bytes(
+    path: Any,
+    *,
+    error_cls: type[BaseException] = FileNotFoundError,
+    miss: str = "",
+) -> bytes:
+    target = Path(path)
+    if not target.is_file():
+        raise error_cls(miss.format(path=target) if miss else f"missing {target}")
+    return target.read_bytes()
+
+
+def map_hits(
+    rows: Sequence[Any],
+    hit_fn: Callable[[Any], Any],
+    *,
+    skip_empty: bool = True,
+) -> list[Any]:
+    out: list[Any] = []
+    for row in rows or ():
+        hit = hit_fn(row)
+        if skip_empty and not hit:
+            continue
+        out.append(hit)
+    return out
