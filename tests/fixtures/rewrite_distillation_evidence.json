@@ -1,0 +1,948 @@
+{
+  "schema": "jevops-learned-rewrite-evidence/v1",
+  "measured_on": "2026-09-22",
+  "notes": [
+    "No search, teacher, or repair at model inference.",
+    "Synthetic split families are shared; these are structural-transfer tests, not semantic-family-disjoint holdouts.",
+    "The original arena input fails the operation cross-entropy gate; this checkpoint is NOT promoted.",
+    "The model matches, but does not beat, the prior deterministic 391-token local best.",
+    "Arena edit-label CE is unavailable against the fixed reference (IR normalization and/or multiple out-of-bank edits); null is not zero."
+  ],
+  "checkpoint_file": "rewrite_distillation_checkpoint.json",
+  "synthetic": {
+    "schema": "jevops-verified-rewrite-distillation/v1",
+    "scope": "synthetic_structural_transfer_not_unseen_semantic_families_or_arena_score",
+    "epochs": 40,
+    "fixture_seed": 20260923,
+    "model_step": 240,
+    "rewrite_steps": 240,
+    "state_sha256": "5fdd503e451f0e6f843ddf07ac0a3e6ccbe8e071a0b6eaabe374e6a60069a9cd",
+    "manifest_sha256": "69acca1335ffd0afb6108fbe110b095d152a6374c37dcc112edcdff0da983f63",
+    "config": {
+      "decay_steps": 1000,
+      "gradient_clip": 1,
+      "holdout_fraction": 0.1,
+      "label_smoothing": 0.02,
+      "learning_rate": 0.15,
+      "loss_weights": {
+        "cosine": 0.35,
+        "cross_entropy": 1,
+        "fuzzy_prover": 0.2,
+        "kl": 0.01,
+        "length": 0.03,
+        "minimality": 0.1,
+        "nca": 0.2,
+        "reconstruction": 0.8,
+        "reward": 0.5
+      },
+      "max_learning_rate": 0.25,
+      "max_ops": 32,
+      "train_binding_policy": false,
+      "train_rewrite_policy": true,
+      "rewrite_max_edits": 4,
+      "min_learning_rate": 0.0005,
+      "plateau_factor": 0.5,
+      "plateau_patience": 2,
+      "beam_width": 4,
+      "seed": 17,
+      "temperature": 1,
+      "validation_fraction": 0.1,
+      "warmup_steps": 0,
+      "weight_decay": 0.0001,
+      "canary_fraction": 0.1
+    },
+    "grammar": {
+      "added_templates": 5,
+      "template_count": 5,
+      "not_mined": [
+        "distill_train_lift_projection_303694"
+      ],
+      "before_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after_digest": "3618a7fbeab3b8a184da295812a9b289432aa2e5f7797442a9533894c253f05a",
+      "requires_new_edit_ce_baseline": true
+    },
+    "train_ids": [
+      "distill_train_exact_local_547339",
+      "distill_train_terminal_alias_434286",
+      "distill_train_constructor_pack_845876",
+      "distill_train_symmetry_318162",
+      "distill_train_projection_383384",
+      "distill_train_lift_projection_303694"
+    ],
+    "before": {
+      "train": {
+        "sample_count": 6,
+        "verified": 6,
+        "verified_shortening": 0,
+        "source_tokens": 28,
+        "prediction_tokens": 28,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 6,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.15783333333333335,
+        "reconstruction_loss": 0.37222222222222223,
+        "objective": 5.933618362171088,
+        "rewrite_cross_entropy": 0.7607246985779726,
+        "rewrite_expected_cosine_loss": 0.4139584684618655,
+        "rewrite_sample_count": 6
+      },
+      "validation": {
+        "sample_count": 6,
+        "verified": 6,
+        "verified_shortening": 0,
+        "source_tokens": 28,
+        "prediction_tokens": 28,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 6,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.15783333333333335,
+        "reconstruction_loss": 0.37222222222222223,
+        "objective": 5.933618362171088,
+        "rewrite_cross_entropy": 0.7607246985779726,
+        "rewrite_expected_cosine_loss": 0.4139584684618655,
+        "rewrite_sample_count": 6
+      },
+      "canary": {
+        "sample_count": 6,
+        "verified": 6,
+        "verified_shortening": 0,
+        "source_tokens": 28,
+        "prediction_tokens": 28,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 6,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.15783333333333335,
+        "reconstruction_loss": 0.37222222222222223,
+        "objective": 5.933618362171088,
+        "rewrite_cross_entropy": 0.7607246985779726,
+        "rewrite_expected_cosine_loss": 0.4139584684618655,
+        "rewrite_sample_count": 6
+      }
+    },
+    "after": {
+      "train": {
+        "sample_count": 6,
+        "verified": 6,
+        "verified_shortening": 5,
+        "source_tokens": 28,
+        "prediction_tokens": 12,
+        "verified_saved_tokens": 16,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 6,
+        "cross_entropy": 0.4336618297735733,
+        "cosine_similarity": 1,
+        "reconstruction_loss": 0,
+        "objective": 0.6214368603471055,
+        "rewrite_cross_entropy": 0.15249653225794144,
+        "rewrite_expected_cosine_loss": 0.10048280921657997,
+        "rewrite_sample_count": 6
+      },
+      "validation": {
+        "sample_count": 6,
+        "verified": 6,
+        "verified_shortening": 5,
+        "source_tokens": 28,
+        "prediction_tokens": 12,
+        "verified_saved_tokens": 16,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 6,
+        "cross_entropy": 0.9223469432832196,
+        "cosine_similarity": 0.7974166666666668,
+        "reconstruction_loss": 0,
+        "objective": 1.180953937779993,
+        "rewrite_cross_entropy": 0.15249653225794144,
+        "rewrite_expected_cosine_loss": 0.10048280921657997,
+        "rewrite_sample_count": 6
+      },
+      "canary": {
+        "sample_count": 6,
+        "verified": 6,
+        "verified_shortening": 5,
+        "source_tokens": 28,
+        "prediction_tokens": 12,
+        "verified_saved_tokens": 16,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 6,
+        "cross_entropy": 0.919362618245758,
+        "cosine_similarity": 0.8290833333333333,
+        "reconstruction_loss": 0,
+        "objective": 1.1668875395858531,
+        "rewrite_cross_entropy": 0.15249653225794144,
+        "rewrite_expected_cosine_loss": 0.10048280921657997,
+        "rewrite_sample_count": 6
+      }
+    },
+    "zero_weight_ablation": {
+      "train": {
+        "sample_count": 6,
+        "verified": 6,
+        "verified_shortening": 0,
+        "source_tokens": 28,
+        "prediction_tokens": 28,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 6,
+        "cross_entropy": 0.4336618297735733,
+        "cosine_similarity": 0.6578333333333334,
+        "reconstruction_loss": 0.37222222222222223,
+        "objective": 1.8485842851807643,
+        "rewrite_cross_entropy": 0.7607246985779726,
+        "rewrite_expected_cosine_loss": 0.4139584684618655,
+        "rewrite_sample_count": 6
+      },
+      "validation": {
+        "sample_count": 6,
+        "verified": 6,
+        "verified_shortening": 0,
+        "source_tokens": 28,
+        "prediction_tokens": 28,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 6,
+        "cross_entropy": 0.9223469432832196,
+        "cosine_similarity": 0.45525,
+        "reconstruction_loss": 0.37222222222222223,
+        "objective": 2.408101362613652,
+        "rewrite_cross_entropy": 0.7607246985779726,
+        "rewrite_expected_cosine_loss": 0.4139584684618655,
+        "rewrite_sample_count": 6
+      },
+      "canary": {
+        "sample_count": 6,
+        "verified": 6,
+        "verified_shortening": 0,
+        "source_tokens": 28,
+        "prediction_tokens": 28,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 6,
+        "cross_entropy": 0.919362618245758,
+        "cosine_similarity": 0.48691666666666666,
+        "reconstruction_loss": 0.37222222222222223,
+        "objective": 2.394034964419512,
+        "rewrite_cross_entropy": 0.7607246985779726,
+        "rewrite_expected_cosine_loss": 0.4139584684618655,
+        "rewrite_sample_count": 6
+      }
+    },
+    "holdout": {
+      "holdout": {
+        "sample_count": 6,
+        "verified": 6,
+        "verified_shortening": 5,
+        "source_tokens": 28,
+        "prediction_tokens": 12,
+        "verified_saved_tokens": 16,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 6,
+        "cross_entropy": 0.9149890087248992,
+        "cosine_similarity": 0.7806666666666667,
+        "reconstruction_loss": 0,
+        "objective": 1.1794602486495604,
+        "rewrite_cross_entropy": 0.15249653225794144,
+        "rewrite_expected_cosine_loss": 0.10048280921657997,
+        "rewrite_sample_count": 6
+      }
+    },
+    "holdout_zero_weight_ablation": {
+      "holdout": {
+        "sample_count": 6,
+        "verified": 6,
+        "verified_shortening": 0,
+        "source_tokens": 28,
+        "prediction_tokens": 28,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 6,
+        "cross_entropy": 0.9149890087248992,
+        "cosine_similarity": 0.43850000000000006,
+        "reconstruction_loss": 0.37222222222222223,
+        "objective": 2.4066076734832196,
+        "rewrite_cross_entropy": 0.7607246985779726,
+        "rewrite_expected_cosine_loss": 0.4139584684618655,
+        "rewrite_sample_count": 6
+      }
+    },
+    "development_gates": {
+      "validation": {
+        "accepted": true,
+        "status": "semantic_scored",
+        "regressions": {},
+        "objective_delta": 4.752664424391095
+      },
+      "canary": {
+        "accepted": true,
+        "status": "semantic_scored",
+        "regressions": {},
+        "objective_delta": 4.7667308225852345
+      }
+    },
+    "holdout_gate": {
+      "accepted": true,
+      "status": "semantic_scored",
+      "regressions": {},
+      "objective_delta": 1.2271474248336591
+    },
+    "compile_count": 64,
+    "holdout_accessed_after_freeze": true,
+    "tuning_allowed_after_holdout": false,
+    "checkpoint_promoted": false,
+    "arena_data_used": false,
+    "live_llm_used": false,
+    "official_score": null,
+    "production_memory_used": false,
+    "canary_predictions": [
+      {
+        "id": "distill_canary_exact_local_345421",
+        "family": "exact_local",
+        "prediction": "theorem distill_canary_exact_local_345421 (p_345421 : Prop) (h_345421 : p_345421) : p_345421 := by\n  assumption\n",
+        "verified": true,
+        "prediction_tokens": 1,
+        "source_tokens": 2,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_canary_exact_local_345421"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_canary_terminal_alias_990545",
+        "family": "terminal_alias",
+        "prediction": "theorem distill_canary_terminal_alias_990545 (p_990545 : Prop) (h_990545 : p_990545) : p_990545 := by\n  assumption\n",
+        "verified": true,
+        "prediction_tokens": 1,
+        "source_tokens": 6,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_canary_terminal_alias_990545"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_canary_constructor_pack_136264",
+        "family": "constructor_pack",
+        "prediction": "theorem distill_canary_constructor_pack_136264 (p_136264 q_136264 : Prop) (h_136264 : p_136264) (k_136264 : q_136264) : p_136264 ∧ q_136264 := by\n  exact ⟨h_136264, k_136264⟩\n",
+        "verified": true,
+        "prediction_tokens": 3,
+        "source_tokens": 5,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_canary_constructor_pack_136264"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_canary_symmetry_805376",
+        "family": "symmetry",
+        "prediction": "theorem distill_canary_symmetry_805376 (p_805376 q_805376 : Nat) (h_805376 : p_805376 = q_805376) : p_805376 = q_805376 := by\n  assumption\n",
+        "verified": true,
+        "prediction_tokens": 1,
+        "source_tokens": 5,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_canary_symmetry_805376"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_canary_projection_534966",
+        "family": "projection",
+        "prediction": "theorem distill_canary_projection_534966 (p_534966 q_534966 : Prop) : p_534966 ∧ q_534966 → p_534966 := by\n  simp_all\n",
+        "verified": true,
+        "prediction_tokens": 1,
+        "source_tokens": 5,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_canary_projection_534966"
+          ],
+          "axioms": [
+            "propext"
+          ],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_canary_lift_projection_122963",
+        "family": "lift_projection",
+        "prediction": "theorem distill_canary_lift_projection_122963 (p_122963 : Prop) : PLift p_122963 → p_122963 := by\n  intro h_122963\n  exact h_122963.1\n",
+        "verified": true,
+        "prediction_tokens": 5,
+        "source_tokens": 5,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_canary_lift_projection_122963"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      }
+    ],
+    "holdout_predictions": [
+      {
+        "id": "distill_holdout_exact_local_76450",
+        "family": "exact_local",
+        "prediction": "theorem distill_holdout_exact_local_76450 (p_76450 : Prop) (h_76450 : p_76450) : p_76450 := by\n  assumption\n",
+        "verified": true,
+        "prediction_tokens": 1,
+        "source_tokens": 2,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_exact_local_76450"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_holdout_terminal_alias_48631",
+        "family": "terminal_alias",
+        "prediction": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  assumption\n",
+        "verified": true,
+        "prediction_tokens": 1,
+        "source_tokens": 6,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_terminal_alias_48631"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_holdout_constructor_pack_16582",
+        "family": "constructor_pack",
+        "prediction": "theorem distill_holdout_constructor_pack_16582 (p_16582 q_16582 : Prop) (h_16582 : p_16582) (k_16582 : q_16582) : p_16582 ∧ q_16582 := by\n  exact ⟨h_16582, k_16582⟩\n",
+        "verified": true,
+        "prediction_tokens": 3,
+        "source_tokens": 5,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_constructor_pack_16582"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_holdout_symmetry_614767",
+        "family": "symmetry",
+        "prediction": "theorem distill_holdout_symmetry_614767 (p_614767 q_614767 : Nat) (h_614767 : p_614767 = q_614767) : p_614767 = q_614767 := by\n  assumption\n",
+        "verified": true,
+        "prediction_tokens": 1,
+        "source_tokens": 5,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_symmetry_614767"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_holdout_projection_240161",
+        "family": "projection",
+        "prediction": "theorem distill_holdout_projection_240161 (p_240161 q_240161 : Prop) : p_240161 ∧ q_240161 → p_240161 := by\n  simp_all\n",
+        "verified": true,
+        "prediction_tokens": 1,
+        "source_tokens": 5,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_projection_240161"
+          ],
+          "axioms": [
+            "propext"
+          ],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_holdout_lift_projection_891716",
+        "family": "lift_projection",
+        "prediction": "theorem distill_holdout_lift_projection_891716 (p_891716 : Prop) : PLift p_891716 → p_891716 := by\n  intro h_891716\n  exact h_891716.1\n",
+        "verified": true,
+        "prediction_tokens": 5,
+        "source_tokens": 5,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_lift_projection_891716"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      }
+    ],
+    "split_policy": "content_disjoint_alpha_renamed_shared_structural_families",
+    "semantic_family_decontamination": false
+  },
+  "arena": {
+    "schema": "jevops-model-only-arena-rewrite/v1",
+    "name": "CallElimCorrect.substOldPostSubset",
+    "ok": true,
+    "state_sha256": "5fdd503e451f0e6f843ddf07ac0a3e6ccbe8e071a0b6eaabe374e6a60069a9cd",
+    "reference_tokens": 391,
+    "reference_compile": {
+      "theorem_ok": true,
+      "kernel_audit": {
+        "schema": "jevops-axiom-audit/v1",
+        "accepted": true,
+        "declarations": [
+          "CallElimCorrect.substOldPostSubset"
+        ],
+        "axioms": [
+          "Quot.sound",
+          "propext"
+        ],
+        "unexpected_axioms": [],
+        "missing_reports": [],
+        "conflicting_reports": [],
+        "native_axioms": [],
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "independent_kernel_verifier_used": false
+      },
+      "selected_version_info": [
+        {
+          "v4.26.0": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ]
+    },
+    "history": [
+      {
+        "commit": "5eecbf7b7e6566a7de02f52467f88c5761683313",
+        "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.substOldPostSubset-392.lean",
+        "body_tokens": 392,
+        "verified": true
+      }
+    ],
+    "evaluations": [
+      {
+        "input": "frozen_original",
+        "source_tokens": 482,
+        "source_verified": true,
+        "metric_gate": {
+          "accepted": false,
+          "status": "semantic_scored",
+          "regressions": {
+            "cross_entropy": 0.06289056180288455
+          },
+          "objective_delta": 0.040075218229867815
+        },
+        "untrained": {
+          "body_tokens": 482,
+          "verified": true,
+          "verified_shortening": false,
+          "loss": {
+            "cosine_loss": 0.5115000000000001,
+            "cosine_similarity": 0.4885,
+            "copy_penalty": 0,
+            "cross_entropy": 4.343805421853687,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 0,
+            "kl_loss": 0,
+            "length_penalty": 0.1111111111111111,
+            "minimality_reward": 0.8888888888888888,
+            "nca_loss": 0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.05813953488372093,
+            "reward": 1,
+            "reward_loss": 0,
+            "total": 4.583786494205108,
+            "typesafe_reward": null,
+            "verifier_reward": 1
+          },
+          "rewrite_policy": null
+        },
+        "trained": {
+          "body_tokens": 481,
+          "verified": true,
+          "verified_shortening": true,
+          "loss": {
+            "cosine_loss": 0.23049999999999993,
+            "cosine_similarity": 0.7695000000000001,
+            "copy_penalty": 0,
+            "cross_entropy": 4.406695983656571,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 0,
+            "kl_loss": 0.003538275794471967,
+            "length_penalty": 0.1111111111111111,
+            "minimality_reward": 0.8888888888888888,
+            "nca_loss": 0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.05232558139534884,
+            "reward": 1,
+            "reward_loss": 0,
+            "total": 4.54371127597524,
+            "typesafe_reward": null,
+            "verifier_reward": 1
+          },
+          "rewrite_policy": {
+            "trace": [
+              {
+                "rule_id": "f8f51701eac723ec901d",
+                "start": 27,
+                "probability": 0.5920510882935831,
+                "choices": 2
+              }
+            ],
+            "teacher_used": false,
+            "solver_used": false,
+            "mode": "learned_span_edits",
+            "authority": "model_proposal_requires_Lean"
+          },
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "CallElimCorrect.substOldPostSubset"
+            ],
+            "axioms": [
+              "Quot.sound",
+              "propext"
+            ],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "zero_edit_weights": {
+          "body_tokens": 482,
+          "verified": true,
+          "verified_shortening": false,
+          "loss": {
+            "cosine_loss": 0.23099999999999998,
+            "cosine_similarity": 0.769,
+            "copy_penalty": 0,
+            "cross_entropy": 4.406695983656571,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 0,
+            "kl_loss": 0.003538275794471967,
+            "length_penalty": 0.1111111111111111,
+            "minimality_reward": 0.8888888888888888,
+            "nca_loss": 0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.05813953488372093,
+            "reward": 1,
+            "reward_loss": 0,
+            "total": 4.548537438765937,
+            "typesafe_reward": null,
+            "verifier_reward": 1
+          },
+          "rewrite_policy": {
+            "trace": [],
+            "teacher_used": false,
+            "solver_used": false,
+            "mode": "learned_span_edits",
+            "authority": "model_proposal_requires_Lean"
+          }
+        }
+      },
+      {
+        "input": "historical_best",
+        "source_tokens": 392,
+        "source_verified": true,
+        "metric_gate": {
+          "accepted": true,
+          "status": "semantic_scored",
+          "regressions": {},
+          "objective_delta": 0.1312379844200322
+        },
+        "untrained": {
+          "body_tokens": 392,
+          "verified": true,
+          "verified_shortening": false,
+          "loss": {
+            "cosine_loss": 0.5005,
+            "cosine_similarity": 0.4995,
+            "copy_penalty": 0,
+            "cross_entropy": 4.343805421853687,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 0,
+            "kl_loss": 0,
+            "length_penalty": 0,
+            "minimality_reward": 1,
+            "nca_loss": 0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.006134969325153374,
+            "reward": 1,
+            "reward_loss": 0,
+            "total": 4.52388839731381,
+            "typesafe_reward": null,
+            "verifier_reward": 1
+          },
+          "rewrite_policy": null
+        },
+        "trained": {
+          "body_tokens": 391,
+          "verified": true,
+          "verified_shortening": true,
+          "loss": {
+            "cosine_loss": 0.23399999999999999,
+            "cosine_similarity": 0.766,
+            "copy_penalty": 0,
+            "cross_entropy": 4.3107156701266796,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 1,
+            "kl_loss": 0.0034742767097893845,
+            "length_penalty": 0,
+            "minimality_reward": 1,
+            "nca_loss": 0,
+            "nca_reward": null,
+            "reconstruction_loss": 0,
+            "reward": 1,
+            "reward_loss": 0,
+            "total": 4.392650412893778,
+            "typesafe_reward": null,
+            "verifier_reward": 1
+          },
+          "rewrite_policy": {
+            "trace": [
+              {
+                "rule_id": "f8f51701eac723ec901d",
+                "start": 18,
+                "probability": 0.5920510882935831,
+                "choices": 2
+              }
+            ],
+            "teacher_used": false,
+            "solver_used": false,
+            "mode": "learned_span_edits",
+            "authority": "model_proposal_requires_Lean"
+          },
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "CallElimCorrect.substOldPostSubset"
+            ],
+            "axioms": [
+              "Quot.sound",
+              "propext"
+            ],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "zero_edit_weights": {
+          "body_tokens": 392,
+          "verified": true,
+          "verified_shortening": false,
+          "loss": {
+            "cosine_loss": 0.23449999999999993,
+            "cosine_similarity": 0.7655000000000001,
+            "copy_penalty": 0,
+            "cross_entropy": 4.3107156701266796,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 0,
+            "kl_loss": 0.0034742767097893845,
+            "length_penalty": 0,
+            "minimality_reward": 1,
+            "nca_loss": 0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.006134969325153374,
+            "reward": 1,
+            "reward_loss": 0,
+            "total": 4.3977333883539,
+            "typesafe_reward": null,
+            "verifier_reward": 1
+          },
+          "rewrite_policy": {
+            "trace": [],
+            "teacher_used": false,
+            "solver_used": false,
+            "mode": "learned_span_edits",
+            "authority": "model_proposal_requires_Lean"
+          }
+        }
+      }
+    ],
+    "unique_compile_count": 7,
+    "metric_gates_accepted": false,
+    "router_search_used": false,
+    "teacher_at_inference": false,
+    "training_enabled": false,
+    "checkpoint_promoted": false,
+    "production_memory_used": false,
+    "official_score": null,
+    "scope": "frozen_model_local_regression_not_unseen_arena_holdout",
+    "frozen_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804"
+  }
+}

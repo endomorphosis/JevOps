@@ -312,11 +312,26 @@ can opt in with `RouterTuningConfig(train_binding_policy=True)` or
 checks also reject binding-loss, verification and metric-coverage regressions.
 See [validation details](LOGIC_REDUCTIONS.md).
 
-For the expanded 28-family reduction catalog, bounded equality saturation,
+For the expanded 33-family reduction catalog, bounded equality saturation,
 Houdini invariant inference, proof slicing and strict axiom-audit mode, see
 [kernel/refactoring research and implementation](KERNEL_REFACTORING_RESEARCH.md).
 The report distinguishes implemented algorithms, optional Lean/Mathlib solver
 proposals and remaining typed-expression/large-scale research work.
+
+The opt-in learned span editor can also replace tactics and copy local names,
+using verified shorter proofs as training targets. It is integrated through
+`--train-rewrite-policy` and has a separate, isolated distillation runner.
+Real model-only arena evaluation shortened 482→481 tokens and a historical
+392-token seed→391, matching the local deterministic best. The original-input
+CE gate failed, so the checkpoint is not promoted. See
+[rewrite learning, research and reproducible evidence](REWRITE_DISTILLATION.md)
+for ablations, finite GF(2) invariant mining and the limits of the small curriculum.
+
+The [certified-refactoring follow-up](CERTIFIED_REFACTORING.md) adds balanced
+solver-list reduction, application/eta edits and exact linear-invariant
+certificates. An opt-in frozen-reconstruction edit head now passes both known
+arena metric gates at the same 481/391 token counts. It also composes learned
+edits on new branch layouts; no new high score or production promotion is claimed.
 
 ## Action bandits and the neurosymbolic CA
 

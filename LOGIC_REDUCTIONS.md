@@ -6,12 +6,18 @@ for Lean, a proof of global shortest length, or a replacement for Lean's kernel.
 Arbitrary theorem proving and globally optimal proof minimization cannot be
 covered by an exhaustive finite tactic list.
 
-The catalog has since expanded to 28 families, with bounded propositional
+The catalog has since expanded to 33 families, with bounded propositional
 equality saturation, finite Houdini inference, hierarchical proof slicing and
 opt-in transitive axiom audits. See [the research and implementation report](KERNEL_REFACTORING_RESEARCH.md)
 for current coverage and the distinction between arena-span admission and a
 strict kernel-only axiom policy. Earlier experiment numbers below are historical;
 the expanded operation vocabulary requires its own CE baseline.
+The [rewrite-distillation follow-up](REWRITE_DISTILLATION.md) adds learned
+replacement edits, finite GF(2) invariant mining, and model-only arena evidence
+with an explicit failed CE gate; it does not claim a new arena high score.
+The newer [certified-refactoring report](CERTIFIED_REFACTORING.md) retains that
+failure and tests a frozen-head edit adapter that avoids reconstruction drift,
+plus linear certificate methods beyond the finite Boolean domain.
 
 ## What is implemented
 

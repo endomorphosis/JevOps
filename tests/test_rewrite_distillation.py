@@ -6,7 +6,7 @@ import pytest
 
 from jevops import autoencoder as ae
 from jevops.autoencoder_training import LeanIRAutoencoder
-from jevops.rewrite_distillation import curriculum_rows, run_distillation
+from jevops.rewrite_distillation import compositional_holdout_rows, curriculum_rows, run_distillation
 from jevops.rewrite_policy import body_of
 
 
@@ -44,6 +44,16 @@ def test_failed_or_unaudited_teacher_stops_before_any_weight_update():
         result = run_distillation(oracle)
         assert not result["ok"] and result["model_step"] == 0
         assert result["reason"] == "unverified_fixture"
+
+
+def test_compositional_holdouts_have_new_layouts_and_never_join_training():
+    rows = compositional_holdout_rows(123)
+    assert len(rows) == 4 and all(r["split"] == "holdout" for r in rows)
+    train = [r for r in curriculum_rows(123, extended=True) if r["split"] == "train"]
+    assert not {r["id"] for r in rows} & {r["id"] for r in train}
+    assert not {r["family"] for r in rows} & {r["family"] for r in train}
+    assert any("case left =>" in r["source"] for r in rows)
+    assert any("case false =>" in r["source"] for r in rows)
 
 
 def test_distillation_rejects_duplicate_rows_and_keeps_training_independent_of_canary_seed():

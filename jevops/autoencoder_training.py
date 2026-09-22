@@ -205,6 +205,7 @@ class AutoencoderConfig:
     max_ops: int = 32
     train_binding_policy: bool = False
     train_rewrite_policy: bool = False
+    freeze_reconstruction_heads: bool = False
     rewrite_max_edits: int = 4
     validation_fraction: float = 0.10
     holdout_fraction: float = 0.10
@@ -240,6 +241,9 @@ class AutoencoderConfig:
         object.__setattr__(self, "max_ops", max(1, int(self.max_ops)))
         object.__setattr__(self, "train_binding_policy", bool(self.train_binding_policy))
         object.__setattr__(self, "train_rewrite_policy", bool(self.train_rewrite_policy))
+        object.__setattr__(self, "freeze_reconstruction_heads", bool(self.freeze_reconstruction_heads))
+        if self.freeze_reconstruction_heads and not self.train_rewrite_policy:
+            raise ValueError("freezing reconstruction heads requires rewrite training")
         object.__setattr__(self, "rewrite_max_edits", max(1, min(8, int(self.rewrite_max_edits))))
         object.__setattr__(self, "validation_fraction", min(0.45, max(0.0, _finite(self.validation_fraction, 0.10))))
         object.__setattr__(self, "holdout_fraction", min(0.45, max(0.0, _finite(self.holdout_fraction, 0.10))))
@@ -269,6 +273,7 @@ class AutoencoderConfig:
             "max_ops": self.max_ops,
             "train_binding_policy": self.train_binding_policy,
             "train_rewrite_policy": self.train_rewrite_policy,
+            "freeze_reconstruction_heads": self.freeze_reconstruction_heads,
             "rewrite_max_edits": self.rewrite_max_edits,
             "min_learning_rate": self.min_learning_rate,
             "plateau_factor": self.plateau_factor,
@@ -1042,7 +1047,8 @@ class LeanIRAutoencoder:
         features = self.feature_vector(example.text)
         previous = "<bos>"
         gradient_norm = 0.0
-        for target in list(_normalized_ops(example)) + ["<eos>"]:
+        targets = [] if self.config.freeze_reconstruction_heads else list(_normalized_ops(example)) + ["<eos>"]
+        for target in targets:
             gradient_norm += self._apply_logit_update(
                 features,
                 previous,
@@ -1051,7 +1057,8 @@ class LeanIRAutoencoder:
                 scale=update_scale / max(1, len(example.target_ops) + 1),
             )
             previous = target
-        latent_norm = self._apply_latent_update(example.text, learning_rate=lr, scale=update_scale)
+        latent_norm = (0.0 if self.config.freeze_reconstruction_heads else
+                       self._apply_latent_update(example.text, learning_rate=lr, scale=update_scale))
         binding_loss = None
         if self.config.train_binding_policy:
             from .binding_policy import loss_and_gradient

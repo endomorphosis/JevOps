@@ -169,6 +169,24 @@ def test_opt_in_binding_classifier_trains_from_a_verified_strict_cut() -> None:
     assert result["model_prediction_after"]["binding_policy"]["mode"] == "learned_binding_keep"
 
 
+@pytest.mark.parametrize("frozen_heads", [False, True])
+def test_opt_in_span_editor_learns_a_verified_replacement_not_just_deletion(frozen_heads) -> None:
+    prefix = "theorem edit_train (p : Prop) (h : p) : p := by\n"
+    source, target = prefix + "  exact h", prefix + "  assumption"
+    memory = {}
+    loop = RouterTuningLoop(memory, source, compile_fn=lambda s, **kw: {"theorem_ok": True},
+                           router_generate=lambda _: "{}", config=RouterTuningConfig(train_rewrite_policy=True,
+                                                                                     freeze_reconstruction_heads=frozen_heads))
+    winner = loop._row(target, origin="test", kind="test")
+    report = loop._train(winner, [winner])
+    assert report["trained"] and report["rewrite_preparation"]["added_templates"] == 1
+    assert memory["nca"]["autoencoder"]["training_state"]["rewrite_steps"] == 1
+    assert report["loss"]["rewrite_cross_entropy"] < report["model_loss_before"]["rewrite_cross_entropy"]
+    assert report["model_prediction_after"]["body_tokens"] < report["model_prediction"]["body_tokens"]
+    if frozen_heads:
+        assert report["loss"]["cross_entropy"] == report["model_loss_before"]["cross_entropy"]
+
+
 @pytest.mark.parametrize("attempted_bce", [.5, None])
 def test_training_rolls_back_binding_loss_regression_or_lost_coverage(monkeypatch, attempted_bce) -> None:
     prefix = "theorem rollback_binding (p : Prop) (h : p) : p := by\n"

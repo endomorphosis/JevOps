@@ -65,7 +65,7 @@ def test_catalog_routes_every_method_and_sweep_is_bounded_and_rotates() -> None:
         assert len({body for _, body, _ in rows}) == len(rows)
         seen.update(ops[0] for _, _, ops in rows)
     # These require specific structural patterns, exercised separately.
-    assert set(LOGIC_STRATEGIES) - {"branch_invariant", "local_alias_reduce", "symmetry_reduce"} <= seen
+    assert set(LOGIC_STRATEGIES) - {"branch_invariant", "local_alias_reduce", "symmetry_reduce", "application_reduce", "eta_reduce"} <= seen
     assert reduction_sweep("exact h", cap=0) == []
 
 

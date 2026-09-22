@@ -98,6 +98,12 @@ METHODS = (
                     ("have", "let", "exact")),
     ReductionMethod("symmetry_reduce", "Cancel adjacent symmetry scaffolding and reverse-proof wrappers", (),
                     ("symm", "Eq.symm", "Iff.symm")),
+    ReductionMethod("application_reduce", "Fuse a unary apply/exact proof into one checked application", (),
+                    ("apply", "exact")),
+    ReductionMethod("eta_reduce", "Eliminate an introduced argument immediately passed to a function", (),
+                    ("intro", "exact")),
+    ReductionMethod("solver_argument_reduce", "Balanced nested lemma-list and certificate-support minimization", (),
+                    ("simp", "rw", "grind", "linarith")),
 )
 LOGIC_STRATEGIES = tuple(method.strategy for method in METHODS)
 _BY_NAME = {method.strategy: method for method in METHODS}
@@ -201,6 +207,25 @@ def reduction_variants(body: str, *, strategy: str, goal: str = "", cap: int = 1
     if strategy == "proof_slice":
         from .proof_slicing import deletion_variants
         return deletion_variants(body, cap=budget)
+    if strategy == "solver_argument_reduce":
+        from .tactic_arguments import argument_variants
+        return argument_variants(body, cap=budget)
+    if strategy in {"application_reduce", "eta_reduce"}:
+        # Whole lines and single identifiers only; dependent type/scope checks
+        # are left to Lean. No rewriting inside terms, comments or quotations.
+        if any(s in body for s in ('--', '/-', '-/', '"', '`', '$')):
+            return rows
+        name = r"[^\W\d][\w'.]*"
+        pattern = (r"(?m)^([ ]*)apply (" + name + r")[ ]*\n\1exact (" + name + r")[ ]*$"
+                   if strategy == "application_reduce" else
+                   r"(?m)^([ ]*)intro (" + name + r")[ ]*\n\1exact (" + name + r") \2[ ]*$")
+        for match in re.finditer(pattern, body):
+            if strategy == "eta_reduce" and match[2] == match[3]:
+                continue
+            replacement = (f"exact {match[2]} {match[3]}" if strategy == "application_reduce"
+                           else f"exact {match[3]}")
+            push(strategy, body[:match.start()] + match[1] + replacement + body[match.end():])
+        return rows
     if strategy == "local_alias_reduce":
         # Small terminal patterns only. No substitution across dependent
         # binders, arbitrary terms, comments, or nested proof blocks.

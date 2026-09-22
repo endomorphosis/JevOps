@@ -1,0 +1,481 @@
+{
+  "schema": "jevops-linear-invariant-evidence/v1",
+  "analysis": {
+    "schema": "jevops-affine-integer-invariants/v1",
+    "kept_indices": [
+      0,
+      1,
+      2
+    ],
+    "removed": [
+      {
+        "index": 3,
+        "round": 1,
+        "initiation": {
+          "proved": true,
+          "certificate": {
+            "weights": [
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            "slack": "5"
+          },
+          "attempts": 9
+        },
+        "preservation": {
+          "proved": false,
+          "status": "unknown_no_certificate",
+          "attempts": 25
+        },
+        "reason": "unproved_not_counterexample"
+      }
+    ],
+    "rounds": 2,
+    "obligations": [
+      {
+        "index": 0,
+        "phase": "init",
+        "premises": [
+          {
+            "coefficients": [
+              1,
+              0
+            ],
+            "bound": 0
+          },
+          {
+            "coefficients": [
+              -1,
+              0
+            ],
+            "bound": 0
+          },
+          {
+            "coefficients": [
+              0,
+              1
+            ],
+            "bound": 0
+          },
+          {
+            "coefficients": [
+              0,
+              -1
+            ],
+            "bound": 0
+          }
+        ],
+        "target": {
+          "coefficients": [
+            1,
+            -1
+          ],
+          "bound": 0
+        },
+        "proved": true,
+        "certificate": {
+          "weights": [
+            "1",
+            "0",
+            "0",
+            "1"
+          ],
+          "slack": "0"
+        },
+        "attempts": 8,
+        "lean_goal": "((1) * x0 + (-1) * x1) \u2264 (0)",
+        "lean": "theorem init_0 (x0 x1 : Int) (h0 : ((1) * x0) \u2264 (0)) (h3 : ((-1) * x1) \u2264 (0)) : ((1) * x0 + (-1) * x1) \u2264 (0) := by\n  linarith only [h0, h3]\n"
+      },
+      {
+        "index": 0,
+        "phase": "step",
+        "premises": [
+          {
+            "coefficients": [
+              1,
+              -1
+            ],
+            "bound": 0
+          },
+          {
+            "coefficients": [
+              -1,
+              1
+            ],
+            "bound": 0
+          },
+          {
+            "coefficients": [
+              -1,
+              0
+            ],
+            "bound": 0
+          }
+        ],
+        "target": {
+          "coefficients": [
+            1,
+            -1
+          ],
+          "bound": 0
+        },
+        "proved": true,
+        "certificate": {
+          "weights": [
+            "1",
+            "0",
+            "0"
+          ],
+          "slack": "0"
+        },
+        "attempts": 1,
+        "lean_goal": "((1) * (((1) * x0) + (1)) + (-1) * (((1) * x1) + (1))) \u2264 (0)",
+        "lean": "theorem step_0 (x0 x1 : Int) (h0 : ((1) * x0 + (-1) * x1) \u2264 (0)) : ((1) * (((1) * x0) + (1)) + (-1) * (((1) * x1) + (1))) \u2264 (0) := by\n  linarith only [h0]\n"
+      },
+      {
+        "index": 1,
+        "phase": "init",
+        "premises": [
+          {
+            "coefficients": [
+              1,
+              0
+            ],
+            "bound": 0
+          },
+          {
+            "coefficients": [
+              -1,
+              0
+            ],
+            "bound": 0
+          },
+          {
+            "coefficients": [
+              0,
+              1
+            ],
+            "bound": 0
+          },
+          {
+            "coefficients": [
+              0,
+              -1
+            ],
+            "bound": 0
+          }
+        ],
+        "target": {
+          "coefficients": [
+            -1,
+            1
+          ],
+          "bound": 0
+        },
+        "proved": true,
+        "certificate": {
+          "weights": [
+            "0",
+            "1",
+            "1",
+            "0"
+          ],
+          "slack": "0"
+        },
+        "attempts": 10,
+        "lean_goal": "((-1) * x0 + (1) * x1) \u2264 (0)",
+        "lean": "theorem init_1 (x0 x1 : Int) (h1 : ((-1) * x0) \u2264 (0)) (h2 : ((1) * x1) \u2264 (0)) : ((-1) * x0 + (1) * x1) \u2264 (0) := by\n  linarith only [h1, h2]\n"
+      },
+      {
+        "index": 1,
+        "phase": "step",
+        "premises": [
+          {
+            "coefficients": [
+              1,
+              -1
+            ],
+            "bound": 0
+          },
+          {
+            "coefficients": [
+              -1,
+              1
+            ],
+            "bound": 0
+          },
+          {
+            "coefficients": [
+              -1,
+              0
+            ],
+            "bound": 0
+          }
+        ],
+        "target": {
+          "coefficients": [
+            -1,
+            1
+          ],
+          "bound": 0
+        },
+        "proved": true,
+        "certificate": {
+          "weights": [
+            "0",
+            "1",
+            "0"
+          ],
+          "slack": "0"
+        },
+        "attempts": 2,
+        "lean_goal": "((-1) * (((1) * x0) + (1)) + (1) * (((1) * x1) + (1))) \u2264 (0)",
+        "lean": "theorem step_1 (x0 x1 : Int) (h1 : ((-1) * x0 + (1) * x1) \u2264 (0)) : ((-1) * (((1) * x0) + (1)) + (1) * (((1) * x1) + (1))) \u2264 (0) := by\n  linarith only [h1]\n"
+      },
+      {
+        "index": 2,
+        "phase": "init",
+        "premises": [
+          {
+            "coefficients": [
+              1,
+              0
+            ],
+            "bound": 0
+          },
+          {
+            "coefficients": [
+              -1,
+              0
+            ],
+            "bound": 0
+          },
+          {
+            "coefficients": [
+              0,
+              1
+            ],
+            "bound": 0
+          },
+          {
+            "coefficients": [
+              0,
+              -1
+            ],
+            "bound": 0
+          }
+        ],
+        "target": {
+          "coefficients": [
+            -1,
+            0
+          ],
+          "bound": 0
+        },
+        "proved": true,
+        "certificate": {
+          "weights": [
+            "0",
+            "1",
+            "0",
+            "0"
+          ],
+          "slack": "0"
+        },
+        "attempts": 2,
+        "lean_goal": "((-1) * x0) \u2264 (0)",
+        "lean": "theorem init_2 (x0 x1 : Int) (h1 : ((-1) * x0) \u2264 (0)) : ((-1) * x0) \u2264 (0) := by\n  linarith only [h1]\n"
+      },
+      {
+        "index": 2,
+        "phase": "step",
+        "premises": [
+          {
+            "coefficients": [
+              1,
+              -1
+            ],
+            "bound": 0
+          },
+          {
+            "coefficients": [
+              -1,
+              1
+            ],
+            "bound": 0
+          },
+          {
+            "coefficients": [
+              -1,
+              0
+            ],
+            "bound": 0
+          }
+        ],
+        "target": {
+          "coefficients": [
+            -1,
+            0
+          ],
+          "bound": 1
+        },
+        "proved": true,
+        "certificate": {
+          "weights": [
+            "0",
+            "0",
+            "1"
+          ],
+          "slack": "1"
+        },
+        "attempts": 10,
+        "lean_goal": "((-1) * (((1) * x0) + (1))) \u2264 (0)",
+        "lean": "theorem step_2 (x0 x1 : Int) (h2 : ((-1) * x0) \u2264 (0)) : ((-1) * (((1) * x0) + (1))) \u2264 (0) := by\n  linarith only [h2]\n"
+      }
+    ],
+    "initial": [
+      {
+        "coefficients": [
+          1,
+          0
+        ],
+        "bound": 0
+      },
+      {
+        "coefficients": [
+          -1,
+          0
+        ],
+        "bound": 0
+      },
+      {
+        "coefficients": [
+          0,
+          1
+        ],
+        "bound": 0
+      },
+      {
+        "coefficients": [
+          0,
+          -1
+        ],
+        "bound": 0
+      }
+    ],
+    "guards": [],
+    "candidates": [
+      {
+        "coefficients": [
+          1,
+          -1
+        ],
+        "bound": 0
+      },
+      {
+        "coefficients": [
+          -1,
+          1
+        ],
+        "bound": 0
+      },
+      {
+        "coefficients": [
+          -1,
+          0
+        ],
+        "bound": 0
+      },
+      {
+        "coefficients": [
+          1,
+          0
+        ],
+        "bound": 5
+      }
+    ],
+    "matrix": [
+      [
+        1,
+        0
+      ],
+      [
+        0,
+        1
+      ]
+    ],
+    "offset": [
+      1,
+      1
+    ],
+    "lean_verified": false,
+    "source_program_binding_verified": false,
+    "complete": false,
+    "authority": "exact_rational_search_requires_Lean"
+  },
+  "redundancy": {
+    "kept_indices": [
+      0,
+      1
+    ],
+    "removed": [
+      {
+        "index": 2,
+        "premise_indices": [
+          0,
+          1
+        ],
+        "proved": true,
+        "certificate": {
+          "weights": [
+            "1",
+            "1"
+          ],
+          "slack": "0"
+        },
+        "attempts": 4,
+        "obligation": "theorem redundant_2 (x0 x1 : Int) (h0 : ((1) * x0) \u2264 (0)) (h1 : ((1) * x1) \u2264 (0)) : ((1) * x0 + (1) * x1) \u2264 (0) := by\n  linarith only [h0, h1]\n"
+      }
+    ],
+    "lean_verified": false,
+    "authority": "exact_rational_search_requires_Lean"
+  },
+  "source": "import Mathlib\ntheorem init_0 (x0 x1 : Int) (h0 : ((1) * x0) \u2264 (0)) (h3 : ((-1) * x1) \u2264 (0)) : ((1) * x0 + (-1) * x1) \u2264 (0) := by\n  linarith only [h0, h3]\n\ntheorem step_0 (x0 x1 : Int) (h0 : ((1) * x0 + (-1) * x1) \u2264 (0)) : ((1) * (((1) * x0) + (1)) + (-1) * (((1) * x1) + (1))) \u2264 (0) := by\n  linarith only [h0]\n\ntheorem init_1 (x0 x1 : Int) (h1 : ((-1) * x0) \u2264 (0)) (h2 : ((1) * x1) \u2264 (0)) : ((-1) * x0 + (1) * x1) \u2264 (0) := by\n  linarith only [h1, h2]\n\ntheorem step_1 (x0 x1 : Int) (h1 : ((-1) * x0 + (1) * x1) \u2264 (0)) : ((-1) * (((1) * x0) + (1)) + (1) * (((1) * x1) + (1))) \u2264 (0) := by\n  linarith only [h1]\n\ntheorem init_2 (x0 x1 : Int) (h1 : ((-1) * x0) \u2264 (0)) : ((-1) * x0) \u2264 (0) := by\n  linarith only [h1]\n\ntheorem step_2 (x0 x1 : Int) (h2 : ((-1) * x0) \u2264 (0)) : ((-1) * (((1) * x0) + (1))) \u2264 (0) := by\n  linarith only [h2]\n\ntheorem redundant_2 (x0 x1 : Int) (h0 : ((1) * x0) \u2264 (0)) (h1 : ((1) * x1) \u2264 (0)) : ((1) * x0 + (1) * x1) \u2264 (0) := by\n  linarith only [h0, h1]\n",
+  "compile": {
+    "theorem_ok": true,
+    "kernel_audit": {
+      "schema": "jevops-axiom-audit/v1",
+      "accepted": true,
+      "declarations": [
+        "init_0",
+        "step_0",
+        "init_1",
+        "step_1",
+        "init_2",
+        "step_2",
+        "redundant_2"
+      ],
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "unexpected_axioms": [],
+      "missing_reports": [],
+      "conflicting_reports": [],
+      "native_axioms": [],
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "independent_kernel_verifier_used": false
+    },
+    "token_count": 242,
+    "stdout_tail": " Classical.choice, Quot.sound]\n'init_2' depends on axioms: [propext, Classical.choice, Quot.sound]\n'step_2' depends on axioms: [propext, Classical.choice, Quot.sound]\n'redundant_2' depends on axioms: [propext, Classical.choice, Quot.sound]\n",
+    "stderr_tail": ""
+  },
+  "source_program_binding_verified": false
+}

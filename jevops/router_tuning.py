@@ -151,6 +151,7 @@ class RouterTuningConfig:
     train: bool = True
     train_binding_policy: bool = False
     train_rewrite_policy: bool = False
+    freeze_reconstruction_heads: bool = False
     strict_router: bool = True
     design_hint: Mapping[str, Any] = field(default_factory=dict)
     router_kwargs: Mapping[str, Any] = field(default_factory=dict)
@@ -182,6 +183,9 @@ class RouterTuningConfig:
         object.__setattr__(self, "teacher_replay", bool(self.teacher_replay))
         object.__setattr__(self, "train_binding_policy", bool(self.train_binding_policy))
         object.__setattr__(self, "train_rewrite_policy", bool(self.train_rewrite_policy))
+        object.__setattr__(self, "freeze_reconstruction_heads", bool(self.freeze_reconstruction_heads))
+        if self.freeze_reconstruction_heads and not self.train_rewrite_policy:
+            raise ValueError("freezing reconstruction heads requires rewrite training")
         object.__setattr__(self, "design_hint", dict(self.design_hint or {}))
         object.__setattr__(self, "router_kwargs", dict(self.router_kwargs or {}))
 
@@ -208,6 +212,7 @@ class RouterTuningConfig:
             "teacher_replay": self.teacher_replay,
             "train_binding_policy": self.train_binding_policy,
             "train_rewrite_policy": self.train_rewrite_policy,
+            "freeze_reconstruction_heads": self.freeze_reconstruction_heads,
             "max_replay_teachers": self.max_replay_teachers,
             "seed": self.seed,
             "train": self.train,
@@ -1665,7 +1670,8 @@ class RouterTuningLoop:
         try:
             store = self.memory.setdefault("nca", {}).setdefault("autoencoder", {})
             training_config = AutoencoderConfig(train_binding_policy=self.config.train_binding_policy,
-                                                train_rewrite_policy=self.config.train_rewrite_policy)
+                                                train_rewrite_policy=self.config.train_rewrite_policy,
+                                                freeze_reconstruction_heads=self.config.freeze_reconstruction_heads)
             model = LeanIRAutoencoder.from_dict(store.get("training_state"), config=training_config)
             eligible: list[Mapping[str, Any]] = [
                 row
@@ -2360,6 +2366,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument("--no-train", action="store_true")
     parser.add_argument("--train-binding-policy", action="store_true", help="train the experimental keep/delete head on verified deletion pairs")
     parser.add_argument("--train-rewrite-policy", action="store_true", help="distill verified shorter spans into the learned copy/edit decoder")
+    parser.add_argument("--freeze-reconstruction-heads", action="store_true", help="freeze operation/latent weights while training rewrite selection")
     parser.add_argument("--allow-cross-provider-fallback", action="store_true")
     args = parser.parse_args(list(argv) if argv is not None else None)
 
@@ -2383,6 +2390,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         train=not args.no_train,
         train_binding_policy=args.train_binding_policy,
         train_rewrite_policy=args.train_rewrite_policy,
+        freeze_reconstruction_heads=args.freeze_reconstruction_heads,
         strict_router=not args.allow_cross_provider_fallback,
     )
     result = tune_autoencoder_with_router(

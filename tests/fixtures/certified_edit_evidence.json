@@ -1,0 +1,1461 @@
+{
+  "schema": "jevops-certified-edit-evidence/v1",
+  "measured_on": "2026-09-22",
+  "checkpoint_file": "certified_edit_checkpoint.json",
+  "notes": [
+    "Operation and latent heads are frozen at initialization; unchanged CE is not evidence of reconstruction-head learning.",
+    "Only training rows supply templates or update weights; the additional composed layouts are evaluated after freeze.",
+    "Same structural families across most splits; no claim of semantic-family decontamination.",
+    "All measured metric gates pass but only one known arena theorem is tested; no production promotion or new high score.",
+    "Edit-label coverage is 11/13 on the combined holdout; multi-step targets have no single-step edit labels."
+  ],
+  "synthetic": {
+    "schema": "jevops-verified-rewrite-distillation/v1",
+    "scope": "synthetic_structural_transfer_not_unseen_semantic_families_or_arena_score",
+    "epochs": 40,
+    "fixture_seed": 20260923,
+    "extended_curriculum": true,
+    "compositional_holdout": true,
+    "reconstruction_heads_unchanged": true,
+    "model_step": 360,
+    "rewrite_steps": 360,
+    "state_sha256": "89017b8108011b0fddd8da7358d8d53ca22865a26e0d3639258c23b517307fdf",
+    "manifest_sha256": "a45ce99439f5101a574430232f7228556932f5784dfa2483d6dbfbb162c491bb",
+    "config": {
+      "decay_steps": 1000,
+      "gradient_clip": 1,
+      "holdout_fraction": 0.1,
+      "label_smoothing": 0.02,
+      "learning_rate": 0.15,
+      "loss_weights": {
+        "cosine": 0.35,
+        "cross_entropy": 1,
+        "fuzzy_prover": 0.2,
+        "kl": 0.01,
+        "length": 0.03,
+        "minimality": 0.1,
+        "nca": 0.2,
+        "reconstruction": 0.8,
+        "reward": 0.5
+      },
+      "max_learning_rate": 0.25,
+      "max_ops": 32,
+      "train_binding_policy": false,
+      "train_rewrite_policy": true,
+      "freeze_reconstruction_heads": true,
+      "rewrite_max_edits": 4,
+      "min_learning_rate": 0.0005,
+      "plateau_factor": 0.5,
+      "plateau_patience": 2,
+      "beam_width": 4,
+      "seed": 17,
+      "temperature": 1,
+      "validation_fraction": 0.1,
+      "warmup_steps": 0,
+      "weight_decay": 0.0001,
+      "canary_fraction": 0.1
+    },
+    "grammar": {
+      "added_templates": 8,
+      "template_count": 8,
+      "not_mined": [
+        "distill_train_lift_projection_303694"
+      ],
+      "before_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after_digest": "987f27d2245d5ea99bac8d4596df6368ad74aa951325ba6d772d66318f12617a",
+      "requires_new_edit_ce_baseline": true
+    },
+    "train_ids": [
+      "distill_train_exact_local_547339",
+      "distill_train_terminal_alias_434286",
+      "distill_train_constructor_pack_845876",
+      "distill_train_symmetry_318162",
+      "distill_train_projection_383384",
+      "distill_train_lift_projection_303694",
+      "distill_train_application_183173",
+      "distill_train_eta_803321",
+      "distill_train_solver_arguments_739395"
+    ],
+    "before": {
+      "train": {
+        "sample_count": 9,
+        "verified": 9,
+        "verified_shortening": 0,
+        "source_tokens": 43,
+        "prediction_tokens": 43,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 9,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.23933333333333331,
+        "reconstruction_loss": 0.3037037037037037,
+        "objective": 5.845297438206981,
+        "rewrite_cross_entropy": 0.7832505379173152,
+        "rewrite_expected_cosine_loss": 0.3401290918276744,
+        "rewrite_sample_count": 9
+      },
+      "validation": {
+        "sample_count": 9,
+        "verified": 9,
+        "verified_shortening": 0,
+        "source_tokens": 43,
+        "prediction_tokens": 43,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 9,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.23933333333333331,
+        "reconstruction_loss": 0.3037037037037037,
+        "objective": 5.845297438206981,
+        "rewrite_cross_entropy": 0.7832505379173152,
+        "rewrite_expected_cosine_loss": 0.3401290918276744,
+        "rewrite_sample_count": 9
+      },
+      "canary": {
+        "sample_count": 9,
+        "verified": 9,
+        "verified_shortening": 0,
+        "source_tokens": 43,
+        "prediction_tokens": 43,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 9,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.23933333333333331,
+        "reconstruction_loss": 0.3037037037037037,
+        "objective": 5.845297438206981,
+        "rewrite_cross_entropy": 0.7832505379173152,
+        "rewrite_expected_cosine_loss": 0.3401290918276744,
+        "rewrite_sample_count": 9
+      }
+    },
+    "after": {
+      "train": {
+        "sample_count": 9,
+        "verified": 9,
+        "verified_shortening": 8,
+        "source_tokens": 43,
+        "prediction_tokens": 20,
+        "verified_saved_tokens": 23,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 9,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.4444444444444444,
+        "reconstruction_loss": 0.037037037037037035,
+        "objective": 4.725227103573848,
+        "rewrite_cross_entropy": 0.1310725211602134,
+        "rewrite_expected_cosine_loss": 0.07507167567393333,
+        "rewrite_sample_count": 9
+      },
+      "validation": {
+        "sample_count": 9,
+        "verified": 9,
+        "verified_shortening": 8,
+        "source_tokens": 43,
+        "prediction_tokens": 20,
+        "verified_saved_tokens": 23,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 9,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.4444444444444444,
+        "reconstruction_loss": 0.037037037037037035,
+        "objective": 4.725227103573848,
+        "rewrite_cross_entropy": 0.1310725211602134,
+        "rewrite_expected_cosine_loss": 0.07507167567393333,
+        "rewrite_sample_count": 9
+      },
+      "canary": {
+        "sample_count": 9,
+        "verified": 9,
+        "verified_shortening": 8,
+        "source_tokens": 43,
+        "prediction_tokens": 20,
+        "verified_saved_tokens": 23,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 9,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.4444444444444444,
+        "reconstruction_loss": 0.037037037037037035,
+        "objective": 4.725227103573848,
+        "rewrite_cross_entropy": 0.1310725211602134,
+        "rewrite_expected_cosine_loss": 0.07507167567393333,
+        "rewrite_sample_count": 9
+      }
+    },
+    "zero_weight_ablation": {
+      "train": {
+        "sample_count": 9,
+        "verified": 9,
+        "verified_shortening": 0,
+        "source_tokens": 43,
+        "prediction_tokens": 43,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 9,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.23933333333333331,
+        "reconstruction_loss": 0.3037037037037037,
+        "objective": 5.845297438206981,
+        "rewrite_cross_entropy": 0.7832505379173152,
+        "rewrite_expected_cosine_loss": 0.3401290918276744,
+        "rewrite_sample_count": 9
+      },
+      "validation": {
+        "sample_count": 9,
+        "verified": 9,
+        "verified_shortening": 0,
+        "source_tokens": 43,
+        "prediction_tokens": 43,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 9,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.23933333333333331,
+        "reconstruction_loss": 0.3037037037037037,
+        "objective": 5.845297438206981,
+        "rewrite_cross_entropy": 0.7832505379173152,
+        "rewrite_expected_cosine_loss": 0.3401290918276744,
+        "rewrite_sample_count": 9
+      },
+      "canary": {
+        "sample_count": 9,
+        "verified": 9,
+        "verified_shortening": 0,
+        "source_tokens": 43,
+        "prediction_tokens": 43,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 9,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.23933333333333331,
+        "reconstruction_loss": 0.3037037037037037,
+        "objective": 5.845297438206981,
+        "rewrite_cross_entropy": 0.7832505379173152,
+        "rewrite_expected_cosine_loss": 0.3401290918276744,
+        "rewrite_sample_count": 9
+      }
+    },
+    "holdout": {
+      "holdout": {
+        "sample_count": 13,
+        "verified": 13,
+        "verified_shortening": 11,
+        "source_tokens": 75,
+        "prediction_tokens": 41,
+        "verified_saved_tokens": 34,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 13,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.43076923076923074,
+        "reconstruction_loss": 0.04761904761904762,
+        "objective": 4.698963426828119,
+        "rewrite_cross_entropy": 0.11571369293841118,
+        "rewrite_expected_cosine_loss": 0.06726372652130583,
+        "rewrite_sample_count": 11
+      }
+    },
+    "holdout_zero_weight_ablation": {
+      "holdout": {
+        "sample_count": 13,
+        "verified": 13,
+        "verified_shortening": 0,
+        "source_tokens": 75,
+        "prediction_tokens": 75,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1,
+        "verifier_evaluated_count": 13,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.26146153846153847,
+        "reconstruction_loss": 0.27008547008547007,
+        "objective": 5.585450105184082,
+        "rewrite_cross_entropy": 0.7038547292559801,
+        "rewrite_expected_cosine_loss": 0.3237419842226427,
+        "rewrite_sample_count": 11
+      }
+    },
+    "development_gates": {
+      "validation": {
+        "accepted": true,
+        "status": "semantic_scored",
+        "regressions": {},
+        "objective_delta": 1.1200703346331338
+      },
+      "canary": {
+        "accepted": true,
+        "status": "semantic_scored",
+        "regressions": {},
+        "objective_delta": 1.1200703346331338
+      }
+    },
+    "holdout_gate": {
+      "accepted": true,
+      "status": "semantic_scored",
+      "regressions": {},
+      "objective_delta": 0.8864866783559631
+    },
+    "compile_count": 110,
+    "holdout_accessed_after_freeze": true,
+    "tuning_allowed_after_holdout": false,
+    "checkpoint_promoted": false,
+    "arena_data_used": false,
+    "live_llm_used": false,
+    "official_score": null,
+    "production_memory_used": false,
+    "semantic_family_decontamination": false,
+    "holdout_predictions": [
+      {
+        "id": "distill_holdout_exact_local_76450",
+        "family": "exact_local",
+        "prediction": "theorem distill_holdout_exact_local_76450 (p_76450 : Prop) (h_76450 : p_76450) : p_76450 := by\n  assumption\n",
+        "verified": true,
+        "prediction_tokens": 1,
+        "source_tokens": 2,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_exact_local_76450"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "f8f51701eac723ec901d",
+              "start": 0,
+              "probability": 0.9477703817381549,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.08262764468118239,
+          "rewrite_expected_cosine_loss": 0.05222961826184511,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1,
+          "kl_loss": 0,
+          "length_penalty": 0,
+          "minimality_reward": 1,
+          "nca_loss": 0,
+          "nca_reward": null,
+          "reconstruction_loss": 0,
+          "reward": 1,
+          "reward_loss": 0,
+          "total": 4.619713432926512,
+          "typesafe_reward": null,
+          "verifier_reward": 1
+        }
+      },
+      {
+        "id": "distill_holdout_terminal_alias_48631",
+        "family": "terminal_alias",
+        "prediction": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  assumption\n",
+        "verified": true,
+        "prediction_tokens": 1,
+        "source_tokens": 6,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_terminal_alias_48631"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "4566076209c9638bb646",
+              "start": 0,
+              "probability": 0.9627832438081114,
+              "choices": 3
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.0909828636659973,
+          "rewrite_expected_cosine_loss": 0.020734495634505884,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1,
+          "kl_loss": 0,
+          "length_penalty": 0,
+          "minimality_reward": 1,
+          "nca_loss": 0,
+          "nca_reward": null,
+          "reconstruction_loss": 0,
+          "reward": 1,
+          "reward_loss": 0,
+          "total": 4.617045358991758,
+          "typesafe_reward": null,
+          "verifier_reward": 1
+        }
+      },
+      {
+        "id": "distill_holdout_constructor_pack_16582",
+        "family": "constructor_pack",
+        "prediction": "theorem distill_holdout_constructor_pack_16582 (p_16582 q_16582 : Prop) (h_16582 : p_16582) (k_16582 : q_16582) : p_16582 ∧ q_16582 := by\n  exact ⟨h_16582, k_16582⟩\n",
+        "verified": true,
+        "prediction_tokens": 3,
+        "source_tokens": 5,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_constructor_pack_16582"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "226d10eec59f318c1e9c",
+              "start": 0,
+              "probability": 0.9646618499792708,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.06904579866097918,
+          "rewrite_expected_cosine_loss": 0.0037307477625547533,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1,
+          "kl_loss": 0,
+          "length_penalty": 0,
+          "minimality_reward": 1,
+          "nca_loss": 0,
+          "nca_reward": null,
+          "reconstruction_loss": 0,
+          "reward": 1,
+          "reward_loss": 0,
+          "total": 4.589156982231557,
+          "typesafe_reward": null,
+          "verifier_reward": 1
+        }
+      },
+      {
+        "id": "distill_holdout_symmetry_614767",
+        "family": "symmetry",
+        "prediction": "theorem distill_holdout_symmetry_614767 (p_614767 q_614767 : Nat) (h_614767 : p_614767 = q_614767) : p_614767 = q_614767 := by\n  assumption\n",
+        "verified": true,
+        "prediction_tokens": 1,
+        "source_tokens": 5,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_symmetry_614767"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "7fdd24134d04668d1896",
+              "start": 0,
+              "probability": 0.9722811688181252,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.06368557824716213,
+          "rewrite_expected_cosine_loss": 0.027718831181874758,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1,
+          "kl_loss": 0,
+          "length_penalty": 0,
+          "minimality_reward": 1,
+          "nca_loss": 0,
+          "nca_reward": null,
+          "reconstruction_loss": 0,
+          "reward": 1,
+          "reward_loss": 0,
+          "total": 4.592192591014502,
+          "typesafe_reward": null,
+          "verifier_reward": 1
+        }
+      },
+      {
+        "id": "distill_holdout_projection_240161",
+        "family": "projection",
+        "prediction": "theorem distill_holdout_projection_240161 (p_240161 q_240161 : Prop) : p_240161 ∧ q_240161 → p_240161 := by\n  simp_all\n",
+        "verified": true,
+        "prediction_tokens": 1,
+        "source_tokens": 5,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_projection_240161"
+          ],
+          "axioms": [
+            "propext"
+          ],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "f96a7acf7c2959514765",
+              "start": 0,
+              "probability": 0.6976457104611856,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.36840500243516977,
+          "rewrite_expected_cosine_loss": 0.3023542895388145,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1,
+          "kl_loss": 0,
+          "length_penalty": 0,
+          "minimality_reward": 1,
+          "nca_loss": 0,
+          "nca_reward": null,
+          "reconstruction_loss": 0,
+          "reward": 1,
+          "reward_loss": 0,
+          "total": 4.993034425627439,
+          "typesafe_reward": null,
+          "verifier_reward": 1
+        }
+      },
+      {
+        "id": "distill_holdout_lift_projection_891716",
+        "family": "lift_projection",
+        "prediction": "theorem distill_holdout_lift_projection_891716 (p_891716 : Prop) : PLift p_891716 → p_891716 := by\n  intro h_891716\n  exact h_891716.1\n",
+        "verified": true,
+        "prediction_tokens": 5,
+        "source_tokens": 5,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_lift_projection_891716"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        },
+        "rewrite_policy": {
+          "trace": [],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.27682638596106224,
+          "rewrite_expected_cosine_loss": 0.2327141815012879,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1,
+          "kl_loss": 0,
+          "length_penalty": 0,
+          "minimality_reward": 1,
+          "nca_loss": 0,
+          "nca_reward": null,
+          "reconstruction_loss": 0,
+          "reward": 1,
+          "reward_loss": 0,
+          "total": 4.877081771340197,
+          "typesafe_reward": null,
+          "verifier_reward": 1
+        }
+      },
+      {
+        "id": "distill_holdout_application_530167",
+        "family": "application",
+        "prediction": "theorem distill_holdout_application_530167 (p_530167 q_530167 : Prop) (k_530167 : p_530167 → q_530167) (h_530167 : p_530167) : q_530167 := by\n  exact k_530167 h_530167\n",
+        "verified": true,
+        "prediction_tokens": 3,
+        "source_tokens": 4,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_application_530167"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "39d1342dbcd8121e89fc",
+              "start": 0,
+              "probability": 0.9636967305060361,
+              "choices": 3
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.09027952117661252,
+          "rewrite_expected_cosine_loss": 0.02633292480530372,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1,
+          "kl_loss": 0,
+          "length_penalty": 0,
+          "minimality_reward": 1,
+          "nca_loss": 0,
+          "nca_reward": null,
+          "reconstruction_loss": 0,
+          "reward": 1,
+          "reward_loss": 0,
+          "total": 4.618301466712153,
+          "typesafe_reward": null,
+          "verifier_reward": 1
+        }
+      },
+      {
+        "id": "distill_holdout_eta_884431",
+        "family": "eta",
+        "prediction": "theorem distill_holdout_eta_884431 (p_884431 q_884431 : Prop) (k_884431 : p_884431 → q_884431) : p_884431 → q_884431 := by\n  assumption\n",
+        "verified": true,
+        "prediction_tokens": 1,
+        "source_tokens": 5,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_eta_884431"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "69f0c33a6916cde43b90",
+              "start": 0,
+              "probability": 0.9664383067008654,
+              "choices": 2
+            },
+            {
+              "rule_id": "f8f51701eac723ec901d",
+              "start": 0,
+              "probability": 0.9477703817381549,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "loss": {
+          "cosine_loss": 1,
+          "cosine_similarity": 0,
+          "copy_penalty": 0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.06774013531832493,
+          "rewrite_expected_cosine_loss": 0.009829992379213429,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 0,
+          "kl_loss": 0,
+          "length_penalty": 0,
+          "minimality_reward": 1,
+          "nca_loss": 0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.3333333333333333,
+          "reward": 1,
+          "reward_loss": 0,
+          "total": 5.0316527211714,
+          "typesafe_reward": null,
+          "verifier_reward": 1
+        }
+      },
+      {
+        "id": "distill_holdout_solver_arguments_193804",
+        "family": "solver_arguments",
+        "prediction": "theorem distill_holdout_solver_arguments_193804 (p_193804 : Nat) : 0 + p_193804 = p_193804 := by\n  simp only [Nat.zero_add]\n",
+        "verified": true,
+        "prediction_tokens": 4,
+        "source_tokens": 6,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_solver_arguments_193804"
+          ],
+          "axioms": [
+            "propext"
+          ],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "bbd0ccb7041befe20772",
+              "start": 0,
+              "probability": 0.9633086205787667,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.07005976029543029,
+          "rewrite_expected_cosine_loss": 0,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1,
+          "kl_loss": 0,
+          "length_penalty": 0,
+          "minimality_reward": 1,
+          "nca_loss": 0,
+          "nca_reward": null,
+          "reconstruction_loss": 0,
+          "reward": 1,
+          "reward_loss": 0,
+          "total": 4.588865182149115,
+          "typesafe_reward": null,
+          "verifier_reward": 1
+        }
+      },
+      {
+        "id": "transfer_holdout_composed_application_265235",
+        "family": "composed_application",
+        "prediction": "theorem transfer_holdout_composed_application_265235 (p_265235 q_265235 : Prop) (f_265235 : p_265235 → q_265235) (h_265235 : p_265235) : q_265235 ∧ q_265235 := by\n  constructor\n  case left =>\n    exact f_265235 h_265235\n  case right =>\n    exact f_265235 h_265235\n",
+        "verified": true,
+        "prediction_tokens": 11,
+        "source_tokens": 13,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "transfer_holdout_composed_application_265235"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "39d1342dbcd8121e89fc",
+              "start": 5,
+              "probability": 0.6852731373179765,
+              "choices": 5
+            },
+            {
+              "rule_id": "39d1342dbcd8121e89fc",
+              "start": 2,
+              "probability": 0.6699584933448406,
+              "choices": 3
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": null,
+          "rewrite_expected_cosine_loss": null,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1,
+          "kl_loss": 0,
+          "length_penalty": 0,
+          "minimality_reward": 1,
+          "nca_loss": 0,
+          "nca_reward": null,
+          "reconstruction_loss": 0,
+          "reward": 1,
+          "reward_loss": 0,
+          "total": 4.518805421853684,
+          "typesafe_reward": null,
+          "verifier_reward": 1
+        }
+      },
+      {
+        "id": "transfer_holdout_composed_eta_265235",
+        "family": "composed_eta",
+        "prediction": "theorem transfer_holdout_composed_eta_265235 (b : Bool) (p_265235 q_265235 : Prop) (f_265235 : p_265235 → q_265235) : p_265235 → q_265235 := by\n  cases b\n  case false =>\n    assumption\n  case true =>\n    assumption\n",
+        "verified": true,
+        "prediction_tokens": 8,
+        "source_tokens": 16,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "transfer_holdout_composed_eta_265235"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "69f0c33a6916cde43b90",
+              "start": 5,
+              "probability": 0.697984495671563,
+              "choices": 3
+            },
+            {
+              "rule_id": "69f0c33a6916cde43b90",
+              "start": 2,
+              "probability": 0.4733048201139163,
+              "choices": 3
+            },
+            {
+              "rule_id": "f8f51701eac723ec901d",
+              "start": 4,
+              "probability": 0.48571125002047566,
+              "choices": 3
+            },
+            {
+              "rule_id": "f8f51701eac723ec901d",
+              "start": 2,
+              "probability": 0.6082562714900765,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "loss": {
+          "cosine_loss": 0.9,
+          "cosine_similarity": 0.1,
+          "copy_penalty": 0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": null,
+          "rewrite_expected_cosine_loss": null,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 0,
+          "kl_loss": 0,
+          "length_penalty": 0,
+          "minimality_reward": 1,
+          "nca_loss": 0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.2857142857142857,
+          "reward": 1,
+          "reward_loss": 0,
+          "total": 4.887376850425113,
+          "typesafe_reward": null,
+          "verifier_reward": 1
+        }
+      },
+      {
+        "id": "transfer_holdout_new_equality_context_265235",
+        "family": "new_equality_context",
+        "prediction": "theorem transfer_holdout_new_equality_context_265235 (p_265235 q_265235 : Int) (h_265235 : p_265235 = q_265235) : p_265235 = q_265235 := by\n  assumption\n",
+        "verified": true,
+        "prediction_tokens": 1,
+        "source_tokens": 2,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "transfer_holdout_new_equality_context_265235"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "f8f51701eac723ec901d",
+              "start": 0,
+              "probability": 0.935744089331036,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.09319793188060223,
+          "rewrite_expected_cosine_loss": 0.06425591066896404,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1,
+          "kl_loss": 0,
+          "length_penalty": 0,
+          "minimality_reward": 1,
+          "nca_loss": 0,
+          "nca_reward": null,
+          "reconstruction_loss": 0,
+          "reward": 1,
+          "reward_loss": 0,
+          "total": 4.634492922468423,
+          "typesafe_reward": null,
+          "verifier_reward": 1
+        }
+      },
+      {
+        "id": "transfer_holdout_new_identity_control_265235",
+        "family": "new_identity_control",
+        "prediction": "theorem transfer_holdout_new_identity_control_265235 (p_265235 : Nat) : p_265235 = p_265235 := by\n  rfl\n",
+        "verified": true,
+        "prediction_tokens": 1,
+        "source_tokens": 1,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "transfer_holdout_new_identity_control_265235"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        },
+        "rewrite_policy": {
+          "trace": [],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0,
+          "rewrite_expected_cosine_loss": 0,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1,
+          "kl_loss": 0,
+          "length_penalty": 0,
+          "minimality_reward": 1,
+          "nca_loss": 0,
+          "nca_reward": null,
+          "reconstruction_loss": 0,
+          "reward": 1,
+          "reward_loss": 0,
+          "total": 4.518805421853684,
+          "typesafe_reward": null,
+          "verifier_reward": 1
+        }
+      }
+    ]
+  },
+  "arena": {
+    "schema": "jevops-model-only-arena-rewrite/v1",
+    "name": "CallElimCorrect.substOldPostSubset",
+    "ok": true,
+    "state_sha256": "89017b8108011b0fddd8da7358d8d53ca22865a26e0d3639258c23b517307fdf",
+    "reference_tokens": 391,
+    "reference_compile": {
+      "theorem_ok": true,
+      "kernel_only": true,
+      "kernel_audit": {
+        "schema": "jevops-axiom-audit/v1",
+        "accepted": true,
+        "declarations": [
+          "CallElimCorrect.substOldPostSubset"
+        ],
+        "axioms": [
+          "Quot.sound",
+          "propext"
+        ],
+        "unexpected_axioms": [],
+        "missing_reports": [],
+        "conflicting_reports": [],
+        "native_axioms": [],
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "independent_kernel_verifier_used": false
+      },
+      "selected_version_info": [
+        {
+          "v4.26.0": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ]
+    },
+    "history": [
+      {
+        "commit": "5eecbf7b7e6566a7de02f52467f88c5761683313",
+        "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.substOldPostSubset-392.lean",
+        "body_tokens": 392,
+        "verified": true
+      }
+    ],
+    "evaluations": [
+      {
+        "input": "frozen_original",
+        "source_tokens": 482,
+        "source_verified": true,
+        "metric_gate": {
+          "accepted": true,
+          "status": "semantic_scored",
+          "regressions": {},
+          "objective_delta": 0.004826162790697808
+        },
+        "untrained": {
+          "body_tokens": 482,
+          "verified": true,
+          "verified_shortening": false,
+          "loss": {
+            "cosine_loss": 0.5115000000000001,
+            "cosine_similarity": 0.4885,
+            "copy_penalty": 0,
+            "cross_entropy": 4.343805421853687,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 0,
+            "kl_loss": 0,
+            "length_penalty": 0.1111111111111111,
+            "minimality_reward": 0.8888888888888888,
+            "nca_loss": 0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.05813953488372093,
+            "reward": 1,
+            "reward_loss": 0,
+            "total": 4.583786494205108,
+            "typesafe_reward": null,
+            "verifier_reward": 1
+          },
+          "rewrite_policy": null
+        },
+        "trained": {
+          "body_tokens": 481,
+          "verified": true,
+          "verified_shortening": true,
+          "loss": {
+            "cosine_loss": 0.511,
+            "cosine_similarity": 0.489,
+            "copy_penalty": 0,
+            "cross_entropy": 4.343805421853687,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 0,
+            "kl_loss": 0,
+            "length_penalty": 0.1111111111111111,
+            "minimality_reward": 0.8888888888888888,
+            "nca_loss": 0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.05232558139534884,
+            "reward": 1,
+            "reward_loss": 0,
+            "total": 4.57896033141441,
+            "typesafe_reward": null,
+            "verifier_reward": 1
+          },
+          "rewrite_policy": {
+            "trace": [
+              {
+                "rule_id": "f8f51701eac723ec901d",
+                "start": 27,
+                "probability": 0.5547778049963307,
+                "choices": 2
+              }
+            ],
+            "teacher_used": false,
+            "solver_used": false,
+            "mode": "learned_span_edits",
+            "authority": "model_proposal_requires_Lean"
+          },
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "CallElimCorrect.substOldPostSubset"
+            ],
+            "axioms": [
+              "Quot.sound",
+              "propext"
+            ],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "zero_edit_weights": {
+          "body_tokens": 482,
+          "verified": true,
+          "verified_shortening": false,
+          "loss": {
+            "cosine_loss": 0.5115000000000001,
+            "cosine_similarity": 0.4885,
+            "copy_penalty": 0,
+            "cross_entropy": 4.343805421853687,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 0,
+            "kl_loss": 0,
+            "length_penalty": 0.1111111111111111,
+            "minimality_reward": 0.8888888888888888,
+            "nca_loss": 0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.05813953488372093,
+            "reward": 1,
+            "reward_loss": 0,
+            "total": 4.583786494205108,
+            "typesafe_reward": null,
+            "verifier_reward": 1
+          },
+          "rewrite_policy": {
+            "trace": [],
+            "teacher_used": false,
+            "solver_used": false,
+            "mode": "learned_span_edits",
+            "authority": "model_proposal_requires_Lean"
+          }
+        }
+      },
+      {
+        "input": "historical_best",
+        "source_tokens": 392,
+        "source_verified": true,
+        "metric_gate": {
+          "accepted": true,
+          "status": "semantic_scored",
+          "regressions": {},
+          "objective_delta": 0.005082975460123151
+        },
+        "untrained": {
+          "body_tokens": 392,
+          "verified": true,
+          "verified_shortening": false,
+          "loss": {
+            "cosine_loss": 0.5005,
+            "cosine_similarity": 0.4995,
+            "copy_penalty": 0,
+            "cross_entropy": 4.343805421853687,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 0,
+            "kl_loss": 0,
+            "length_penalty": 0,
+            "minimality_reward": 1,
+            "nca_loss": 0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.006134969325153374,
+            "reward": 1,
+            "reward_loss": 0,
+            "total": 4.52388839731381,
+            "typesafe_reward": null,
+            "verifier_reward": 1
+          },
+          "rewrite_policy": null
+        },
+        "trained": {
+          "body_tokens": 391,
+          "verified": true,
+          "verified_shortening": true,
+          "loss": {
+            "cosine_loss": 0.5,
+            "cosine_similarity": 0.5,
+            "copy_penalty": 0,
+            "cross_entropy": 4.343805421853687,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 1,
+            "kl_loss": 0,
+            "length_penalty": 0,
+            "minimality_reward": 1,
+            "nca_loss": 0,
+            "nca_reward": null,
+            "reconstruction_loss": 0,
+            "reward": 1,
+            "reward_loss": 0,
+            "total": 4.518805421853687,
+            "typesafe_reward": null,
+            "verifier_reward": 1
+          },
+          "rewrite_policy": {
+            "trace": [
+              {
+                "rule_id": "f8f51701eac723ec901d",
+                "start": 18,
+                "probability": 0.5547778049963307,
+                "choices": 2
+              }
+            ],
+            "teacher_used": false,
+            "solver_used": false,
+            "mode": "learned_span_edits",
+            "authority": "model_proposal_requires_Lean"
+          },
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "CallElimCorrect.substOldPostSubset"
+            ],
+            "axioms": [
+              "Quot.sound",
+              "propext"
+            ],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "zero_edit_weights": {
+          "body_tokens": 392,
+          "verified": true,
+          "verified_shortening": false,
+          "loss": {
+            "cosine_loss": 0.5005,
+            "cosine_similarity": 0.4995,
+            "copy_penalty": 0,
+            "cross_entropy": 4.343805421853687,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 0,
+            "kl_loss": 0,
+            "length_penalty": 0,
+            "minimality_reward": 1,
+            "nca_loss": 0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.006134969325153374,
+            "reward": 1,
+            "reward_loss": 0,
+            "total": 4.52388839731381,
+            "typesafe_reward": null,
+            "verifier_reward": 1
+          },
+          "rewrite_policy": {
+            "trace": [],
+            "teacher_used": false,
+            "solver_used": false,
+            "mode": "learned_span_edits",
+            "authority": "model_proposal_requires_Lean"
+          }
+        }
+      }
+    ],
+    "unique_compile_count": 7,
+    "metric_gates_accepted": true,
+    "router_search_used": false,
+    "teacher_at_inference": false,
+    "training_enabled": false,
+    "checkpoint_promoted": false,
+    "production_memory_used": false,
+    "official_score": null,
+    "scope": "frozen_model_local_regression_not_unseen_arena_holdout",
+    "frozen_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804"
+  }
+}

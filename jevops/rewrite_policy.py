@@ -233,7 +233,10 @@ def _cosine_cost(body: str, target: str) -> float:
 def loss_and_gradient(weights: Mapping[str, float], rows: Sequence[Mapping[str, Any]], target: str, *,
                       temperature: float = 1.0, smoothing: float = 0.0,
                       cosine_weight: float = .35) -> dict[str, Any] | None:
-    labels = [i for i, row in enumerate(rows) if row["body"] == target]
+    # Blank lines/trailing spaces carry no tactic tokens in this restricted
+    # comment/string-free grammar. IR rendering may remove those trivia.
+    normalize = lambda text: "\n".join(line.rstrip() for line in text.splitlines() if line.strip())
+    labels = [i for i, row in enumerate(rows) if normalize(row["body"]) == normalize(target)]
     if len(labels) != 1:
         return None  # Unsupported targets never become identity labels.
     label = labels[0]

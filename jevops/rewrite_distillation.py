@@ -28,11 +28,14 @@ def digest(value: Any) -> str:
     return hashlib.sha256(json.dumps(value, sort_keys=True).encode()).hexdigest()
 
 
-def curriculum_rows(seed: int = 20260923) -> list[dict[str, Any]]:
+def curriculum_rows(seed: int = 20260923, *, extended: bool = False) -> list[dict[str, Any]]:
     rows = []
     for split_index, split in enumerate(("train", "validation", "canary", "holdout")):
         rng = random.Random(17 if split == "train" else seed + split_index)
-        for family in ("exact_local", "terminal_alias", "constructor_pack", "symmetry", "projection", "lift_projection"):
+        families = ("exact_local", "terminal_alias", "constructor_pack", "symmetry", "projection", "lift_projection")
+        if extended:
+            families += ("application", "eta", "solver_arguments")
+        for family in families:
             n = rng.randrange(10**6)
             p, q, h, k, alias = (f"{word}_{n}" for word in ("p", "q", "h", "k", "alias"))
             if family == "exact_local":
@@ -52,9 +55,18 @@ def curriculum_rows(seed: int = 20260923) -> list[dict[str, Any]]:
             elif family == "projection":
                 header = f"({p} {q} : Prop) : {p} ∧ {q} → {p}"
                 body, methods = f"intro {h}\nexact {h}.1", ["logic_simp"]
-            else:
+            elif family == "lift_projection":
                 header = f"({p} : Prop) : PLift {p} → {p}"
                 body, methods = f"intro {h}\nexact {h}.1", ["logic_simp"]
+            elif family == "application":
+                header = f"({p} {q} : Prop) ({k} : {p} → {q}) ({h} : {p}) : {q}"
+                body, methods = f"apply {k}\nexact {h}", ["application_reduce"]
+            elif family == "eta":
+                header = f"({p} {q} : Prop) ({k} : {p} → {q}) : {p} → {q}"
+                body, methods = f"intro {h}\nexact {k} {h}", ["eta_reduce"]
+            else:
+                header = f"({p} : Nat) : 0 + {p} = {p}"
+                body, methods = "simp only [Nat.zero_add, Nat.add_zero]", ["solver_argument_reduce"]
             name = f"distill_{split}_{family}_{n}"
             rows.append({"id": name, "split": split, "family": family, "strategies": methods,
                          "source": f"theorem {name} {header} := by\n" + textwrap.indent(body, "  ") + "\n"})
@@ -79,6 +91,26 @@ def _validate_rows(rows: Sequence[Mapping[str, Any]]) -> None:
         sources.add(identity)
     if not any(row["split"] == "train" for row in rows):
         raise ValueError("training split is empty")
+
+
+def compositional_holdout_rows(seed: int = 20260924) -> list[dict[str, Any]]:
+    """New proof layouts/domains, scored after freeze; not new rule training."""
+    n = random.Random(seed).randrange(10**6)
+    p, q, h, f = (f"{s}_{n}" for s in ("p", "q", "h", "f"))
+    fixtures = [
+        ("composed_application", f"({p} {q} : Prop) ({f} : {p} → {q}) ({h} : {p}) : {q} ∧ {q}",
+         f"constructor\ncase left =>\n  apply {f}\n  exact {h}\ncase right =>\n  apply {f}\n  exact {h}",
+         ["application_reduce", "application_reduce"]),
+        ("composed_eta", f"(b : Bool) ({p} {q} : Prop) ({f} : {p} → {q}) : {p} → {q}",
+         f"cases b\ncase false =>\n  intro {h}\n  exact {f} {h}\ncase true =>\n  intro {h}\n  exact {f} {h}",
+         ["eta_reduce", "eta_reduce"]),
+        ("new_equality_context", f"({p} {q} : Int) ({h} : {p} = {q}) : {p} = {q}",
+         f"exact {h}", ["rewrite_transport"]),
+        ("new_identity_control", f"({p} : Nat) : {p} = {p}", "rfl", ["kernel_reduce"]),
+    ]
+    return [{"id": f"transfer_holdout_{family}_{n}", "split": "holdout", "family": family,
+             "strategies": methods, "source": f"theorem transfer_holdout_{family}_{n} {header} := by\n"
+             + textwrap.indent(body, "  ") + "\n"} for family, header, body, methods in fixtures]
 
 
 def verified(receipt: Mapping[str, Any]) -> bool:
@@ -135,13 +167,18 @@ def _aggregate(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
 
 def run_distillation(compile_fn: Callable[..., Mapping[str, Any]], *, rows: Sequence[Mapping[str, Any]] | None = None,
                      seed: int = 20260923, epochs: int = 40, max_compiles: int = 192,
+                     extended: bool = False, freeze_reconstruction_heads: bool = False,
+                     compositional_holdout: bool = False,
                      event: Callable[[Mapping[str, Any]], Any] | None = None) -> dict[str, Any]:
     if not 1 <= epochs <= 200 or not 1 <= max_compiles <= 512:
         raise ValueError("invalid distillation budget")
-    rows = list(curriculum_rows(seed) if rows is None else rows)
+    rows = list(curriculum_rows(seed, extended=extended) if rows is None else rows)
+    if compositional_holdout:
+        rows.extend(compositional_holdout_rows(seed + 100))
     _validate_rows(rows)
     config = AutoencoderConfig(train_rewrite_policy=True, learning_rate=.15, warmup_steps=0,
-                               decay_steps=1000, rewrite_max_edits=4, seed=17)
+                               decay_steps=1000, rewrite_max_edits=4, seed=17,
+                               freeze_reconstruction_heads=freeze_reconstruction_heads)
     model = LeanIRAutoencoder(config=config)
     cache, attempts, events = {}, [], []
 
@@ -210,6 +247,8 @@ def run_distillation(compile_fn: Callable[..., Mapping[str, Any]], *, rows: Sequ
                 for split in dict.fromkeys(r["split"] for r in selected)}
 
     before = evaluate(development, model)
+    reconstruction_keys = ("vocab", "op_bias", "transition", "feature_op", "latent_bias", "feature_latent")
+    base_heads = {k: model.to_dict()[k] for k in reconstruction_keys}
     notify("training", epochs=epochs, train_count=len(train), templates=grammar["template_count"])
     history = []
     for epoch in range(epochs):
@@ -217,6 +256,9 @@ def run_distillation(compile_fn: Callable[..., Mapping[str, Any]], *, rows: Sequ
         if epoch in {0, epochs//2, epochs-1}:
             history.append({"epoch": epoch+1, **report})
     frozen = model.to_dict()
+    base_heads_unchanged = base_heads == {k: frozen[k] for k in reconstruction_keys}
+    if freeze_reconstruction_heads:
+        assert base_heads_unchanged, "frozen reconstruction parameters changed"
     after = evaluate(development, model)
     gates = {split: canary_gate(before[split], after[split], max_cross_entropy_regression=.02)
              for split in ("validation", "canary") if split in before}
@@ -242,6 +284,10 @@ def run_distillation(compile_fn: Callable[..., Mapping[str, Any]], *, rows: Sequ
     return {"schema": "jevops-verified-rewrite-distillation/v1",
             "ok": gates_accepted and holdout_valid and (not holdout or holdout_gate["accepted"]),
             "scope": "synthetic_structural_transfer_not_unseen_semantic_families_or_arena_score",
+            "split_policy": "content_disjoint_alpha_renamed_shared_structural_families",
+            "semantic_family_decontamination": False,
+            "extended_curriculum": extended, "reconstruction_heads_unchanged": base_heads_unchanged,
+            "compositional_holdout": compositional_holdout,
             "epochs": epochs, "fixture_seed": seed, "config": config.to_dict(), "grammar": grammar,
             "train_ids": [e.sample_id for e in train], "manifest": rows, "manifest_sha256": digest(rows),
             "before": before, "after": after, "zero_weight_ablation": ablation,
@@ -262,12 +308,17 @@ def main() -> int:
     parser.add_argument("--lake", action="store_true")
     parser.add_argument("--epochs", type=int, default=40)
     parser.add_argument("--seed", type=int, default=20260923)
+    parser.add_argument("--extended", action="store_true", help="include application, eta and solver-list teachers")
+    parser.add_argument("--compositional-holdout", action="store_true", help="add held-out branch compositions and new domain/control fixtures")
+    parser.add_argument("--freeze-reconstruction-heads", action="store_true", help="train only rewrite selection; keep operation and latent parameters fixed")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if args.output.exists():
         parser.error("output exists; choose a new receipt path")
     result = run_distillation(_lean_compiler(project_root=args.project_root.resolve(), use_lake=args.lake,
                                             kernel_only=True, timeout=30), epochs=args.epochs, seed=args.seed,
+                              extended=args.extended, freeze_reconstruction_heads=args.freeze_reconstruction_heads,
+                              compositional_holdout=args.compositional_holdout,
                               event=lambda row: print(json.dumps(row), flush=True))
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open("x", encoding="utf-8") as handle:

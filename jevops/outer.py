@@ -5244,6 +5244,52 @@ def text_or(value: Any, default: str = "") -> str:
     return str(value or default)
 
 
+def str_or_none(value: Any) -> Optional[str]:
+    """None stays None; otherwise str(value)."""
+
+    return None if value is None else str(value)
+
+
+def as_dict(value: Any, default: Any = None) -> Any:
+    """value when it is a dict, else default."""
+
+    return value if isinstance(value, dict) else default
+
+
+def path_or(value: Any, default: Any = None, *, factory: Optional[Callable[[], Any]] = None) -> Any:
+    """Path(value) unless value is None, else factory() or default."""
+
+    if value is not None:
+        return Path(value)
+    if factory is not None:
+        return factory()
+    return default
+
+
+def as_mapping(value: Any, default: Any = None) -> Any:
+    """value when it is a Mapping, else default."""
+
+    return value if isinstance(value, Mapping) else default
+
+
+def reason_text(value: Any) -> str:
+    """exc_head for exceptions, otherwise text_or."""
+
+    return exc_head(value) if isinstance(value, BaseException) else text_or(value)
+
+
+def str_map(mapping: Any) -> dict[str, str]:
+    """Stringify both keys and values of a mapping."""
+
+    return {text_or(key): text_or(item) for key, item in dict(mapping or {}).items()}
+
+
+def str_keys(mapping: Any) -> dict[str, Any]:
+    """Stringify mapping keys; leave values as-is."""
+
+    return {text_or(key): value for key, value in dict(mapping or {}).items()}
+
+
 def count_hits(
     text: str,
     needles: Sequence[Any],

@@ -62,6 +62,8 @@ def test_edit_ce_and_expected_cosine_gradient_matches_finite_differences(tempera
         minus = objective({**weights, key: weights[key]-1e-5})["total"]
         assert result["gradient"][key] == pytest.approx((plus-minus)/2e-5, abs=1e-7)
     assert loss_and_gradient(weights, rows, "rfl") is None
+    with_trivia = [{**row, "body": "\n" + row["body"] + "\n\n"} for row in rows]
+    assert loss_and_gradient(weights, with_trivia, "assumption") is not None
 
 
 def test_learned_replacement_roundtrip_inference_is_read_only_and_ablatable():
@@ -95,6 +97,27 @@ def test_edit_cross_entropy_stays_correct_when_a_probability_underflows():
     result = loss_and_gradient({"bias": -1000.0}, rows, "assumption", cosine_weight=0)
     assert result["cross_entropy"] == 1000.0
     assert result["gradient"]["bias"] == -1.0
+
+
+def test_edit_only_training_preserves_all_reconstruction_weights_and_ce():
+    source, target = pair()
+    config = AutoencoderConfig(train_rewrite_policy=True, freeze_reconstruction_heads=True, warmup_steps=0)
+    model = LeanIRAutoencoder(config=config)
+    row = example(source, target)
+    model.prepare_rewrite_training([row])
+    before = model.to_dict()
+    ce = model._sequence_loss(row)
+    for _ in range(10):
+        report = model.train_example(row)
+        assert report["gradient_norm"] == report["latent_gradient_norm"] == 0
+    for key in ("op_bias", "transition", "feature_op", "latent_bias", "feature_latent", "vocab"):
+        assert model.to_dict()[key] == before[key]
+    assert model._sequence_loss(row) == ce
+    assert model.predict_ir(source)["ops"] == [{"op": "assumption"}]
+    assert model.rewrite_objective(row)["cross_entropy"] < .5
+    assert AutoencoderConfig(**config.to_dict()).freeze_reconstruction_heads
+    with pytest.raises(ValueError, match="requires rewrite"):
+        AutoencoderConfig(freeze_reconstruction_heads=True)
 
 
 def test_editor_preserves_case_layout_and_never_mutates_the_statement():

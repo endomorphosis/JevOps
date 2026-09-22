@@ -148,8 +148,11 @@ This complements existing K-maps, Quine–McCluskey, BDD support reduction and
 entailed-literal/equality analysis. It is not general program invariant inference.
 No transition relation is silently inferred from a Lean theorem statement, and
 no goal consequence is inserted into the proof as an assumption. Infinite-state
-abstract interpretation, polyhedral/Farkas certificates, polynomial ideals and
-CEGAR/IC3 require separate representations and certificate reconstruction.
+abstract interpretation, polynomial ideals and CEGAR/IC3 require separate
+representations and certificate reconstruction. A subsequent
+[certified-refactoring implementation](CERTIFIED_REFACTORING.md) adds a bounded
+exact Farkas search and guarded affine integer invariants with Lean obligations;
+it is not a complete polyhedral or general program-analysis engine.
 
 ```python
 from jevops.logic_ir import parse_formula as P
@@ -166,7 +169,8 @@ assert report["redundant_indices"] == [2]
 
 ## 4. Refactoring coverage
 
-There are now 28 catalog families. The full machine-readable list is
+There are now 33 catalog families, including terminal alias, symmetry,
+application/eta and balanced solver-argument reduction. The full machine-readable list is
 `jevops.logic_refactor.reduction_catalog()`, including environment and trust notes.
 
 | Area | Available methods | What remains bounded/conditional |
@@ -216,8 +220,15 @@ its reported compression does not establish our small autoencoder's capability.
 New candidates enter the existing compiler-gated teacher pipeline. CE, cosine,
 binding BCE, raw predictions and search winners remain separate. Failed proofs,
 unproved invariants and Python e-graph equivalences are never proof targets.
-Canaries and holdouts must stay outside teacher collection. The new algorithms
+Canaries and holdouts must stay outside training-teacher collection. The new algorithms
 do not constitute NCA training or a demonstrated learned tactic synthesizer.
+
+The [rewrite-distillation follow-up](REWRITE_DISTILLATION.md) now implements a
+learned span-copy editor and finite GF(2) affine-invariant mining. It measures
+model-only 482→481 and historical-seed 392→391 arena compression, separately
+from search. The original-input CE gate fails, so the checkpoint is not promoted.
+The deterministic experiment in section 7 below remains a separate historical
+result; the new editor does not beat its 391-token best.
 
 The IR recognizes 25 additional operations used by the catalog. Loading a saved
 model now preserves its saved vocabulary: expanding a softmax vocabulary changes
