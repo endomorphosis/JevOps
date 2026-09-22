@@ -2,8 +2,9 @@
 
 TypeSafe / Jev **kernel**, split from Lean Refactor Arena and other papers.
 
-Jev is a **gate**, not a generator. This package does **not** write Lean.
-Lake (or another oracle) lives in the implementation that *uses* the kernel.
+The Jev kernel is a **gate**, not a proof authority. Optional refactoring and
+autoencoder modules propose Lean candidates; only the consuming Lean/Lake
+verifier can admit them. The generic kernel keeps that verifier injectable.
 
 ## Layout
 
@@ -32,6 +33,8 @@ Lake (or another oracle) lives in the implementation that *uses* the kernel.
 | `jevops.tactics` | Lean tactic analysis plus explicit multi-armed-bandit action tactic |
 | `jevops.autoencoder` | Canonical Lean IR, sparse trainable autoencoder, verifier-gated rewards |
 | `jevops.autoencoder_training` | Cross-entropy/cosine training, LR schedule, canary/holdout protocol |
+| `jevops.logic_ir` | Bounded propositional IR, K-map/Quine–McCluskey minimization, BDDs and invariant obligations |
+| `jevops.logic_refactor` | Compiler-gated logic/arithmetic/structural reduction catalog and rotating sweeps |
 | `jevops.program` | Closed IR compile/parse, work-ops execute (lake/board via hooks) |
 | `jevops.repair` | Diagnose/heal grid, tape, stack, program_state |
 | `jevops.tools` | TypeSafe tool catalog, MCP++ describe, subloops, KG |
@@ -78,6 +81,9 @@ Grok skills live in `skills/` (canonical). LRA keeps thin `lra-*` redirects.
 | `jevops-plan` | `jevops.plan` |
 
 ## Consumers
+
+See [Logic reductions](LOGIC_REDUCTIONS.md) for the reduction catalog, limits,
+proof obligations, and integration with router/autoencoder training.
 
 Lean Refactor Arena harness re-exports these as `nca_kernel`, `nca_plan`, `typesafe_nca` cell helpers, etc.
 Set `JEVOPS_CAS_DIR` for L2 CAS (LRA sets it to `evidence/canaries/nca-cas`).
@@ -182,6 +188,13 @@ candidate's `candidate_target_loss`, so a perfect target match cannot masquerade
 as a perfect model prediction. Results also expose `model_body_tokens_after`
 separately from the verified-search `best_body_tokens`.
 
+The search performs two bounded composition passes. The first crossovers the
+current round's verified teachers; when that pool matches or improves the
+previous elite, a second `max_elite_composed_candidates` pass composes the new
+router/hammer/local/model teachers with older verified teachers. Derived
+composition and IR-crossover rows are excluded as parents in the second pass,
+and every candidate remains compiler/Lake-gated with parent provenance.
+
 ```python
 from jevops.router_tuning import RouterTuningConfig, tune_autoencoder_with_router
 
@@ -264,6 +277,46 @@ keeps the pre-shrink result in
 shortening to pass Lean before it can win. The current local proxy is
 `0.7797619047619048` versus the frozen pre-shrink `0.125`; neither is an
 official Arena score.
+
+For an isolated check of **learned** shortening rather than search success, run:
+
+```bash
+python -m jevops.training_probe --output /tmp/jevops-training-probe-new.json
+```
+
+This trains a fresh model on four compiler-checked synthetic deletion pairs,
+then evaluates its actual rendered predictions on two held-out development
+fixtures, a live-binding negative control, and eight randomized dependency
+fixtures. It never uses arena data or production memory. The receipt includes
+CE/cosine, compiler outcomes, the checkpoint, and separate **raw** and
+dependency-guarded predictions. The raw model still deletes necessary bindings;
+the conservative guard restores prerequisites or suppresses uncertain edits.
+That is static protection, not learned dependency reasoning or evidence of
+arena generalization. That is the default legacy experiment. To train the
+opt-in binding keep/delete head on a balanced curriculum, run:
+
+```bash
+python -m jevops.training_probe --curriculum balanced --train-binding-policy \
+  --output /tmp/jevops-binding-probe-new.json
+```
+
+This learns binary-classifier weights over **symbolic source dependency
+features**. It reports binding BCE separately from sequence CE/cosine, along
+with raw-head, guarded and old-decoder ablations. On 11 development fixtures,
+the raw head produced four shorter, compiler-valid proofs without guard
+restoration; the same-weights old decoder shortened none. Unsupported proof
+structure is preserved, not compressed. That checkpoint's arena search tied
+392 tokens; it did not improve the previous best and is not promoted. The router
+can opt in with `RouterTuningConfig(train_binding_policy=True)` or
+`--train-binding-policy`; raw proposals still require Lean admission. Canary
+checks also reject binding-loss, verification and metric-coverage regressions.
+See [validation details](LOGIC_REDUCTIONS.md).
+
+For the expanded 28-family reduction catalog, bounded equality saturation,
+Houdini invariant inference, proof slicing and strict axiom-audit mode, see
+[kernel/refactoring research and implementation](KERNEL_REFACTORING_RESEARCH.md).
+The report distinguishes implemented algorithms, optional Lean/Mathlib solver
+proposals and remaining typed-expression/large-scale research work.
 
 ## Action bandits and the neurosymbolic CA
 

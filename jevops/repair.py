@@ -586,6 +586,39 @@ def align_generated(
     return flatten_fn(reference, match_fn(reference, extract_fn(text)))
 
 
+def bind_align(
+    reference: str,
+    *,
+    extract_fn: Callable[[str], str],
+    match_fn: Callable[[str, str], str],
+    flatten_fn: Callable[[str, str], str],
+) -> Callable[[str], str]:
+    """align_generated bound to a reference. Generation stays injected."""
+
+    def _align(text: str) -> str:
+        return align_generated(
+            reference,
+            text,
+            extract_fn=extract_fn,
+            match_fn=match_fn,
+            flatten_fn=flatten_fn,
+        )
+
+    return _align
+
+
+def flatten_matched(
+    match_fn: Callable[[str, str], str],
+    flatten_fn: Callable[[str, str], str],
+) -> Callable[[str, str], str]:
+    """flatten(keep, match(keep, filled)). Used for denoise keep-best."""
+
+    def _flatten(keep: str, filled: str) -> str:
+        return flatten_fn(keep, match_fn(keep, filled))
+
+    return _flatten
+
+
 def align_then_compile(
     text: str,
     reference: str,

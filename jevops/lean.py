@@ -2339,11 +2339,16 @@ def pack_compile_view(
     """Lake compile view. Errors/sorry are already scoped. Never an Arena score."""
 
     timed_out = bool(receipt.get("timed_out"))
-    theorem_ok = not timed_out and not list(errors or ()) and not sorry
+    # Missing JSON diagnostics are not positive evidence: process launch,
+    # import, and parser failures can produce no parseable Lean error rows.
+    exit_code = receipt.get("exit_code")
+    process_ok = type(exit_code) is int and exit_code == 0 and not timed_out
+    theorem_ok = (process_ok
+                  and not receipt.get("error") and not list(errors or ()) and not sorry)
     out = {
         "ok": bool(theorem_ok),
         "theorem_ok": bool(theorem_ok),
-        "module_exit_0": receipt.get("exit_code") == 0 and not timed_out,
+        "module_exit_0": process_ok,
         "exit_code": receipt.get("exit_code"),
         "wall_ms": receipt.get("wall_ms"),
         "error": receipt.get("error"),
@@ -2354,6 +2359,8 @@ def pack_compile_view(
         "arena_score": None,
     }
     out.update(dict(extra or {}))
+    # Diagnostic overlays must never override the admission decision.
+    out["ok"] = out["theorem_ok"] = bool(theorem_ok)
     out["arena_score"] = None
     return out
 
@@ -3848,44 +3855,82 @@ def compile_keepbest(
     span_fn: Callable[[str, str, str], tuple[int, int]],
     line_in_span_fn: Callable[..., bool],
     extra_fn: Callable[..., Mapping[str, Any]],
+    audit_declaration: str = "",
 ) -> dict[str, Any]:
     """Putnam vs repo keep-best compile. Lake is the oracle. Never PATH lean."""
 
     record = dict(record)
+    audit_suffix = ""
+    if audit_declaration:
+        from .proof_trust import axiom_audit_command
+
+        audit_suffix = axiom_audit_command(audit_declaration)
+    requested_versions = list(record.get("version_info") or ())
     record["version_info"] = list(pins_fn(record) or ())
     if not record["version_info"]:
         return dict(closed_fn(token_count=token_fn(tactics)))
+
+    def aggregate(views: list[dict[str, Any]]) -> dict[str, Any]:
+        complete = len(views) == len(record["version_info"])
+        accepted = complete and bool(views) and all(v.get("theorem_ok") for v in views)
+        out = dict(next((v for v in views if not v.get("theorem_ok")), views[0] if views else
+                        closed_fn(token_count=token_fn(tactics))))
+        out.update(ok=accepted, theorem_ok=accepted, all_tags_ok=accepted,
+                   checked_tag_count=len(views), expected_tag_count=len(record["version_info"]),
+                   tag_results=views, requested_version_info=requested_versions,
+                   selected_version_info=record["version_info"],
+                   all_requested_tags_ok=accepted and requested_versions == record["version_info"])
+        if not complete:
+            out["error"] = out.get("error") or "incomplete_tag_receipts"
+        return out
+
     if str(record.get("source") or "") == putnam_source:
         patched = patch_fn(record, tactics, statement=statement_fn(record))
+        if audit_suffix:
+            patched = {**patched, "src": str(patched["src"]) + audit_suffix}
         started = now_fn()
-        receipt = _first_receipt_dict(compile_fn(patched))
-        stdout = str(receipt.get("stdout") or "")
-        errors = list(parse_errors_fn(stdout) or ())
-        return dict(
-            pack_fn(
+        views = []
+        for raw in compile_fn(patched):
+            receipt = _first_receipt_dict([raw])
+            stdout = str(receipt.get("stdout") or "")
+            errors = list(parse_errors_fn(stdout) or ())
+            view = dict(pack_fn(
                 receipt,
                 token_count=token_fn(tactics),
                 errors=errors,
                 sorry=bool(sorry_fn(stdout, 1, 10**9)),
-                extra={"compile_wall_ms_outer": elapsed_fn(started)},
-            )
-        )
+                extra={"compile_wall_ms_outer": elapsed_fn(started),
+                       "lean_tag": receipt.get("lean_tag"), "argv": receipt.get("argv")},
+            ))
+            if audit_declaration:
+                from .proof_trust import audit_axioms
+
+                view["kernel_audit"] = audit_axioms(stdout, [audit_declaration])
+                view["ok"] = view["theorem_ok"] = bool(view.get("theorem_ok") and view["kernel_audit"]["accepted"])
+            views.append(view)
+        return aggregate(views)
     dest = dest_fn(record)
     write_bytes_fn(dest, restore)
     replacement = candidate_source_fn(record, tactics)
     original = restore.decode("utf-8") if isinstance(restore, (bytes, bytearray)) else str(restore)
     start_line, end_line = span_fn(original, str(record["src"]), replacement)
-    splice_fn(dest, str(record["src"]), replacement)
-    started = now_fn()
-    receipts = compile_fn(record)
-    write_bytes_fn(dest, restore)
-    receipt = _first_receipt_dict(receipts)
-    stdout = str(receipt.get("stdout") or "")
-    errors = list(parse_errors_fn(stdout) or ())
-    errors_in = [item for item in errors if line_in_span_fn(item.get("pos"), start_line, end_line)]
-    errors_out = [item for item in errors if not line_in_span_fn(item.get("pos"), start_line, end_line)]
-    return dict(
-        pack_fn(
+    try:
+        splice_fn(dest, str(record["src"]), replacement)
+        if audit_suffix:
+            write_bytes_fn(dest, Path(dest).read_bytes() + audit_suffix.encode("utf-8"))
+        started = now_fn()
+        receipts = compile_fn(record)
+    finally:
+        # Failed or interrupted compilation must not contaminate later runs.
+        write_bytes_fn(dest, restore)
+    views = []
+    for raw in receipts:
+        receipt = _first_receipt_dict([raw])
+        stdout = str(receipt.get("stdout") or "")
+        errors = list(parse_errors_fn(stdout) or ())
+        errors_in = [item for item in errors if line_in_span_fn(item.get("pos"), start_line, end_line)]
+        errors_out = [item for item in errors if not line_in_span_fn(item.get("pos"), start_line, end_line)]
+        view = dict(pack_fn(
             receipt,
             token_count=token_fn(tactics),
             errors=errors_in or errors_out,
@@ -3900,8 +3945,14 @@ def compile_keepbest(
                 errors_out,
                 elapsed_fn(started),
             ),
-        )
-    )
+        ))
+        if audit_declaration:
+            from .proof_trust import audit_axioms
+
+            view["kernel_audit"] = audit_axioms(stdout, [audit_declaration])
+            view["ok"] = view["theorem_ok"] = bool(view.get("theorem_ok") and view["kernel_audit"]["accepted"])
+        views.append(view)
+    return aggregate(views)
 
 
 def collect_warmup_problem(

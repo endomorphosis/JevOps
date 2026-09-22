@@ -34,6 +34,7 @@ from typing import Any, Callable, Mapping, MutableMapping, Optional, Sequence
 
 from . import autoencoder as ae
 from . import tactics as tactic_ops
+from . import logic_refactor
 from .autoencoder_training import (
     AutoencoderConfig,
     LeanIRAutoencoder,
@@ -84,10 +85,12 @@ ROUTER_STRATEGIES = (
     "closed_edits",
     "shortcut_closers",
     "goal_directed",
+    "hypothesis_refactor",
     "hammer_sweep",
     "compose_verified",
     "ir_crossover",
     "pca_mca_cross",
+    *logic_refactor.LOGIC_STRATEGIES,
 )
 _ROUTER_STRATEGY_SET = frozenset(ROUTER_STRATEGIES)
 _MCA_FAMILIES = (
@@ -136,13 +139,18 @@ class RouterTuningConfig:
     n_variations: int = 8
     strategy_cap: int = 16
     hammer_sweep: bool = True
+    logic_reductions: bool = True
+    max_logic_candidates: int = 12
     max_hammer_candidates: int = 24
     max_composed_candidates: int = 12
+    max_elite_composed_candidates: int = 8
     max_composition_sources: int = 6
     teacher_replay: bool = True
     max_replay_teachers: int = 8
     seed: int = 17
     train: bool = True
+    train_binding_policy: bool = False
+    train_rewrite_policy: bool = False
     strict_router: bool = True
     design_hint: Mapping[str, Any] = field(default_factory=dict)
     router_kwargs: Mapping[str, Any] = field(default_factory=dict)
@@ -160,15 +168,20 @@ class RouterTuningConfig:
             "max_prompt_chars",
             "n_variations",
             "strategy_cap",
+            "max_logic_candidates",
             "max_hammer_candidates",
             "max_composed_candidates",
+            "max_elite_composed_candidates",
             "max_composition_sources",
             "max_replay_teachers",
         ):
             object.__setattr__(self, name, max(1, int(getattr(self, name))))
         object.__setattr__(self, "seed", int(self.seed))
         object.__setattr__(self, "hammer_sweep", bool(self.hammer_sweep))
+        object.__setattr__(self, "logic_reductions", bool(self.logic_reductions))
         object.__setattr__(self, "teacher_replay", bool(self.teacher_replay))
+        object.__setattr__(self, "train_binding_policy", bool(self.train_binding_policy))
+        object.__setattr__(self, "train_rewrite_policy", bool(self.train_rewrite_policy))
         object.__setattr__(self, "design_hint", dict(self.design_hint or {}))
         object.__setattr__(self, "router_kwargs", dict(self.router_kwargs or {}))
 
@@ -186,10 +199,15 @@ class RouterTuningConfig:
             "n_variations": self.n_variations,
             "strategy_cap": self.strategy_cap,
             "hammer_sweep": self.hammer_sweep,
+            "logic_reductions": self.logic_reductions,
+            "max_logic_candidates": self.max_logic_candidates,
             "max_hammer_candidates": self.max_hammer_candidates,
             "max_composed_candidates": self.max_composed_candidates,
+            "max_elite_composed_candidates": self.max_elite_composed_candidates,
             "max_composition_sources": self.max_composition_sources,
             "teacher_replay": self.teacher_replay,
+            "train_binding_policy": self.train_binding_policy,
+            "train_rewrite_policy": self.train_rewrite_policy,
             "max_replay_teachers": self.max_replay_teachers,
             "seed": self.seed,
             "train": self.train,
@@ -417,10 +435,13 @@ def parse_router_plan(text: Any, *, config: Optional[RouterTuningConfig] = None)
     }
 
 
-def _strategy_body(name: str, body: str, rng: random.Random) -> list[tuple[str, str, str]]:
+def _strategy_body(name: str, body: str, rng: random.Random, *, goal: str = "") -> list[tuple[str, str, str]]:
     """Apply one allowlisted local strategy and return labeled body drafts."""
 
     text = str(body or "")
+    if name in logic_refactor.LOGIC_STRATEGIES:
+        return [(kind, candidate, name) for kind, candidate, _ops in
+                logic_refactor.reduction_variants(text, strategy=name, goal=goal, cap=24)]
     if name == "closed_tree":
         return [(str(family), str(candidate), "closed_tree") for family, candidate, _ops in tactic_ops.closed_tree_edits(text)]
     if name == "guided_mca":
@@ -446,6 +467,11 @@ def _strategy_body(name: str, body: str, rng: random.Random) -> list[tuple[str, 
         return [
             (str(family), str(candidate), "goal_directed")
             for family, candidate in tactic_ops.closer_variants(text)
+        ]
+    if name == "hypothesis_refactor":
+        return [
+            (str(family), str(candidate), "hypothesis_refactor")
+            for family, candidate, _ops in tactic_ops.hypothesis_refactor_variants(text, cap=24)
         ]
     if name == "pca_mca_cross":
         rows = tactic_ops.closed_tree_edits(text, case_replace_cap=4)
@@ -497,7 +523,14 @@ def _router_prompt(
         "current_body": head_chars(body, 5000),
         "current_metrics": dict(current),
         "tactic_analysis": dict(analysis),
-        "recent_rounds": list(history)[-3:],
+        # Training receipts can be much larger than the entire prompt budget.
+        # Expose actual rejected proof diagnostics, not a truncated loss dump.
+        "recent_rounds": [{
+            "round": row.get("round"), "accepted": row.get("accepted"),
+            "winner": row.get("round_winner"),
+            "failures": [{key: candidate.get(key) for key in ("id", "origin", "kind", "body_tokens", "failure")}
+                         for candidate in row.get("candidates", ()) if not candidate.get("lake_ok")][:4],
+        } for row in list(history)[-2:]],
         "allowed_ir_ops": list(ae.LEAN_IR_OPS),
         "allowed_strategies": list(ROUTER_STRATEGIES),
         "outer_design_directive": dict(design_hint or {}),
@@ -516,8 +549,33 @@ def _router_prompt(
         '{"kind":"tactic","tactics":"simp"}]}\n'
         f"Provide at most {config.max_router_candidates} candidates.\n"
     )
-    prompt = preamble + json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-    return prompt[: config.max_prompt_chars]
+    def render() -> str:
+        return preamble + json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+    if len(render()) > config.max_prompt_chars:
+        payload["context_truncated"] = True
+        for field in ("statement_and_header", "current_body"):
+            payload[field] = head_chars(payload[field], 2000)
+    for field in ("outer_design_directive", "tactic_analysis", "allowed_ir_ops", "recent_rounds",
+                  "current_body", "statement_and_header", "allowed_strategies", "current_metrics"):
+        if len(render()) <= config.max_prompt_chars:
+            break
+        payload.pop(field, None)
+    prompt = render()
+    if len(prompt) > config.max_prompt_chars:
+        # Extremely small caller budgets cannot accommodate the instructions.
+        return "{}" if config.max_prompt_chars >= 2 else "0"
+    return prompt
+
+
+def _compile_failure(receipt: Mapping[str, Any]) -> dict[str, Any]:
+    nested = receipt.get("compile") if isinstance(receipt.get("compile"), Mapping) else receipt
+    errors = nested.get("errors") or ()
+    messages = [str(e.get("data") or e.get("message") or "")[:240]
+                for e in errors[:3] if isinstance(e, Mapping)] if isinstance(errors, (list, tuple)) else []
+    reason = str(receipt.get("reason") or nested.get("error") or "")[:160]
+    message = "\n".join(messages) or str(nested.get("stdout_tail") or nested.get("stderr_tail") or reason)
+    return {"reason": reason, "message": message[:600], "exit_code": nested.get("exit_code")}
 
 
 def _compact_row(row: Mapping[str, Any]) -> dict[str, Any]:
@@ -532,6 +590,9 @@ def _compact_row(row: Mapping[str, Any]) -> dict[str, Any]:
         "ir_ce_m": row.get("ir_ce_m"),
         "rationale": row.get("rationale"),
         "reason": row.get("reason"),
+        "failure": _compile_failure(row.get("compile") or {}) if not row.get("lake_ok") else None,
+        "dependency_guard": row.get("dependency_guard"),
+        "binding_policy": row.get("binding_policy"),
         "rule_id": row.get("rule_id"),
         "rule_kind": row.get("rule_kind"),
         "seed_provenance": row.get("seed_provenance"),
@@ -585,6 +646,7 @@ class RouterTuningLoop:
         self.seed_candidates = tuple(seed_specs[: self.config.max_candidate_pool])
         self._rules: dict[str, dict[str, Any]] = {}
         self._compile_cache: dict[str, dict[str, Any]] = {}
+        self._known_failure_skips = 0
         self._source_prefix, self._source_body, self._has_theorem = _source_parts(self.source)
         self._source_ir = ae.encode_lean_ir(self.source)
 
@@ -676,7 +738,7 @@ class RouterTuningLoop:
             },
             reference_tokens=source_body_tokens,
             reference_ops=len(self._source_ir.get("ops") or ()),
-        )
+        ) if lake_ok else 0.0
         scored = ae.score_candidate(
             {
                 "cosine_m": diagnostics["ir_cosine_m"],
@@ -750,9 +812,10 @@ class RouterTuningLoop:
         rule_kind = str((metadata or {}).get("rule_kind") or "")
         if (
             str((metadata or {}).get("seed_provenance") or "") == "git_history"
-            or rule_kind in {"verified_composition", "ir_crossover", "teacher_replay"}
+            or rule_kind in {"verified_composition", "elite_composition", "ir_crossover", "teacher_replay",
+                             "logic_reduction", "hammer_strategy", "hammer_sweep", "router_strategy", "local_strategy"}
         ):
-            # Historical keep-bests and their compiler-gated compositions may
+            # Historical keep-bests and locally generated edits/compositions may
             # contain harmless layout lines beyond the tighter LLM response
             # budget.  Keep the exception bounded and apply the same
             # unsafe-text/declaration checks.
@@ -775,6 +838,13 @@ class RouterTuningLoop:
                         break
             return
         if len(rows) >= self.config.max_candidate_pool:
+            return
+        cached = self._compile_cache.get(digest)
+        if cached is not None and not cached.get("theorem_ok"):
+            # The immutable theorem/compiler context has already rejected
+            # this exact body in this run. Retain its original receipt, but
+            # do not spend another round's candidate slot on the same failure.
+            self._known_failure_skips += 1
             return
         seen.add(digest)
         rows.append(
@@ -831,7 +901,7 @@ class RouterTuningLoop:
             if name not in _ROUTER_STRATEGY_SET:
                 continue
             try:
-                generated = _strategy_body(name, body, self.rng)
+                generated = _strategy_body(name, body, self.rng, goal=str(self._source_ir.get("goal") or ""))
             except Exception:
                 generated = []
             for kind, candidate, origin in generated:
@@ -851,6 +921,13 @@ class RouterTuningLoop:
             store = ((self.memory.get("nca") or {}).get("autoencoder") or {})
             model = LeanIRAutoencoder.from_dict(store.get("training_state"), config=AutoencoderConfig())
             rows.append(model.predict_ir(current, source_ir=current_ir, max_ops=self.config.n_variations))
+            if model.state.get("binding_steps"):
+                # A conservative guard can retain a genuinely redundant fact.
+                # Offer the raw learned edit as a separate, still compiler-
+                # gated proposal; never substitute it for guarded diagnostics.
+                raw = model.predict_ir(current, source_ir=current_ir, dependency_guard=False)
+                raw["proposal_policy"] = "binding_raw"
+                rows.append(raw)
         except Exception:
             pass
         sampler = getattr(ae, "_candidate_ir_variants", None)
@@ -867,12 +944,28 @@ class RouterTuningLoop:
         rows: list[dict[str, Any]],
         seen: set[str],
         current: str,
+        *,
+        max_new: Optional[int] = None,
     ) -> None:
         current_ir = ae.encode_lean_ir(current)
         plan_digest = str(plan.get("response_digest") or plan.get("raw_digest") or "")
-        for item in list(plan.get("candidates") or ()):
+        before = len(rows)
+        deferred_strategies = []
+
+        def full() -> bool:
+            return max_new is not None and len(rows) - before >= max(0, int(max_new))
+
+        items = list(plan.get("candidates") or ())
+        # A top-level strategy is an explicit router request too. Reserve its
+        # exploration in the router branch, before generic hammer/local rows.
+        present = {item.get("strategy") for item in items if isinstance(item, Mapping)}
+        items.extend({"strategy": name} for name in list(plan.get("strategies") or ())[:self.config.strategy_cap]
+                     if name in _ROUTER_STRATEGY_SET and name not in present)
+        for item in items:
             if not isinstance(item, Mapping):
                 continue
+            if full():
+                return
             rationale = str(item.get("rationale") or "")
             kind = str(item.get("kind") or "router_candidate")
             if item.get("strategy"):
@@ -886,7 +979,9 @@ class RouterTuningLoop:
                         "plan_digest": plan_digest,
                     }
                 )
-                for strategy_kind, body, origin in _strategy_body(str(item["strategy"]), _source_parts(current)[1], self.rng):
+                variants = _strategy_body(str(item["strategy"]), _source_parts(current)[1], self.rng, goal=str(current_ir.get("goal") or ""))
+                deferred_strategies.append((rule_id, rationale, variants[1:]))
+                for strategy_kind, body, origin in variants[:1]:
                     self._push(
                         rows,
                         seen,
@@ -896,6 +991,8 @@ class RouterTuningLoop:
                         rationale=rationale,
                         metadata={"rule_id": rule_id, "rule_kind": "router_strategy"},
                     )
+                    if full():
+                        return
             if item.get("ops") is not None:
                 ops = _normalise_ir_ops(item.get("ops"), self.config)
                 if ops is not None:
@@ -908,8 +1005,7 @@ class RouterTuningLoop:
                             "plan_digest": plan_digest,
                         }
                     )
-                    candidate_ir = dict(current_ir)
-                    candidate_ir["ops"] = ops
+                    candidate_ir = ae._ir_with_ops(current_ir, ops)
                     self._push_ir(
                         rows,
                         seen,
@@ -919,6 +1015,8 @@ class RouterTuningLoop:
                         rationale=rationale,
                         metadata={"rule_id": rule_id, "rule_kind": "llm_router_ir"},
                     )
+                    if full():
+                        return
             if item.get("tactics") is not None:
                 tactic_text = str(item.get("tactics") or "")
                 rule_id = self._register_rule(
@@ -939,14 +1037,36 @@ class RouterTuningLoop:
                     rationale=rationale,
                     metadata={"rule_id": rule_id, "rule_kind": "llm_router_tactic"},
                 )
+                if full():
+                    return
 
-    def _verified_sources(self, rows: Sequence[Mapping[str, Any]], current: str) -> list[dict[str, Any]]:
+        # Give each requested family a first probe before expanding any one
+        # family's full neighborhood into the shared router quota.
+        for index in range(max((len(group) for _, _, group in deferred_strategies), default=0)):
+            for rule_id, rationale, group in deferred_strategies:
+                if full():
+                    return
+                if index < len(group):
+                    kind, body, origin = group[index]
+                    self._push(rows, seen, body, origin="router_strategy:" + origin, kind=kind,
+                               rationale=rationale, metadata={"rule_id": rule_id, "rule_kind": "router_strategy"})
+
+    def _verified_sources(
+        self,
+        rows: Sequence[Mapping[str, Any]],
+        current: str,
+        *,
+        exclude_kinds: Sequence[str] = (),
+    ) -> list[dict[str, Any]]:
         """Return distinct Lake-admitted teachers in shortest-first order."""
 
+        excluded = {str(kind) for kind in exclude_kinds}
         candidates = [
             dict(row)
             for row in rows
-            if row.get("lake_ok") and str(row.get("source") or "").strip()
+            if row.get("lake_ok")
+            and str(row.get("source") or "").strip()
+            and str(row.get("kind") or "") not in excluded
         ]
         if str(current or "").strip() and not any(str(row.get("source") or "") == str(current) for row in candidates):
             current_row = self._row(current, origin="current", kind="composition_source")
@@ -976,11 +1096,22 @@ class RouterTuningLoop:
         rows: list[dict[str, Any]],
         seen: set[str],
         current: str,
+        *,
+        max_new: Optional[int] = None,
+        exclude_kinds: Sequence[str] = (),
+        composition_kind: str = "verified_composition",
+        origin_prefix: str = "composition",
     ) -> int:
         """Crossover separately Lake-admitted high-score teachers."""
 
         before = len(rows)
-        sources = self._verified_sources(rows, current)
+        target = self.config.max_composed_candidates
+        if max_new is not None:
+            target = min(target, max(0, int(max_new)))
+        if target <= 0:
+            return 0
+        sources = self._verified_sources(rows, current, exclude_kinds=exclude_kinds)
+        pair_variants: list[tuple[list[tuple[str, str, tuple[str, ...]]], list[str]]] = []
         for left_index, left in enumerate(sources):
             for right in sources[left_index + 1 :]:
                 left_body = _source_parts(str(left.get("source") or ""))[1]
@@ -989,37 +1120,50 @@ class RouterTuningLoop:
                     str(left.get("rule_id") or left.get("id") or "")[:80],
                     str(right.get("rule_id") or right.get("id") or "")[:80],
                 ]
-                for kind, body, ops in tactic_ops.compose_tactic_bodies(
+                variants = tactic_ops.compose_tactic_bodies(
                     left_body,
                     right_body,
                     cap=self.config.max_composed_candidates,
-                ):
-                    digest = _digest(body)
-                    rule_id = self._register_rule(
-                        {
-                            "kind": "verified_composition",
-                            "strategy": "compose_verified",
-                            "ops": list(ops),
-                            "origin": "verified_composition",
-                            "candidate_digest": digest,
-                            "parent_rule_ids": parent_ids,
-                        }
-                    )
-                    self._push(
-                        rows,
-                        seen,
-                        body,
-                        origin="composition:" + str(kind),
-                        kind="verified_composition",
-                        rationale="crossover of two independently Lake-admitted teachers",
-                        metadata={
-                            "rule_id": rule_id,
-                            "rule_kind": "verified_composition",
-                            "composition_parent_ids": parent_ids,
-                        },
-                    )
-                    if len(rows) - before >= self.config.max_composed_candidates:
-                        return len(rows) - before
+                )
+                if variants:
+                    pair_variants.append((variants, parent_ids))
+
+        # Round-robin recipes across pairs.  A low candidate budget should
+        # expose several independent high-score pairings rather than consume
+        # the entire budget on the first pair in source order.
+        for variant_index in range(
+            max((len(variants) for variants, _parent_ids in pair_variants), default=0)
+        ):
+            for variants, parent_ids in pair_variants:
+                if variant_index >= len(variants):
+                    continue
+                kind, body, ops = variants[variant_index]
+                digest = _digest(body)
+                rule_id = self._register_rule(
+                    {
+                        "kind": composition_kind,
+                        "strategy": "compose_verified",
+                        "ops": list(ops),
+                        "origin": composition_kind,
+                        "candidate_digest": digest,
+                        "parent_rule_ids": parent_ids,
+                    }
+                )
+                self._push(
+                    rows,
+                    seen,
+                    body,
+                    origin=origin_prefix + ":" + str(kind),
+                    kind=composition_kind,
+                    rationale="crossover of two independently Lake-admitted teachers",
+                    metadata={
+                        "rule_id": rule_id,
+                        "rule_kind": composition_kind,
+                        "composition_parent_ids": parent_ids,
+                    },
+                )
+                if len(rows) - before >= target:
+                    return len(rows) - before
         return len(rows) - before
 
     def _crossover_ir_rows(
@@ -1027,11 +1171,19 @@ class RouterTuningLoop:
         rows: list[dict[str, Any]],
         seen: set[str],
         current: str,
+        *,
+        max_new: Optional[int] = None,
     ) -> int:
         """Crossover operation sequences from distinct verified teachers."""
 
         before = len(rows)
+        target = self.config.max_composed_candidates
+        if max_new is not None:
+            target = min(target, max(0, int(max_new)))
+        if target <= 0:
+            return 0
         sources = self._verified_sources(rows, current)
+        pair_variants: list[tuple[list[dict[str, Any]], list[str]]] = []
         for left_index, left in enumerate(sources):
             left_ir = left.get("ir") if isinstance(left.get("ir"), Mapping) else ae.encode_lean_ir(str(left.get("source") or ""))
             for right in sources[left_index + 1 :]:
@@ -1040,35 +1192,45 @@ class RouterTuningLoop:
                     str(left.get("rule_id") or left.get("id") or "")[:80],
                     str(right.get("rule_id") or right.get("id") or "")[:80],
                 ]
-                for candidate_ir in ae.crossover_lean_ir(
+                variants = ae.crossover_lean_ir(
                     left_ir,
                     right_ir,
                     limit=self.config.max_composed_candidates,
-                ):
-                    rule_id = self._register_rule(
-                        {
-                            "kind": "ir_crossover",
-                            "strategy": "ir_crossover",
-                            "ops": list(candidate_ir.get("ops") or ())[:32],
-                            "origin": "verified_ir_crossover",
-                            "candidate_digest": str(candidate_ir.get("ops_digest") or ""),
-                            "parent_rule_ids": parent_ids,
-                        }
-                    )
-                    self._push_ir(
-                        rows,
-                        seen,
-                        candidate_ir,
-                        origin="ir_crossover",
-                        kind="ir_crossover",
-                        metadata={
-                            "rule_id": rule_id,
-                            "rule_kind": "ir_crossover",
-                            "composition_parent_ids": parent_ids,
-                        },
-                    )
-                    if len(rows) - before >= self.config.max_composed_candidates:
-                        return len(rows) - before
+                )
+                if variants:
+                    pair_variants.append((variants, parent_ids))
+
+        for variant_index in range(
+            max((len(variants) for variants, _parent_ids in pair_variants), default=0)
+        ):
+            for variants, parent_ids in pair_variants:
+                if variant_index >= len(variants):
+                    continue
+                candidate_ir = variants[variant_index]
+                rule_id = self._register_rule(
+                    {
+                        "kind": "ir_crossover",
+                        "strategy": "ir_crossover",
+                        "ops": list(candidate_ir.get("ops") or ())[:32],
+                        "origin": "verified_ir_crossover",
+                        "candidate_digest": str(candidate_ir.get("ops_digest") or ""),
+                        "parent_rule_ids": parent_ids,
+                    }
+                )
+                self._push_ir(
+                    rows,
+                    seen,
+                    candidate_ir,
+                    origin="ir_crossover",
+                    kind="ir_crossover",
+                    metadata={
+                        "rule_id": rule_id,
+                        "rule_kind": "ir_crossover",
+                        "composition_parent_ids": parent_ids,
+                    },
+                )
+                if len(rows) - before >= target:
+                    return len(rows) - before
         return len(rows) - before
 
     def _hammer_sweep_rows(
@@ -1078,6 +1240,7 @@ class RouterTuningLoop:
         current: str,
         *,
         requested: Sequence[str] = (),
+        max_new: Optional[int] = None,
     ) -> int:
         """Explore all bounded local strategies over the best admitted bases."""
 
@@ -1085,7 +1248,10 @@ class RouterTuningLoop:
             return 0
         before = len(rows)
         sources = self._verified_sources(rows, current)
-        remaining = max(0, int(self.config.max_hammer_candidates))
+        target = int(self.config.max_hammer_candidates)
+        if max_new is not None:
+            target = min(target, max(0, int(max_new)))
+        remaining = max(0, target)
         if not sources or remaining <= 0:
             return 0
         strategy_names = [
@@ -1097,62 +1263,70 @@ class RouterTuningLoop:
             name
             for name in ROUTER_STRATEGIES
             if name not in {"hammer_sweep", "compose_verified", "ir_crossover"}
+            and name not in logic_refactor.LOGIC_STRATEGIES
             and name not in strategy_names
         )
+        groups: list[tuple[dict[str, Any], str, list[tuple[str, str, tuple[str, ...]]]]] = []
         for base in sources:
             body = _source_parts(str(base.get("source") or ""))[1]
-            generated = tactic_ops.hammer_sweep_variants(
-                body,
-                body,
-                cap=min(remaining, 32),
-            )
-            for kind, candidate, ops in generated:
-                rule_id = self._register_rule(
-                    {
-                        "kind": "hammer_sweep",
-                        "strategy": "hammer_sweep",
-                        "ops": list(ops),
-                        "origin": "bounded_hammer",
-                        "candidate_digest": _digest(candidate),
-                        "parent_rule_ids": [str(base.get("rule_id") or base.get("id") or "")[:80]],
-                    }
-                )
-                self._push(
-                    rows,
-                    seen,
-                    candidate,
-                    origin="hammer:" + str(kind),
-                    kind="hammer_sweep",
-                    metadata={"rule_id": rule_id, "rule_kind": "hammer_sweep"},
-                )
-                remaining = int(self.config.max_hammer_candidates) - (len(rows) - before)
-                if remaining <= 0:
-                    return len(rows) - before
-            # Now visit every direct allowlisted strategy, with the outer
-            # model's requested choices first.  The global row budget keeps
-            # this exhaustive enumeration from multiplying compiler calls.
+            # Enumerate a bounded neighborhood, then interleave methods.
+            # Exhausting all closers before visiting the next strategy used
+            # to starve most methods under realistic compiler budgets.
+            groups.append((base, "hammer_sweep", tactic_ops.hammer_sweep_variants(body, body, cap=32)))
             for strategy in strategy_names:
-                for kind, candidate, origin in _strategy_body(strategy, body, self.rng):
-                    rule_id = self._register_rule(
-                        {
-                            "kind": "hammer_strategy",
-                            "strategy": strategy,
-                            "origin": "bounded_hammer_strategy",
-                            "candidate_digest": _digest(candidate),
-                            "parent_rule_ids": [str(base.get("rule_id") or base.get("id") or "")[:80]],
-                        }
-                    )
-                    self._push(
-                        rows,
-                        seen,
-                        candidate,
-                        origin="hammer_strategy:" + str(origin),
-                        kind=str(kind),
-                        metadata={"rule_id": rule_id, "rule_kind": "hammer_strategy"},
-                    )
-                    remaining = int(self.config.max_hammer_candidates) - (len(rows) - before)
-                    if remaining <= 0:
-                        return len(rows) - before
+                variants = _strategy_body(strategy, body, self.rng, goal=str(self._source_ir.get("goal") or ""))[:32]
+                groups.append((base, strategy, [(kind, candidate, (origin,)) for kind, candidate, origin in variants]))
+        for index in range(max((len(group) for _, _, group in groups), default=0)):
+            for base, strategy, group in groups:
+                if index >= len(group):
+                    continue
+                kind, candidate, ops = group[index]
+                rule_kind = "hammer_sweep" if strategy == "hammer_sweep" else "hammer_strategy"
+                rule_id = self._register_rule({
+                    "kind": rule_kind, "strategy": strategy, "ops": list(ops),
+                    "origin": "bounded_hammer", "candidate_digest": _digest(candidate),
+                    "parent_rule_ids": [str(base.get("rule_id") or base.get("id") or "")[:80]],
+                })
+                self._push(rows, seen, candidate,
+                           origin=("hammer:" + kind if strategy == "hammer_sweep" else "hammer_strategy:" + strategy),
+                           kind=kind, metadata={"rule_id": rule_id, "rule_kind": rule_kind})
+                if len(rows) - before >= target:
+                    return len(rows) - before
+        return len(rows) - before
+
+    def _logic_reduction_rows(
+        self, rows: list[dict[str, Any]], seen: set[str], current: str, *,
+        requested: Sequence[str] = (), max_new: int, round_index: int,
+    ) -> int:
+        """Give semantic and invariant reductions their own compiler budget."""
+        if not self.config.logic_reductions or max_new <= 0:
+            return 0
+        before = len(rows)
+        sources = self._verified_sources(rows, current)
+        groups = []
+        for base in sources:
+            source = str(base["source"])
+            groups.append((base, logic_refactor.reduction_sweep(
+                _source_parts(source)[1], source=source, goal=str(self._source_ir.get("goal") or ""),
+                requested=requested, cap=self.config.max_logic_candidates,
+                # Step one, not the quota: a quota sharing a factor with the
+                # method count would permanently skip some starting families.
+                offset=round_index,
+            )))
+        for index in range(max((len(group) for _, group in groups), default=0)):
+            for base, group in groups:
+                if index >= len(group):
+                    continue
+                kind, body, ops = group[index]
+                rule_id = self._register_rule({
+                    "kind": "logic_reduction", "strategy": ops[0], "ops": list(ops),
+                    "origin": "logic_reduction", "candidate_digest": _digest(body),
+                    "parent_rule_ids": [str(base.get("rule_id") or base["id"])[:80]],
+                })
+                self._push(rows, seen, body, origin="logic:" + ops[0] + ":" + kind, kind=kind,
+                           metadata={"rule_id": rule_id, "rule_kind": "logic_reduction"})
+                if len(rows) - before >= max_new:
+                    return len(rows) - before
         return len(rows) - before
 
     def _teacher_source_digest(self) -> str:
@@ -1247,6 +1421,8 @@ class RouterTuningLoop:
         self,
         rows: list[dict[str, Any]],
         seen: set[str],
+        *,
+        max_new: Optional[int] = None,
     ) -> int:
         """Re-admit persisted teachers through the current compiler.
 
@@ -1286,11 +1462,18 @@ class RouterTuningLoop:
         candidates.sort(
             key=lambda item: (
                 int(item.get("body_tokens") or 10**9),
+                0
+                if str(item.get("seed_provenance") or "") == "git_history"
+                or str(item.get("origin") or "") in {"verified_seed", "current"}
+                else 1,
                 str(item.get("candidate_digest") or ""),
             )
         )
         before = len(rows)
-        for item in candidates[: self.config.max_replay_teachers]:
+        replay_limit = self.config.max_replay_teachers
+        if max_new is not None:
+            replay_limit = min(replay_limit, max(0, int(max_new)))
+        for item in candidates[:replay_limit]:
             source_rule_id = str(item.get("rule_id") or "")[:80]
             candidate_digest = str(item.get("candidate_digest") or _digest(item.get("body")))[:80]
             replay_rule_id = "rule-" + _digest(
@@ -1355,6 +1538,9 @@ class RouterTuningLoop:
                 "families": sorted({str(row.get("family") or "") for row in structure.get("mca_holes") or ()}),
             },
             "ir_ops": [str(row.get("op") or "") for row in self._source_ir.get("ops") or ()][:32],
+            "logical_reductions": logic_refactor.analysis_summary(str(self._source_ir.get("goal") or "")),
+            "invariant_hints": logic_refactor.structural_observations(body),
+            "applicable_reductions": logic_refactor.applicable_strategies(self.source),
         }
 
     def _model_diagnostics(
@@ -1363,6 +1549,9 @@ class RouterTuningLoop:
         example: Any,
         *,
         phase: str,
+        dependency_guard: bool = True,
+        binding_policy: Optional[bool] = None,
+        rewrite_policy: Optional[bool] = None,
     ) -> dict[str, Any]:
         """Measure the autoencoder's own prediction, never a search winner.
 
@@ -1373,13 +1562,24 @@ class RouterTuningLoop:
         reward a prediction the model did not make.
         """
 
-        predicted_ir = model.predict_ir(example.text, source_ir=self._source_ir)
-        predicted_source = ae.decode_lean_ir(predicted_ir)
+        predicted_ir = model.predict_ir(example.text, source_ir=self._source_ir,
+                                        dependency_guard=dependency_guard, binding_policy=binding_policy,
+                                        rewrite_policy=rewrite_policy)
+        # Match the actual candidate path: the decoder supplies the body,
+        # while the immutable theorem envelope comes from the benchmark.
+        # Compiling decode_lean_ir's synthetic *_rt declaration directly
+        # made every prediction fail the arena statement-prefix check.
+        predicted_body = _ir_body(predicted_ir)
+        predicted_source = (_render_source(self._source_prefix, predicted_body, has_theorem=self._has_theorem)
+                            if predicted_body is not None else ae.decode_lean_ir(predicted_ir))
         row = self._row(
             predicted_source,
             origin="autoencoder:" + str(phase),
             kind="model_prediction",
         )
+        row["dependency_guard"] = predicted_ir.get("dependency_guard")
+        row["binding_policy"] = predicted_ir.get("binding_policy")
+        row["rewrite_policy"] = predicted_ir.get("rewrite_policy")
         loss = loss_for_example(
             model,
             example,
@@ -1464,7 +1664,9 @@ class RouterTuningLoop:
             }
         try:
             store = self.memory.setdefault("nca", {}).setdefault("autoencoder", {})
-            model = LeanIRAutoencoder.from_dict(store.get("training_state"), config=AutoencoderConfig())
+            training_config = AutoencoderConfig(train_binding_policy=self.config.train_binding_policy,
+                                                train_rewrite_policy=self.config.train_rewrite_policy)
+            model = LeanIRAutoencoder.from_dict(store.get("training_state"), config=training_config)
             eligible: list[Mapping[str, Any]] = [
                 row
                 for row in rows
@@ -1538,6 +1740,11 @@ class RouterTuningLoop:
                     nca_rewards[example.sample_id] = feedback.reward
             primary = examples[0]
             model_snapshot = model.to_dict()
+            rewrite_preparation = None
+            if self.config.train_rewrite_policy:
+                if not self._row(self.source, origin="current", kind="teacher_source_check").get("lake_ok"):
+                    return {"ok": False, "trained": False, "reason": "unverified_rewrite_source"}
+                rewrite_preparation = model.prepare_rewrite_training(examples)
             before = self._model_diagnostics(model, primary, phase="before")
             train_report = model.train_batch(
                 examples,
@@ -1553,19 +1760,39 @@ class RouterTuningLoop:
             cosine_drop = float(before_loss.get("cosine_similarity") or 0.0) - float(
                 after_loss.get("cosine_similarity") or 0.0
             )
-            update_accepted = ce_rise <= 0.02 and cosine_drop <= 0.02
+            verifier_regression = bool(before["row"].get("lake_ok")) and not bool(after["row"].get("lake_ok"))
+            binding_rise = ((float(after_loss["binding_cross_entropy"]) - float(before_loss["binding_cross_entropy"]))
+                            if before_loss.get("binding_cross_entropy") is not None and
+                            after_loss.get("binding_cross_entropy") is not None else 0.0)
+            binding_coverage_lost = (before_loss.get("binding_cross_entropy") is not None and
+                                     after_loss.get("binding_cross_entropy") is None)
+            rewrite_rise = (float(after_loss.get("rewrite_cross_entropy") or 0.0) -
+                            float(before_loss.get("rewrite_cross_entropy") or 0.0))
+            rewrite_coverage_lost = (before_loss.get("rewrite_cross_entropy") is not None and
+                                    after_loss.get("rewrite_cross_entropy") is None)
+            update_accepted = (ce_rise <= 0.02 and binding_rise <= 0.02 and cosine_drop <= 0.02 and
+                               rewrite_rise <= 0.02 and not rewrite_coverage_lost and
+                               not verifier_regression and not binding_coverage_lost)
+            train_report["rewrite_preparation"] = rewrite_preparation
             if not update_accepted:
-                # A high verifier reward must not hide a representation
-                # regression.  Roll back decoder/latent weights and keep the
-                # failed update as an auditable training attempt.
-                model = LeanIRAutoencoder.from_dict(model_snapshot, config=AutoencoderConfig())
-                after = self._model_diagnostics(model, primary, phase="rollback")
+                # Neither a valid teacher nor improved soft metrics justify
+                # promoting a newly invalid model prediction. Preserve the
+                # attempted result before restoring the checkpoint.
                 train_report["update_rejection"] = {
                     "cross_entropy_rise": ce_rise,
+                    "binding_cross_entropy_rise": binding_rise,
+                    "binding_coverage_lost": binding_coverage_lost,
+                    "rewrite_cross_entropy_rise": rewrite_rise,
+                    "rewrite_coverage_lost": rewrite_coverage_lost,
                     "cosine_drop": cosine_drop,
                     "cross_entropy_tolerance": 0.02,
                     "cosine_tolerance": 0.02,
+                    "verifier_regression": verifier_regression,
+                    "attempted_prediction": _compact_row(after["row"]),
+                    "attempted_loss": after["loss"],
                 }
+                model = LeanIRAutoencoder.from_dict(model_snapshot, config=training_config)
+                after = self._model_diagnostics(model, primary, phase="rollback")
             # This is intentionally named separately: it measures the
             # verified candidate used as the teacher target, not the model's
             # prediction.  The public ``loss`` below is always ``after``.
@@ -1636,6 +1863,7 @@ class RouterTuningLoop:
         model_prediction_after: Optional[dict[str, Any]] = None
         model_loss_after: Optional[dict[str, Any]] = None
         for round_index in range(self.config.rounds):
+            failure_skips_before = self._known_failure_skips
             current_body = _source_parts(current)[1]
             current_row = best or baseline
             analysis = self._analysis(current_body)
@@ -1670,11 +1898,56 @@ class RouterTuningLoop:
             rows: list[dict[str, Any]] = []
             seen: set[str] = set()
             composition_count = 0
+            elite_composition_count = 0
+            elite_composition_triggered = False
             ir_crossover_count = 0
             hammer_count = 0
+            logic_count = 0
             replay_count = 0
+            seed_admitted = 0
+            # Give each independent family a bounded slice of the remaining
+            # pool.  This prevents a long historical seed list or a large
+            # composition fanout from hiding router, IR, replay, or hammer
+            # evidence.  Families that produce fewer rows leave their unused
+            # capacity for the later families and the local/model tail.
+            branch_caps: list[tuple[str, int]] = []
+            if self.config.teacher_replay:
+                branch_caps.append(("teacher_replay", self.config.max_replay_teachers))
+            branch_caps.extend(
+                [
+                    ("router", self.config.max_router_candidates),
+                    ("composition", self.config.max_composed_candidates),
+                    ("ir_crossover", self.config.max_composed_candidates),
+                ]
+            )
+            if self.config.hammer_sweep:
+                branch_caps.append(("hammer", self.config.max_hammer_candidates))
+            if self.config.logic_reductions:
+                branch_caps.append(("logic", self.config.max_logic_candidates))
+            training_state = ((self.memory.get("nca") or {}).get("autoencoder") or {}).get("training_state") or {}
+            has_binding_policy = isinstance(training_state, Mapping) and bool(training_state.get("binding_steps"))
+            if has_binding_policy:
+                branch_caps.append(("binding_model", 1))
+            # Hold back a small tail for the elite pass. Without an explicit
+            # reservation, the local/model tail can fill the pool before the
+            # loop has a chance to compose newly discovered teachers with the
+            # previous high-score teachers. Very small fixture pools keep the
+            # old behavior so branch-coverage tests remain meaningful.
+            elite_reserved_capacity = (
+                min(self.config.max_elite_composed_candidates, self.config.max_candidate_pool // 4)
+                if self.config.max_candidate_pool >= 12
+                else 0
+            )
+            branch_budgets: dict[str, int] = {}
+            seed_budget = min(
+                len(self.seed_candidates),
+                max(0, self.config.max_composition_sources - 1),
+                max(0, self.config.max_candidate_pool - 1 - len(branch_caps) - elite_reserved_capacity),
+            )
             self._push(rows, seen, current_body, origin="current", kind="current")
             for seed in self.seed_candidates:
+                if seed_admitted >= seed_budget:
+                    break
                 seed_body = self._seed_body(seed.get("body"))
                 seed_meta = dict(seed.get("metadata") or {})
                 seed_rule_id = self._register_rule(
@@ -1696,6 +1969,7 @@ class RouterTuningLoop:
                     "actual_tokens": seed_meta.get("actual_tokens"),
                     "body_digest": seed_meta.get("body_digest") or _digest(seed_body),
                 }
+                before_seed = len(rows)
                 self._push(
                     rows,
                     seen,
@@ -1705,17 +1979,78 @@ class RouterTuningLoop:
                     rationale="candidate must re-pass the compiler before training",
                     metadata=seed_metadata,
                 )
-            replay_count = self._replay_teacher_rows(rows, seen)
-            self._router_rows(plan, rows, seen, current)
-            composition_count = self._compose_verified_rows(rows, seen, current)
-            ir_crossover_count = self._crossover_ir_rows(rows, seen, current)
-            hammer_count = self._hammer_sweep_rows(
+                if len(rows) > before_seed:
+                    seed_admitted += 1
+
+            remaining_branches = len(branch_caps)
+
+            def branch_budget(name: str, cap: int) -> int:
+                nonlocal remaining_branches
+                available = max(0, self.config.max_candidate_pool - elite_reserved_capacity - len(rows))
+                remaining = max(1, remaining_branches)
+                quota = 0 if available <= 0 else max(1, (available + remaining - 1) // remaining)
+                quota = min(int(cap), quota)
+                branch_budgets[name] = quota
+                remaining_branches = max(0, remaining_branches - 1)
+                return quota
+
+            if self.config.teacher_replay:
+                replay_count = self._replay_teacher_rows(
+                    rows,
+                    seen,
+                    max_new=branch_budget("teacher_replay", self.config.max_replay_teachers),
+                )
+
+            self._router_rows(
+                plan,
                 rows,
                 seen,
                 current,
-                requested=plan.get("strategies") or (),
+                max_new=branch_budget("router", self.config.max_router_candidates),
             )
+
+            composition_budget = branch_budget("composition", self.config.max_composed_candidates)
+            composition_count = self._compose_verified_rows(
+                rows,
+                seen,
+                current,
+                max_new=composition_budget,
+            )
+
+            ir_budget = branch_budget("ir_crossover", self.config.max_composed_candidates)
+            ir_crossover_count = self._crossover_ir_rows(
+                rows,
+                seen,
+                current,
+                max_new=ir_budget,
+            )
+
+            if self.config.hammer_sweep:
+                hammer_count = self._hammer_sweep_rows(
+                    rows,
+                    seen,
+                    current,
+                    requested=plan.get("strategies") or (),
+                    max_new=branch_budget("hammer", self.config.max_hammer_candidates),
+                )
+            if self.config.logic_reductions:
+                logic_count = self._logic_reduction_rows(
+                    rows, seen, current, requested=plan.get("strategies") or (),
+                    max_new=branch_budget("logic", self.config.max_logic_candidates),
+                    round_index=round_index,
+                )
+            model_irs = None
+            if has_binding_policy:
+                binding_budget = branch_budget("binding_model", 1)
+                model_irs = self._autoencoder_irs(current)
+                if binding_budget:
+                    for candidate_ir in model_irs:
+                        if candidate_ir.get("proposal_policy") == "binding_raw":
+                            self._push_ir(rows, seen, candidate_ir, origin="autoencoder:binding_raw", kind="ir_model")
+                            break
             for kind, body, origin in self._local_rows(current_body, plan.get("strategies") or ()):
+                if len(rows) >= self.config.max_candidate_pool - elite_reserved_capacity:
+                    break
                 rule_id = self._register_rule(
                     {
                         "kind": "local_strategy",
@@ -1735,8 +2070,45 @@ class RouterTuningLoop:
             # verified-teacher crossover and hammer probes.  A tiny diagnostic
             # run must not crowd out the very compositions it is meant to
             # evaluate; the model still receives the admitted winner below.
-            for candidate_ir in self._autoencoder_irs(current):
-                self._push_ir(rows, seen, candidate_ir, origin="autoencoder", kind="ir_model")
+            for candidate_ir in model_irs if model_irs is not None else self._autoencoder_irs(current):
+                if len(rows) >= self.config.max_candidate_pool - elite_reserved_capacity:
+                    break
+                origin = "autoencoder:binding_raw" if candidate_ir.get("proposal_policy") == "binding_raw" else "autoencoder"
+                self._push_ir(rows, seen, candidate_ir, origin=origin, kind="ir_model")
+            # The first composition pass runs before local/model candidates so
+            # that it cannot be crowded out. If that pass already reaches or
+            # beats the previous elite, intensify once using newly admitted
+            # router/hammer/local/model teachers as parents. Composition and
+            # IR-crossover outputs are excluded here to keep this pass
+            # pairwise and auditable rather than recursively multiplying
+            # derived candidates.
+            pre_verified = [row for row in rows if row.get("lake_ok")]
+            pre_winner = min(
+                pre_verified,
+                key=lambda row: (
+                    int(row.get("body_tokens") or 10**9),
+                    int(row.get("token_count") or 10**9),
+                    -float(row.get("reward") or 0.0),
+                    str(row.get("id") or ""),
+                ),
+                default=None,
+            )
+            previous_best_tokens = int(best.get("body_tokens") or 10**9) if best is not None else 10**9
+            elite_composition_triggered = bool(
+                pre_winner is not None
+                and int(pre_winner.get("body_tokens") or 10**9) <= previous_best_tokens
+            )
+            if elite_composition_triggered:
+                elite_capacity = max(0, self.config.max_candidate_pool - len(rows))
+                elite_composition_count = self._compose_verified_rows(
+                    rows,
+                    seen,
+                    current,
+                    max_new=min(self.config.max_elite_composed_candidates, elite_capacity),
+                    exclude_kinds=("verified_composition", "elite_composition", "ir_crossover"),
+                    composition_kind="elite_composition",
+                    origin_prefix="elite_composition",
+                )
             verified = [row for row in rows if row.get("lake_ok")]
             round_winner = min(
                 verified,
@@ -1783,9 +2155,18 @@ class RouterTuningLoop:
                     "search": {
                         "hammer_enabled": self.config.hammer_sweep,
                         "hammer_candidates": hammer_count,
+                        "known_failure_skips": self._known_failure_skips - failure_skips_before,
+                        "logic_candidates": logic_count,
+                        "logic_strategies": sorted({str(row.get("origin")).split(":")[1]
+                                                    for row in rows if str(row.get("origin", "")).startswith("logic:")}),
                         "composed_candidates": composition_count,
+                        "elite_composed_candidates": elite_composition_count,
+                        "elite_composition_triggered": elite_composition_triggered,
+                        "elite_reserved_capacity": elite_reserved_capacity,
                         "ir_crossover_candidates": ir_crossover_count,
                         "replay_teachers": replay_count,
+                        "seed_admitted": seed_admitted,
+                        "branch_budgets": dict(branch_budgets),
                     },
                     "round_winner": _compact_row(round_winner) if round_winner else None,
                     "accepted": improved,
@@ -1819,12 +2200,17 @@ class RouterTuningLoop:
                 "composed_candidates": sum(
                     int((row.get("search") or {}).get("composed_candidates") or 0) for row in history
                 ),
+                "elite_composed_candidates": sum(
+                    int((row.get("search") or {}).get("elite_composed_candidates") or 0)
+                    for row in history
+                ),
                 "ir_crossover_candidates": sum(
                     int((row.get("search") or {}).get("ir_crossover_candidates") or 0) for row in history
                 ),
                 "hammer_candidates": sum(
                     int((row.get("search") or {}).get("hammer_candidates") or 0) for row in history
                 ),
+                "logic_candidates": sum(int((row.get("search") or {}).get("logic_candidates") or 0) for row in history),
                 "replay_teachers": sum(
                     int((row.get("search") or {}).get("replay_teachers") or 0) for row in history
                 ),
@@ -1861,12 +2247,17 @@ class RouterTuningLoop:
                 "composed_candidates": sum(
                     int((row.get("search") or {}).get("composed_candidates") or 0) for row in history
                 ),
+                "elite_composed_candidates": sum(
+                    int((row.get("search") or {}).get("elite_composed_candidates") or 0)
+                    for row in history
+                ),
                 "ir_crossover_candidates": sum(
                     int((row.get("search") or {}).get("ir_crossover_candidates") or 0) for row in history
                 ),
                 "hammer_candidates": sum(
                     int((row.get("search") or {}).get("hammer_candidates") or 0) for row in history
                 ),
+                "logic_candidates": sum(int((row.get("search") or {}).get("logic_candidates") or 0) for row in history),
                 "replay_teachers": sum(
                     int((row.get("search") or {}).get("replay_teachers") or 0) for row in history
                 ),
@@ -1904,14 +2295,25 @@ def tune_autoencoder_with_router(
     ).run()
 
 
-def _lean_compiler(*, project_root: Path, use_lake: bool = False, timeout: float = 20.0) -> Callable[..., dict[str, Any]]:
+def _lean_compiler(*, project_root: Path, use_lake: bool = False, timeout: float = 20.0,
+                   kernel_only: bool = False) -> Callable[..., dict[str, Any]]:
     executable = "lake" if use_lake else "lean"
 
     def compile_one(source: str, problem: str = "") -> dict[str, Any]:
         del problem
+        from .proof_trust import audit_axioms, top_level_declarations
+
+        declarations = []
+        checked_source = str(source)
+        if kernel_only:
+            try:
+                declarations = top_level_declarations(checked_source)
+            except ValueError as exc:
+                return {"theorem_ok": False, "reason": str(exc), "kernel_audit": {"accepted": False}}
+            checked_source += "\n" + "\n".join(f"#print axioms {name}" for name in declarations) + "\n"
         with tempfile.TemporaryDirectory(prefix="jevops-router-", dir=str(project_root)) as temp_name:
             path = Path(temp_name) / "Main.lean"
-            path.write_text(str(source), encoding="utf-8")
+            path.write_text(checked_source, encoding="utf-8")
             argv = [executable, "env", "lean", str(path)] if use_lake else [executable, str(path)]
             try:
                 completed = subprocess.run(
@@ -1924,8 +2326,12 @@ def _lean_compiler(*, project_root: Path, use_lake: bool = False, timeout: float
                 )
             except (OSError, subprocess.TimeoutExpired) as exc:
                 return {"theorem_ok": False, "reason": type(exc).__name__, "token_count": len(str(source).split())}
+            output = (completed.stdout or "") + "\n" + (completed.stderr or "")
+            audit = audit_axioms(output, declarations) if kernel_only else None
             return {
-                "theorem_ok": completed.returncode == 0,
+                "theorem_ok": (completed.returncode == 0 and not re.search(r"\bsorry(?:Ax)?\b", output)
+                               and (audit is None or audit["accepted"])),
+                "kernel_audit": audit,
                 "token_count": len(str(source).split()),
                 "stdout_tail": (completed.stdout or "")[-240:],
                 "stderr_tail": (completed.stderr or "")[-240:],
@@ -1941,14 +2347,19 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument("source_file", help="Lean theorem source file")
     parser.add_argument("--problem", default="")
     parser.add_argument("--project-root", default=".")
+    parser.add_argument("--kernel-only", action="store_true", help="require axiom audits using only propext, Classical.choice and Quot.sound (top-level named theorem helper)")
     parser.add_argument("--provider", default="codex_cli")
     parser.add_argument("--model", dest="model_name", default="gpt-5.6-luna")
     parser.add_argument("--reasoning-effort", default="high")
     parser.add_argument("--rounds", type=int, default=3)
     parser.add_argument("--n-variations", type=int, default=8)
+    parser.add_argument("--no-logic-reductions", action="store_true", help="disable the dedicated formal-logic search branch")
+    parser.add_argument("--max-logic-candidates", type=int, default=12)
     parser.add_argument("--lake", action="store_true", help="compile with lake env lean")
     parser.add_argument("--state-path", default=None)
     parser.add_argument("--no-train", action="store_true")
+    parser.add_argument("--train-binding-policy", action="store_true", help="train the experimental keep/delete head on verified deletion pairs")
+    parser.add_argument("--train-rewrite-policy", action="store_true", help="distill verified shorter spans into the learned copy/edit decoder")
     parser.add_argument("--allow-cross-provider-fallback", action="store_true")
     args = parser.parse_args(list(argv) if argv is not None else None)
 
@@ -1967,14 +2378,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         reasoning_effort=args.reasoning_effort,
         rounds=args.rounds,
         n_variations=args.n_variations,
+        logic_reductions=not args.no_logic_reductions,
+        max_logic_candidates=args.max_logic_candidates,
         train=not args.no_train,
+        train_binding_policy=args.train_binding_policy,
+        train_rewrite_policy=args.train_rewrite_policy,
         strict_router=not args.allow_cross_provider_fallback,
     )
     result = tune_autoencoder_with_router(
         memory,
         source,
         problem=args.problem or Path(args.source_file).stem,
-        compile_fn=_lean_compiler(project_root=project_root, use_lake=args.lake),
+        compile_fn=_lean_compiler(project_root=project_root, use_lake=args.lake, kernel_only=args.kernel_only),
         config=config,
     )
     if args.state_path:

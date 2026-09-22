@@ -144,6 +144,42 @@ def skipped(reason: str, **extra: Any) -> dict[str, Any]:
     return out
 
 
+def kept_skip(
+    reason: str,
+    unique: Sequence[Any],
+    keep: int,
+    *,
+    head_fn: Callable[..., Sequence[Any]],
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Skip payload that keeps a greedy head. Catalogs stay in extra."""
+
+    out = skipped(
+        reason,
+        kept=list(head_fn(unique, keep)),
+        jev_generated_lean=False,
+        arena_score=None,
+    )
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
+def skip_unless_configured(
+    module: Any,
+    skip_fn: Callable[[str], Any],
+    *,
+    attr: str = "typesafe_configured",
+    reason: str = "no_key",
+) -> Any:
+    """Return skip_fn(reason) when configured() is false, else None."""
+
+    configured = getattr(module, attr, None)
+    if configured is None or not configured():
+        return skip_fn(reason)
+    return None
+
+
 @dataclass(frozen=True)
 class RouteResult:
     skipped: bool

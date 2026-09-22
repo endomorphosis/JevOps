@@ -38,7 +38,7 @@ DEFAULT_STATE = _jevops_path.LRA_STATE_ROOT / "track1-lake"
 FROZEN_WARMUP_SHA256 = lra_splice.FROZEN_WARMUP_SHA256
 
 
-def installed_matching_pins(record: Mapping[str, Any], clone: Path) -> list[dict[str, str]]:
+def installed_matching_pins(record: Mapping[str, Any], clone: Path, *, elan_home: Optional[Path] = None) -> list[dict[str, str]]:
     """Keep version_info rows whose elan tag is installed and commit matches the clone."""
 
     from jevops.lean import filter_installed_pin_maps
@@ -47,7 +47,7 @@ def installed_matching_pins(record: Mapping[str, Any], clone: Path) -> list[dict
     head = git_head(clone) if (clone / ".git").exists() else ""
     return filter_installed_pin_maps(
         lra_cw.iter_version_pins(record.get("version_info")),
-        resolve_fn=lambda pin: lra_cw.resolve_pin(pin, require_installed=True),
+        resolve_fn=lambda pin: lra_cw.resolve_pin(pin, elan_home=elan_home, require_installed=True),
         head=head,
     )
 
@@ -82,6 +82,9 @@ def compile_tactics(
     state_root: Path,
     timeout: float,
     restore: bytes,
+    network: str = "allow",
+    elan_home: Optional[Path] = None,
+    kernel_only: bool = False,
 ) -> dict[str, Any]:
     from jevops.lean import compile_closed, compile_keepbest, pack_compile_view, splice_span
     from jevops.outer import elapsed_ms, head_seq, tail_chars
@@ -94,16 +97,22 @@ def compile_tactics(
 
             return filter_installed_pin_maps(
                 lra_cw.iter_version_pins(rec.get("version_info")),
-                resolve_fn=lambda pin: lra_cw.resolve_pin(pin, require_installed=True),
+                resolve_fn=lambda pin: lra_cw.resolve_pin(pin, elan_home=elan_home, require_installed=True),
             )
-        return installed_matching_pins(rec, clone)
+        return installed_matching_pins(rec, clone, elan_home=elan_home)
 
     def _compile(rec: Mapping[str, Any]) -> list[Any]:
+        if network == "deny" and str(rec.get("source") or "") == "putnambench":
+            for pin in lra_cw.iter_version_pins(rec.get("version_info")):
+                project = lra_cw.project_dir_for_record(rec, pin, state_root=state_root)
+                if not (project / "lakefile.lean").is_file():
+                    raise FileNotFoundError(f"cached Putnam project missing under network=deny: {pin.lean_tag}")
         return lra_cw.compile_record(
             rec,
             timeout=timeout,
             state_root=state_root,
-            network="allow",
+            network=network,
+            elan_home=elan_home,
             require_oleans=False,
             hardware_class=HARDWARE_CLASS,
             skip_checkout=True,
@@ -139,6 +148,7 @@ def compile_tactics(
     return compile_keepbest(
         record,
         tactics,
+        audit_declaration=str(record["name"]) if kernel_only else "",
         putnam_source="putnambench",
         token_fn=lra_loop.token_count,
         closed_fn=compile_closed,

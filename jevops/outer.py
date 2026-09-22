@@ -13,6 +13,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Mapping, Optional, Sequence
 
+from .logic_refactor import LOGIC_STRATEGIES
+
 # ``update_code`` is deliberately a closed outer action.  The action only
 # describes a candidate; a consumer must provide the validator/updater hook
 # that decides whether the candidate is allowed to touch the worktree.
@@ -54,10 +56,12 @@ TACTIC_DESIGN_STRATEGIES = (
     "keep_calc_only",
     "shortcut_closers",
     "goal_directed",
+    "hypothesis_refactor",
     "hammer_sweep",
     "compose_verified",
     "ir_crossover",
     "pca_mca_cross",
+    *LOGIC_STRATEGIES,
 )
 
 
@@ -5219,6 +5223,62 @@ def first_truthy(*values: Any, default: Any = None) -> Any:
     return default
 
 
+def first_not_none(
+    *values: Any,
+    factory: Optional[Callable[[], Any]] = None,
+    default: Any = None,
+) -> Any:
+    """First value that is not None, else factory() or default."""
+
+    for value in values:
+        if value is not None:
+            return value
+    if factory is not None:
+        return factory()
+    return default
+
+
+def text_or(value: Any, default: str = "") -> str:
+    """str(value or default)."""
+
+    return str(value or default)
+
+
+def count_hits(
+    text: str,
+    needles: Sequence[Any],
+    *,
+    weight: int = 1,
+    add_len: bool = False,
+) -> int:
+    """Sum weight (+ len if add_len) for each needle contained in text."""
+
+    score = 0
+    blob = str(text or "")
+    for item in needles or ():
+        needle = item[0] if isinstance(item, (tuple, list)) and item else item
+        if needle and str(needle) in blob:
+            score += int(weight)
+            if add_len:
+                score += len(str(needle))
+    return score
+
+
+def or_call(value: Any, fn: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
+    """value if truthy, else fn(*args, **kwargs)."""
+
+    return value if value else fn(*args, **kwargs)
+
+
+def append_if(items: Sequence[Any], cond: Any, value: Any) -> list[Any]:
+    """Copy items and append value when cond."""
+
+    out = list(items or ())
+    if cond:
+        out.append(value)
+    return out
+
+
 def attrs_dict(
     obj: Any,
     keys: Sequence[str],
@@ -5583,6 +5643,13 @@ def pipe(value: Any, *fns: Callable[[Any], Any]) -> Any:
     return value
 
 
+def raise_caught(err: Any) -> None:
+    """Re-raise err when it is not None."""
+
+    if err is not None:
+        raise err
+
+
 def raise_if(cond: Any, error_cls: Any, msg: str) -> None:
     """Raise error_cls(msg) when cond."""
 
@@ -5659,6 +5726,52 @@ def beam_shape(
     width = 1 if str(mode) == str(greedy) else max(1, int(beam))
     samples = 1 if width <= 1 else min(width, int(sample_cap))
     return width, samples
+
+
+def project_map(items: Sequence[Any], fn: Callable[[Any], Any]) -> list[Any]:
+    """Map fn over items. None/empty is []."""
+
+    return [fn(item) for item in items or ()]
+
+
+def or_none(value: Any) -> Any:
+    """value or None. Empty string becomes None."""
+
+    return value or None
+
+
+def ensure_dir(path: Any) -> Path:
+    """mkdir parents. Returns Path(path)."""
+
+    dest = Path(path)
+    dest.mkdir(parents=True, exist_ok=True)
+    return dest
+
+
+def fail_spend(
+    ledger: Any,
+    kind: str,
+    estimated_in: int,
+    estimated_out: int,
+    *,
+    fixture: bool = False,
+    model: str = "",
+    error_cls: Any = RuntimeError,
+    msg: str = "",
+    cause: Optional[BaseException] = None,
+) -> None:
+    """Record a spend line, then raise. USD stays on the ledger."""
+
+    ledger.record(
+        kind,
+        input_tokens=int(estimated_in),
+        output_tokens=int(estimated_out),
+        fixture=fixture,
+        model=model,
+    )
+    if cause is not None:
+        raise error_cls(msg) from cause
+    raise error_cls(msg)
 
 
 def ignore_each(*fns: Callable[[], Any], error_cls: Any = Exception) -> None:
@@ -6187,4 +6300,618 @@ def map_hits(
         if skip_empty and not hit:
             continue
         out.append(hit)
+    return out
+
+
+def unpack_pair(value: Any, default: tuple[Any, Any] = (None, None)) -> tuple[Any, Any]:
+    """First two items of a sequence, or default when value is None."""
+
+    if value is None:
+        return default
+    return value[0], value[1]
+
+
+def cap_or_fill(
+    items: Sequence[Any],
+    n: int,
+    fill_fn: Callable[[], Sequence[Any]],
+) -> list[Any]:
+    """Take the first n items. If empty and n>0, call fill_fn()."""
+
+    use = list(items or ())[: max(0, int(n))]
+    if not use and int(n) > 0:
+        use = list(fill_fn() or ())
+    return use
+
+
+def load_module_or_skip(
+    path: Any,
+    name: str,
+    *,
+    load_fn: Callable[[Any, str], Any],
+    skip_fn: Callable[[str], Any],
+    missing: str = "typesafe_inference_missing",
+    spec: str = "typesafe_inference_spec",
+) -> tuple[Any, Any]:
+    """Load a module from path. Returns (module, None) or (None, skip_payload)."""
+
+    dest = Path(path)
+    if not dest.is_file():
+        return None, skip_fn(missing)
+    module = load_fn(dest, name)
+    if module is None:
+        return None, skip_fn(spec)
+    return module, None
+
+
+def write_analysis_json(
+    dest: Any,
+    *,
+    gaps: Any,
+    nca_status: Any,
+    schema: str = "lra-skill-analysis/v1",
+    write_fn: Optional[Callable[..., Any]] = None,
+    name: str = "skill-analysis.json",
+) -> Path:
+    """Write a skill-analysis JSON. Catalog schema stays injected."""
+
+    path = Path(dest) / str(name)
+    payload = {"schema": schema, "gaps": gaps, "nca_status": nca_status}
+    (write_fn or write_json)(path, payload)
+    return path
+
+
+def append_repair(
+    prompt: str,
+    feedback: str,
+    *,
+    head: str = "\n\nPrevious candidate failed lake compile:\n",
+    tail: str = "\nReturn only a repaired tactic block after := by.\n",
+) -> str:
+    """Append lake-feedback repair instructions. Catalog strings stay injected."""
+
+    return str(prompt) + str(head) + str(feedback) + str(tail)
+
+
+def fixture_factory(client_cls: Any, answers_fn: Callable[[], Any]) -> Callable[..., Any]:
+    """Build a fixture client factory. Catalog answers stay injected."""
+
+    def factory(**kwargs: Any) -> Any:
+        return client_cls(answers=answers_fn(), **kwargs)
+
+    return factory
+
+
+def call_if_file(path: Any, fn: Callable[[], Any], default: Any = None) -> Any:
+    """Call fn when path exists as a file."""
+
+    dest = Path(path) if path is not None else None
+    return call_if(dest is not None and dest.is_file(), fn, default=default)
+
+
+def record_route_usage(
+    ledger: Any,
+    route: Any,
+    *,
+    kind: str = "jev",
+    fixture: bool = False,
+    model: str = "",
+) -> Any:
+    """Record spend from a route.usage mapping. USD stays on the ledger."""
+
+    usage = dict(getattr(route, "usage", None) or {})
+    inn, out = usage_tokens(usage, fallback_in=0)
+    return ledger.record(
+        kind,
+        input_tokens=inn,
+        output_tokens=out,
+        fixture=bool(fixture) or bool(getattr(route, "used_fixture", False)),
+        model=getattr(route, "model", None) or model,
+    )
+
+
+def finish_ledger_run(
+    cls: Any,
+    ledger: Any,
+    *,
+    digest: str,
+    skipped: bool,
+    reason: str,
+    mode: str,
+    name: Any,
+    used_fixture: bool,
+    remaining_default: Any,
+    extra: Optional[Mapping[str, Any]] = None,
+    overlay_extra: Optional[Mapping[str, Any]] = None,
+    official_track2: bool = False,
+) -> dict[str, Any]:
+    """Build a named-run result and overlay digest. Catalog extras stay injected."""
+
+    result = result_from_ledger(
+        cls,
+        ledger,
+        skipped=skipped,
+        reason=reason,
+        mode=mode,
+        name=name,
+        used_fixture=used_fixture,
+        remaining_default=remaining_default,
+        extra=extra,
+        official_track2=official_track2,
+    )
+    return overlay_skipped(result, digest=digest, extra=overlay_extra)
+
+
+def overlay_named_skip(
+    skip_fn: Callable[..., Any],
+    *,
+    digest: str,
+    extra: Optional[Mapping[str, Any]] = None,
+    reason: str,
+    mode: str,
+    name: Any,
+    ledger: Any,
+    official_track2: bool = False,
+    used_fixture: bool = False,
+) -> dict[str, Any]:
+    """Named-run skip overlay. Catalog extras stay injected."""
+
+    return overlay_skip(
+        skip_fn,
+        digest=digest,
+        extra=extra,
+        reason=reason,
+        mode=mode,
+        official_track2=official_track2,
+        name=name,
+        used_fixture=used_fixture,
+        ledger=ledger,
+    )
+
+
+def fit_landscape(
+    records: Sequence[Any],
+    *,
+    feature_fn: Callable[[Any], Any],
+    fit_fn: Callable[[Sequence[Any]], Any],
+    analyze_fn: Callable[..., Any],
+) -> tuple[Any, list[Any]]:
+    """Fit a model on feature rows and analyze each record. No Lean."""
+
+    model = fit_fn(project_map(records, feature_fn))
+    landscape = project_map(records, lambda item: analyze_fn(item, model=model))
+    return model, landscape
+
+
+def finish_live_write(
+    dest: Any,
+    payload: Mapping[str, Any],
+    *,
+    prefix: str,
+    latest: str,
+    gaps: Any,
+    nca_status: Any,
+    write_fn: Optional[Callable[..., Any]] = None,
+    pair_fn: Optional[Callable[..., Any]] = None,
+) -> dict[str, Any]:
+    """Ensure dest, write skill-analysis.json, then the live JSON pair."""
+
+    ensure_dir(dest)
+    write_analysis_json(dest, gaps=gaps, nca_status=nca_status, write_fn=write_fn)
+    (pair_fn or write_json_pair)(dest, payload, prefix=prefix, latest=latest)
+    return dict(payload)
+
+
+def begin_named_route(
+    record: Any,
+    records: Sequence[Any],
+    *,
+    neighbor_fn: Callable[..., Any],
+    state_fn: Callable[..., Any],
+    fixture: bool,
+    factory_fn: Optional[Callable[[], Any]] = None,
+    router_cls: Any,
+    **router_kwargs: Any,
+) -> tuple[Any, Any, Any]:
+    """Neighbors, problem state, optional fixture factory, router. No Lean."""
+
+    neighbors = neighbor_fn(record, records)
+    state = state_fn(record, neighbors=neighbors)
+    factory = call_if(fixture, factory_fn) if factory_fn is not None else None
+    router = router_cls(client_factory=factory, **router_kwargs)
+    return neighbors, state, router
+
+
+def charge_unless_skipped(result: Any, charge_fn: Callable[[], Any], default: Any = None) -> Any:
+    """Charge when result.skipped is false. Spend stays injected."""
+
+    return default if getattr(result, "skipped", False) else charge_fn()
+
+
+def caught_reason(ok: bool, result: Any, exc: Any) -> tuple[str, Any]:
+    """(reason, result). Failed calls keep the error text and drop the result."""
+
+    if ok:
+        return "", result
+    return str(exc), None
+
+
+def bump_box(box: dict[str, Any], key: str, fn: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
+    """Increment box[key], then call fn. Used for lake-call counters."""
+
+    box[str(key)] = int(box.get(key, 0)) + 1
+    return fn(*args, **kwargs)
+
+
+def map_if(value: Any, fn: Callable[[Any], Any], default: Any = None) -> Any:
+    """Call fn(value) unless value is None."""
+
+    return default if value is None else fn(value)
+
+
+def bind_named_skip(skip_fn: Callable[..., Any], **fixed: Any) -> Callable[..., dict[str, Any]]:
+    """Bind overlay_named_skip kwargs. Caller overrides per skip."""
+
+    def _skip(**kwargs: Any) -> dict[str, Any]:
+        payload = dict(fixed)
+        payload.update(kwargs)
+        return overlay_named_skip(skip_fn, **payload)
+
+    return _skip
+
+
+def head_errors(rows: Sequence[Any], key: str = "errors") -> list[Any]:
+    """errors from the first row, else []."""
+
+    if not rows:
+        return []
+    row = rows[0] if isinstance(rows[0], Mapping) else {}
+    return list(row.get(key) or [])
+
+
+def keep_box(tokens: Any, keep: Any) -> dict[str, Any]:
+    """boxed_keepbest state."""
+
+    return {"tokens": int(tokens), "keep": keep}
+
+
+def if_prefix(text: str, prefix: str, yes: Any, no: Any) -> Any:
+    """yes if text startswith prefix, else no."""
+
+    return yes if str(text).startswith(str(prefix)) else no
+
+
+def allow_pred(allow: Optional[Sequence[Any]] = None) -> Callable[[Any], bool]:
+    """None allow means all items. Else membership in the set."""
+
+    allowed = set(allow) if allow else None
+
+    def wanted(item: Any) -> bool:
+        return allowed is None or item in allowed
+
+    return wanted
+
+
+def fit_drop(
+    records: Sequence[Any],
+    feature_fn: Callable[[Any], Any],
+    fit_fn: Callable[[Sequence[Any]], Any],
+    drop: Sequence[str] = ("zscore", "vt"),
+) -> dict[str, Any]:
+    """Fit on feature rows, then drop private keys. No Lean."""
+
+    return without_keys(fit_fn(project_map(records, feature_fn)), drop)
+
+
+def record_required(
+    ledger: Any,
+    kind: str,
+    input_tokens: int,
+    output_tokens: int,
+    *,
+    fixture: bool = False,
+    model: str = "",
+    require_fn: Callable[..., Any],
+    error_cls: Any,
+    fmt: str,
+) -> Any:
+    """Record spend, then require the line was not skipped. USD stays on the ledger."""
+
+    line = ledger.record(
+        kind,
+        input_tokens=int(input_tokens),
+        output_tokens=int(output_tokens),
+        fixture=fixture,
+        model=model,
+    )
+    require_fn(line, error_cls, fmt=fmt)
+    return line
+
+
+def bind_finish(cls: Any, ledger: Any, **fixed: Any) -> Callable[..., dict[str, Any]]:
+    """Bind finish_ledger_run kwargs. Caller overrides per outcome."""
+
+    def _finish(**kwargs: Any) -> dict[str, Any]:
+        payload = dict(fixed)
+        payload.update(kwargs)
+        return finish_ledger_run(cls, ledger, **payload)
+
+    return _finish
+
+
+def begin_live_sample(
+    records: Sequence[Any],
+    *,
+    feature_fn: Callable[[Any], Any],
+    fit_fn: Callable[[Sequence[Any]], Any],
+    analyze_fn: Callable[..., Any],
+    all_small: bool,
+    filter_fn: Callable[[Sequence[Any], Any], Sequence[Any]],
+    sample_fn: Callable[[], Sequence[Any]],
+    include: bool = False,
+    ensure_fn: Optional[Callable[[Sequence[Any], Sequence[Any]], Sequence[Any]]] = None,
+) -> tuple[Any, list[Any], list[Any]]:
+    """Fit landscape, then filter or sample. Optional named include."""
+
+    model, landscape = fit_landscape(
+        records, feature_fn=feature_fn, fit_fn=fit_fn, analyze_fn=analyze_fn
+    )
+    sampled = list(
+        either(all_small, lambda: filter_fn(records, landscape), sample_fn) or ()
+    )
+    if ensure_fn is not None:
+        sampled = list(call_if(include, lambda: ensure_fn(sampled, records), default=sampled) or ())
+    return model, landscape, sampled
+
+
+def with_key(row: Mapping[str, Any], key: str, value: Any) -> dict[str, Any]:
+    """Copy a mapping and set one key."""
+
+    out = dict(row)
+    out[str(key)] = value
+    return out
+
+
+def jev_budget(
+    n: Any,
+    rounds: Any,
+    inner: Any,
+    *,
+    floor: int = 8,
+    factor: int = 3,
+    extra: int = 2,
+) -> int:
+    """max(floor, n * max(rounds, inner) * factor + extra)."""
+
+    return max(int(floor), int(n) * max(int(rounds), int(inner)) * int(factor) + int(extra))
+
+
+def names_of(rows: Sequence[Any], key: str = "name") -> list[Any]:
+    """Collect mapping[key] from rows."""
+
+    return [item[key] for item in rows or ()]
+
+
+def or_str(primary: Any, fallback: Any) -> str:
+    """primary or str(fallback)."""
+
+    return primary or str(fallback)
+
+
+def index_paths(paths: Mapping[Any, Any], mapping: Mapping[str, Any]) -> dict[str, Any]:
+    """Rename path keys. mapping values are keys in paths."""
+
+    return {str(key): paths[src] for key, src in dict(mapping).items()}
+
+
+def or_load(value: Any, load_fn: Callable[[], Any], default: Optional[Mapping[str, Any]] = None) -> dict[str, Any]:
+    """Use value when nonempty, else load_fn(). Always a dict."""
+
+    row = dict(value or {})
+    if row:
+        return row
+    loaded = load_fn()
+    return dict(loaded or default or {})
+
+
+def pin_calls(*fns: Callable[[], Any]) -> Callable[[], None]:
+    """Thunk that runs setup callables, then returns."""
+
+    def _pin() -> None:
+        after_calls(fns, lambda: None)
+
+    return _pin
+
+
+def first_set(*values: Any, default: Any = ()) -> set[Any]:
+    """First truthy value as a set. Empty/missing uses default."""
+
+    hit = first_truthy(*values, default=None)
+    if hit is None:
+        return set(default)
+    return set(hit)
+
+
+def unless_flag(flag: Any, payload: Optional[Mapping[str, Any]] = None, **fields: Any) -> dict[str, Any]:
+    """Return payload/fields unless flag is true, then {}."""
+
+    if flag:
+        return {}
+    out = dict(payload or {})
+    out.update(fields)
+    return out
+
+
+def mapping_and_total(
+    factory: Callable[[], Any],
+    total_fn: Callable[[Any], Any],
+) -> tuple[Any, Any]:
+    """(mapping, total_fn(mapping))."""
+
+    row = factory()
+    return row, total_fn(row)
+
+
+def pop_nested(container: Mapping[str, Any], outer: str, key: str, default: Any = None) -> Any:
+    """Pop key from container[outer] when that value is a dict."""
+
+    row = container.get(outer) or {}
+    if not isinstance(row, dict):
+        return default
+    return row.pop(key, default)
+
+
+def attrs_of(rows: Sequence[Any], name: str) -> list[Any]:
+    """getattr(item, name) for each item."""
+
+    return [getattr(item, name) for item in rows or ()]
+
+
+def substrings_in(text: str, pairs: Sequence[Any]) -> list[Any]:
+    """First element of each pair that occurs in text."""
+
+    return [item[0] for item in pairs or () if item and item[0] in text]
+
+
+def any_get(mapping: Optional[Mapping[str, Any]], *keys: str) -> bool:
+    """True if any mapping.get(key) is truthy."""
+
+    row = mapping or {}
+    return any(row.get(key) for key in keys)
+
+
+def field_eq(key: str, value: Any) -> Callable[[Any], bool]:
+    """Predicate: mapping[key] or getattr equals value."""
+
+    def _pred(item: Any) -> bool:
+        if isinstance(item, Mapping):
+            return item.get(key) == value
+        return getattr(item, key, None) == value
+
+    return _pred
+
+
+def contains_attr(name: str, needle: Any) -> Callable[[Any], bool]:
+    """Predicate: needle in getattr(item, name)."""
+
+    def _pred(item: Any) -> bool:
+        return needle in getattr(item, name, ())
+
+    return _pred
+
+
+def dict_call(fn: Callable[..., Any], *args: Any, **kwargs: Any) -> dict[str, Any]:
+    """dict(fn(*args, **kwargs)). Compile views stay mappings."""
+
+    return dict(fn(*args, **kwargs))
+
+
+def get_list(row: Any, key: str = "", default: Optional[Sequence[Any]] = None) -> list[Any]:
+    """list(row[key]) when row is a mapping, else list(row). Missing is []."""
+
+    if isinstance(row, Mapping):
+        return list(row.get(key) or default or ())
+    return list(row or default or ())
+
+
+def or_int(value: Any, default: int, *, floor: Optional[int] = None) -> int:
+    """int(value or default), optional floor."""
+
+    n = int(value or default)
+    return max(int(floor), n) if floor is not None else n
+
+
+def sample_n(beam: Any, cap: int) -> int:
+    """1 when beam<=1, else min(max(beam, 1), cap)."""
+
+    n = int(beam)
+    if n <= 1:
+        return 1
+    return min(max(n, 1), int(cap))
+
+
+def pick_line(text: str, rng: Any, idxs: Sequence[int]) -> tuple[int, str]:
+    """Choose an index and return (index, that line)."""
+
+    index = int(rng.choice(list(idxs)))
+    lines = str(text or "").splitlines()
+    return index, lines[index]
+
+
+def nested_get(container: Any, *keys: Any, default: Any = None) -> Any:
+    """Walk mapping keys. Missing/non-mapping returns default."""
+
+    row = container
+    for key in keys:
+        if not isinstance(row, Mapping):
+            return default
+        row = row.get(key)
+        if row is None:
+            return default
+    return row
+
+
+def first_int(*values: Any, default: int = 0) -> int:
+    """int of the first truthy value, else default."""
+
+    hit = first_truthy(*values, default=None)
+    return int(default) if hit is None else int(hit)
+
+
+def map_pairs(
+    rows: Sequence[Any],
+    *,
+    kind_key: str = "kind",
+    value_key: str = "tactics",
+    default_kind: str = "",
+) -> list[tuple[str, str]]:
+    """(kind, value) pairs from mapping rows."""
+
+    return [
+        (str(item.get(kind_key) or default_kind), str(item.get(value_key) or ""))
+        for item in rows or ()
+    ]
+
+
+def rstrip_or(value: Any, default: str = "", chars: str = "/") -> str:
+    """str(value or default).rstrip(chars)."""
+
+    return str(value or default).rstrip(chars)
+
+
+def stripped_or(primary: Any, fallback: Any, chars: str = "\n") -> str:
+    """str(primary or fallback).strip(chars). Keeps interior spaces."""
+
+    return str(primary or fallback).strip(chars)
+
+
+def optional_fn(cond: Any, fn: Any) -> Any:
+    """fn when cond, else None."""
+
+    return fn if cond else None
+
+
+def any_pred(pred: Callable[[Any], Any], items: Sequence[Any]) -> bool:
+    """True if pred(item) for any item."""
+
+    return any(pred(item) for item in items or ())
+
+
+def maybe_set(items: Any) -> Optional[set[Any]]:
+    """set(items) when nonempty, else None."""
+
+    return set(items) if items else None
+
+
+def or_list(value: Any, default: Sequence[Any]) -> list[Any]:
+    """list(value) or list(default). Empty is default."""
+
+    return list(value or ()) or list(default)
+
+
+def overlay_map(base: Any, **fields: Any) -> dict[str, Any]:
+    """Copy a mapping and overlay fields."""
+
+    out = dict(base or {})
+    out.update(fields)
     return out

@@ -715,7 +715,12 @@ def nested_header_spans(
 
 
 def replace_span(text: str, header_end: int, end: int, body: str, *, indent: str) -> str:
-    replacement = str(indent) + str(body).strip() + "\n"
+    # Donors may already be indented; raw multi-line tactic proposals may not.
+    # Rebase the whole block, preserving relative nesting. Indenting only the
+    # first line lets subsequent tactics escape the case arm they replace.
+    lines = str(body).strip("\n").splitlines()
+    common = min((len(line) - len(line.lstrip()) for line in lines if line.strip()), default=0)
+    replacement = "\n".join(str(indent) + line[common:] if line.strip() else "" for line in lines) + "\n"
     return str(text or "")[: int(header_end)] + replacement + str(text or "")[int(end) :]
 
 

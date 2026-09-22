@@ -1,0 +1,85 @@
+{
+  "schema": "jevops-kernel-refactor-regression/v1",
+  "recorded_on": "2026-09-22",
+  "frozen_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+  "name": "CallElimCorrect.substOldPostSubset",
+  "source_body_tokens": 482,
+  "best_body_tokens": 391,
+  "best_source": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1]) := by\n  induction post <;> simp [substOld]\n  case fvar =>\n    intro\n\n\n\n    simp_all\n  case op =>\n    intro\n\n    simp_all\n  case const =>\n    intro\n    simp_all\n  case bvar =>\n    intro\n    simp_all\n  case abs ih =>\n    assumption\n  case ite cih tih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intro\n      simp_all\n  case app ih1 ih2 =>\n    split\n    . split\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n    . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply ih1 <;> assumption\n        intros x Hin\n        simp_all\n        cases Hin <;> simp_all\n      . apply List.Subset.trans\n        apply ih2 <;> assumption\n        intro\n        simp_all\n  case quant trih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intro\n      simp_all\n",
+  "historical_seed_tokens_reverified": 392,
+  "kernel_only": true,
+  "requested_strategies": [
+    "proof_slice",
+    "grind_control",
+    "rewrite_transport"
+  ],
+  "router": "deterministic_strategy_plan",
+  "mode": "seeded_regression",
+  "training_enabled": false,
+  "model_step": 0,
+  "binding_steps": 0,
+  "production_memory_used": false,
+  "nca_memory_discarded": true,
+  "round_count": 3,
+  "compile_attempt_count": 34,
+  "model_evaluation": {
+    "cross_entropy": 4.304065093204165,
+    "cosine_similarity": 0.4885,
+    "body_tokens": 482,
+    "lake_ok": true
+  },
+  "winning_candidate": {
+    "id": "v-27a825564250",
+    "origin": "hammer_strategy:rewrite_transport",
+    "kind": "exact_to_assumption",
+    "body_tokens": 391,
+    "lake_ok": true
+  },
+  "source_sha256": "27a825564250da11ed157185323a2a65e8ad098fdb9ff72009d83551d8dacb33",
+  "previous_best_source": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1]) := by\n  induction post <;> simp [substOld]\n  case fvar =>\n    intro\n\n\n\n    simp_all\n  case op =>\n    intro\n\n    simp_all\n  case const =>\n    intro\n    simp_all\n  case bvar =>\n    intro\n    simp_all\n  case abs ih =>\n    exact ih\n  case ite cih tih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intro\n      simp_all\n  case app ih1 ih2 =>\n    split\n    . split\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n    . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply ih1 <;> assumption\n        intros x Hin\n        simp_all\n        cases Hin <;> simp_all\n      . apply List.Subset.trans\n        apply ih2 <;> assumption\n        intro\n        simp_all\n  case quant trih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intro\n      simp_all\n",
+  "fresh_recheck": {
+    "lake_ok": true,
+    "theorem_ok": true,
+    "body_tokens": 391,
+    "kernel_only": true,
+    "kernel_audit": {
+      "accepted": true,
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "axioms": [
+        "Quot.sound",
+        "propext"
+      ],
+      "conflicting_reports": [],
+      "declarations": [
+        "CallElimCorrect.substOldPostSubset"
+      ],
+      "independent_kernel_verifier_used": false,
+      "missing_reports": [],
+      "native_axioms": [],
+      "schema": "jevops-axiom-audit/v1",
+      "unexpected_axioms": []
+    },
+    "selected_version_info": [
+      {
+        "v4.26.0": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      }
+    ],
+    "module_has_unrelated_sorry_warnings": true,
+    "sorry_in_theorem": false,
+    "module_exit_0": true,
+    "wall_ms": 4605.231685098261,
+    "axiom_report_stdout_tail": "lse,\"keepFullRange\":false,\"kind\":\"hasSorry\",\"pos\":{\"column\":8,\"line\":3273},\"severity\":\"warning\"}\n{\"caption\":\"\",\"data\":\"'CallElimCorrect.substOldPostSubset' depends on axioms: [propext, Quot.sound]\",\"endPos\":{\"column\":6,\"line\":4693},\"fileName\":\"Strata/Transform/CallElimCorrect.lean\",\"isSilent\":false,\"keepFullRange\":false,\"kind\":\"[anonymous]\",\"pos\":{\"column\":0,\"line\":4693},\"severity\":\"information\"}\n"
+  },
+  "transformation": {
+    "before": "  case abs ih =>\n    exact ih",
+    "after": "  case abs ih =>\n    assumption"
+  },
+  "evidence_scope": "seeded regression, one frozen theorem; not an unseen holdout, learned compression, global minimum or official arena score",
+  "search_receipt_path": "/tmp/jevops-kernel-methods-TGoYvk/arena-kernel.json",
+  "official_score": null,
+  "arena_score": null
+}

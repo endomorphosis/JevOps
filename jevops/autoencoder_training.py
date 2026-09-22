@@ -118,16 +118,14 @@ def _canonical_ops(ir: Mapping[str, Any]) -> tuple[tuple[str, tuple[str, ...]], 
 def _ops_to_ir(source_ir: Mapping[str, Any], ops: Sequence[tuple[str, Sequence[str]]]) -> dict[str, Any]:
     """Copy stable IR metadata while replacing only the operation sequence."""
 
-    packed = dict(source_ir)
-    packed["ops"] = [
+    operations = [
         {"op": str(op), **({"args": list(args)} if args else {})}
         for op, args in ops
     ]
-    packed["families"] = []
-    packed["legal_ir"] = False
-    packed["functional_lean"] = True
-    packed["schema"] = getattr(_ae(), "LEAN_IR_SCHEMA", "jevops-lean-ir/v1")
-    packed["source_copy"] = False
+    # A changed flat sequence must invalidate/project the old script too.
+    # Otherwise loss measures selected operations while Lean executes an
+    # unchanged source proof, concealing a failed learned edit.
+    packed = _ae()._ir_with_ops(source_ir, operations)
     packed["ops_digest"] = _digest(packed["ops"])
     return packed
 
@@ -205,6 +203,9 @@ class AutoencoderConfig:
     temperature: float = 1.0
     beam_width: int = 4
     max_ops: int = 32
+    train_binding_policy: bool = False
+    train_rewrite_policy: bool = False
+    rewrite_max_edits: int = 4
     validation_fraction: float = 0.10
     holdout_fraction: float = 0.10
     canary_fraction: float = 0.10
@@ -237,6 +238,9 @@ class AutoencoderConfig:
         object.__setattr__(self, "temperature", max(0.05, _finite(self.temperature, 1.0)))
         object.__setattr__(self, "beam_width", max(1, int(self.beam_width)))
         object.__setattr__(self, "max_ops", max(1, int(self.max_ops)))
+        object.__setattr__(self, "train_binding_policy", bool(self.train_binding_policy))
+        object.__setattr__(self, "train_rewrite_policy", bool(self.train_rewrite_policy))
+        object.__setattr__(self, "rewrite_max_edits", max(1, min(8, int(self.rewrite_max_edits))))
         object.__setattr__(self, "validation_fraction", min(0.45, max(0.0, _finite(self.validation_fraction, 0.10))))
         object.__setattr__(self, "holdout_fraction", min(0.45, max(0.0, _finite(self.holdout_fraction, 0.10))))
         object.__setattr__(self, "canary_fraction", min(0.45, max(0.0, _finite(self.canary_fraction, 0.10))))
@@ -263,6 +267,9 @@ class AutoencoderConfig:
             "loss_weights": dict(sorted(self.loss_weights.items())),
             "max_learning_rate": self.max_learning_rate,
             "max_ops": self.max_ops,
+            "train_binding_policy": self.train_binding_policy,
+            "train_rewrite_policy": self.train_rewrite_policy,
+            "rewrite_max_edits": self.rewrite_max_edits,
             "min_learning_rate": self.min_learning_rate,
             "plateau_factor": self.plateau_factor,
             "plateau_patience": self.plateau_patience,
@@ -579,6 +586,9 @@ class LossBreakdown:
     minimality_reward: float
     length_penalty: float
     copy_penalty: float
+    binding_cross_entropy: Optional[float] = None
+    rewrite_cross_entropy: Optional[float] = None
+    rewrite_expected_cosine_loss: Optional[float] = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -586,6 +596,9 @@ class LossBreakdown:
             "cosine_similarity": self.cosine_similarity,
             "copy_penalty": self.copy_penalty,
             "cross_entropy": self.cross_entropy,
+            "binding_cross_entropy": self.binding_cross_entropy,
+            "rewrite_cross_entropy": self.rewrite_cross_entropy,
+            "rewrite_expected_cosine_loss": self.rewrite_expected_cosine_loss,
             "fuzzy_prover_reward": self.fuzzy_prover_reward,
             "ir_exact_match": self.ir_exact_match,
             "kl_loss": self.kl_loss,
@@ -619,6 +632,8 @@ class LeanIRAutoencoder:
             self._load_state(state)
 
     def _new_state(self) -> dict[str, Any]:
+        from .binding_policy import FEATURES
+
         vocab = list(_operation_vocab()) + ["<eos>"]
         return {
             "schema": MODEL_SCHEMA,
@@ -633,6 +648,11 @@ class LeanIRAutoencoder:
             "feature_op": {},
             "latent_bias": [0.0] * int(getattr(_ae(), "LATENT_D", 16)),
             "feature_latent": {},
+            "binding_steps": 0,
+            "binding_weights": dict.fromkeys(FEATURES, 0.0),
+            "rewrite_steps": 0,
+            "rewrite_templates": [],
+            "rewrite_weights": {},
         }
 
     def _load_state(self, state: Mapping[str, Any]) -> None:
@@ -644,6 +664,13 @@ class LeanIRAutoencoder:
             if key in base:
                 base[key] = value
         vocab = list(_operation_vocab()) + ["<eos>"]
+        saved_vocab = loaded.get("vocab")
+        if isinstance(saved_vocab, list) and saved_vocab:
+            # A vocabulary expansion changes the softmax denominator and CE.
+            # Frozen checkpoints must retain their evaluation vocabulary.
+            if any(not isinstance(op, str) or op not in vocab for op in saved_vocab):
+                raise ValueError("checkpoint has unsupported operation vocabulary")
+            vocab = list(dict.fromkeys([*saved_vocab, "<eos>"]))
         base["vocab"] = vocab
         raw_bias = base.get("op_bias") if isinstance(base.get("op_bias"), Mapping) else {}
         base["op_bias"] = {op: _finite(raw_bias.get(op)) for op in vocab}
@@ -678,6 +705,19 @@ class LeanIRAutoencoder:
             for key, value in raw_latent_rows.items()
             if isinstance(value, Sequence) and not isinstance(value, (str, bytes))
         }
+        from .binding_policy import FEATURES
+
+        base["binding_steps"] = max(0, int(_finite(base.get("binding_steps"))))
+        raw_binding = base.get("binding_weights") if isinstance(base.get("binding_weights"), Mapping) else {}
+        base["binding_weights"] = {key: _finite(raw_binding.get(key)) for key in FEATURES}
+        from .rewrite_policy import validate_templates
+
+        base["rewrite_templates"] = validate_templates(base["rewrite_templates"])
+        base["rewrite_steps"] = max(0, int(_finite(base.get("rewrite_steps"))))
+        raw_rewrite = base.get("rewrite_weights")
+        if not isinstance(raw_rewrite, Mapping) or len(raw_rewrite) > 8192:
+            raise ValueError("invalid rewrite weights")
+        base["rewrite_weights"] = {str(key): _finite(value) for key, value in raw_rewrite.items()}
         self.state = base
 
     @classmethod
@@ -686,6 +726,14 @@ class LeanIRAutoencoder:
 
     def copy(self) -> "LeanIRAutoencoder":
         return LeanIRAutoencoder(config=self.config, state=self.to_dict())
+
+    def extend_operation_vocabulary(self) -> list[str]:
+        """Explicit migration for training; CE changes and needs a new baseline."""
+        added = [op for op in _operation_vocab() if op not in self.state["vocab"]]
+        self.state["vocab"].extend(added)
+        for op in added:
+            self.state["op_bias"][op] = 0.0
+        return added
 
     @property
     def step(self) -> int:
@@ -732,46 +780,178 @@ class LeanIRAutoencoder:
     def operation_probabilities(self, text: str, previous: str = "<bos>") -> dict[str, float]:
         return _softmax(self._logits(self.feature_vector(text), previous), self.config.temperature)
 
+    @staticmethod
+    def _binding_features(text: str, operations: Sequence[tuple[str, Sequence[str]]]) -> dict[str, Any]:
+        from .binding_policy import source_features
+
+        marker = _ae()._LEAN_HEADER.search(str(text))
+        body = str(text)[marker.end():] if marker else str(text)
+        return source_features(body, operations)
+
+    def _binding_training_data(self, example: TrainingExample) -> Optional[tuple[list[dict[str, Any]], list[int]]]:
+        from .binding_policy import subsequence_labels
+
+        source = _source_ir(example)
+        if any(source.get(key) != example.target_ir.get(key) for key in ("goal", "binders")):
+            return None
+        operations = _canonical_ops(source)
+        features = self._binding_features(example.text, operations)
+        if not features["supported"] or not features["rows"]:
+            return None
+        labels = subsequence_labels(operations, example.target_ops)
+        if labels is None or any(not keep and operations[i][0] != "have" for i, keep in enumerate(labels)):
+            return None
+        return features["rows"], labels
+
+    def binding_cross_entropy(self, example: TrainingExample) -> Optional[float]:
+        from .binding_policy import loss_and_gradient
+
+        if not self.config.train_binding_policy and not self.state.get("binding_steps"):
+            return None
+        data = self._binding_training_data(example)
+        return None if data is None else loss_and_gradient(self.state["binding_weights"], *data)[0]
+
+    def prepare_rewrite_training(self, examples: Sequence[TrainingExample]) -> dict[str, Any]:
+        """Explicitly expand the edit grammar BEFORE taking metric baselines.
+
+        Low-level supervised API: callers must supply verified, training-only
+        pairs. The distillation runner and router enforce that contract. Never
+        call this on validation/canary/holdout examples or in predict_ir.
+        """
+        from .rewrite_policy import MAX_RULES, body_from_ir, mine_template, validate_templates
+
+        if not self.config.train_rewrite_policy:
+            raise ValueError("rewrite training is not enabled")
+        bank = copy.deepcopy(self.state["rewrite_templates"])
+        before = _digest(bank)
+        skipped = []
+        for example in examples:
+            observed = _source_ir(example)
+            if any(observed.get(k) != example.target_ir.get(k) for k in ("goal", "binders")):
+                raise ValueError("rewrite teacher changes theorem envelope")
+            if not set(_normalized_ops(example)) <= set(self.state["vocab"]):
+                raise ValueError("training target requires explicit vocabulary migration and rebaselining")
+            rule = mine_template(example.text, body_from_ir(example.target_ir))
+            if rule is None:
+                skipped.append(example.sample_id)
+            elif not any(r["id"] == rule["id"] for r in bank):
+                if len(bank) == MAX_RULES:
+                    skipped.append(example.sample_id)
+                else:
+                    bank.append(rule)
+        bank = validate_templates(bank)
+        added = len(bank) - len(self.state["rewrite_templates"])
+        self.state["rewrite_templates"] = bank
+        return {"added_templates": added, "template_count": len(bank), "not_mined": skipped,
+                "before_digest": before, "after_digest": _digest(bank),
+                "requires_new_edit_ce_baseline": bool(added)}
+
+    def rewrite_objective(self, example: TrainingExample) -> Optional[dict[str, Any]]:
+        from .rewrite_policy import body_from_ir, choices, loss_and_gradient
+
+        if not self.config.train_rewrite_policy and not self.state["rewrite_steps"]:
+            return None
+        if any(_source_ir(example).get(k) != example.target_ir.get(k) for k in ("goal", "binders")):
+            return None
+        return loss_and_gradient(self.state["rewrite_weights"], choices(example.text, self.state["rewrite_templates"]),
+                                 body_from_ir(example.target_ir), temperature=self.config.temperature,
+                                 smoothing=self.config.label_smoothing,
+                                 cosine_weight=self.config.loss_weights.get("rewrite_cosine", .35))
+
     def predict_ir(
         self,
         text: str,
         *,
         source_ir: Optional[Mapping[str, Any]] = None,
         max_ops: Optional[int] = None,
+        dependency_guard: bool = True,
+        binding_policy: Optional[bool] = None,
+        rewrite_policy: Optional[bool] = None,
     ) -> dict[str, Any]:
         """Decode an operation sequence while preserving source symbols.
 
         Operation selection is learned; arguments are copied only from the
         parsed source IR and are independently sanitized by the renderer.  We
         never let a model hallucinate arbitrary Lean text into the output.
-        Normal evaluation preserves the complete observed sequence; callers
-        doing bounded candidate generation must pass ``max_ops`` explicitly.
+        Normal evaluation considers the complete observed sequence but may
+        learn to omit operations. A lexical dependency guard retains needed
+        bindings and stateful steps; Lean must still verify the result. The
+        ``max_ops`` proposal limit may be exceeded to retain prerequisites.
+        ``dependency_guard=False`` is an explicit raw-model ablation, not an
+        admission bypass. No teacher target is consulted by either path.
         """
 
         source = dict(source_ir or _ae().encode_lean_ir(text))
+        if self.state["rewrite_steps"] and rewrite_policy is not False:
+            import textwrap
+            from .rewrite_policy import body_of, decode
+
+            edited = decode(text, self.state["rewrite_templates"], self.state["rewrite_weights"],
+                            max_edits=self.config.rewrite_max_edits, temperature=self.config.temperature)
+            prefix, _ = body_of(text)
+            rendered = prefix + "\n" + textwrap.indent(edited["body"], "  ") if prefix else edited["body"]
+            prediction = dict(_ae().encode_lean_ir(rendered))
+            for key in ("goal", "binders", "ident"):
+                if key in source:
+                    prediction[key] = copy.deepcopy(source[key])
+            prediction["rewrite_policy"] = {k: v for k, v in edited.items() if k != "body"}
+            prediction["dependency_guard"] = {"enabled": False, "reason": "span_edits_require_Lean_not_deletion_closure",
+                                               "restored": [], "teacher_used": False}
+            prediction["binding_policy"] = {"mode": "superseded_by_span_editor", "teacher_used": False}
+            return prediction
         target = list(_canonical_ops(source))
-        if self.step <= 0:
-            return _ops_to_ir(source, target)
-        features = self.feature_vector(text)
-        selected: list[tuple[str, tuple[str, ...]]] = []
-        previous = "<bos>"
-        if max_ops is None:
-            limit = len(target)
+        selected_indices: list[int] = []
+        policy = {"mode": "legacy_eos_filter", "teacher_used": False}
+        if self.state.get("binding_steps") and binding_policy is not False:
+            from .binding_policy import keep_probability
+
+            features = self._binding_features(text, target)
+            policy = {"mode": "learned_binding_keep", "supported": features["supported"],
+                      "reason": features["reason"], "steps": self.state["binding_steps"],
+                      "feature_source": "symbolic_dependency_graph", "teacher_used": False, "decisions": []}
+            # Unsupported structured proofs explicitly abstain. This is source
+            # preservation, not a learned success or the static guard acting.
+            selected_indices = list(range(len(target)))
+            if features["supported"]:
+                for row in features["rows"]:
+                    probability = keep_probability(self.state["binding_weights"], row["features"])
+                    policy["decisions"].append({"index": row["index"], "keep_probability": probability})
+                    if probability < .5:
+                        selected_indices.remove(row["index"])
+            else:
+                policy["mode"] = "unsupported_identity"
+        elif self.step <= 0:
+            selected_indices = list(range(len(target)))
         else:
-            limit = max(1, min(int(max_ops), self.config.max_ops))
-        for op, args in target[:limit]:
-            logits = self._logits(features, previous)
-            op_score = logits.get(op, -60.0)
-            eos_score = logits.get("<eos>", -60.0)
-            # The margin keeps one-step online training from erasing an
-            # otherwise valid source proof.  More training can learn a real
-            # shortening by pushing EOS above this margin.
-            if op_score + 2.0 >= eos_score:
-                selected.append((op, args))
-                previous = op
+            features = self.feature_vector(text)
+            previous = "<bos>"
+            limit = len(target) if max_ops is None else max(1, min(int(max_ops), self.config.max_ops))
+            for index, (op, _args) in enumerate(target[:limit]):
+                logits = self._logits(features, previous)
+                op_score = logits.get(op, -60.0)
+                eos_score = logits.get("<eos>", -60.0)
+                # The margin keeps one-step updates from erasing the source;
+                # later updates can learn deletions, subject to the guard.
+                if op_score + 2.0 >= eos_score:
+                    selected_indices.append(index)
+                    previous = op
+        if dependency_guard:
+            from .ir_dependencies import close_deletions
+
+            marker = _ae()._LEAN_HEADER.search(str(text))
+            body = str(text)[marker.end():] if marker else str(text)
+            guard = close_deletions(body, target, selected_indices)
+            selected_indices = guard["kept_indices"]
+        else:
+            guard = {"enabled": False, "reason": "raw_model_ablation", "proposed_indices": selected_indices,
+                     "kept_indices": selected_indices, "restored": [], "teacher_used": False}
+        selected = [target[index] for index in selected_indices]
         if not selected:
             selected = [("trivial", ())]
-        return _ops_to_ir(source, selected)
+        prediction = _ops_to_ir(source, selected)
+        prediction["dependency_guard"] = guard
+        prediction["binding_policy"] = policy
+        return prediction
 
     def _sequence_loss(self, example: TrainingExample) -> float:
         features = self.feature_vector(example.text)
@@ -803,7 +983,11 @@ class LeanIRAutoencoder:
         probs = _softmax(self._logits(features, previous), self.config.temperature)
         smoothing = self.config.label_smoothing
         gradients = {
-            op: probs.get(op, 0.0) - ((1.0 - smoothing) if op == target else (smoothing / max(1, len(vocab) - 1)))
+            # Match _sequence_loss exactly: smoothing is uniform over the
+            # whole vocabulary, including the target. Softmax temperature
+            # contributes the additional chain-rule factor.
+            op: (probs.get(op, 0.0) - ((1.0 - smoothing if op == target else 0.0)
+                                     + smoothing / max(1, len(vocab)))) / self.config.temperature
             for op in vocab
         }
         norm = math.sqrt(sum(value * value for value in gradients.values())) or 1.0
@@ -848,6 +1032,8 @@ class LeanIRAutoencoder:
         learning_rate: Optional[float] = None,
         reward: Optional[float] = None,
     ) -> dict[str, Any]:
+        if not set(_normalized_ops(example)) <= set(self.state["vocab"]):
+            raise ValueError("training target requires explicit vocabulary migration and rebaselining")
         lr = float(learning_rate if learning_rate is not None else self.learning_rate())
         # A low reward increases caution but does not erase a useful teacher
         # signal; verifier reward is an auxiliary weight, never the target.
@@ -866,8 +1052,35 @@ class LeanIRAutoencoder:
             )
             previous = target
         latent_norm = self._apply_latent_update(example.text, learning_rate=lr, scale=update_scale)
+        binding_loss = None
+        if self.config.train_binding_policy:
+            from .binding_policy import loss_and_gradient
+
+            data = self._binding_training_data(example)
+            if data is not None:
+                binding_loss, gradients = loss_and_gradient(self.state["binding_weights"], *data)
+                norm = math.sqrt(sum(v * v for v in gradients.values())) or 1.0
+                scale = min(1.0, self.config.gradient_clip / norm)
+                step = lr * update_scale * self.config.loss_weights.get("binding_cross_entropy", .25)
+                for key, gradient in gradients.items():
+                    old = self.state["binding_weights"].get(key, 0.0)
+                    self.state["binding_weights"][key] = old * (1 - step * self.config.weight_decay) - step * scale * gradient
+                self.state["binding_steps"] += 1
+        rewrite_loss = self.rewrite_objective(example) if self.config.train_rewrite_policy else None
+        if rewrite_loss is not None and rewrite_loss["choice_count"] > 1:
+            gradient = rewrite_loss["gradient"]
+            norm = math.sqrt(sum(v*v for v in gradient.values())) or 1.0
+            scale = min(1.0, self.config.gradient_clip / norm)
+            step = lr * update_scale * self.config.loss_weights.get("rewrite_cross_entropy", 1.0)
+            weights = self.state["rewrite_weights"]
+            for key, value in gradient.items():
+                weights[key] = weights.get(key, 0.0) * (1-step*self.config.weight_decay) - step*scale*value
+            self.state["rewrite_steps"] += 1
         self.state["step"] = self.step + 1
-        return {"cross_entropy": ce, "gradient_norm": gradient_norm, "latent_gradient_norm": latent_norm, "learning_rate": lr}
+        return {"cross_entropy": ce, "gradient_norm": gradient_norm, "latent_gradient_norm": latent_norm,
+                "learning_rate": lr, "binding_cross_entropy": binding_loss,
+                "rewrite_cross_entropy": None if rewrite_loss is None else rewrite_loss["cross_entropy"],
+                "rewrite_expected_cosine_loss": None if rewrite_loss is None else rewrite_loss["expected_cosine_loss"]}
 
     def train_batch(
         self,
@@ -878,6 +1091,11 @@ class LeanIRAutoencoder:
     ) -> dict[str, Any]:
         if not examples:
             return {"sample_count": 0, "cross_entropy": 0.0, "gradient_norm": 0.0}
+        # Reject incompatible batches before updating any weights. Otherwise
+        # a late new operation could leave a partially trained checkpoint.
+        vocab = set(self.state["vocab"])
+        if any(not set(_normalized_ops(row)) <= vocab for row in examples):
+            raise ValueError("training target requires explicit vocabulary migration and rebaselining")
         reports = []
         for row in examples:
             reward = (rewards or {}).get(row.sample_id)
@@ -895,6 +1113,8 @@ class LeanIRAutoencoder:
             "gradient_norm": sum(float(row["gradient_norm"]) for row in reports) / len(reports),
             "latent_gradient_norm": sum(float(row["latent_gradient_norm"]) for row in reports) / len(reports),
             "learning_rate": self.learning_rate(),
+            "binding_updates": sum(r["binding_cross_entropy"] is not None for r in reports),
+            "rewrite_labeled_examples": sum(r["rewrite_cross_entropy"] is not None for r in reports),
         }
 
 
@@ -928,6 +1148,10 @@ def merge_model_states(
             continue
     if not models:
         return LeanIRAutoencoder(config=cfg).to_dict()
+    if any(model.state["vocab"] != models[0].state["vocab"] for model in models[1:]):
+        raise ValueError("cannot merge different operation vocabularies; migrate and rebaseline explicitly")
+    if any(model.state["rewrite_templates"] != models[0].state["rewrite_templates"] for model in models[1:]):
+        raise ValueError("cannot merge different rewrite grammars; align them before training")
     positive = [max(0.0, _finite(value)) for value in kept_weights]
     total_weight = sum(positive)
     if total_weight <= 0.0:
@@ -1013,6 +1237,15 @@ def merge_model_states(
     base["transition"] = merge_nested_rows("transition")
     base["feature_op"] = merge_nested_rows("feature_op")
     base["feature_latent"] = merge_nested_vectors("feature_latent", latent_dim)
+    from .binding_policy import FEATURES
+
+    base["binding_steps"] = sum(int(model.state.get("binding_steps") or 0) for model in models)
+    base["binding_weights"] = {key: sum(weight * model.state.get("binding_weights", {}).get(key, 0.0)
+                                      for weight, model in zip(norm, models)) for key in FEATURES}
+    base["rewrite_steps"] = sum(model.state["rewrite_steps"] for model in models)
+    rewrite_keys = {k for model in models for k in model.state["rewrite_weights"]}
+    base["rewrite_weights"] = {k: sum(w*m.state["rewrite_weights"].get(k, 0.0) for w, m in zip(norm, models))
+                               for k in rewrite_keys}
     return LeanIRAutoencoder(config=cfg, state=base).to_dict()
 
 
@@ -1527,7 +1760,7 @@ def loss_for_example(
     cosine_similarity = max(0.0, min(1.0, cosine_m))
     distance = _sequence_distance(target_names + ("<eos>",), predicted_names + ("<eos>",))
     reconstruction_loss = distance / float(max(1, len(target_names) + len(predicted_names) + 1))
-    exact = 1.0 if target_names == predicted_names else 0.0
+    exact = 1.0 if example.target_ops == predicted_ops else 0.0
     target_latent = [float(value) / 1000.0 for value in _ae().encode_milles(example.text)["mu"]]
     predicted_latent = model.predict_latent(example.text)
     latent_cos = _ae().cosine_milles(
@@ -1555,11 +1788,20 @@ def loss_for_example(
         if minimality_reward is not None
         else 1.0 - _clip01(length_penalty)
     )
+    # Short text is not a successful refactor without a positive compiler
+    # result. This applies even to a caller-supplied minimality score: failed
+    # and unevaluated predictions must not earn a compression bonus in loss.
+    if _finite(verifier_reward, -1.0) != 1.0:
+        minimality = 0.0
     reward_values = [value for value in (verifier_reward, typesafe_reward, fuzzy) if value is not None]
     reward = None if not reward_values else sum(_clip01(value) for value in reward_values) / len(reward_values)
+    if verifier_reward is not None and _finite(verifier_reward, -1.0) != 1.0:
+        reward = 0.0  # Preserve soft advisor fields, but never override a failed verifier.
     reward_loss = 0.0 if reward is None else 1.0 - reward
     copy_penalty = 0.0
     weights = cfg.loss_weights
+    binding_ce = model.binding_cross_entropy(example)
+    rewrite_loss = model.rewrite_objective(example)
     total = (
         weights.get("cross_entropy", 1.0) * model._sequence_loss(example)
         + weights.get("cosine", 0.35) * cosine_loss
@@ -1570,6 +1812,8 @@ def loss_for_example(
         + weights.get("nca", 0.20) * nca_loss
         + weights.get("fuzzy_prover", 0.20) * (0.0 if fuzzy is None else 1.0 - fuzzy)
         + weights.get("minimality", 0.10) * (1.0 - minimality)
+        + weights.get("binding_cross_entropy", .25) * (binding_ce if binding_ce is not None else 0.0)
+        + weights.get("rewrite_cross_entropy", 1.0) * (rewrite_loss["total"] if rewrite_loss is not None else 0.0)
     )
     return LossBreakdown(
         total=max(0.0, total),
@@ -1589,6 +1833,9 @@ def loss_for_example(
         minimality_reward=minimality,
         length_penalty=length_penalty,
         copy_penalty=copy_penalty,
+        binding_cross_entropy=binding_ce,
+        rewrite_cross_entropy=None if rewrite_loss is None else rewrite_loss["cross_entropy"],
+        rewrite_expected_cosine_loss=None if rewrite_loss is None else rewrite_loss["expected_cosine_loss"],
     )
 
 
@@ -1645,6 +1892,11 @@ def evaluate_model(
             "sample_count": 0,
             "objective": None,
             "cross_entropy": None,
+            "binding_cross_entropy": None,
+            "binding_sample_count": 0,
+            "rewrite_cross_entropy": None,
+            "rewrite_expected_cosine_loss": None,
+            "rewrite_sample_count": 0,
             "cosine_similarity": None,
             "reconstruction_loss": None,
             "ir_exact_match": None,
@@ -1657,12 +1909,21 @@ def evaluate_model(
         }
     values = [row["loss"] for row in rows]
     verifier_values = [row["verifier_reward"] for row in rows if row["verifier_reward"] is not None]
+    binding_values = [row["binding_cross_entropy"] for row in values if row["binding_cross_entropy"] is not None]
+    rewrite_values = [row for row in values if row["rewrite_cross_entropy"] is not None]
     return {
         "status": "semantic_scored",
         "split": split,
         "sample_count": len(rows),
         "objective": sum(float(value["total"]) for value in values) / len(values),
         "cross_entropy": sum(float(value["cross_entropy"]) for value in values) / len(values),
+        "binding_cross_entropy": sum(binding_values) / len(binding_values) if binding_values else None,
+        "binding_sample_count": len(binding_values),
+        "rewrite_cross_entropy": (sum(r["rewrite_cross_entropy"] for r in rewrite_values)/len(rewrite_values)
+                                  if rewrite_values else None),
+        "rewrite_expected_cosine_loss": (sum(r["rewrite_expected_cosine_loss"] for r in rewrite_values)/len(rewrite_values)
+                                        if rewrite_values else None),
+        "rewrite_sample_count": len(rewrite_values),
         "cosine_similarity": sum(float(value["cosine_similarity"]) for value in values) / len(values),
         "reconstruction_loss": sum(float(value["reconstruction_loss"]) for value in values) / len(values),
         "ir_exact_match": sum(float(value["ir_exact_match"]) for value in values) / len(values),
@@ -1713,6 +1974,10 @@ def evaluate_stream_split(
     }
     verifier_sum = 0.0
     verifier_count = 0
+    binding_sum = 0.0
+    binding_count = 0
+    rewrite_sum = rewrite_cosine_sum = 0.0
+    rewrite_count = 0
     nca_reward_sum = 0.0
     nca_reward_count = 0
     evidence: list[dict[str, Any]] = []
@@ -1752,6 +2017,13 @@ def evaluate_stream_split(
         count += 1
         for key in sums:
             sums[key] += float(values[key])
+        if values["binding_cross_entropy"] is not None:
+            binding_sum += values["binding_cross_entropy"]
+            binding_count += 1
+        if values["rewrite_cross_entropy"] is not None:
+            rewrite_sum += values["rewrite_cross_entropy"]
+            rewrite_cosine_sum += values["rewrite_expected_cosine_loss"]
+            rewrite_count += 1
         if values.get("nca_reward") is not None:
             nca_reward_sum += float(values["nca_reward"])
             nca_reward_count += 1
@@ -1777,6 +2049,11 @@ def evaluate_stream_split(
             "stream_count": stream_count,
             "objective": None,
             "cross_entropy": None,
+            "binding_cross_entropy": None,
+            "binding_sample_count": 0,
+            "rewrite_cross_entropy": None,
+            "rewrite_expected_cosine_loss": None,
+            "rewrite_sample_count": 0,
             "cosine_similarity": None,
             "reconstruction_loss": None,
             "ir_exact_match": None,
@@ -1794,6 +2071,11 @@ def evaluate_stream_split(
         "stream_count": stream_count,
         "objective": sums["total"] / count,
         "cross_entropy": sums["cross_entropy"] / count,
+        "binding_cross_entropy": binding_sum / binding_count if binding_count else None,
+        "binding_sample_count": binding_count,
+        "rewrite_cross_entropy": rewrite_sum/rewrite_count if rewrite_count else None,
+        "rewrite_expected_cosine_loss": rewrite_cosine_sum/rewrite_count if rewrite_count else None,
+        "rewrite_sample_count": rewrite_count,
         "cosine_similarity": sums["cosine_similarity"] / count,
         "reconstruction_loss": sums["reconstruction_loss"] / count,
         "ir_exact_match": sums["ir_exact_match"] / count,
@@ -2009,14 +2291,48 @@ def canary_gate(
 ) -> dict[str, Any]:
     """Reject a candidate when a frozen canary worsens guarded metrics."""
 
-    if int(after.get("sample_count") or 0) == 0:
+    before_count = int(before.get("sample_count") or 0)
+    after_count = int(after.get("sample_count") or 0)
+    if before_count == after_count == 0:
         return {"accepted": True, "status": "not_measured", "regressions": {}, "objective_delta": 0.0}
     regressions: dict[str, float] = {}
+    if before_count > 0 and before_count != after_count:
+        regressions["sample_coverage_changed"] = 1.0
+    for key in ("cross_entropy", "binding_cross_entropy", "rewrite_cross_entropy", "rewrite_expected_cosine_loss", "cosine_similarity", "reconstruction_loss",
+                "verifier_success_rate", "nca_reward"):
+        if before.get(key) is not None:
+            try:
+                valid = math.isfinite(float(after[key])) and math.isfinite(float(before[key]))
+            except (KeyError, TypeError, ValueError):
+                valid = False
+            if not valid:
+                regressions[f"{key}_not_finite"] = 1.0
+    if before.get("verifier_success_rate") is not None:
+        if before.get("verifier_evaluated_count") != after.get("verifier_evaluated_count"):
+            regressions["verifier_coverage_changed"] = 1.0
+        verifier_drop = _finite(before["verifier_success_rate"]) - _finite(after.get("verifier_success_rate"))
+        if verifier_drop > 0:
+            regressions["verifier_success_rate"] = verifier_drop
     before_ce = _finite(before.get("cross_entropy"), 0.0)
     after_ce = _finite(after.get("cross_entropy"), 0.0)
     if after_ce - before_ce > max(0.0, float(max_cross_entropy_regression)):
         regressions["cross_entropy"] = after_ce - before_ce
+    if before.get("binding_cross_entropy") is not None:
+        if (after.get("binding_cross_entropy") is None or
+                after.get("binding_sample_count") != before.get("binding_sample_count")):
+            regressions["binding_coverage_changed"] = 1.0
+        else:
+            binding_rise = _finite(after["binding_cross_entropy"]) - _finite(before["binding_cross_entropy"])
+            if binding_rise > max(0.0, float(max_cross_entropy_regression)):
+                regressions["binding_cross_entropy"] = binding_rise
     before_cos = _finite(before.get("cosine_similarity"), 0.0)
+    if before.get("rewrite_cross_entropy") is not None:
+        if after.get("rewrite_sample_count") != before.get("rewrite_sample_count"):
+            regressions["rewrite_coverage_changed"] = 1.0
+        for key in ("rewrite_cross_entropy", "rewrite_expected_cosine_loss"):
+            rise = _finite(after.get(key)) - _finite(before.get(key))
+            if rise > max(0.0, float(max_cross_entropy_regression)):
+                regressions[key] = rise
     after_cos = _finite(after.get("cosine_similarity"), 0.0)
     if before_cos - after_cos > max(0.0, float(max_cosine_regression)):
         regressions["cosine_similarity"] = before_cos - after_cos

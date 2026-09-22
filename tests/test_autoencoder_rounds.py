@@ -87,7 +87,12 @@ def test_three_rounds_beat_frozen_local_proxy_without_leaking_oracle_text() -> N
         canary_fraction=0.0,
         holdout_fraction=0.0,
     )
-    model = ae.LeanIRAutoencoder(config=config)
+    # The historical scalar score was measured with the original vocabulary.
+    # Keep that exact softmax support for both baseline and training instead
+    # of silently rewriting the frozen score after adding new tactics.
+    legacy_vocab = list(ae.LEAN_IR_OPS[:ae.LEAN_IR_OPS.index("decide") + 1]) + ["<eos>"]
+    assert len(legacy_vocab) == 49
+    model = ae.LeanIRAutoencoder.from_dict({"vocab": legacy_vocab}, config=config)
     compile_cache: dict[str, dict[str, object]] = {}
     compile_fn = _lean_compiler(compile_cache)
 
@@ -119,6 +124,7 @@ def test_three_rounds_beat_frozen_local_proxy_without_leaking_oracle_text() -> N
     client = RecordingTypeSafe()
     memory: dict[str, object] = {
         "nca": {
+            "autoencoder": {"training_state": model.to_dict()},
             "grid": {
                 "ptr://skill/port_autoencoder": {
                     "energy": 0.8,

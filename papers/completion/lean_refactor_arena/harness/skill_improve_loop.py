@@ -176,7 +176,7 @@ def router_prompt(
             "skip_stem: ban a port_ skill that lake-failed.\n"
             "mint: enable a keep-structure stem already in the harness.\n"
             "stop: no remaining lake-valid cut. If nca.halt or nca.budget_dead is true, action must be stop.\n"
-            "Design strategies: closed_tree, guided_mca, span_preserving, closed_edits, hammer_variants, shortcut_closers, goal_directed, hammer_sweep, compose_verified, ir_crossover, pca_mca_cross, drop_unused_haves, drop_rename_i, drop_have_after_induction, collapse_simp_at, collapse_rw_to_simp, join_consecutive_exacts, join_consecutive_applies, try_simp_all, pca_prefix, keep_calc_only.\n"
+            "Design strategies: closed_tree, guided_mca, span_preserving, closed_edits, hammer_variants, shortcut_closers, goal_directed, hypothesis_refactor, hammer_sweep, compose_verified, ir_crossover, pca_mca_cross, drop_unused_haves, drop_rename_i, drop_have_after_induction, collapse_simp_at, collapse_rw_to_simp, join_consecutive_exacts, join_consecutive_applies, try_simp_all, pca_prefix, keep_calc_only.\n"
             "Use tactic_design_history and inner_analysis to avoid repeating a design that produced no new Lake-verified candidate; choose a different strategy or repair stem when evidence supports it.\n"
             "When outer_stalled=true, prefer hypothesis_refactor over repeating mint_tactic or nest_inner.\n"
         ),

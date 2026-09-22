@@ -78,8 +78,14 @@ def compiler_for_record(
     elan_home: Optional[Path] = None,
     network: str = "deny",
     skip_checkout: bool = True,
+    kernel_only: bool = False,
 ) -> Callable[..., Mapping[str, Any]]:
     """Build a RouterTuning-compatible compiler backed by the LRA splice oracle."""
+
+    if network not in {"allow", "deny"}:
+        raise ValueError("network must be allow or deny")
+    if not skip_checkout:
+        raise ValueError("splice compilation requires an already pinned checkout")
 
     resolved_state_root = (
         Path(state_root).expanduser().resolve()
@@ -103,37 +109,38 @@ def compiler_for_record(
             # checked-out source file, compiles it with Lake, and restores the
             # file. Feeding theorem-only text to run_warmup.compile_tactics
             # would erase imports and produce false failures.
-            clone = lra_keepbest.lra_cw.clone_dir(
-                str(record.get("url") or ""), resolved_state_root
-            )
-            dest = clone / lra_keepbest.lra_cw.source_relpath(record)
-            if not dest.is_file():
-                return {
-                    "theorem_ok": False,
-                    "lake_ok": False,
-                    "reason": "cached_source_missing",
-                    "token_count": lra_loop.token_count(tactics),
-                }
-            relpath = str(lra_keepbest.lra_cw.source_relpath(record))
-            # A failed prior canary may have left the isolated clone with a
-            # theorem-only candidate. Recover the pinned checkout bytes from
-            # Git before invoking the splice/restore compiler.
-            original = subprocess.run(
-                ["git", "-C", str(clone), "show", f"HEAD:{relpath}"],
-                capture_output=True,
-                check=False,
-            )
-            restore = original.stdout if original.returncode == 0 else dest.read_bytes()
+            restore = b""  # Putnam compiles a generated module, not a Git splice.
+            if str(record.get("source") or "") != "putnambench":
+                clone = lra_keepbest.lra_cw.clone_dir(str(record.get("url") or ""), resolved_state_root)
+                relpath = str(lra_keepbest.lra_cw.source_relpath(record))
+                dest = clone / relpath
+                if not dest.is_file():
+                    return {"theorem_ok": False, "lake_ok": False, "reason": "cached_source_missing",
+                            "token_count": lra_loop.token_count(tactics)}
+                restore = dest.read_bytes()
+                original = subprocess.run(
+                    ["git", "-C", str(clone), "show", f"HEAD:{relpath}"],
+                    capture_output=True, check=False,
+                )
+                # Never silently overwrite another run's or a user's edits.
+                if original.returncode != 0 or original.stdout != restore:
+                    return {"theorem_ok": False, "lake_ok": False, "reason": "cached_source_modified",
+                            "token_count": lra_loop.token_count(tactics)}
             result = lra_keepbest.compile_tactics(
                 record,
                 tactics,
                 state_root=resolved_state_root,
                 timeout=compile_timeout,
                 restore=restore,
+                network=network,
+                elan_home=elan_home,
+                kernel_only=kernel_only,
             )
             # ``sorryAx`` may occur elsewhere in a large source module; the
-            # benchmark's theorem-span gate is the authority for this local
-            # track. Preserve both values for auditability.
+            # benchmark's theorem-span gate is the default local authority.
+            # kernel_only additionally requires the target's transitive axiom
+            # audit; compile_tactics folds its decision into theorem_ok.
+            # Preserve both values for auditability.
             tags_ok = bool(result.get("theorem_ok")) and not bool(
                 result.get("sorry_in_theorem")
             )
@@ -146,9 +153,13 @@ def compiler_for_record(
                 "body_tokens": lra_loop.token_count(tactics),
                 "compile_receipts": [dict(result)],
                 "all_tags_ok": bool(tags_ok),
+                "all_requested_tags_ok": bool(result.get("all_requested_tags_ok")),
+                "selected_version_info": result.get("selected_version_info", []),
                 "sorryAx": bool(result.get("sorryAx")),
                 "sorry_in_theorem": bool(result.get("sorry_in_theorem")),
                 "compile": dict(result),
+                "kernel_audit": result.get("kernel_audit"),
+                "kernel_only": kernel_only,
             }
         except Exception as exc:  # compile failures are retained, never rewarded
             return {

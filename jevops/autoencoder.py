@@ -83,6 +83,13 @@ LEAN_IR_OPS = (
     "aesop",
     "grind",
     "decide",
+    # Explicit operations used by the reduction catalog. Punctuation-bearing
+    # tactic variants remain source proposals, not guessed IR operations.
+    "simpa", "subst_vars", "ac_rfl", "by_contra", "by_cases", "classical",
+    "push_neg", "bv_decide", "norm_cast", "push_cast", "abel", "abel_nf",
+    "noncomm_ring", "group", "order", "bound", "zify", "qify", "decide_cbv",
+    "split_ifs", "contrapose", "fin_cases", "interval_cases", "revert", "clear",
+    "symm", "let", "skip",
 )
 _FUNCTIONAL_BODY = frozenset(LEAN_IR_OPS)
 _TOKEN = re.compile(r"[A-Za-z0-9_]+")
@@ -424,6 +431,51 @@ def _codebook(memory: Mapping[str, Any]) -> list[dict[str, Any]]:
     return list(((memory.get("nca") or {}).get("autoencoder") or {}).get("codebook") or [])
 
 
+def _header_telescope_goal(header: str) -> tuple[str, str]:
+    """Split at the declaration's colon, not a binder/quantifier's colon.
+
+    Preserve the goal's parentheses: stripping them as individual characters
+    corrupts expressions such as ``(p ∧ q) → p``. This is a lexical helper,
+    not a replacement for Lean elaboration.
+    """
+    stack: list[str] = []
+    pairs = {"(": ")", "[": "]", "{": "}", "⦃": "⦄", "⟨": "⟩"}
+    comment_depth = 0
+    quoted = False
+    index = 0
+    while index < len(header):
+        ch = header[index]
+        if quoted:
+            if ch == "\\":
+                index += 2
+                continue
+            if ch == '"':
+                quoted = False
+        elif header.startswith("/-", index):
+            comment_depth += 1
+            index += 2
+            continue
+        elif comment_depth:
+            if header.startswith("-/", index):
+                comment_depth -= 1
+                index += 2
+                continue
+        elif header.startswith("--", index):
+            end = header.find("\n", index)
+            index = len(header) if end < 0 else end + 1
+            continue
+        elif ch == '"':
+            quoted = True
+        elif ch in pairs:
+            stack.append(pairs[ch])
+        elif stack and ch == stack[-1]:
+            stack.pop()
+        elif ch == ":" and not stack:
+            return header[:index].strip(), header[index + 1:].strip()
+        index += 1
+    return header.strip(), "True"
+
+
 def encode_lean_ir(text: str) -> dict[str, Any]:
     """Parse text into deterministic, grammar-constrained Lean IR.
 
@@ -438,10 +490,8 @@ def encode_lean_ir(text: str) -> dict[str, Any]:
     match = _LEAN_HEADER.search(source)
     if match:
         ident = re.sub(r"[^A-Za-z0-9_]", "", str(match.group("ident") or "roundtrip")) or "roundtrip"
-        header = " ".join(str(match.group("header") or "").split())
-        goal = header.rsplit(":", 1)[-1].strip() if ":" in header else "True"
-        goal = goal.strip("() ") or "True"
-        binder_source = header.rsplit(":", 1)[0].strip() if ":" in header else ""
+        binder_source, goal = _header_telescope_goal(str(match.group("header") or ""))
+        goal = " ".join(goal.split()) or "True"
         binders = [
             _safe_ir_arg(found.group(0), max_chars=240)
             for found in re.finditer(r"(?:\([^()]+\)|\[[^\[\]]+\]|\{[^{}]+\})", binder_source)
@@ -464,7 +514,10 @@ def encode_lean_ir(text: str) -> dict[str, Any]:
     chunks: list[str] = []
     for line in body.splitlines() or [body]:
         cleaned = re.sub(r"^\s*(?:\.|·|case\s+[^:]+:)\s*", "", line).strip()
-        chunks.extend(piece.strip() for piece in re.split(r"\s*;\s*", cleaned) if piece.strip())
+        # Match the whole all-goals combinator before its inner semicolon.
+        # Splitting `<;>` on `;` alone created arguments such as `post <`
+        # and discarded the following `> intro h` operation entirely.
+        chunks.extend(piece.strip() for piece in re.split(r"\s*(?:<;>|;)\s*", cleaned) if piece.strip())
     if not chunks:
         chunks = [body]
     for chunk in chunks:
@@ -780,6 +833,22 @@ def crossover_lean_ir(
                     break
             if len(rows) >= cap:
                 break
+    if len(rows) < cap:
+        # Interleaving preserves the order of each teacher while exploring a
+        # composition family that prefix/suffix crossover cannot express.
+        interleaved_left: list[tuple[str, tuple[str, ...]]] = []
+        interleaved_right: list[tuple[str, tuple[str, ...]]] = []
+        for index in range(max(len(left_ops), len(right_ops))):
+            if index < len(left_ops):
+                interleaved_left.append(left_ops[index])
+            if index < len(right_ops):
+                interleaved_left.append(right_ops[index])
+            if index < len(right_ops):
+                interleaved_right.append(right_ops[index])
+            if index < len(left_ops):
+                interleaved_right.append(left_ops[index])
+        add(interleaved_left)
+        add(interleaved_right)
     return rows
 
 

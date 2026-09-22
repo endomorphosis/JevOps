@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from types import SimpleNamespace
+import math
+
+import pytest
 
 from jevops import autoencoder as ae
 
@@ -34,6 +37,32 @@ def test_v2_ir_preserves_goal_arguments_and_is_non_admitting() -> None:
 
     compact = ae.encode_lean_ir("intro simp trivial")
     assert [row["op"] for row in compact["ops"]] == ["intro", "simp", "trivial"]
+
+
+def test_expanded_reduction_ir_roundtrips_and_checkpoint_ce_does_not_silently_rebaseline() -> None:
+    for op in ("simpa", "abel", "noncomm_ring", "group", "norm_cast", "qify", "decide_cbv"):
+        ir = ae.encode_lean_ir(op)
+        assert ir["ops"] == [{"op": op}]
+        assert op in ae.decode_lean_ir(ir)
+    model = ae.LeanIRAutoencoder()
+    model.state["vocab"] = ["have", "exact", "trivial", "<eos>"]
+    model.state["op_bias"] = {op: 0.0 for op in model.state["vocab"]}
+    example = ae.coerce_training_example("exact h")
+    ce = ae.loss_for_example(model, example).cross_entropy
+    restored = ae.LeanIRAutoencoder.from_dict(model.to_dict())
+    assert ae.loss_for_example(restored, example).cross_entropy == ce == pytest.approx(math.log(4))
+    before = restored.to_dict()
+    with pytest.raises(ValueError, match="migration"):
+        restored.train_example(ae.coerce_training_example("abel"))
+    assert restored.to_dict() == before
+    with pytest.raises(ValueError, match="migration"):
+        restored.train_batch([example, ae.coerce_training_example("abel")])
+    assert restored.to_dict() == before
+    with pytest.raises(ValueError, match="vocabularies"):
+        ae.merge_model_states([restored.to_dict(), ae.LeanIRAutoencoder().to_dict()])
+    assert "abel" in restored.extend_operation_vocabulary()
+    assert ae.loss_for_example(restored, example).cross_entropy > ce
+    restored.train_example(ae.coerce_training_example("abel"))
 
 
 def test_structural_ir_preserves_case_bullets_and_branches() -> None:
@@ -103,6 +132,45 @@ def test_paired_refactor_evaluation_does_not_decode_from_target_ir() -> None:
 
     report = ae.evaluate_model(ae.LeanIRAutoencoder(), [example])
     assert report["rows"][0]["loss"]["ir_exact_match"] == 0.0
+
+
+def test_learned_deletions_change_the_rendered_script_not_only_flat_ops() -> None:
+    source = "theorem learned (h : True) : True := by\n  have unused : True := True.intro\n  exact h"
+    model = ae.LeanIRAutoencoder()
+    model.state["step"] = 1
+    model.state["op_bias"].update(have=-9.0, exact=2.0)
+    predicted = model.predict_ir(source)
+    assert predicted["ops"] == [{"op": "exact", "args": ["h"]}]
+    rendered = ae.decode_lean_ir(predicted)
+    assert "have unused" not in rendered and "exact h" in rendered
+
+
+@pytest.mark.parametrize("temperature", [0.5, 1.0, 2.0])
+def test_smoothed_ce_logit_gradient_matches_finite_differences(temperature: float) -> None:
+    config = ae.AutoencoderConfig(temperature=temperature, label_smoothing=.2,
+                                 gradient_clip=100, weight_decay=0)
+    model = ae.LeanIRAutoencoder(config=config)
+    model.state["op_bias"]["exact"] = .7
+
+    def loss() -> float:
+        probabilities = model.operation_probabilities("", previous="<bos>")
+        return -(1 - config.label_smoothing) * math.log(probabilities["exact"]) - (
+            config.label_smoothing * sum(math.log(p) for p in probabilities.values()) / len(probabilities))
+
+    epsilon = 1e-5
+    expected = {}
+    for op in ("exact", "have", "<eos>"):
+        value = model.state["op_bias"][op]
+        model.state["op_bias"][op] = value + epsilon
+        plus = loss()
+        model.state["op_bias"][op] = value - epsilon
+        minus = loss()
+        model.state["op_bias"][op] = value
+        expected[op] = (plus - minus) / (2 * epsilon)
+    before = dict(model.state["op_bias"])
+    model._apply_logit_update(model.feature_vector(""), "<bos>", "exact", learning_rate=.01, scale=1)
+    for op, gradient in expected.items():
+        assert (before[op] - model.state["op_bias"][op]) / .01 == pytest.approx(gradient, abs=1e-7)
 
 
 def test_manifest_tampering_is_rejected_and_lr_has_warmup_decay() -> None:
@@ -268,6 +336,22 @@ def test_minimality_only_prefers_shorter_candidates_after_verification() -> None
     long_score = ae.score_candidate(long, minimality_reward=ae.minimality_score(long))
     assert short_score["admission"] == "verified"
     assert short_score["reward"] > long_score["reward"]
+
+
+@pytest.mark.parametrize("verifier", [None, 0.0, 0.5, float("nan")])
+def test_loss_cannot_reward_unverified_minimality_or_override_failed_verification(verifier) -> None:
+    model = ae.LeanIRAutoencoder()
+    example = ae.coerce_training_example("exact h")
+    for supplied_minimality in (None, 1.0):
+        result = ae.loss_for_example(model, example, verifier_reward=verifier,
+                                     minimality_reward=supplied_minimality,
+                                     typesafe_reward=1.0, fuzzy_prover_reward=1.0)
+        assert result.minimality_reward == 0.0
+        if verifier is not None:
+            assert result.reward == 0.0
+        assert result.typesafe_reward == 1.0 and result.fuzzy_prover_reward == 1.0
+    verified = ae.loss_for_example(model, example, verifier_reward=1.0, minimality_reward=1.0)
+    assert verified.minimality_reward == 1.0
 
 
 def test_sparse_shard_states_merge_without_corpus_materialization() -> None:

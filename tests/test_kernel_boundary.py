@@ -891,6 +891,431 @@ class KernelBoundaryTests(unittest.TestCase):
         self.assertEqual(outer.beam_shape("greedy", 4, sample_cap=8), (1, 1))
         self.assertEqual(outer.beam_shape("beam", 4, sample_cap=8), (4, 4))
         self.assertEqual(outer.beam_shape("beam", 12, sample_cap=8), (12, 8))
+        self.assertEqual(outer.project_map([1, 2], lambda n: n + 1), [2, 3])
+        self.assertIsNone(outer.or_none(""))
+        self.assertEqual(outer.or_none("x"), "x")
+
+        class _Spend:
+            def record(self, kind, **kwargs):
+                charged.append((kind, kwargs))
+
+        with self.assertRaises(RuntimeError) as failed:
+            outer.fail_spend(_Spend(), "grok", 1, 2, error_cls=RuntimeError, msg="no", cause=ValueError("x"))
+        self.assertEqual(str(failed.exception), "no")
+        a, b = outer.unpack_pair(None, default=("", {}))
+        self.assertEqual((a, b), ("", {}))
+        a, b = outer.unpack_pair(("t", {"i": 1}, "extra"))
+        self.assertEqual((a, b), ("t", {"i": 1}))
+        self.assertEqual(outer.cap_or_fill(["a", "b", "c"], 2, lambda: ["z"]), ["a", "b"])
+        self.assertEqual(outer.cap_or_fill([], 2, lambda: ["z"]), ["z"])
+        self.assertEqual(outer.cap_or_fill([], 0, lambda: ["z"]), [])
+        module, skipped = outer.load_module_or_skip(
+            "/no/such.py", "x", load_fn=lambda _p, _n: None, skip_fn=lambda reason: {"reason": reason}
+        )
+        self.assertIsNone(module)
+        self.assertEqual(skipped["reason"], "typesafe_inference_missing")
+        dest = outer.mkdtemp(prefix="lra-analysis-")
+        written = outer.write_analysis_json(dest, gaps={"g": 1}, nca_status={"ok": True})
+        self.assertTrue(written.is_file())
+        from jevops import jev as jev_mod
+        from jevops import repair as repair_mod
+        from jevops import search as search_mod
+
+        skip = jev_mod.kept_skip("no_key", ["a", "b", "c"], 2, head_fn=lambda rows, n: list(rows)[:n])
+        self.assertTrue(skip["skipped"])
+        self.assertEqual(skip["kept"], ["a", "b"])
+        self.assertFalse(skip["jev_generated_lean"])
+        cfg_skip = jev_mod.skip_unless_configured(
+            type("M", (), {"typesafe_configured": staticmethod(lambda: False)})(),
+            lambda reason: {"reason": reason},
+        )
+        self.assertEqual(cfg_skip["reason"], "no_key")
+        self.assertIsNone(
+            jev_mod.skip_unless_configured(
+                type("M", (), {"typesafe_configured": staticmethod(lambda: True)})(),
+                lambda reason: {"reason": reason},
+            )
+        )
+        holes = search_mod.holes_or_find(
+            [],
+            lambda: [
+                type("H", (), {"kind": "operator", "hole_id": "a"})(),
+                type("H", (), {"kind": "ident", "hole_id": "b"})(),
+            ],
+            kinds=("operator",),
+            n=8,
+        )
+        self.assertEqual(len(holes), 1)
+        row, tokens, keep = search_mod.denoise_keepbest(
+            text="simp",
+            keep="  intro\n",
+            keep_tokens=10,
+            extract_fn=lambda text: text,
+            flatten_fn=lambda _keep, filled: filled,
+            eval_fn=lambda body: [{"theorem_ok": True, "token_count": 3, "tactics": body}],
+            hammer_fn=lambda noisy, _errors: noisy,
+        )
+        self.assertTrue(row["accepted"])
+        self.assertEqual(tokens, 3)
+        self.assertEqual(keep, "simp")
+        none_row, none_tokens, none_keep = search_mod.denoise_keepbest(
+            text="",
+            keep="  intro\n",
+            keep_tokens=10,
+            extract_fn=lambda text: text,
+            flatten_fn=lambda _keep, filled: filled,
+            eval_fn=lambda _body: [],
+            hammer_fn=lambda noisy, _errors: noisy,
+        )
+        self.assertIsNone(none_row)
+        self.assertEqual((none_tokens, none_keep), (10, "  intro\n"))
+
+        class Chain:
+            def __init__(self, tactics="", tokens=0, theorem_ok=False):
+                self.tactics = tactics
+                self.tokens = tokens
+                self.theorem_ok = theorem_ok
+
+        packed = search_mod.begin_mcmc(
+            start="  simp\n",
+            compiled={"token_count": 2, "theorem_ok": True},
+            reference="  intro\n  simp\n",
+            token_fn=lambda text: len(text.split()),
+            beam=2,
+            chain_cls=Chain,
+            init_kind="init",
+        )
+        self.assertEqual(len(packed["chains"]), 2)
+        self.assertTrue(packed["best"]["theorem_ok"])
+        self.assertEqual(packed["lake_calls"], 1)
+
+        class Generated:
+            skipped = False
+            text = "omega"
+
+        swapped = search_mod.swap_from_generate(
+            Generated(),
+            tactics="  simp\n  exact h\n",
+            index=0,
+            parse_fn=lambda text: text.strip().splitlines()[0],
+            looks_fn=lambda _text: True,
+            replace_fn=lambda _body, _i, _nxt: "  omega\n  exact h\n",
+            stop="STOP",
+            target="  simp",
+            head_fn=lambda text, n: text[:n],
+        )
+        self.assertEqual(swapped["kind"], "leanstral_swap")
+
+        class SkippedGen:
+            skipped = True
+            text = "omega"
+
+        self.assertIsNone(
+            search_mod.swap_from_generate(
+                SkippedGen(),
+                tactics="x",
+                index=0,
+                parse_fn=str,
+                looks_fn=bool,
+                replace_fn=lambda *_a: "",
+                stop="STOP",
+                target="x",
+                head_fn=lambda text, _n: text,
+            )
+        )
+        fanout = [{"kind": "a"}]
+        search_mod.pin_grok_fanout(
+            fanout,
+            [{"kind": "b"}, {"kind": "pick"}],
+            "pick",
+            cap=2,
+            key_fn=lambda item: item["kind"],
+        )
+        self.assertEqual([item["kind"] for item in fanout], ["a", "pick", "b"])
+        self.assertIn("failed lake compile", outer.append_repair("draft", "unknown identifier"))
+        self.assertTrue(outer.append_repair("draft", "err").startswith("draft"))
+        factory = outer.fixture_factory(dict, lambda: {"a": 1})
+        self.assertEqual(factory(b=2), {"answers": {"a": 1}, "b": 2})
+        missing = outer.call_if_file("/no/such/file.lean", lambda: "hit", default="miss")
+        self.assertEqual(missing, "miss")
+        present = outer.call_if_file(written, lambda: "hit", default="miss")
+        self.assertEqual(present, "hit")
+
+        class _Route:
+            usage = {"input_tokens": 3, "output_tokens": 4}
+            used_fixture = True
+            model = "jev"
+
+        class _Led:
+            def record(self, kind, **kwargs):
+                return (kind, kwargs)
+
+        charged = outer.record_route_usage(_Led(), _Route(), model="fallback")
+        self.assertEqual(charged[0], "jev")
+        self.assertEqual(charged[1]["input_tokens"], 3)
+        self.assertTrue(charged[1]["fixture"])
+        finished = outer.finish_ledger_run(
+            dict,
+            type("L", (), {"grok_calls": 0, "jev_calls": 1, "spent_usd": 0, "remaining_usd": 3, "hard_stopped": False, "as_dict": lambda self: {}})(),
+            digest="abc",
+            skipped=True,
+            reason="no_key",
+            mode="off",
+            name="P",
+            used_fixture=True,
+            remaining_default=3.0,
+            extra={"called_grok": False},
+            overlay_extra={"source": "strata"},
+        )
+        self.assertTrue(finished["skipped"] if "skipped" in finished else finished.get("ok"))
+        self.assertEqual(finished["warmup_jsonl_sha256"], "abc")
+        model, landscape = outer.fit_landscape(
+            [{"n": 1}, {"n": 2}],
+            feature_fn=lambda row: row["n"],
+            fit_fn=lambda rows: sum(rows),
+            analyze_fn=lambda item, model: {"n": item["n"], "m": model},
+        )
+        self.assertEqual(model, 3)
+        self.assertEqual(landscape[1]["m"], 3)
+        started = search_mod.begin_keep_search(
+            {"name": "P"},
+            tactic_fn=lambda _rec: "  simp\n",
+            find_fn=lambda _text: [type("H", (), {"hole_id": "h0"})()],
+            token_fn=lambda text: len(text.split()),
+        )
+        self.assertEqual(started["keep_tokens"], 1)
+        self.assertEqual(len(started["holes"]), 1)
+        keep, tokens, dropped, history = search_mod.unpack_walked(
+            {"keep": "  intro\n", "keep_tokens": 4, "dropped": ["h0"], "history": [{"r": 1}]}
+        )
+        self.assertEqual((keep, tokens), ("  intro\n", 4))
+        self.assertEqual(dropped, {"h0"})
+        masked = search_mod.begin_masked(
+            {"name": "P"},
+            tactic_fn=lambda _rec: "  simp at h\n  exact x\n",
+            find_fn=lambda _text: [type("H", (), {"family": "dead_code"})(), type("H", (), {"family": "strength_reduction"})()],
+            mask_fn=lambda text, _holes: text.replace("simp at h", "<<<MCA>>>"),
+            fill_pred=lambda hole: hole.family == "strength_reduction",
+        )
+        self.assertIn("<<<MCA>>>", masked["skeleton"])
+        self.assertEqual(len(masked["fill_holes"]), 1)
+        live = outer.finish_live_write(
+            dest,
+            {"ok": True},
+            prefix="random-canary",
+            latest="random-canary-latest.json",
+            gaps={"g": 1},
+            nca_status={"ok": True},
+        )
+        self.assertTrue(live["ok"])
+        self.assertTrue((dest / "random-canary-latest.json").is_file())
+        neighbors, state, router = outer.begin_named_route(
+            {"name": "P"},
+            [{"name": "P"}],
+            neighbor_fn=lambda rec, _rows: [{"name": rec["name"]}],
+            state_fn=lambda rec, neighbors: {"n": len(neighbors), "name": rec["name"]},
+            fixture=True,
+            factory_fn=lambda: outer.fixture_factory(dict, lambda: {"a": 1}),
+            router_cls=lambda **kwargs: kwargs,
+            mode="inloop",
+        )
+        self.assertEqual(state["n"], 1)
+        self.assertEqual(router["mode"], "inloop")
+        self.assertIsNotNone(router["client_factory"])
+        self.assertIsNone(outer.charge_unless_skipped(type("R", (), {"skipped": True})(), lambda: 7))
+        self.assertEqual(outer.charge_unless_skipped(type("R", (), {"skipped": False})(), lambda: 7), 7)
+        self.assertEqual(outer.caught_reason(True, "ok", None), ("", "ok"))
+        reason, dropped_result = outer.caught_reason(False, "ok", ValueError("no"))
+        self.assertEqual(reason, "no")
+        self.assertIsNone(dropped_result)
+        box = {"n": 1}
+        self.assertEqual(outer.bump_box(box, "n", lambda: 9), 9)
+        self.assertEqual(box["n"], 2)
+        filled, shot = search_mod.flatten_shot(
+            kind="k",
+            generator="g",
+            text="  SIMP\n",
+            shots=[{}],
+            flatten_fn=lambda text: text.lower(),
+            pack_fn=lambda **kwargs: kwargs,
+        )
+        self.assertEqual(filled, "  simp\n")
+        self.assertEqual(shot["kind"], "k")
+        dropped_ids: set[str] = set()
+        hit, tokens, body, row = search_mod.trial_keepbest(
+            label="exploit",
+            hole_ids=["h0"],
+            dropped=dropped_ids,
+            drop_fn=lambda _ids: "  simp\n",
+            eval_fn=lambda trial: [{"theorem_ok": True, "token_count": 2, "tactics": trial}],
+            keep_tokens=10,
+            apply_fn=search_mod.apply_keepbest,
+            strip_fn=search_mod.strip_tactics,
+        )
+        self.assertTrue(hit)
+        self.assertEqual(dropped_ids, {"h0"})
+        self.assertEqual(tokens, 2)
+        self.assertEqual(row["label"], "exploit")
+        body, prefix, vocab = search_mod.begin_prefix_search(
+            {"name": "P"},
+            tactic_fn=lambda _rec: "  intro\n  simp\n",
+            prefix_fn=lambda text: text.splitlines()[0],
+            vocab_fn=lambda text: text.split(),
+        )
+        self.assertEqual(prefix, "  intro")
+        self.assertIn("simp", vocab)
+        self.assertIn("intro", body)
+        self.assertEqual(outer.map_if(None, str), None)
+        self.assertEqual(outer.map_if(3, lambda n: n + 1), 4)
+        self.assertEqual(outer.head_errors([]), [])
+        self.assertEqual(outer.head_errors([{"errors": ["e"]}]), ["e"])
+        self.assertEqual(outer.keep_box(4, "  simp\n")["tokens"], 4)
+        self.assertEqual(outer.if_prefix("grok_file", "grok", "g", "l"), "g")
+        self.assertEqual(outer.if_prefix("leanstral", "grok", "g", "l"), "l")
+        wanted = outer.allow_pred(("a", "b"))
+        self.assertTrue(wanted("a"))
+        self.assertFalse(wanted("c"))
+        self.assertTrue(outer.allow_pred(None)("z"))
+        dropped_model = outer.fit_drop(
+            [{"n": 1}, {"n": 2}],
+            feature_fn=lambda row: row["n"],
+            fit_fn=lambda rows: {"sum": sum(rows), "zscore": 1, "vt": 2},
+        )
+        self.assertEqual(dropped_model, {"sum": 3})
+        skip = outer.bind_named_skip(
+            lambda **kwargs: kwargs,
+            digest="abc",
+            name="P",
+            ledger="L",
+        )
+        skipped = skip(reason="no_key", mode="off", extra={"k": 1})
+        self.assertEqual(skipped["reason"], "no_key")
+        self.assertEqual(skipped["warmup_jsonl_sha256"], "abc")
+        self.assertEqual(skipped["k"], 1)
+
+        class _Line:
+            skipped = False
+            reason = "ok"
+
+        class _Led:
+            def record(self, kind, **kwargs):
+                return _Line()
+
+        line = outer.record_required(
+            _Led(),
+            "grok",
+            1,
+            2,
+            require_fn=outer.require_recorded,
+            error_cls=RuntimeError,
+            fmt="no: {reason}",
+        )
+        self.assertFalse(line.skipped)
+        self.assertEqual(outer.or_str("", ValueError("x")), "x")
+        self.assertEqual(outer.or_str("ok", "x"), "ok")
+        self.assertEqual(outer.with_key({"a": 1}, "cut", "139"), {"a": 1, "cut": "139"})
+        self.assertEqual(outer.names_of([{"name": "P"}, {"name": "Q"}]), ["P", "Q"])
+        self.assertEqual(outer.jev_budget(6 * 1 * 3, 1, 1), 56)
+        self.assertEqual(outer.jev_budget(0, 1, 1), 8)
+        self.assertEqual(outer.index_paths({"a.json": "/tmp/a", "b.lean": "/tmp/b"}, {"a": "a.json"}), {"a": "/tmp/a"})
+        self.assertEqual(outer.or_load({"k": 1}, lambda: {"k": 2}), {"k": 1})
+        self.assertEqual(outer.or_load({}, lambda: {"k": 2}), {"k": 2})
+        model, landscape, sampled = outer.begin_live_sample(
+            [{"n": 1}, {"n": 2}],
+            feature_fn=lambda row: row["n"],
+            fit_fn=lambda rows: sum(rows),
+            analyze_fn=lambda item, model: {"n": item["n"], "m": model},
+            all_small=True,
+            filter_fn=lambda recs, _land: recs[:1],
+            sample_fn=lambda: [{"n": 9}],
+        )
+        self.assertEqual(model, 3)
+        self.assertEqual(len(sampled), 1)
+        finish = outer.bind_finish(
+            dict,
+            type("L", (), {"grok_calls": 0, "jev_calls": 0, "spent_usd": 0, "remaining_usd": 3, "hard_stopped": False, "as_dict": lambda self: {}})(),
+            digest="abc",
+            mode="track1",
+            name="P",
+            used_fixture=True,
+            remaining_default=3.0,
+        )
+        finished = finish(skipped=True, reason="no_key", extra={"called_grok": False}, overlay_extra={"source": "strata"})
+        self.assertEqual(finished["warmup_jsonl_sha256"], "abc")
+        self.assertEqual(finished["reason"], "no_key")
+        ids = search_mod.choose_minibatch(
+            [type("H", (), {"hole_id": "h0"})(), type("H", (), {"hole_id": "h1"})()],
+            {"choice": "h0", "probabilities": {"h1": 0.9, "h0": 0.1}},
+            rng=type("R", (), {"choice": staticmethod(lambda rest: rest[0])})(),
+            k=2,
+        )
+        self.assertEqual(ids[0], "h0")
+        hits: list[int] = []
+        outer.pin_calls(lambda: hits.append(1), lambda: hits.append(2))()
+        self.assertEqual(hits, [1, 2])
+        self.assertEqual(outer.first_set(None, ["a", "b"]), {"a", "b"})
+        self.assertEqual(outer.first_set(None, None), set())
+        self.assertEqual(outer.unless_flag(True, {"a": 1}), {})
+        self.assertEqual(outer.unless_flag(False, {"a": 1}), {"a": 1})
+        paired, total = outer.mapping_and_total(lambda: {"x": 1, "y": 2}, lambda row: sum(row.values()))
+        self.assertEqual((paired, total), ({"x": 1, "y": 2}, 3))
+        nested = {"nca": {"overlay_done": True, "keep": 1}}
+        self.assertTrue(outer.pop_nested(nested, "nca", "overlay_done"))
+        self.assertNotIn("overlay_done", nested["nca"])
+        self.assertEqual(outer.attrs_of([type("S", (), {"label": "a"})()], "label"), ["a"])
+        self.assertEqual(outer.substrings_in("simp at h; exact x", (("simp at", "s"), ("missing", "m"))), ["simp at"])
+        self.assertTrue(outer.any_get({"n_induction": 1, "n_cases": 0}, "n_induction", "n_cases"))
+        flatten = repair_mod.flatten_matched(lambda keep, filled: keep + filled, lambda keep, matched: matched.strip())
+        self.assertEqual(flatten("  ", "  simp\n"), "simp")
+        self.assertTrue(outer.field_eq("kind", "hosted")({"kind": "hosted"}))
+        self.assertTrue(outer.contains_attr("ops", "collapse")(type("D", (), {"ops": ("collapse",)})()))
+        self.assertEqual(outer.dict_call(lambda **kw: kw, a=1), {"a": 1})
+        self.assertEqual(outer.get_list({"errors": ["e"]}, "errors"), ["e"])
+        self.assertEqual(outer.get_list(["e"]), ["e"])
+        self.assertEqual(outer.or_int(None, 6, floor=2), 6)
+        self.assertEqual(outer.or_int(0, 6, floor=2), 6)
+        self.assertEqual(outer.sample_n(1, 4), 1)
+        self.assertEqual(outer.sample_n(8, 4), 4)
+        idx, line = outer.pick_line("  intro\n  simp\n", type("R", (), {"choice": staticmethod(lambda rows: rows[1])})(), [0, 1])
+        self.assertEqual((idx, line), (1, "  simp"))
+        self.assertEqual(outer.nested_get({"nca": {"sidecar_built": True}}, "nca", "sidecar_built"), True)
+        self.assertIsNone(outer.nested_get({}, "nca", "sidecar_built"))
+        self.assertEqual(outer.first_int(None, 0, 4), 4)
+        self.assertEqual(outer.first_int(None, default=9), 9)
+        self.assertEqual(
+            outer.map_pairs([{"kind": "a", "tactics": "  simp\n"}], default_kind="step"),
+            [("a", "  simp\n")],
+        )
+        aligned = repair_mod.bind_align(
+            "  intro\n",
+            extract_fn=lambda text: text.strip(),
+            match_fn=lambda _keep, filled: filled,
+            flatten_fn=lambda _keep, filled: filled,
+        )
+        self.assertEqual(aligned("  simp\n"), "simp")
+        self.assertEqual(outer.rstrip_or(None, "http://x/v1/"), "http://x/v1")
+        self.assertEqual(outer.stripped_or(None, "  intro\n"), "  intro")
+        self.assertIsNone(outer.optional_fn(False, lambda: 1))
+        self.assertTrue(callable(outer.optional_fn(True, lambda: 1)))
+        self.assertTrue(outer.any_pred(lambda n: n > 2, [1, 3]))
+        self.assertEqual(outer.maybe_set(["a"]), {"a"})
+        self.assertIsNone(outer.maybe_set([]))
+        self.assertEqual(outer.or_list([], [{"family": "dead_code"}]), [{"family": "dead_code"}])
+        self.assertEqual(outer.overlay_map({"a": 1}, b=2), {"a": 1, "b": 2})
+        self.assertEqual(outer.or_call("", lambda: "x"), "x")
+        self.assertEqual(outer.or_call("a", lambda: "x"), "a")
+        self.assertEqual(outer.or_call("keep", lambda prefix, vocab: f"{prefix}:{vocab}", "p", "v"), "keep")
+        self.assertEqual(outer.append_if(["a"], True, "b"), ["a", "b"])
+        self.assertEqual(outer.append_if(["a"], False, "b"), ["a"])
+        self.assertEqual(outer.first_not_none(None, factory=lambda: "x"), "x")
+        self.assertEqual(outer.first_not_none(0, factory=lambda: "x"), 0)
+        self.assertEqual(outer.text_or(None), "")
+        self.assertEqual(outer.text_or("a"), "a")
+        outer.raise_caught(None)
+        with self.assertRaises(RuntimeError):
+            outer.raise_caught(RuntimeError("x"))
+        self.assertEqual(outer.count_hits("simp at h", (("simp at", "s"),), weight=10, add_len=True), 17)
+        self.assertEqual(outer.count_hits("omega", ("omega",), weight=3), 3)
         putnam_dir = lean.project_dir_for_record(
             {"name": "Q", "source": "putnambench", "url": ""},
             lean.VersionPin(lean_tag="v4.26.0", git_commit="abc"),

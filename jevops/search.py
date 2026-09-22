@@ -195,6 +195,29 @@ def minibatch_ids(
     return out
 
 
+def choose_minibatch(
+    remaining: Sequence[Any],
+    jev: Optional[Mapping[str, Any]] = None,
+    rng: Any = None,
+    *,
+    k: int = 2,
+    id_fn: Optional[Callable[[Any], str]] = None,
+) -> list[str]:
+    """Unique hole ids from a Jev round: greedy choice, ranked, then rng."""
+
+    from jevops.outer import ranked_pairs
+
+    ident = id_fn or (lambda hole: str(getattr(hole, "hole_id", hole)))
+    packed = dict(jev or {})
+    return minibatch_ids(
+        [ident(hole) for hole in remaining or ()],
+        choice=packed.get("choice"),
+        ranked=ranked_pairs(packed.get("probabilities")),
+        rng=rng,
+        k=k,
+    )
+
+
 def metropolis_token_accept(
     *,
     old_tok: int,
@@ -2564,3 +2587,267 @@ def after_compile_row(
         return rows, bool(rest[-1] if rest else False)
     rows.extend(list(extra or ()))
     return rows, False
+
+
+def holes_or_find(
+    holes: Sequence[Any],
+    find_fn: Callable[[], Sequence[Any]],
+    *,
+    kinds: Sequence[str] = (),
+    n: int = 8,
+    head_fn: Optional[Callable[..., Sequence[Any]]] = None,
+    kind_attr: str = "kind",
+) -> list[Any]:
+    """Use holes, else find and filter by kinds, then cap to n."""
+
+    from jevops.outer import head_seq
+
+    cap = head_fn or head_seq
+    rows = list(holes or ())
+    if not rows:
+        found = list(find_fn() or ())
+        if kinds:
+            allowed = {str(kind) for kind in kinds}
+
+            def _kind(item: Any) -> str:
+                if isinstance(item, Mapping):
+                    return str(item.get(kind_attr) or "")
+                return str(getattr(item, kind_attr, "") or "")
+
+            rows = [item for item in found if _kind(item) in allowed]
+        else:
+            rows = found
+    return list(cap(rows, int(n)))
+
+
+def denoise_keepbest(
+    *,
+    text: str,
+    keep: str,
+    keep_tokens: int,
+    extract_fn: Callable[[str], str],
+    flatten_fn: Callable[[str, str], str],
+    eval_fn: Callable[[str], Sequence[Mapping[str, Any]]],
+    hammer_fn: Callable[[str, Sequence[Any]], str],
+    extra: Optional[Mapping[str, Any]] = None,
+) -> tuple[Optional[dict[str, Any]], int, str]:
+    """Extract, flatten, eval, hammer, eval, keep-best. Lake still admits."""
+
+    filled = extract_fn(text) if text else ""
+    if not filled:
+        return None, int(keep_tokens), keep
+    noisy = flatten_fn(keep, filled)
+    evals_n = list(eval_fn(noisy) or ())
+    errors = (evals_n[0].get("errors") if evals_n else None) or []
+    denoised = hammer_fn(noisy, errors)
+    evals_d = list(eval_fn(denoised) or ())
+    hit, tokens, body = apply_keepbest(evals_n + evals_d, int(keep_tokens), trial=denoised)
+    keep_out = body if hit else keep
+    row = {
+        **dict(extra or {}),
+        "accepted": bool(hit),
+        "noise_evals": strip_tactics(evals_n),
+        "denoise_evals": strip_tactics(evals_d),
+    }
+    return row, int(tokens if hit else keep_tokens), keep_out
+
+
+def begin_mcmc(
+    *,
+    start: str,
+    compiled: Mapping[str, Any],
+    reference: str,
+    token_fn: Callable[[str], int],
+    beam: int,
+    chain_cls: Any,
+    init_kind: str,
+) -> dict[str, Any]:
+    """Pack start compile into chains/best. Does not compile Lean."""
+
+    start_tok = int(compiled.get("token_count") or token_fn(start))
+    start_ok = bool(compiled.get("theorem_ok"))
+    ref_tok = int(token_fn(reference))
+    return {
+        "chains": mcmc_chains(start, start_tok, start_ok, beam, chain_cls),
+        "best": init_mcmc_best(
+            start=start,
+            start_ok=start_ok,
+            start_tok=start_tok,
+            reference=reference,
+            ref_tok=ref_tok,
+            kind=init_kind,
+        ),
+        "start_tok": start_tok,
+        "start_ok": start_ok,
+        "ref_tok": ref_tok,
+        "lake_calls": 1,
+        "history": [],
+        "failed_bodies": set(),
+        "leanstral_calls": 0,
+    }
+
+
+def swap_from_generate(
+    result: Any,
+    *,
+    tactics: str,
+    index: int,
+    parse_fn: Callable[[str], str],
+    looks_fn: Callable[[str], bool],
+    replace_fn: Callable[[str, int, str], str],
+    stop: str,
+    target: str,
+    head_fn: Callable[[str, int], str],
+    text_attr: str = "text",
+    skipped_attr: str = "skipped",
+) -> Optional[dict[str, str]]:
+    """Skip empty/skipped generate, else line_swap_from_text. Generation stays injected."""
+
+    if getattr(result, skipped_attr, False) or not getattr(result, text_attr, ""):
+        return None
+    return line_swap_from_text(
+        tactics=tactics,
+        index=index,
+        text=getattr(result, text_attr),
+        parse_fn=parse_fn,
+        looks_fn=looks_fn,
+        replace_fn=replace_fn,
+        stop=stop,
+        target=target,
+        head_fn=head_fn,
+    )
+
+
+def pin_grok_fanout(
+    candidates: list[Any],
+    extras: Sequence[Mapping[str, Any]],
+    pick: Any,
+    *,
+    cap: int,
+    key_fn: Callable[[Any], Any],
+) -> list[Any]:
+    """Pin TypeSafe pick then unique-cap extras onto candidates. No Lean."""
+
+    candidates.extend(unique_pin_cap(extras, pick, key_fn=key_fn, cap=int(cap)))
+    return candidates
+
+
+def begin_keep_search(
+    record: Mapping[str, Any],
+    *,
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    find_fn: Callable[[str], Sequence[Any]],
+    token_fn: Callable[[str], int],
+    pin_fn: Optional[Callable[[], Any]] = None,
+) -> dict[str, Any]:
+    """Start a keep-best hole search. Does not compile Lean."""
+
+    if pin_fn is not None:
+        pin_fn()
+    reference = tactic_fn(record)
+    return {
+        "reference": reference,
+        "holes": list(find_fn(reference) or ()),
+        "keep": reference,
+        "keep_tokens": int(token_fn(reference)),
+        "history": [],
+        "dropped": set(),
+        "jevs": [],
+    }
+
+
+def unpack_walked(walked: Mapping[str, Any]) -> tuple[str, int, set[Any], list[Any]]:
+    """Unpack keep/tokens/dropped/history from a coordinate or diffuse walk."""
+
+    return (
+        str(walked.get("keep") or ""),
+        int(walked.get("keep_tokens") or 0),
+        set(walked.get("dropped") or ()),
+        list(walked.get("history") or ()),
+    )
+
+
+def begin_masked(
+    record: Mapping[str, Any],
+    *,
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    find_fn: Callable[[str], Sequence[Any]],
+    mask_fn: Callable[[str, Sequence[Any]], str],
+    fill_pred: Optional[Callable[[Any], Any]] = None,
+) -> dict[str, Any]:
+    """Mask residual holes. Fill predicate stays injected. No Lean writes."""
+
+    from jevops.outer import where
+
+    tactics = tactic_fn(record)
+    holes = list(find_fn(tactics) or ())
+    return {
+        "tactics": tactics,
+        "holes": holes,
+        "skeleton": mask_fn(tactics, holes),
+        "fill_holes": where(holes, fill_pred) if fill_pred is not None else holes,
+    }
+
+
+def flatten_shot(
+    *,
+    kind: str,
+    generator: str,
+    text: str,
+    shots: Sequence[Any],
+    flatten_fn: Callable[[str], str],
+    pack_fn: Callable[..., Mapping[str, Any]],
+    extra: Optional[Mapping[str, Any]] = None,
+) -> tuple[str, dict[str, Any]]:
+    """Flatten generated text and pack a few-shot candidate. No Lean writes."""
+
+    filled = flatten_fn(text)
+    return filled, pack_shot_candidate(
+        kind=kind,
+        generator=generator,
+        tactics=filled,
+        shots=shots,
+        pack_fn=pack_fn,
+        extra=extra,
+    )
+
+
+def trial_keepbest(
+    *,
+    label: str,
+    hole_ids: Sequence[str],
+    dropped: set[str],
+    drop_fn: Callable[[Sequence[str]], str],
+    eval_fn: Callable[[str], Sequence[Mapping[str, Any]]],
+    keep_tokens: int,
+    apply_fn: Callable[..., tuple[Optional[Mapping[str, Any]], int, str]],
+    strip_fn: Callable[[Sequence[Mapping[str, Any]]], Sequence[Mapping[str, Any]]],
+) -> tuple[bool, int, str, dict[str, Any]]:
+    """Drop holes, eval, keep-best. Mutates dropped on hit. Lake still admits."""
+
+    trial = drop_fn(list(dict.fromkeys(list(dropped) + list(hole_ids))))
+    evals = list(eval_fn(trial) or ())
+    hit, tokens, body = apply_fn(evals, keep_tokens, trial=trial)
+    if hit:
+        dropped.update(hole_ids)
+    row = {
+        "label": label,
+        "holes": list(hole_ids),
+        "accepted": bool(hit),
+        "keep_tokens": tokens,
+        "evals": list(strip_fn(evals)),
+    }
+    return bool(hit), int(tokens), body, row
+
+
+def begin_prefix_search(
+    record: Mapping[str, Any],
+    *,
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    prefix_fn: Callable[[str], str],
+    vocab_fn: Callable[[str], Sequence[str]],
+) -> tuple[str, str, list[str]]:
+    """(tactics, prefix, vocab). Does not compile Lean."""
+
+    tactics = tactic_fn(record)
+    return tactics, prefix_fn(tactics), list(vocab_fn(tactics) or ())

@@ -980,6 +980,46 @@ def hammer_sweep_variants(
     return rows[:budget]
 
 
+def hypothesis_refactor_variants(
+    tactics: str,
+    *,
+    cap: int = 24,
+) -> list[tuple[str, str, tuple[str, ...]]]:
+    """Generate bounded candidates for an explicit outer refactor hypothesis.
+
+    This is intentionally a deterministic inner-loop expansion.  The outer
+    LLM supplies the hypothesis/family; these closed edits instantiate it into
+    compiler candidates without allowing the model to execute arbitrary Lean
+    text.  The normal Lake gate still decides whether any draft is useful.
+    """
+
+    budget = max(1, int(cap))
+    rows: list[tuple[str, str, tuple[str, ...]]] = []
+    seen: set[str] = set()
+
+    def push(kind: str, body: str, *ops: str) -> None:
+        text = str(body or "").strip("\n")
+        if not text or text in seen or len(rows) >= budget:
+            return
+        seen.add(text)
+        rows.append(("hypothesis_" + str(kind), text, ("hypothesis_refactor", *ops)))
+
+    for family, body, ops in guided_mca_edits(
+        str(tactics or ""),
+        ("dead_code", "strength_reduction", "loop_invariant", "search_space", "algebraic_simplification"),
+    ):
+        push(str(family), body, *ops)
+        if len(rows) >= budget:
+            return rows
+    for family, body, ops in closed_tree_edits(str(tactics or ""), case_replace_cap=4):
+        push(str(family), body, *ops)
+        if len(rows) >= budget:
+            return rows
+    for kind, body in shortcut_variants(str(tactics or ""), cap=budget):
+        push(str(kind), body, "shortcut", str(kind))
+    return rows[:budget]
+
+
 def random_mca_drafts(
     tactics: str,
     rng: Any,
@@ -1510,6 +1550,103 @@ def compose_tactic_bodies(
     left_spans = {span.label: span for span in case_spans(left_text)}
     right_spans = {span.label: span for span in case_spans(right_text)}
     common = [label for label in left_spans if label in right_spans]
+
+    def splice_labels(
+        skeleton: str,
+        skeleton_spans: Mapping[str, CaseSpan],
+        donor: str,
+        donor_spans: Mapping[str, CaseSpan],
+        labels: Sequence[str],
+    ) -> str:
+        # Apply replacements from right to left so the original offsets remain
+        # valid while more than one case arm is replaced.
+        result = skeleton
+        for label in sorted(labels, key=lambda item: skeleton_spans[item].start, reverse=True):
+            skeleton_span = skeleton_spans[label]
+            donor_span = donor_spans[label]
+            donor_body = donor[donor_span.header_end : donor_span.end]
+            result = replace_case_body(result, skeleton_span, donor_body)
+        return result
+
+    def splice_mixed(
+        skeleton: str,
+        skeleton_spans: Mapping[str, CaseSpan],
+        labels: Sequence[str],
+        right_for: set[str],
+    ) -> str:
+        """Use a different donor teacher for each selected case arm."""
+
+        result = skeleton
+        for label in sorted(labels, key=lambda item: skeleton_spans[item].start, reverse=True):
+            skeleton_span = skeleton_spans[label]
+            if label in right_for:
+                donor_text = right_text
+                donor_span = right_spans[label]
+            else:
+                donor_text = left_text
+                donor_span = left_spans[label]
+            donor_body = donor_text[donor_span.header_end : donor_span.end]
+            result = replace_case_body(result, skeleton_span, donor_body)
+        return result
+
+    # A one-arm splice can miss the useful combination when each teacher has
+    # a different shorter arm. Probe a few two-arm combinations first; the
+    # outer cap remains the hard bound and the compiler/Lake gate remains the
+    # semantic authority.
+    pair_cap = max(0, min(4, budget // 2))
+    pair_count = 0
+    for first_index, first_label in enumerate(common):
+        for second_label in common[first_index + 1 :]:
+            labels = (first_label, second_label)
+            push(
+                "case_multi_splice_left",
+                splice_labels(left_text, left_spans, right_text, right_spans, labels),
+                "compose_verified",
+                "case_multi_splice",
+                *labels,
+                "left_skeleton",
+            )
+            push(
+                "case_multi_splice_right",
+                splice_labels(right_text, right_spans, left_text, left_spans, labels),
+                "compose_verified",
+                "case_multi_splice",
+                *labels,
+                "right_skeleton",
+            )
+            # The mixed-donor variants are the important case that ordinary
+            # left/right splicing misses: retain one skeleton while borrowing
+            # different arms from each teacher. Exclude the all-left/all-right
+            # masks because those are already emitted above.
+            for mask in range(1, (1 << len(labels)) - 1):
+                right_for = {
+                    label
+                    for bit, label in enumerate(labels)
+                    if mask & (1 << bit)
+                }
+                push(
+                    "case_mixed_splice_left",
+                    splice_mixed(left_text, left_spans, labels, right_for),
+                    "compose_verified",
+                    "case_mixed_splice",
+                    *labels,
+                    "left_skeleton",
+                )
+                push(
+                    "case_mixed_splice_right",
+                    splice_mixed(right_text, right_spans, labels, right_for),
+                    "compose_verified",
+                    "case_mixed_splice",
+                    *labels,
+                    "right_skeleton",
+                )
+                if len(rows) >= budget:
+                    break
+            pair_count += 1
+            if pair_count >= pair_cap or len(rows) >= budget:
+                break
+        if pair_count >= pair_cap or len(rows) >= budget:
+            break
     for label in common:
         left_body = left_text[left_spans[label].header_end : left_spans[label].end]
         right_body = right_text[right_spans[label].header_end : right_spans[label].end]
@@ -1537,8 +1674,52 @@ def compose_tactic_bodies(
     left_lines = left_text.splitlines()
     right_lines = right_text.splitlines()
     if not common and left_lines and right_lines:
+        # Full concatenations are useful when one teacher supplies setup and
+        # the other supplies a closer. Alternating lines cover a second
+        # composition family whose useful commands are interleaved rather
+        # than split at one clean boundary. All outputs remain proposals;
+        # Lake decides whether the layout is meaningful.
+        push(
+            "flat_left_then_right",
+            "\n".join([*left_lines, *right_lines]),
+            "compose_verified",
+            "flat_concat",
+            "left_then_right",
+        )
+        push(
+            "flat_right_then_left",
+            "\n".join([*right_lines, *left_lines]),
+            "compose_verified",
+            "flat_concat",
+            "right_then_left",
+        )
+        interleaved_left: list[str] = []
+        interleaved_right: list[str] = []
+        for index in range(max(len(left_lines), len(right_lines))):
+            if index < len(left_lines):
+                interleaved_left.append(left_lines[index])
+            if index < len(right_lines):
+                interleaved_left.append(right_lines[index])
+            if index < len(right_lines):
+                interleaved_right.append(right_lines[index])
+            if index < len(left_lines):
+                interleaved_right.append(left_lines[index])
+        push(
+            "flat_interleave_left",
+            "\n".join(interleaved_left),
+            "compose_verified",
+            "flat_interleave",
+            "left_first",
+        )
+        push(
+            "flat_interleave_right",
+            "\n".join(interleaved_right),
+            "compose_verified",
+            "flat_interleave",
+            "right_first",
+        )
         max_cut = min(len(left_lines), len(right_lines))
-        for cut in range(1, max_cut):
+        for cut in range(0, max_cut + 1):
             push(
                 "flat_prefix_left_suffix_right",
                 "\n".join([*left_lines[:cut], *right_lines[cut:]]),

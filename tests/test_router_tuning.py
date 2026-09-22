@@ -12,9 +12,12 @@ from jevops import tactics
 from jevops.outer import make_llm_router_generate
 from jevops.router_tuning import (
     RouterTuningConfig,
+    RouterTuningLoop,
     _lean_compiler,
     parse_router_plan,
     tune_autoencoder_with_router,
+    _compact_row,
+    _router_prompt,
 )
 
 
@@ -72,6 +75,158 @@ def test_router_plan_accepts_compact_singular_tactic_field() -> None:
     assert plan["candidates"][0]["tactics"] == "trivial"
 
 
+def test_router_receives_compiler_failures_without_truncated_json_or_training_dump() -> None:
+    failed = _compact_row({"id": "bad", "lake_ok": False, "origin": "logic:test", "compile": {
+        "compile": {"exit_code": 1, "errors": [{"data": "unsolved goals: missing premise h"}]}}})
+    assert "missing premise h" in failed["failure"]["message"]
+    history = [{"round": 1, "candidates": [failed], "training": {"state": "x" * 100_000}}]
+    prompt = _router_prompt(source="theorem test : True := by trivial", body="trivial", problem="test",
+                            current={}, analysis={}, history=history, config=RouterTuningConfig())
+    payload = json.loads(prompt.rsplit("\n", 1)[-1])
+    assert payload["recent_rounds"][0]["failures"][0]["failure"]["exit_code"] == 1
+    assert "missing premise h" in prompt and "training" not in payload["recent_rounds"][0]
+    assert len(prompt) < RouterTuningConfig().max_prompt_chars
+    short = _router_prompt(source="x" * 20_000, body="y" * 20_000, problem="test", current={}, analysis={},
+                           history=history, config=RouterTuningConfig(max_prompt_chars=2500))
+    # The final payload is a complete JSON object, even under a tight budget.
+    json.loads(short.rsplit("\n", 1)[-1])
+    assert len(short) <= 2500
+
+
+def test_known_failures_do_not_consume_later_round_slots_or_persist_between_runs() -> None:
+    source = "theorem test : True := by\n  trivial"
+    calls = []
+    loop = RouterTuningLoop({}, source, compile_fn=lambda s, **kw: calls.append(s) or {"theorem_ok": False},
+                           router_generate=lambda _: "{}")
+    first = []
+    loop._push(first, set(), "rfl", origin="test", kind="test")
+    assert len(first) == 1 and not first[0]["lake_ok"]
+    later = []
+    loop._push(later, set(), "rfl", origin="test", kind="test")
+    assert not later and len(calls) == 1 and loop._known_failure_skips == 1
+    fresh = RouterTuningLoop({}, source, compile_fn=lambda s, **kw: {"theorem_ok": True},
+                            router_generate=lambda _: "{}")
+    fresh._push(later, set(), "rfl", origin="test", kind="test")
+    assert len(later) == 1 and later[0]["lake_ok"]  # Repaired tactics may be retried in a new run.
+
+
+def test_requested_strategy_families_share_the_router_quota(monkeypatch) -> None:
+    import jevops.router_tuning as rt
+
+    def variants(name, body, rng, **kwargs):
+        return [(f"{name}-{i}", f"exact proof_{name}_{i}", name) for i in range(8)]
+
+    monkeypatch.setattr(rt, "_strategy_body", variants)
+    source = "theorem test : True := by\n  trivial"
+    loop = RouterTuningLoop({}, source, compile_fn=lambda s, **kw: {"theorem_ok": True},
+                           router_generate=lambda _: "{}")
+    rows = []
+    loop._router_rows(parse_router_plan('{"strategies":["simp_set_reduce","branch_invariant"]}'),
+                      rows, set(), source, max_new=2)
+    assert [r["origin"] for r in rows] == ["router_strategy:simp_set_reduce", "router_strategy:branch_invariant"]
+
+
+def test_training_rolls_back_invalid_predictions_even_when_soft_metrics_improve(monkeypatch) -> None:
+    source = "theorem rollback (h : True) : True := by\n  have unused : True := True.intro\n  exact h"
+    memory = {}
+    loop = RouterTuningLoop(memory, source, compile_fn=lambda s, **kw: {"theorem_ok": True},
+                           router_generate=lambda _: "{}")
+    winner = loop._row("theorem rollback (h : True) : True := by\n  exact h", origin="test", kind="test")
+    diagnostics = loop._model_diagnostics
+    phases = []
+
+    def invalid_after(model, example, *, phase):
+        phases.append(phase)
+        report = diagnostics(model, example, phase=phase)
+        if phase == "after":
+            report["loss"].update(cross_entropy=0.0, cosine_similarity=1.0)
+            report["row"].update(lake_ok=False, compile={"theorem_ok": False, "compile": {
+                "exit_code": 1, "errors": [{"data": "missing live binding"}]}})
+        return report
+
+    monkeypatch.setattr(loop, "_model_diagnostics", invalid_after)
+    result = loop._train(winner, [winner])
+    assert result["ok"] and not result["trained"] and not result["update_accepted"]
+    assert result["step"] == 0 and memory["nca"]["autoencoder"]["training_state"]["step"] == 0
+    assert phases == ["before", "after", "rollback"]
+    rejection = result["update_rejection"]
+    assert rejection["verifier_regression"] and rejection["cross_entropy_rise"] < 0
+    assert "missing live binding" in rejection["attempted_prediction"]["failure"]["message"]
+    assert result["model_prediction_after"]["lake_ok"]
+
+
+def test_opt_in_binding_classifier_trains_from_a_verified_strict_cut() -> None:
+    prefix = "theorem binding_train (p : Prop) (h : p) : p := by\n"
+    target = prefix + "  have proof : p := h\n  exact proof"
+    source = prefix + "  have unused : True := True.intro\n  have proof : p := h\n  exact proof"
+    memory = {}
+    loop = RouterTuningLoop(memory, source, compile_fn=lambda s, **kw: {"theorem_ok": "have proof" in s},
+                           router_generate=lambda _: "{}", config=RouterTuningConfig(train_binding_policy=True))
+    winner = loop._row(target, origin="test", kind="test")
+    result = loop._train(winner, [winner])
+    assert result["ok"] and result["trained"] and result["binding_updates"] == 1
+    assert memory["nca"]["autoencoder"]["training_state"]["binding_steps"] == 1
+    assert result["model_prediction_after"]["binding_policy"]["mode"] == "learned_binding_keep"
+
+
+@pytest.mark.parametrize("attempted_bce", [.5, None])
+def test_training_rolls_back_binding_loss_regression_or_lost_coverage(monkeypatch, attempted_bce) -> None:
+    prefix = "theorem rollback_binding (p : Prop) (h : p) : p := by\n"
+    source = prefix + "  have unused : True := True.intro\n  have proof : p := h\n  exact proof"
+    memory = {}
+    loop = RouterTuningLoop(memory, source, compile_fn=lambda s, **kw: {"theorem_ok": "have proof" in s},
+                           router_generate=lambda _: "{}", config=RouterTuningConfig(train_binding_policy=True))
+    winner = loop._row(prefix + "  have proof : p := h\n  exact proof", origin="test", kind="test")
+    diagnostics = loop._model_diagnostics
+
+    def injected_loss(model, example, *, phase):
+        report = diagnostics(model, example, phase=phase)
+        report["loss"]["binding_cross_entropy"] = attempted_bce if phase == "after" else .1
+        if phase == "after":
+            report["loss"].update(cross_entropy=0.0, cosine_similarity=1.0)
+        return report
+
+    monkeypatch.setattr(loop, "_model_diagnostics", injected_loss)
+    result = loop._train(winner, [winner])
+    assert not result["update_accepted"] and not result["trained"]
+    assert memory["nca"]["autoencoder"]["training_state"]["binding_steps"] == 0
+    assert result["update_rejection"]["binding_coverage_lost"] == (attempted_bce is None)
+
+
+def test_raw_binding_proposal_cannot_bypass_compiler_admission() -> None:
+    model = ae.LeanIRAutoencoder()
+    model.state["binding_steps"] = 1
+    model.state["binding_weights"]["bias"] = -10.0  # Deliberately unsafe deletion policy.
+    source = "theorem raw_gate (p : Prop) (h : p) : p := by\n  have proof : p := h\n  exact proof"
+    memory = {"nca": {"autoencoder": {"training_state": model.to_dict()}}}
+    loop = RouterTuningLoop(memory, source, compile_fn=lambda s, **kw: {"theorem_ok": "have proof" in s},
+                           router_generate=lambda _: "{}")
+    raw = next(ir for ir in loop._autoencoder_irs(source) if ir.get("proposal_policy") == "binding_raw")
+    assert not raw["dependency_guard"]["enabled"] and len(raw["ops"]) == 1
+    rows = []
+    loop._push_ir(rows, set(), raw, origin="autoencoder:binding_raw", kind="test")
+    assert len(rows) == 1 and rows[0]["admission"] == "rejected"
+    assert rows[0]["reward"] == 0.0 and rows[0]["minimality_reward"] == 0.0
+
+
+def test_trained_binding_proposal_is_assessed_before_local_candidates_fill_pool(monkeypatch) -> None:
+    model = ae.LeanIRAutoencoder()
+    model.state["binding_steps"] = 1
+    model.state["binding_weights"]["bias"] = -10.0
+    source = "theorem binding_slot (p : Prop) (h : p) : p := by\n  have proof : p := h\n  exact proof"
+    memory = {"nca": {"autoencoder": {"training_state": model.to_dict()}}}
+    loop = RouterTuningLoop(memory, source, compile_fn=lambda s, **kw: {"theorem_ok": "have proof" in s},
+                           router_generate=lambda _: "{}", config=RouterTuningConfig(
+                               rounds=1, train=False, max_candidate_pool=12, hammer_sweep=False,
+                               logic_reductions=False, teacher_replay=False))
+    monkeypatch.setattr(loop, "_local_rows", lambda *a: [(f"local-{i}", f"exact local_{i}", "test") for i in range(20)])
+    result = loop.run()
+    rows = result["history"][0]["candidates"]
+    raw = [r for r in rows if r["origin"] == "autoencoder:binding_raw"]
+    assert len(raw) == 1 and not raw[0]["lake_ok"]
+    assert len(rows) <= 12 and result["ok"]
+
+
 def test_router_plan_accepts_new_structural_ir_operations() -> None:
     plan = parse_router_plan(
         json.dumps(
@@ -99,6 +254,30 @@ def test_router_plan_accepts_new_structural_ir_operations() -> None:
     ]
 
 
+def test_hypothesis_refactor_strategy_expands_into_closed_candidates() -> None:
+    plan = parse_router_plan('{"strategies":["hypothesis_refactor"]}')
+    assert plan["strategies"] == ["hypothesis_refactor"]
+    variants = tactics.hypothesis_refactor_variants("  simp at h\n  exact h\n", cap=8)
+    assert variants
+    assert all("hypothesis_refactor" in ops for _kind, _body, ops in variants)
+
+
+def test_llm_hypothesis_strategy_enters_the_compiler_gated_training_loop() -> None:
+    source = "theorem hypothesis_loop (h : True) : True := by\n  have hx : True := h\n  exact hx"
+    result = tune_autoencoder_with_router(
+        {"nca": {"grid": {}, "board_edges": []}},
+        source,
+        problem="hypothesis_loop",
+        compile_fn=lambda candidate, problem="": {"theorem_ok": True, "token_count": len(candidate.split())},
+        router_generate=lambda _prompt: '{"strategies":["hypothesis_refactor"]}',
+        config=RouterTuningConfig(rounds=1, max_candidate_pool=16, max_router_candidates=2),
+    )
+    assert any(
+        "hypothesis_refactor" in str(row.get("origin") or "")
+        for row in result["history"][0]["candidates"]
+    )
+
+
 def test_hammer_sweep_and_teacher_composition_are_bounded() -> None:
     sweep = tactics.hammer_sweep_variants("  exact h\n", cap=12)
     assert 0 < len(sweep) <= 12
@@ -107,10 +286,19 @@ def test_hammer_sweep_and_teacher_composition_are_bounded() -> None:
     composed = tactics.compose_tactic_bodies(
         "  intro h\n  exact h\n",
         "  rintro h\n  assumption\n",
-        cap=8,
+        cap=16,
     )
     assert composed
     assert any("assumption" in body for _kind, body, _ops in composed)
+    assert any("interleave" in kind or "concat" in kind for kind, _body, _ops in composed)
+
+    multi_arm = tactics.compose_tactic_bodies(
+        "  case left =>\n    simp\n  case middle =>\n    exact h\n  case right =>\n    rfl\n",
+        "  case left =>\n    aesop\n  case middle =>\n    assumption\n  case right =>\n    decide\n",
+        cap=8,
+    )
+    assert any("multi_splice" in kind for kind, _body, _ops in multi_arm)
+    assert any("mixed_splice" in kind for kind, _body, _ops in multi_arm)
 
     crossovers = ae.crossover_lean_ir(
         ae.encode_lean_ir("intro h\nexact h"),
@@ -119,6 +307,10 @@ def test_hammer_sweep_and_teacher_composition_are_bounded() -> None:
     )
     assert crossovers
     assert all(row["schema"] == ae.LEAN_IR_SCHEMA for row in crossovers)
+    assert any(
+        len(row.get("ops") or ()) >= 3
+        for row in crossovers
+    )
 
 
 def test_router_loop_records_hammer_and_verified_composition_rules() -> None:
@@ -141,7 +333,9 @@ def test_router_loop_records_hammer_and_verified_composition_rules() -> None:
         router_generate=lambda _prompt: "{}",
         config=RouterTuningConfig(
             rounds=1,
-            max_candidate_pool=32,
+            # Exercise the branch-aware scheduler: two historical seeds must
+            # still leave room for composition, IR crossover, and hammer rows.
+            max_candidate_pool=12,
             max_composed_candidates=4,
             max_hammer_candidates=4,
             max_composition_sources=4,
@@ -153,15 +347,61 @@ def test_router_loop_records_hammer_and_verified_composition_rules() -> None:
     search = result["history"][0]["search"]
     assert search["composed_candidates"] > 0
     assert search["hammer_candidates"] > 0
+    assert search["ir_crossover_candidates"] > 0
+    assert search["branch_budgets"]["composition"] >= 1
+    assert search["branch_budgets"]["hammer"] >= 1
     origins = [row["origin"] for row in result["history"][0]["candidates"]]
     assert any(str(origin).startswith("composition:") for origin in origins)
     assert any(str(origin).startswith("hammer") for origin in origins)
+    composition_pairs = {
+        tuple(row.get("composition_parent_ids") or ())
+        for row in result["history"][0]["candidates"]
+        if str(row.get("origin") or "").startswith("composition:")
+    }
+    assert len(composition_pairs) >= 2
     assert any(row.get("kind") == "verified_composition" for row in result["history"][0]["rules"])
     assert any(
         row.get("kind") in {"hammer_sweep", "hammer_strategy"}
         for row in result["history"][0]["rules"]
     )
     assert any(row.get("kind") == "verified_composition" for row in memory["nca"]["router_rules"])
+
+
+def test_elite_composition_revisits_newly_admitted_local_teachers() -> None:
+    source = "theorem elite (h : True) : True := by\n  have hx : True := h\n  exact hx"
+    result = tune_autoencoder_with_router(
+        {"nca": {"grid": {}, "board_edges": []}},
+        source,
+        problem="elite_composition",
+        compile_fn=lambda candidate, problem="": {
+            "theorem_ok": True,
+            "token_count": len(candidate.split()),
+        },
+        router_generate=lambda _prompt: '{"strategies":["goal_directed"]}',
+        seed_candidates=[
+            {"body": "  exact h\n", "provenance": "git_history", "commit": "elite-a"},
+            {"body": "  assumption\n", "provenance": "git_history", "commit": "elite-b"},
+        ],
+        config=RouterTuningConfig(
+            rounds=1,
+            max_candidate_pool=48,
+            max_router_candidates=2,
+            max_composed_candidates=2,
+            max_elite_composed_candidates=4,
+            max_hammer_candidates=2,
+            max_composition_sources=5,
+            n_variations=1,
+        ),
+    )
+
+    search = result["history"][0]["search"]
+    assert search["elite_composition_triggered"] is True
+    assert search["elite_composed_candidates"] > 0
+    assert any(
+        str(row.get("origin") or "").startswith("elite_composition:")
+        for row in result["history"][0]["candidates"]
+    )
+    assert any(row.get("kind") == "elite_composition" for row in result["history"][0]["rules"])
 
 
 def test_outer_design_directive_reaches_inner_router_prompt() -> None:
