@@ -22,6 +22,9 @@ BODY_BY_PREFIXES = (
     ":= by",
 )
 STATEMENT_SORRY_SUFFIX = " := by\nsorry"
+FORBIDDEN_PROOF_TOKENS = ("theorem", "lemma", "import", "open")
+ASSIGN_NEEDLE = ":" + "="
+TOKEN_BOUNDARY = r"(?<![A-Za-z0-9_']){token}(?![A-Za-z0-9_'])"
 
 
 @dataclass(frozen=True)
@@ -661,6 +664,26 @@ class AdmissionView:
     used_full_src_as_native: bool = False
     used_full_src_as_canonical: bool = False
     arena_score: None = None
+
+
+def admit_empty_canonical(
+    admit_fn: Callable[..., Any],
+    proof_text: str,
+    native: str,
+    *,
+    theorem_id: str = "",
+    declaration_name: str = "",
+) -> Any:
+    """Lexical admit with empty canonical_source/expected_statement. Not a lake admit."""
+
+    return admit_fn(
+        proof_text,
+        native,
+        theorem_id=theorem_id,
+        declaration_name=declaration_name,
+        canonical_source="",
+        expected_statement="",
+    )
 
 
 def pack_admission_view(
@@ -2704,6 +2727,154 @@ def plan_bake_from_jobs(
     )
 
 
+FAKE_LAKE_EXEC = """#!/usr/bin/python3.12
+import os
+import sys
+
+args = sys.argv[1:]
+if not args or args[0] != "env" or len(args) < 2:
+    sys.stderr.write("lra-fake-lake: expected 'env <lean> ...'\\n")
+    sys.exit(2)
+os.execv(args[1], args[1:])
+"""
+
+FAKE_LAKE_PATH_A = """#!/usr/bin/python3.12
+import os
+import sys
+
+args = sys.argv[1:]
+if not args or args[0] != "env" or len(args) < 2:
+    sys.stderr.write("lra-021-fake-lake: expected 'env <lean> ...'\\n")
+    sys.exit(2)
+os.execv(args[1], args[1:])
+"""
+
+FAKE_LEAN_COMPILE = """#!/usr/bin/python3.12
+import json
+import sys
+from pathlib import Path
+
+argv = sys.argv[1:]
+heartbeats = None
+source = None
+for arg in argv:
+    if arg.startswith("-DmaxHeartbeats="):
+        try:
+            heartbeats = int(arg.split("=", 1)[1])
+        except ValueError:
+            heartbeats = -1
+    elif arg == "--json":
+        continue
+    elif not arg.startswith("-"):
+        source = arg
+
+if heartbeats is None or heartbeats <= 0:
+    sys.stderr.write("measurement maxHeartbeats must be finite and positive\\n")
+    sys.exit(3)
+if source is None:
+    sys.stderr.write("missing source file\\n")
+    sys.exit(4)
+path = Path(source)
+if not path.is_file():
+    sys.stderr.write(f"source not found: {source}\\n")
+    sys.exit(4)
+text = path.read_text(encoding="utf-8")
+sorry = "sorry" in text.split() or "sorryAx" in text or "admit" in text.split()
+decl = path.stem.replace(".", "_") or "lra_candidate"
+if sorry:
+    print(json.dumps({"severity": "warning", "data": "hasSorry", "pos": {"line": 1, "column": 0}}))
+    print(f"#print axioms {decl}")
+    print(f"{decl} : sorryAx")
+    sys.exit(1)
+print(json.dumps({"severity": "information", "data": "ok", "pos": {"line": 1, "column": 0}}))
+print(f"#print axioms {decl}")
+print(f"{decl} : []")
+sys.exit(0)
+"""
+
+FAKE_LEAN_PATH_A = r"""#!/usr/bin/python3.12
+import json
+import re
+import sys
+from pathlib import Path
+
+argv = sys.argv[1:]
+heartbeats = None
+source = None
+has_json = False
+for arg in argv:
+    if arg.startswith("-DmaxHeartbeats="):
+        try:
+            heartbeats = int(arg.split("=", 1)[1])
+        except ValueError:
+            heartbeats = -1
+    elif arg == "--json":
+        has_json = True
+    elif not arg.startswith("-"):
+        source = arg
+
+if not has_json:
+    sys.stderr.write("lra-021-fake-lean: expected --json\n")
+    sys.exit(2)
+if heartbeats is None or heartbeats <= 0:
+    sys.stderr.write("measurement maxHeartbeats must be finite and positive\n")
+    sys.exit(3)
+if source is None:
+    sys.stderr.write("missing source file\n")
+    sys.exit(4)
+path = Path(source)
+if not path.is_file():
+    sys.stderr.write(f"source not found: {source}\n")
+    sys.exit(4)
+text = path.read_text(encoding="utf-8")
+if " := by\n" in text:
+    tactic_block = text.rsplit(" := by\n", 1)[-1].strip()
+elif " := by" in text:
+    tactic_block = text.rsplit(" := by", 1)[-1].strip()
+else:
+    tactic_block = ""
+tactic = tactic_block.split()[0] if tactic_block.split() else ""
+aesop_imported = bool(re.search(r"(?m)^\s*import\s+Aesop\b", text))
+unsolved = "theorem lra_unsolved" in text
+decl = path.stem.replace(".", "_") or "lra_candidate"
+
+
+def fail(message: str, sorry: bool = False) -> None:
+    payload = {"severity": "error", "data": message, "pos": {"line": 1, "column": 0}}
+    if sorry:
+        payload["data"] = "hasSorry"
+        payload["severity"] = "warning"
+    print(json.dumps(payload))
+    print(f"#print axioms {decl}")
+    print(f"{decl} : sorryAx" if sorry else f"{decl} : []")
+    sys.exit(1)
+
+
+def succeed() -> None:
+    print(json.dumps({"severity": "information", "data": "ok", "pos": {"line": 1, "column": 0}}))
+    print(f"#print axioms {decl}")
+    print(f"{decl} : []")
+    sys.exit(0)
+
+
+if tactic == "sorry":
+    fail("sorry hole", sorry=True)
+if unsolved:
+    fail(f"unsolved under {tactic}")
+if tactic == "rfl":
+    fail("rfl failed on lake-project goal")
+if tactic == "aesop":
+    if aesop_imported:
+        succeed()
+    fail("unknown identifier 'aesop' (Aesop not imported)")
+if tactic in {"decide", "omega", "simp_all"}:
+    if aesop_imported:
+        fail(f"{tactic} failed; Putnam synthetic closes with aesop")
+    succeed()
+fail(f"unknown tactic {tactic!r}")
+"""
+
+
 def plant_fake_toolchain(
     elan_home: Any,
     lean_tag: str,
@@ -2711,7 +2882,7 @@ def plant_fake_toolchain(
     dirname_fn: Callable[[str], str],
     files: Mapping[str, str],
 ) -> Path:
-    """Plant tag-pinned lake/lean scripts. Injected bodies stay in the consumer."""
+    """Plant tag-pinned lake/lean scripts. Fake bodies live in FAKE_* constants."""
 
     from jevops.outer import join_under, plant_executables
 
@@ -3325,6 +3496,115 @@ def stamp_tag_compile(
         lean_path=toolchain.lean_path,
         timeout_seconds=getattr(receipt, "timeout_seconds", timeout),
         extra_ok=getattr(receipt, "measurement_maxHeartbeats", 0) == int(max_heartbeats),
+        ikv_floor=ikv_floor,
+    )
+
+
+def load_admit_lean_proof_text(*, setup: Sequence[Any] = ()) -> Any:
+    """Live ImportFrom of admit_lean_proof_text. Jev does not write Lean. Lake is the oracle."""
+
+    for item in setup or ():
+        item()
+    from ipfs_accelerate_py.agent_supervisor.proof.kernel_verification import admit_lean_proof_text
+
+    return admit_lean_proof_text
+
+
+def load_lean_toolchain(*, setup: Sequence[Any] = ()) -> dict[str, Any]:
+    """Live ImportFrom of tag-pinned lake/lean helpers. Never PATH lean. Never writes Lean."""
+
+    for item in setup or ():
+        item()
+    from ipfs_datasets_py.logic.hammers.frontends.lean_toolchain import (
+        KERNEL_COMMAND_TEMPLATE,
+        LeanToolchainMissing,
+        LeanToolchainResolver,
+        audit_lean_frontend_path_json,
+        run_lean_process,
+    )
+
+    return {
+        "KERNEL_COMMAND_TEMPLATE": KERNEL_COMMAND_TEMPLATE,
+        "LeanToolchainMissing": LeanToolchainMissing,
+        "LeanToolchainResolver": LeanToolchainResolver,
+        "audit_lean_frontend_path_json": audit_lean_frontend_path_json,
+        "run_lean_process": run_lean_process,
+    }
+
+
+def resolve_tag_pin(
+    pin: Any,
+    *,
+    resolver_cls: Any,
+    elan_home: Any = None,
+    require_installed: bool = True,
+    miss_types: tuple[type[BaseException], ...] = (),
+    error_cls: type[BaseException] = ValueError,
+) -> Any:
+    """Resolve a tag pin through an injected toolchain resolver. Never PATH lean."""
+
+    from jevops.outer import reraise_as
+
+    resolver = resolver_cls(elan_home)
+    return reraise_as(
+        lambda: resolver.resolve_tag(
+            pin.lean_tag, git_commit=pin.git_commit, require_installed=require_installed
+        ),
+        miss_types,
+        error_cls,
+    )
+
+
+def stamp_with_lake_process(
+    receipt: Any,
+    *,
+    lake_path: str,
+    lean_path: str,
+    source_file: str,
+    max_heartbeats: int,
+    cwd: Any,
+    toolchain: Any,
+    timeout: float,
+    stamp_fn: Callable[..., Any],
+    run_lean_process: Callable[..., Any],
+    state_root: Any,
+    tmp_name: str,
+    process_env_key: str,
+    threads: Any,
+    ikv_floor: float,
+    refuse: str = "",
+    error_cls: type[BaseException] = ValueError,
+) -> Any:
+    """Build measurement_argv and stamp via run_lean_process. Lake is the oracle. Never writes Lean."""
+
+    argv = measurement_argv(
+        lake_path,
+        lean_path,
+        source_file,
+        max_heartbeats=max_heartbeats,
+        refuse=refuse,
+        error_cls=error_cls,
+    )
+    from jevops.outer import text_or
+
+    return stamp_measured(
+        receipt,
+        argv=argv,
+        cwd=cwd,
+        toolchain=toolchain,
+        timeout=timeout,
+        stamp_fn=stamp_fn,
+        run_fn=lambda argv, env: run_lean_process(
+            argv,
+            timeout=timeout,
+            cwd=text_or(cwd),
+            env=env,
+        ),
+        state_root=state_root,
+        tmp_name=tmp_name,
+        process_env_key=process_env_key,
+        threads=threads,
+        max_heartbeats=max_heartbeats,
         ikv_floor=ikv_floor,
     )
 
@@ -4293,8 +4573,57 @@ def fill_timed_attempt(
     )
 
 
+def timed_tactic_with_lake_process(
+    *,
+    tactic: str,
+    source_file: str,
+    cwd: Any,
+    lake_path: str,
+    lean_path: str,
+    timeout: float,
+    env: Mapping[str, str],
+    max_heartbeats: int,
+    write_fn: Callable[..., Any],
+    run_lean_process: Callable[..., Any],
+    fill_fn: Callable[..., Any],
+    timed_fn: Callable[..., tuple[Any, float, float]],
+    refuse: str = "",
+    error_cls: type[BaseException] = ValueError,
+    write_args: Sequence[Any] = (),
+    write_kwargs: Optional[Mapping[str, Any]] = None,
+) -> Any:
+    """Write a candidate, measurement_argv, then run_lean_process. Lake is the oracle."""
+
+    write_fn(*tuple(write_args), **dict(write_kwargs or {}))
+    argv = measurement_argv(
+        lake_path,
+        lean_path,
+        source_file,
+        max_heartbeats=max_heartbeats,
+        refuse=refuse,
+        error_cls=error_cls,
+    )
+    from jevops.outer import overlay_map, text_or
+
+    return fill_timed_attempt(
+        tactic=tactic,
+        argv=argv,
+        cwd=cwd,
+        source_file=source_file,
+        timeout=timeout,
+        run_fn=lambda: run_lean_process(
+            argv,
+            timeout=timeout,
+            cwd=text_or(cwd),
+            env=overlay_map(env),
+        ),
+        fill_fn=fill_fn,
+        timed_fn=timed_fn,
+    )
+
+
 def pack_statement_report(**fields: Any) -> dict[str, Any]:
-    """Prefix-bind / admission report overlay. Bind literals stay in the consumer."""
+    """Prefix-bind / admission report overlay. Bind literals live in split_statement_suffix."""
 
     out = dict(fields)
     out["arena_score"] = None

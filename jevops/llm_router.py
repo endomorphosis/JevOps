@@ -25,7 +25,7 @@ import tempfile
 import threading
 import urllib.error
 import urllib.request
-from typing import Any, Mapping, Optional
+from typing import Any, Mapping, Optional, Sequence
 
 
 class LLMRouterError(RuntimeError):
@@ -241,4 +241,15 @@ def generate_text(
     return text
 
 
-__all__ = ["LLMRouterError", "generate_text", "get_last_generation_trace"]
+def load_accelerate_router(*, setup: Sequence[Any] = ()) -> tuple[Any, Any]:
+    """Live ImportFrom of ipfs_accelerate_py.llm_router.generate_text. Never writes Lean."""
+
+    for item in setup or ():
+        item()
+    from ipfs_accelerate_py.llm_router import generate_text as router_generate_text
+    from ipfs_accelerate_py.llm_router import get_last_generation_trace
+
+    return router_generate_text, get_last_generation_trace
+
+
+__all__ = ["LLMRouterError", "generate_text", "get_last_generation_trace", "load_accelerate_router"]

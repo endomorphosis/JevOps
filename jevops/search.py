@@ -1385,8 +1385,59 @@ def init_mcmc_best(
     kind: str,
 ) -> dict[str, Any]:
     if start_ok:
-        return {"kind": kind, "tactics": start, "token_count": int(start_tok), "theorem_ok": True}
-    return {"kind": "reference", "tactics": reference, "token_count": int(ref_tok), "theorem_ok": True}
+        return pack_keep(kind=kind, tactics=start, token_count=start_tok, theorem_ok=True)
+    return pack_keep(kind="reference", tactics=reference, token_count=ref_tok, theorem_ok=True)
+
+
+def pack_keep(
+    *,
+    kind: str,
+    tactics: str,
+    token_count: int,
+    theorem_ok: bool = True,
+) -> dict[str, Any]:
+    """Keep-best box. Lake still admits."""
+
+    return {
+        "kind": str(kind),
+        "tactics": tactics,
+        "token_count": int(token_count),
+        "theorem_ok": bool(theorem_ok),
+    }
+
+
+def start_keep(
+    tactics: str,
+    compiled: Mapping[str, Any],
+    *,
+    token_fn: Callable[[str], int],
+    kind: str = "init",
+) -> dict[str, Any]:
+    """Initial keep-best from a compile row."""
+
+    from jevops.outer import first_int
+
+    return pack_keep(
+        kind=kind,
+        tactics=tactics,
+        token_count=first_int(compiled.get("token_count"), token_fn(tactics)),
+        theorem_ok=bool(compiled.get("theorem_ok")),
+    )
+
+
+def keep_beats(
+    best: Optional[Mapping[str, Any]],
+    ref_tokens: int,
+    *,
+    ok_key: str = "theorem_ok",
+    token_key: str = "token_count",
+) -> bool:
+    """True when keep is lake-ok and strictly shorter than the reference."""
+
+    from jevops.outer import first_int
+
+    row = best or {}
+    return bool(row.get(ok_key)) and first_int(row.get(token_key)) < int(ref_tokens)
 
 
 def mcmc_try_proposals(
@@ -2050,6 +2101,226 @@ def run_mcmc_rounds(
     return leanstral_calls
 
 
+def run_cascade_rounds(
+    *,
+    rounds: int,
+    current: str,
+    best: dict[str, Any],
+    history: list[dict[str, Any]],
+    failed_kinds: set[str],
+    ledger: Any,
+    rng: Any,
+    name: str,
+    available_fn: Callable[..., Mapping[str, str]],
+    live_tree_fn: Callable[[Mapping[str, str]], Mapping[str, Any]],
+    classify_fn: Callable[..., Mapping[str, Any]],
+    verify_fn: Callable[..., Mapping[str, float]],
+    compile_fn: Callable[[str], Mapping[str, Any]],
+    token_fn: Callable[[str], int],
+    unavailable_fn: Callable[[BaseException], bool],
+    sleep_fn: Callable[[float], None],
+    confident: float,
+    fire_t: float,
+    sleep_s: float = 5.0,
+    goal: str = "Shorten a lake-valid Lean 4 proof without breaking compile. Do not write Lean.",
+) -> tuple[str, dict[str, Any]]:
+    """Hierarchical family→leaf cascade. Lake is the oracle. Jev does not write Lean."""
+
+    from jevops.outer import (
+        exc_head,
+        first_float,
+        first_int,
+        first_truthy,
+        get_str,
+        head_seq,
+        or_list,
+        overlay_map,
+        tail_chars,
+        text_or,
+    )
+
+    del rng
+    hard_stopped = lambda: bool(getattr(ledger, "hard_stopped", False))
+    for round_i in range(int(rounds)):
+        if hard_stopped():
+            break
+        found = dict(available_fn(current) or {})
+        for kind in list(found):
+            if kind in failed_kinds and kind != "keep":
+                found.pop(kind, None)
+        tree = live_tree_fn(found)
+        state = {
+            "problem": name,
+            "current_tokens": best["token_count"],
+            "current_tail": tail_chars(current, 400),
+            "available_leaves": sorted(k for k in found if k != "keep"),
+            "failed_kinds": sorted(failed_kinds),
+            "goal": goal,
+        }
+        try:
+            classified = classify_fn(state, tree)
+        except Exception as exc:  # noqa: BLE001
+            history.append({"round": round_i, "action": "typesafe_error", "error": exc_head(exc)})
+            if unavailable_fn(exc):
+                sleep_fn(sleep_s)
+                continue
+            break
+        row: dict[str, Any] = {
+            "round": round_i,
+            "abstain": classified["abstain"],
+            "separation": classified["separation"],
+            "paths": head_seq(classified["paths"], 6),
+            "family": classified["family"],
+            "beam_fams": classified["beam_fams"],
+        }
+        if classified["abstain"]:
+            row["action"] = "abstain_keep"
+            history.append(row)
+            continue
+        winning_fam = get_str(classified.get("family"), "choice")
+        if winning_fam not in tree:
+            winning_fam = text_or(or_list(classified.get("beam_fams"), ["keep"])[0])
+        greedy_leaf = None
+        if winning_fam and winning_fam != "keep":
+            fam_paths = [p for p in classified["paths"] if p.get("family") == winning_fam]
+            if fam_paths:
+                greedy_leaf = get_str(fam_paths[0], "leaf")
+        tried = False
+        for top in classified["paths"]:
+            leaf = get_str(top, "leaf")
+            if first_truthy(leaf == "keep", top["family"] == "keep", leaf in failed_kinds):
+                continue
+            body = found.get(leaf)
+            if not body or body.strip("\n") == current.strip("\n"):
+                continue
+            tok = token_fn(body)
+            leaf_conf = first_float(top.get("leaf_confidence"))
+            family_conf = first_float(classified["family"].get("confidence"))
+            confident_leaf = leaf_conf >= float(confident)
+            greedy_ok = (not confident_leaf) and family_conf >= float(confident) and leaf == greedy_leaf
+            if not confident_leaf and not greedy_ok:
+                continue
+            row["picked"] = top
+            row["proposed_tokens"] = tok
+            row["greedy_family"] = greedy_ok
+            if tok >= first_int(best.get("token_count")):
+                failed_kinds.add(leaf)
+                continue
+            vstate = overlay_map(
+                state,
+                edit_kind=leaf,
+                proposed_tokens=tok,
+                proposed_tail=tail_chars(body, 400),
+            )
+            try:
+                flags = verify_fn(vstate)
+            except Exception as exc:  # noqa: BLE001
+                row["action"] = "verify_error"
+                row["error"] = exc_head(exc)
+                history.append(row)
+                tried = True
+                break
+            fired = {k: p for k, p in flags.items() if p > float(fire_t)}
+            row["verify"] = flags
+            row["fired"] = fired
+            if fired:
+                row["action"] = "skip_lake"
+                failed_kinds.add(leaf)
+                history.append(row)
+                tried = True
+                break
+            compiled = dict(compile_fn(body) or {})
+            ok = bool(compiled.get("theorem_ok"))
+            lake_tok = first_int(compiled.get("token_count"), tok)
+            row["action"] = "lake"
+            row["ok"] = ok
+            row["tokens"] = lake_tok
+            row["errors"] = head_seq(compiled.get("errors"), 1)
+            history.append(row)
+            tried = True
+            if ok and lake_tok < first_int(best.get("token_count")):
+                best = pack_keep(
+                    kind=f"cascade_r{round_i}_{leaf}",
+                    tactics=body,
+                    token_count=lake_tok,
+                )
+                current = body
+            else:
+                failed_kinds.add(leaf)
+            break
+        if not tried:
+            row["action"] = "abstain_family"
+            history.append(row)
+    return current, best
+
+
+def run_autoresearch_rounds(
+    *,
+    rounds: int,
+    current: str,
+    best: dict[str, Any],
+    history: list[dict[str, Any]],
+    labeled: list[dict[str, Any]],
+    weights: Mapping[str, float],
+    ledger: Any,
+    propose_fn: Callable[[str], Sequence[Mapping[str, Any]]],
+    feature_fn: Callable[[str, Mapping[str, Any], Mapping[str, float]], Mapping[str, Any]],
+    compile_fn: Callable[[str], Mapping[str, Any]],
+    token_fn: Callable[[str], int],
+    update_fn: Callable[[list[dict[str, Any]], dict[str, float]], dict[str, float]],
+    propose_cap: int = 6,
+    lake_cap: int = 2,
+) -> tuple[str, dict[str, Any], dict[str, float]]:
+    """Score MCMC proposals with injected features, then lake the shorter ones."""
+
+    from jevops.outer import first_float, first_int, first_truthy, get_str, head_seq, overlay_map
+
+    weights_out = dict(weights or {})
+    hard_stopped = lambda: bool(getattr(ledger, "hard_stopped", False))
+    for round_i in range(int(rounds)):
+        if hard_stopped():
+            break
+        scored: list[dict[str, Any]] = []
+        for proposal in head_seq(propose_fn(current), propose_cap):
+            feat = feature_fn(current, proposal, weights_out)
+            scored.append(overlay_map(proposal, **feat))
+            if hard_stopped():
+                break
+        scored.sort(key=lambda item: first_float(item.get("score")), reverse=True)
+        current_tok = token_fn(current)
+        shorter = [
+            item
+            for item in scored
+            if token_fn(get_str(item, "tactics")) < current_tok
+        ]
+        for proposal in head_seq(first_truthy(shorter, scored), lake_cap):
+            body = get_str(proposal, "tactics")
+            compiled = dict(compile_fn(body) or {})
+            ok = bool(compiled.get("theorem_ok"))
+            tok = first_int(compiled.get("token_count"), token_fn(body))
+            row = {
+                "round": round_i,
+                "kind": proposal.get("kind"),
+                "note": proposal.get("note"),
+                "score": proposal.get("score"),
+                "features": proposal.get("features"),
+                "ok": ok,
+                "tokens": tok,
+                "errors": head_seq(compiled.get("errors"), 1),
+            }
+            history.append(row)
+            labeled.append(row)
+            if ok and tok < first_int(best.get("token_count")):
+                best = pack_keep(
+                    kind=f"ar_r{round_i}_{proposal.get('kind')}",
+                    tactics=body,
+                    token_count=tok,
+                )
+                current = body
+        weights_out = update_fn(labeled, weights_out)
+    return current, best, weights_out
+
+
 def pack_diffuse(
     *,
     name: str,
@@ -2246,6 +2517,290 @@ def finish_mca_problem(
     )
 
 
+def dispatch_mca_generation(
+    *,
+    grok_paths: Sequence[Any] = (),
+    grok_few_shot: bool = False,
+    few_shot: bool = False,
+    call_leanstral: bool = False,
+    one_hole: bool = False,
+    fill_holes: Sequence[Any] = (),
+    holes: Sequence[Any] = (),
+    grok_paths_fn: Optional[Callable[[], Mapping[str, Any]]] = None,
+    grok_few_shot_fn: Optional[Callable[[], Mapping[str, Any]]] = None,
+    few_shot_fn: Optional[Callable[[], Mapping[str, Any]]] = None,
+    one_hole_fn: Optional[Callable[[], Mapping[str, Any]]] = None,
+    mask_fn: Optional[Callable[[], Mapping[str, Any]]] = None,
+) -> dict[str, Any]:
+    """Pick one MCA generation branch. Generation bodies stay injected. Never writes Lean."""
+
+    from jevops.outer import overlay_map
+
+    call_leanstral = bool(call_leanstral)
+    grok_few_shot = bool(grok_few_shot)
+    if grok_few_shot:
+        call_leanstral = False
+    if grok_paths:
+        grok_few_shot = False
+        call_leanstral = False
+    out: dict[str, Any] = {
+        "call_leanstral": call_leanstral,
+        "grok_few_shot": grok_few_shot,
+        "leanstral_text": None,
+        "identity": None,
+        "ledger": None,
+        "grok_skip_reason": "",
+        "one_hole_fills": [],
+        "few_shot_row": None,
+        "grok_few_shot_row": None,
+        "grok_workspace": None,
+        "grok_file_meta": [],
+        "grok_file_rows": [],
+        "holes_for_leanstral": list(holes or ()),
+    }
+    if grok_paths and grok_paths_fn is not None:
+        out = overlay_map(out, **dict(grok_paths_fn() or {}))
+        out["grok_few_shot"] = False
+        out["call_leanstral"] = False
+        grok_few_shot = False
+        call_leanstral = False
+    if grok_few_shot and grok_few_shot_fn is not None:
+        out = overlay_map(out, **dict(grok_few_shot_fn() or {}))
+        out["grok_few_shot"] = True
+        out["call_leanstral"] = False
+    elif few_shot and call_leanstral and few_shot_fn is not None:
+        out = overlay_map(out, **dict(few_shot_fn() or {}))
+    elif call_leanstral and one_hole and one_hole_fn is not None:
+        out = overlay_map(out, **dict(one_hole_fn() or {}))
+    elif call_leanstral and fill_holes and mask_fn is not None:
+        out = overlay_map(out, **dict(mask_fn() or {}))
+        out["holes_for_leanstral"] = list(fill_holes)
+    return out
+
+
+def run_mca_problem(
+    *,
+    generated: Mapping[str, Any],
+    name: str,
+    digest: str,
+    tactics: str,
+    holes: Sequence[Any],
+    skeleton: str,
+    assemble_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    compile_fn: Callable[[str], Mapping[str, Any]],
+    row_fn: Callable[[Mapping[str, Any], Mapping[str, Any]], Mapping[str, Any]],
+    hammer_fn: Callable[..., tuple[list[dict[str, Any]], str, list[Any], bool]],
+    needs_hammer_fn: Callable[[str], bool],
+    repair_fn: Optional[Callable[..., tuple[list[dict[str, Any]], bool]]] = None,
+    ablate_fn: Optional[Callable[[], Sequence[Mapping[str, Any]]]] = None,
+    fanout_fn: Optional[Callable[[list[dict[str, Any]], Any], Any]] = None,
+    extra_fn: Callable[..., Mapping[str, Any]],
+    redact_fn: Callable[[Mapping[str, Any]], Any],
+    token_fn: Callable[[str], int],
+    head_fn: Callable[[str, int], str],
+    asdict_fn: Callable[[Any], Mapping[str, Any]],
+    hardware_class: str,
+    grok_hardware_class: str,
+    grok_paths: Sequence[Any] = (),
+    typesafe_fanout: bool = False,
+    schema: str = "lra-mca-mask-replace/v1",
+) -> dict[str, Any]:
+    """Assemble/fanout/compile MCA drafts after generation dispatch. Lake still admits."""
+
+    from jevops.outer import call_if, extend_if, first_truthy, first_where, kind_startswith, replace_if
+
+    grok_few_shot = bool(generated.get("grok_few_shot"))
+    leanstral_text = generated.get("leanstral_text")
+    holes_for = list(generated.get("holes_for_leanstral") or holes)
+    candidates = list(assemble_fn(leanstral_text=None, holes=holes) or ())
+    extend_if(
+        candidates,
+        lambda: list(assemble_fn(leanstral_text=leanstral_text, holes=holes_for) or ()),
+        cond=bool(leanstral_text),
+        key_fn=lambda item: item["kind"],
+    )
+    candidates = merge_labeled_candidates(
+        candidates,
+        list(generated.get("one_hole_fills") or ()),
+        list(generated.get("grok_file_rows") or ()),
+        extra_rows=(generated.get("few_shot_row"), generated.get("grok_few_shot_row")),
+    )
+    seed_row = first_where(candidates, kind_startswith("grok"))
+    typesafe_meta = call_if(
+        typesafe_fanout and seed_row is not None and fanout_fn is not None,
+        lambda: fanout_fn(candidates, generated.get("ledger")),
+    )
+    hw = replace_if(first_truthy(grok_few_shot, grok_paths), grok_hardware_class, hardware_class)
+    return finish_mca_problem(
+        candidates=candidates,
+        compile_fn=compile_fn,
+        row_fn=row_fn,
+        hammer_fn=hammer_fn,
+        needs_hammer_fn=needs_hammer_fn,
+        repair_fn=repair_fn,
+        ablate_fn=ablate_fn,
+        name=name,
+        digest=digest,
+        holes=[dict(asdict_fn(hole)) for hole in holes],
+        skeleton_head=head_fn(skeleton, 800),
+        hardware_class=hw,
+        ref_tokens=token_fn(tactics),
+        extra_fn=lambda grok_ok, grok_tactics, grok_errors: extra_fn(
+            grok_ok=grok_ok,
+            grok_tactics=grok_tactics,
+            grok_errors=grok_errors,
+            generated=generated,
+            typesafe_meta=typesafe_meta,
+        ),
+        redact_fn=redact_fn,
+        schema=schema,
+    )
+
+
+def diffuse_noise_step(
+    *,
+    use_leanstral: bool,
+    remaining: Sequence[Any],
+    rng: Any,
+    keep: str,
+    keep_tokens: int,
+    record: Mapping[str, Any],
+    records: Sequence[Mapping[str, Any]],
+    name: str,
+    ledger_fn: Callable[[int], Any],
+    one_hole_prompt_fn: Callable[..., str],
+    shrink_prompt_fn: Callable[..., str],
+    generate_fn: Callable[..., Any],
+    extract_fn: Callable[[str], str],
+    flatten_fn: Callable[[str, str], str],
+    hammer_fn: Callable[..., str],
+    eval_fn: Callable[[str], Sequence[Mapping[str, Any]]],
+    skip_exc: Any = (),
+    round_i: int = 0,
+    hole_id_attr: str = "hole_id",
+) -> tuple[Any, str, int]:
+    """Leanstral noise then hammer denoise. Generation stays injected. Lake still admits."""
+
+    from jevops.outer import ignore_error, overlay_map, unpack_pair
+
+    if not use_leanstral:
+        return None, keep, int(keep_tokens)
+    ledger = ledger_fn(int(round_i))
+    if remaining:
+        hole = rng.choice(list(remaining))
+        prompt = one_hole_prompt_fn(record, keep, hole)
+        noise_meta = {"hole": getattr(hole, hole_id_attr, hole), "mode": "one_hole"}
+    else:
+        prompt = shrink_prompt_fn(record, keep, int(keep_tokens), records, name)
+        noise_meta = {"hole": None, "mode": "shrink_keep"}
+    generated = ignore_error(
+        lambda: generate_fn(prompt, ledger),
+        skip_exc or (),
+        default=None,
+    )
+    text, identity = unpack_pair(generated, default=("", {}))
+    row, tokens, keep_out = denoise_keepbest(
+        text=text,
+        keep=keep,
+        keep_tokens=int(keep_tokens),
+        extract_fn=extract_fn,
+        flatten_fn=flatten_fn,
+        eval_fn=eval_fn,
+        hammer_fn=hammer_fn,
+        extra=overlay_map(noise_meta, identity=identity),
+    )
+    return row, keep_out, int(tokens)
+
+
+def run_diffuse_search(
+    name: str,
+    *,
+    load_fn: Callable[..., tuple[Any, Sequence[Any], str, Any, Any, bytes]],
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    find_fn: Callable[[str], Sequence[Any]],
+    token_fn: Callable[[str], int],
+    pin_fn: Callable[[], Any],
+    drop_fn: Callable[[str, Sequence[Any], Sequence[str]], str],
+    eval_fn: Callable[[Mapping[str, Any], str], Sequence[Mapping[str, Any]]],
+    jev_fn: Callable[..., Mapping[str, Any]],
+    noise_fn: Callable[..., tuple[Any, str, int]],
+    rounds: int,
+    seed: int,
+    tau: float,
+    redact_fn: Callable[[Mapping[str, Any]], Any],
+    hardware_class: str,
+    protocol: str = "LRA/v1",
+    pr: str = "",
+    error_cls: Any = RuntimeError,
+) -> dict[str, Any]:
+    """Keep-best diffuse/denoise search. drop/eval/noise stay injected. Lake is the oracle."""
+
+    from jevops.outer import first_int, replace_if, take_keys
+    import random
+
+    rng = random.Random(first_int(seed))
+    record, records, digest, _clone, _dest, restore = load_fn(name, error_cls=error_cls)
+    started = begin_keep_search(
+        record,
+        tactic_fn=tactic_fn,
+        find_fn=find_fn,
+        token_fn=token_fn,
+        pin_fn=pin_fn,
+    )
+    reference, holes, keep, keep_tokens, dropped = take_keys(
+        started, "reference", "holes", "keep", "keep_tokens", "dropped"
+    )
+
+    def consider(label: str, hole_ids: Sequence[str]) -> dict[str, Any]:
+        nonlocal keep, keep_tokens, dropped
+        hit, keep_tokens, body, row = trial_keepbest(
+            label=label,
+            hole_ids=hole_ids,
+            dropped=dropped,
+            drop_fn=lambda ids: drop_fn(reference, holes, ids),
+            eval_fn=lambda trial: eval_fn(record, trial),
+            keep_tokens=keep_tokens,
+            apply_fn=apply_keepbest,
+            strip_fn=strip_tactics,
+        )
+        keep = replace_if(hit, body, keep)
+        return row
+
+    def _noise(round_i: int, remaining: Sequence[Any]) -> Any:
+        nonlocal keep, keep_tokens
+        row, keep, keep_tokens = noise_fn(
+            round_i, remaining, keep, keep_tokens, record, records, rng
+        )
+        return row
+
+    walked = run_diffuse_rounds(
+        holes,
+        rounds=rounds,
+        tau=tau,
+        rng=rng,
+        consider_fn=consider,
+        jev_fn=lambda remaining, history, tokens: jev_fn(record, remaining, history, tokens),
+        noise_fn=_noise,
+        keep_tokens=keep_tokens,
+        dropped=dropped,
+    )
+    _keep, keep_tokens, dropped, _history = unpack_walked(walked)
+    return redact_fn(
+        pack_diffuse(
+            name=name,
+            digest=digest,
+            n_holes=len(holes),
+            ref_tokens=token_fn(reference),
+            keep_tokens=keep_tokens,
+            dropped=dropped,
+            rounds=walked["rounds"],
+            hardware_class=hardware_class,
+            protocol=protocol,
+            pr=pr,
+        )
+    )
+
+
 def line_swap_from_text(
     *,
     tactics: str,
@@ -2372,6 +2927,18 @@ def collect_grok_fanout_extras(
             }
         )
     return extras
+
+
+def load_code_symbol_vector_index(*, setup: Sequence[Any] = ()) -> Any:
+    """Live ImportFrom of the advisory vector index. Never writes Lean."""
+
+    for item in setup or ():
+        item()
+    from ipfs_accelerate_py.agent_supervisor.analysis.code_symbol_vector_index import (
+        search_code_symbol_vector_index,
+    )
+
+    return search_code_symbol_vector_index
 
 
 def run_vector_search(

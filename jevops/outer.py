@@ -87,6 +87,45 @@ def split_after_prefix(
     return src[len(prefix) :]
 
 
+def split_statement_suffix(
+    src: str,
+    statement: str,
+    *,
+    name: str = "",
+    error_cls: Any = ValueError,
+    miss_msg: Optional[str] = None,
+) -> str:
+    """JSONL prefix-bind: src.startswith(statement); body is src[len(statement):]. Never scans for :=."""
+
+    if not isinstance(statement, str) or not statement:
+        raise error_cls(
+            f"{name}: statement must be a non-empty string" if name else "statement must be a non-empty string"
+        )
+    if not isinstance(src, str) or not src:
+        raise error_cls(f"{name}: src must be a non-empty string" if name else "src must be a non-empty string")
+    if not src.startswith(statement):
+        raise error_cls(
+            miss_msg
+            or (
+                f"{name}: src does not start with the frozen statement"
+                if name
+                else "src does not start with the frozen statement"
+            )
+        )
+    return src[len(statement) :]
+
+
+def prefix_bind_flags(src: str, statement: str, suffix: str = "") -> dict[str, bool]:
+    """Prefix-bind flags from src.startswith(statement) and src[len(statement):]. Never scans for :=."""
+
+    prefix_bind = isinstance(src, str) and isinstance(statement, str) and bool(statement) and src.startswith(statement)
+    return {
+        "prefix_bind": prefix_bind,
+        "body_is_suffix": bool(prefix_bind) and suffix == src[len(statement) :],
+        "reconstructed": bool(prefix_bind) and (statement + suffix) == src,
+    }
+
+
 def strip_leading_prefixes(
     text: str,
     prefixes: Sequence[str],
@@ -2591,6 +2630,54 @@ def xdg_runtime_dir(*, environ: Optional[Any] = None) -> Path:
     return Path(f"/run/user/{os.getuid()}")
 
 
+EXCLUSIVE_FLOCK_CHILD = (
+    "import fcntl, os, sys, time\n"
+    "p = sys.argv[1]\n"
+    "fd = os.open(p, os.O_RDWR)\n"
+    "fcntl.flock(fd, 2 | 4)\n"
+    "sys.stdout.write('held\\n')\n"
+    "sys.stdout.flush()\n"
+    "time.sleep(30)\n"
+)
+
+
+def hold_exclusive_child(
+    path: Any,
+    *,
+    error_cls: type[BaseException] = RuntimeError,
+    python: Optional[str] = None,
+) -> Any:
+    """Spawn a child that takes exclusive flock via numeric 2|4. Never names LOCK_EX."""
+
+    import os
+    import stat
+    import subprocess
+    import sys
+
+    dest = Path(path)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    flags = os.O_RDWR | os.O_CREAT
+    if hasattr(os, "O_CLOEXEC"):
+        flags |= os.O_CLOEXEC
+    fd = os.open(dest, flags, stat.S_IRUSR | stat.S_IWUSR)
+    os.close(fd)
+    proc = subprocess.Popen(
+        [str(python or sys.executable), "-c", EXCLUSIVE_FLOCK_CHILD, str(dest)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    if proc.stdout is None:
+        proc.kill()
+        raise error_cls("exclusive flock child has no stdout")
+    line = proc.stdout.readline()
+    if line.strip() != "held":
+        err = proc.stderr.read() if proc.stderr is not None else ""
+        proc.kill()
+        raise error_cls(f"child failed to hold exclusive flock: {line!r} {err!r}")
+    return proc
+
+
 def try_import(name: str) -> Any:
     try:
         return __import__(name)
@@ -4718,6 +4805,50 @@ def authorize_spend(
     return True, "ok", cost
 
 
+def authorize_then_stop(
+    ledger: Any,
+    kind: str,
+    *,
+    cost_fn: Callable[[], Any],
+    spent: Any,
+    budget: Any,
+    zero: Any,
+    counts: Optional[Mapping[str, int]] = None,
+    limits: Optional[Mapping[str, int]] = None,
+    official: bool = False,
+    official_reason: str = "official_track2_off",
+    stop_attr: str = "hard_stopped",
+) -> tuple[bool, str, Any]:
+    """Call-count gate, then budget gate. Sets ledger.hard_stopped. USD stays injected."""
+
+    allowed, reason, zero_out = authorize_spend(
+        kind,
+        official=official,
+        counts=counts,
+        limits=limits,
+        spent=0,
+        cost=0,
+        budget=1,
+        zero=zero,
+        official_reason=official_reason,
+    )
+    if not allowed:
+        if reason != official_reason:
+            setattr(ledger, stop_attr, True)
+        return False, reason, zero_out
+    cost = cost_fn()
+    allowed, reason, cost = authorize_spend(
+        kind,
+        spent=spent,
+        cost=cost,
+        budget=budget,
+        zero=zero,
+    )
+    if not allowed:
+        setattr(ledger, stop_attr, True)
+    return allowed, reason, cost
+
+
 def chat_request_payload(
     prompt: str,
     *,
@@ -5223,6 +5354,13 @@ def first_truthy(*values: Any, default: Any = None) -> Any:
     return default
 
 
+def first_or_required(mapping: Mapping[str, Any], optional_key: str, required_key: str) -> Any:
+    """mapping.get(optional) or mapping[required]. Missing required raises."""
+
+    hit = mapping.get(optional_key)
+    return hit if hit else mapping[required_key]
+
+
 def first_not_none(
     *values: Any,
     factory: Optional[Callable[[], Any]] = None,
@@ -5264,6 +5402,29 @@ def path_or(value: Any, default: Any = None, *, factory: Optional[Callable[[], A
     if factory is not None:
         return factory()
     return default
+
+
+def list_or_none(value: Any) -> Optional[list[Any]]:
+    """list(value) unless value is None."""
+
+    return None if value is None else list(value)
+
+
+def exit_ok(ok: Any, *, bad: int = 1) -> int:
+    """0 when ok, else bad."""
+
+    return 0 if ok else int(bad)
+
+
+def at_or(items: Sequence[Any], index: int, *, default_index: int = 0) -> Any:
+    """items[index] when in range, else items[default_index]."""
+
+    rows = list(items or ())
+    if not rows:
+        return None
+    if 0 <= int(index) < len(rows):
+        return rows[int(index)]
+    return rows[int(default_index)]
 
 
 def as_mapping(value: Any, default: Any = None) -> Any:
@@ -5952,6 +6113,12 @@ def any_contains(items: Sequence[Any], needle: str) -> bool:
     return any(str(needle) in str(item) for item in items or ())
 
 
+def any_in(container: Any, needles: Sequence[Any]) -> bool:
+    """True if any needle is contained in container."""
+
+    return any(needle in container for needle in needles or ())
+
+
 def none_stripped_startswith(items: Sequence[Any], prefix: str) -> bool:
     return not any(str(item).strip().startswith(prefix) for item in items or ())
 
@@ -6606,6 +6773,36 @@ def bind_named_skip(skip_fn: Callable[..., Any], **fixed: Any) -> Callable[..., 
     return _skip
 
 
+def run_named_route(
+    *,
+    early_pairs: Sequence[tuple[Any, Callable[[], Any]]],
+    begin_fn: Callable[[], tuple[Any, Any, Any]],
+    route_fn: Callable[[Any, Any, Any], Any],
+    charge_fn: Callable[[Any], Any],
+    skip_pairs_fn: Callable[[Any, Any], Sequence[tuple[Any, Callable[[], Any]]]],
+    generate_fn: Callable[[], tuple[bool, Any, Any]],
+    fail_fn: Callable[[Any], Any],
+    success_fn: Callable[[Any], Any],
+    after_fn: Optional[Callable[[], Any]] = None,
+) -> Any:
+    """Named-run gate: skip, route, charge, generate. Catalogs stay injected. No Lean."""
+
+    early = first_call(*early_pairs)
+    if early is not None:
+        return early
+    neighbors, state, router = begin_fn()
+    result = route_fn(router, state, neighbors)
+    line = charge_fn(result)
+    skipped = first_call(*skip_pairs_fn(result, line))
+    if skipped is not None:
+        return skipped
+    ok, packed, exc = generate_fn()
+    if not ok:
+        return fail_fn(exc)
+    call_if(after_fn is not None, after_fn)
+    return success_fn(packed)
+
+
 def head_errors(rows: Sequence[Any], key: str = "errors") -> list[Any]:
     """errors from the first row, else []."""
 
@@ -6902,6 +7099,13 @@ def first_int(*values: Any, default: int = 0) -> int:
 
     hit = first_truthy(*values, default=None)
     return int(default) if hit is None else int(hit)
+
+
+def first_float(*values: Any, default: float = 0.0) -> float:
+    """float of the first non-None value, else default. 0.0 is a valid score."""
+
+    hit = first_not_none(*values, default=None)
+    return float(default) if hit is None else float(hit)
 
 
 def map_pairs(

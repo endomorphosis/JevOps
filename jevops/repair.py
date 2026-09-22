@@ -1047,6 +1047,22 @@ def assigned_constants(source: str, names: Sequence[str]) -> dict[str, Any]:
     return {str(name): assigned_constant(tree, str(name)) for name in names}
 
 
+ASSIGN_SCAN_METHODS = frozenset(
+    {
+        "find",
+        "rfind",
+        "index",
+        "rindex",
+        "partition",
+        "rpartition",
+        "split",
+        "rsplit",
+        "count",
+        "replace",
+    }
+)
+
+
 def matching_constants(source: str, pred: Any) -> list[str]:
     return [value for value in string_constants(source) if pred(value)]
 
@@ -1182,6 +1198,32 @@ def audit_source(
     }
 
 
+def module_source(mod: Any) -> str:
+    from jevops.outer import read_text
+
+    return read_text(mod.__file__)
+
+
+def module_imported_names(mod: Any) -> set[str]:
+    return imported_names(module_source(mod))
+
+
+def module_call_names(mod: Any) -> set[str]:
+    return call_short_names(module_source(mod))
+
+
+def catalog_constants(names: Sequence[str]) -> dict[str, Any]:
+    from jevops import catalogs
+
+    return assigned_constants(module_source(catalogs), names)
+
+
+def catalog_literal(name: str, **kwargs: Any) -> Any:
+    from jevops import catalogs
+
+    return assigned_literal(module_source(catalogs), name, **kwargs)
+
+
 def pack_call_audit(
     out: Mapping[str, Any],
     *,
@@ -1189,11 +1231,12 @@ def pack_call_audit(
     forbidden_call_names: Sequence[str] = (),
     extra: Optional[Mapping[str, Any]] = None,
     extra_ok: Sequence[bool] = (),
+    extra_call_names: Sequence[str] = (),
     flag_prefix: str = "uses_",
 ) -> dict[str, Any]:
-    """Overlay required/forbidden Call names onto an AST audit. Live Calls stay in the consumer."""
+    """Overlay required/forbidden Call names onto an AST audit. extra_call_names union kernel Calls."""
 
-    calls = set(out.get("call_names") or ())
+    calls = set(out.get("call_names") or ()) | {str(name) for name in extra_call_names}
     flags = {f"{flag_prefix}{name}": name in calls for name in required_calls}
     packed = {
         "imported_names": out.get("imported_names"),

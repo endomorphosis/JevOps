@@ -751,3 +751,31 @@ def seed_then_sidecar(
         except Exception:
             pass
     return out
+
+
+def load_campaign_fetch(
+    *,
+    scripts_root: Any,
+    module: str = "paper_supervisor_campaign",
+) -> Any:
+    """Import fetch_board from a campaign module. Never writes a campaign DB."""
+
+    import importlib
+
+    from jevops.outer import ensure_sys_path
+
+    ensure_sys_path(scripts_root)
+    campaign = importlib.import_module(str(module))
+    return campaign.fetch_board
+
+
+def load_database_task_source(*, setup: Sequence[Any] = ()) -> Any:
+    """Live ImportFrom of DatabaseTaskSource. Read-only overlay. Never writes Lean."""
+
+    for item in setup or ():
+        item()
+    from ipfs_accelerate_py.agent_supervisor.task_sources.database_task_source import (
+        DatabaseTaskSource,
+    )
+
+    return DatabaseTaskSource

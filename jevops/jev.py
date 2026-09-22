@@ -597,10 +597,16 @@ def instantiate_questions(
     score: Optional[Callable[..., Any]] = None,
     neighbor_names: Sequence[str] = (),
     neighbor_key: str = "neighbor_style_match",
+    criteria_overlay: Optional[Mapping[str, Any]] = None,
 ) -> dict[str, Any]:
-    """Build a question dict from a type/instructions/criteria spec."""
+    """Build a question dict from a type/instructions/criteria spec.
+
+    Instructions stay as given (str or mapping). Noul criteria are passed when set.
+    Runtime criteria overlay replaces per-name criteria. Catalogs stay injected.
+    """
 
     packed: dict[str, Mapping[str, Any]] = dict(spec)
+    overlay = dict(criteria_overlay or {})
     if neighbor_names and neighbor_key in packed:
         neighbor_criteria = {"none": "Do not imitate a neighbor"}
         for neighbor in neighbor_names:
@@ -612,12 +618,15 @@ def instantiate_questions(
     questions: dict[str, Any] = {}
     for name, item in packed.items():
         kind = str(item["type"])
-        instructions = str(item["instructions"])
-        criteria = item.get("criteria")
+        instructions = item["instructions"]
+        criteria = overlay[name] if name in overlay else item.get("criteria")
         if kind == "choice":
             questions[name] = choice_ctor(instructions=instructions, criteria=criteria)
         elif kind == "noul":
-            questions[name] = noul_ctor(instructions=instructions)
+            kwargs: dict[str, Any] = {"instructions": instructions}
+            if criteria is not None:
+                kwargs["criteria"] = criteria
+            questions[name] = noul_ctor(**kwargs)
         elif kind == "score":
             questions[name] = score_ctor(instructions=instructions, criteria=list(criteria or []))
         else:
@@ -1431,6 +1440,106 @@ def pack_rank_catalog(
     if extra:
         out.update(dict(extra))
     return out
+
+
+def load_typesafe_inference(
+    *,
+    setup: Sequence[Any] = (),
+    path: str = "",
+    exists: bool = False,
+    fallback: bool = True,
+) -> dict[str, Any]:
+    """Live ImportFrom of ipfs_accelerate_py.typesafe_inference. Never typesafe-sdk. Never writes Lean."""
+
+    for item in setup or ():
+        item()
+    try:
+        from ipfs_accelerate_py.typesafe_inference import (  # type: ignore[import-not-found]
+            Choice,
+            Noul,
+            Score,
+            TypeSafeClient,
+            typesafe_configured,
+        )
+    except ImportError as exc:
+        if fallback:
+            from jevops.typesafe_inference import (
+                Choice,
+                Noul,
+                Score,
+                TypeSafeClient,
+                typesafe_configured,
+            )
+
+            return typesafe_load_payload(
+                available=True,
+                path=path,
+                exists=exists,
+                Choice=Choice,
+                Noul=Noul,
+                Score=Score,
+                TypeSafeClient=TypeSafeClient,
+                typesafe_configured=typesafe_configured,
+            )
+        from jevops.outer import exc_text
+
+        return typesafe_load_payload(
+            available=False,
+            error=exc_text(exc),
+            path=path,
+            exists=exists,
+        )
+    return typesafe_load_payload(
+        available=True,
+        path=path,
+        exists=True,
+        Choice=Choice,
+        Noul=Noul,
+        Score=Score,
+        TypeSafeClient=TypeSafeClient,
+        typesafe_configured=typesafe_configured,
+    )
+
+
+def typesafe_is_configured(*, setup: Sequence[Any] = (), fallback: bool = False) -> bool:
+    """True when in-tree TypeSafe types load and typesafe_configured() is true."""
+
+    loaded = load_typesafe_inference(setup=setup, fallback=fallback)
+    configured = loaded.get("typesafe_configured")
+    return bool(loaded.get("available") and callable(configured) and configured())
+
+
+def typesafe_session(
+    *,
+    setup: Sequence[Any] = (),
+    fallback: bool = False,
+    skip_reason: str = "no_key",
+    **skip_extra: Any,
+) -> tuple[Optional[dict[str, Any]], Optional[dict[str, Any]]]:
+    """Return (loaded, None) when TypeSafe is configured, else (None, skipped payload)."""
+
+    loaded = load_typesafe_inference(setup=setup, fallback=fallback)
+    configured = loaded.get("typesafe_configured")
+    if loaded.get("available") and callable(configured) and configured():
+        return loaded, None
+    return None, skipped(skip_reason, **skip_extra)
+
+
+def typesafe_namespace(*, setup: Sequence[Any] = (), fallback: bool = False) -> Any:
+    """SimpleNamespace of TypeSafe ctors, or None when unconfigured. Never writes Lean."""
+
+    loaded, skip = typesafe_session(setup=setup, fallback=fallback)
+    if skip is not None or loaded is None:
+        return None
+    from types import SimpleNamespace
+
+    return SimpleNamespace(
+        Choice=loaded["Choice"],
+        Noul=loaded["Noul"],
+        Score=loaded["Score"],
+        TypeSafeClient=loaded["TypeSafeClient"],
+        typesafe_configured=loaded["typesafe_configured"],
+    )
 
 
 def typesafe_load_payload(

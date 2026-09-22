@@ -45,6 +45,7 @@ class KernelBoundaryTests(unittest.TestCase):
             "jev",
             "walk",
             "board",
+            "catalogs",
             "outer",
             "oracle",
             "pick",
@@ -1282,6 +1283,151 @@ class KernelBoundaryTests(unittest.TestCase):
         self.assertIsNone(outer.nested_get({}, "nca", "sidecar_built"))
         self.assertEqual(outer.first_int(None, 0, 4), 4)
         self.assertEqual(outer.first_int(None, default=9), 9)
+        self.assertEqual(outer.first_float(None, 0.0), 0.0)
+        self.assertEqual(outer.first_float(0.8), 0.8)
+        self.assertEqual(outer.first_or_required({"a": "", "b": "x"}, "a", "b"), "x")
+        from jevops import catalogs as catalogs_mod
+
+        qs = jev_mod.instantiate_questions(
+            catalogs_mod.PICK_QUESTION_SPEC,
+            criteria_overlay={"family": {"dead_code": "drop unused"}},
+        )
+        self.assertEqual(qs["family"].kind, "choice")
+        self.assertEqual(qs["family"].criteria["dead_code"], "drop unused")
+        self.assertEqual(catalogs_mod.default_fixture_answers()["rewrite_family"], "have_chain")
+        self.assertEqual(search_mod.pack_keep(kind="init", tactics="  simp\n", token_count=3), {
+            "kind": "init",
+            "tactics": "  simp\n",
+            "token_count": 3,
+            "theorem_ok": True,
+        })
+        started = search_mod.start_keep(
+            "  simp\n",
+            {"token_count": 3, "theorem_ok": True},
+            token_fn=lambda text: len(text),
+        )
+        self.assertEqual(started["token_count"], 3)
+        self.assertTrue(search_mod.keep_beats(started, 10))
+        self.assertFalse(search_mod.keep_beats(started, 3))
+        self.assertEqual(search_mod.kept_view(started), {"kind": "init", "theorem_ok": True, "token_count": 3})
+        walked_best = {"kind": "init", "tactics": "  simp\n", "token_count": 4, "theorem_ok": True}
+        walked_hist: list = []
+        walked_failed: set[str] = set()
+        nxt, walked_best = search_mod.run_cascade_rounds(
+            rounds=1,
+            current="  simp\n",
+            best=walked_best,
+            history=walked_hist,
+            failed_kinds=walked_failed,
+            ledger=type("L", (), {"hard_stopped": False})(),
+            rng=None,
+            name="T",
+            available_fn=lambda _body: {"keep": "  simp\n", "drop": "  rfl\n"},
+            live_tree_fn=lambda found: {"drop": {"drop": "x"}} if "drop" in found else {},
+            classify_fn=lambda _state, _tree: {
+                "abstain": False,
+                "separation": 2.0,
+                "paths": [{"leaf": "drop", "family": "drop", "leaf_confidence": 0.9}],
+                "family": {"choice": "drop", "confidence": 0.9},
+                "beam_fams": ["drop"],
+            },
+            verify_fn=lambda _state: {"will_unsolve_refine": 0.1},
+            compile_fn=lambda body: {"theorem_ok": True, "token_count": 1, "errors": []},
+            token_fn=lambda text: len(text.split()),
+            unavailable_fn=lambda _exc: False,
+            sleep_fn=lambda _s: None,
+            confident=0.55,
+            fire_t=0.7,
+        )
+        self.assertEqual(nxt.strip(), "rfl")
+        self.assertEqual(walked_best["token_count"], 1)
+        self.assertEqual(walked_hist[0]["action"], "lake")
+        ar_best = {"kind": "init", "tactics": "  simp_all\n", "token_count": 4, "theorem_ok": True}
+        ar_hist: list = []
+        ar_labeled: list = []
+        nxt, ar_best, wts = search_mod.run_autoresearch_rounds(
+            rounds=1,
+            current="  simp_all\n",
+            best=ar_best,
+            history=ar_hist,
+            labeled=ar_labeled,
+            weights={"likely_compiles": 1.0},
+            ledger=type("L", (), {"hard_stopped": False})(),
+            propose_fn=lambda _body: [{"kind": "drop", "tactics": "  rfl\n", "note": "x"}],
+            feature_fn=lambda _body, proposal, _w: {"score": 0.9, "features": {"likely_compiles": 0.9}},
+            compile_fn=lambda body: {"theorem_ok": True, "token_count": 1, "errors": []},
+            token_fn=lambda text: len(text.split()),
+            update_fn=lambda _rows, w: dict(w),
+        )
+        self.assertEqual(nxt.strip(), "rfl")
+        self.assertEqual(ar_best["token_count"], 1)
+        self.assertEqual(wts["likely_compiles"], 1.0)
+        ledger = type("L", (), {"hard_stopped": False, "official_track2": False})()
+        allowed, reason, cost = outer.authorize_then_stop(
+            ledger,
+            "grok",
+            cost_fn=lambda: 2,
+            spent=0,
+            budget=10,
+            zero=0,
+            official=False,
+            counts={"grok": 0},
+            limits={"grok": 2},
+        )
+        self.assertTrue(allowed)
+        self.assertEqual((reason, cost), ("ok", 2))
+        allowed, reason, cost = outer.authorize_then_stop(
+            ledger, "grok", cost_fn=lambda: 1, spent=0, budget=1, zero=0, official=True
+        )
+        self.assertFalse(allowed)
+        self.assertEqual(reason, "official_track2_off")
+        self.assertFalse(ledger.hard_stopped)
+        allowed, reason, cost = outer.authorize_then_stop(
+            ledger, "grok", cost_fn=lambda: 5, spent=0, budget=1, zero=0, official=False
+        )
+        self.assertFalse(allowed)
+        self.assertEqual(reason, "hard_stop")
+        self.assertTrue(ledger.hard_stopped)
+        skipped = outer.run_named_route(
+            early_pairs=((True, lambda: {"skipped": True, "reason": "no_key"}),),
+            begin_fn=lambda: (None, None, None),
+            route_fn=lambda *_a: None,
+            charge_fn=lambda _r: None,
+            skip_pairs_fn=lambda _r, _l: (),
+            generate_fn=lambda: (True, None, None),
+            fail_fn=lambda _e: {"ok": False},
+            success_fn=lambda _p: {"ok": True},
+        )
+        self.assertEqual(skipped["reason"], "no_key")
+        generated = search_mod.dispatch_mca_generation(
+            grok_few_shot=True,
+            call_leanstral=True,
+            grok_few_shot_fn=lambda: {"ledger": "g", "grok_few_shot_row": {"kind": "grok_few_shot"}},
+            few_shot_fn=lambda: {"few_shot_row": {"kind": "leanstral_few_shot"}},
+        )
+        self.assertTrue(generated["grok_few_shot"])
+        self.assertFalse(generated["call_leanstral"])
+        self.assertEqual(generated["grok_few_shot_row"]["kind"], "grok_few_shot")
+        row, keep, tokens = search_mod.diffuse_noise_step(
+            use_leanstral=False,
+            remaining=(),
+            rng=None,
+            keep="  simp\n",
+            keep_tokens=3,
+            record={},
+            records=(),
+            name="T",
+            ledger_fn=lambda _i: None,
+            one_hole_prompt_fn=lambda *_a: "",
+            shrink_prompt_fn=lambda *_a: "",
+            generate_fn=lambda *_a: None,
+            extract_fn=lambda text: text,
+            flatten_fn=lambda keep, filled: filled,
+            hammer_fn=lambda noisy, _e: noisy,
+            eval_fn=lambda _body: [],
+        )
+        self.assertIsNone(row)
+        self.assertEqual((keep, tokens), ("  simp\n", 3))
         self.assertEqual(
             outer.map_pairs([{"kind": "a", "tactics": "  simp\n"}], default_kind="step"),
             [("a", "  simp\n")],
@@ -1320,6 +1466,14 @@ class KernelBoundaryTests(unittest.TestCase):
         self.assertIsNone(outer.path_or(None))
         self.assertEqual(outer.path_or(None, Path("/d")), Path("/d"))
         self.assertEqual(outer.path_or(None, factory=lambda: Path("/f")), Path("/f"))
+        self.assertIsNone(outer.list_or_none(None))
+        self.assertEqual(outer.list_or_none(("a",)), ["a"])
+        self.assertEqual(outer.exit_ok(True), 0)
+        self.assertEqual(outer.exit_ok(False, bad=2), 2)
+        self.assertEqual(outer.at_or(["a", "b", "c"], 8), "a")
+        self.assertEqual(outer.at_or(["a", "b", "c"], 2), "c")
+        self.assertTrue(outer.any_in("simp_all", ("simp", "rw")))
+        self.assertFalse(outer.any_in("intro", ("simp", "rw")))
         self.assertEqual(outer.as_mapping({"a": 1}), {"a": 1})
         self.assertEqual(outer.as_mapping("x", {}), {})
         self.assertEqual(outer.reason_text(ValueError("boom")), "boom")
@@ -6080,6 +6234,199 @@ class KernelBoundaryTests(unittest.TestCase):
             )
             self.assertEqual(holes[0]["span"], 2)
             self.assertEqual(holes[0]["n_masks"], 1)
+
+    def test_audit_fragments_live_in_kernel(self) -> None:
+        from jevops import catalogs, jev, lean, llm_router, outer
+        from jevops.repair import (
+            assigned_literal,
+            call_short_names,
+            catalog_constants,
+            imported_names,
+            module_source,
+            pack_call_audit,
+            string_constants,
+        )
+
+        outer_src = module_source(outer)
+        start = outer_src.index("def split_statement_suffix")
+        end = outer_src.index("\ndef ", start + 1)
+        fragment = outer_src[start:end]
+        self.assertIn("src.startswith(statement)", fragment)
+        self.assertIn("src[len(statement)", fragment)
+        self.assertEqual(outer.split_statement_suffix("abcde", "abc"), "de")
+        flags = outer.prefix_bind_flags("abcde", "abc", "de")
+        self.assertTrue(flags["prefix_bind"])
+        self.assertTrue(flags["body_is_suffix"])
+
+        seen: dict[str, str] = {}
+
+        def _admit(proof, native, **kwargs):
+            seen.update(kwargs)
+            return {"proof": proof, "native": native, **kwargs}
+
+        lean.admit_empty_canonical(_admit, "simp", "thm := by\nsorry", theorem_id="T")
+        self.assertEqual(seen["canonical_source"], "")
+        self.assertEqual(seen["expected_statement"], "")
+        lean_src = module_source(lean)
+        self.assertIn("canonical_source=\"\"", lean_src.replace(" ", ""))
+        self.assertIn("expected_statement=\"\"", lean_src.replace(" ", ""))
+        calls = call_short_names(lean_src)
+        self.assertIn("measurement_argv", calls)
+        self.assertIn("run_lean_process", calls)
+
+        argv_holder: dict = {}
+
+        def _run_lean_process(argv, **kwargs):
+            argv_holder["argv"] = list(argv)
+            return {"ok": True}
+
+        def _stamp_fn(receipt, **kwargs):
+            return {"receipt": receipt, "argv": kwargs.get("argv")}
+
+        class _Tool:
+            lake_path = "/lake"
+            lean_path = "/lean"
+            elan_home = "/elan"
+
+        class _Rec:
+            measurement_maxHeartbeats = 400000
+            timeout_seconds = 12
+            argv = None
+            cwd = None
+
+        stamped = lean.stamp_with_lake_process(
+            _Rec(),
+            lake_path="/lake",
+            lean_path="/lean",
+            source_file="Foo.lean",
+            max_heartbeats=400000,
+            cwd="/proj",
+            toolchain=_Tool(),
+            timeout=12,
+            stamp_fn=_stamp_fn,
+            run_lean_process=_run_lean_process,
+            state_root="/tmp",
+            tmp_name="kernel-audit",
+            process_env_key="ENV",
+            threads=1,
+            ikv_floor=30.0,
+        )
+        self.assertIn("lake", stamped["argv"][0])
+        packed = pack_call_audit(
+            {"call_names": [], "forbidden_imports": [], "forbidden_calls": [], "score_keys": []},
+            required_calls=("measurement_argv", "run_lean_process"),
+            extra_call_names=calls,
+        )
+        self.assertTrue(packed["ok"])
+        self.assertTrue(packed["uses_measurement_argv"])
+
+        jev_names = imported_names(module_source(jev))
+        self.assertIn("ipfs_accelerate_py.typesafe_inference", jev_names)
+        self.assertIn("Choice", jev_names)
+        self.assertIn("TypeSafeClient", jev_names)
+        loaded = jev.load_typesafe_inference(fallback=True)
+        self.assertTrue(loaded["available"])
+        self.assertTrue(callable(loaded["Choice"]))
+
+        router_names = imported_names(module_source(llm_router))
+        self.assertIn("ipfs_accelerate_py.llm_router", router_names)
+        self.assertIn("generate_text", router_names)
+
+        consts = catalog_constants(
+            ("DEFAULT_MODE", "JEV_GENERATES_LEAN", "HAMMER_006_LRA_READY", "MAX_GROK_CALLS")
+        )
+        self.assertEqual(consts["DEFAULT_MODE"], "off")
+        self.assertIs(consts["JEV_GENERATES_LEAN"], False)
+        self.assertIs(consts["HAMMER_006_LRA_READY"], False)
+        self.assertEqual(consts["MAX_GROK_CALLS"], 2)
+        grok = assigned_literal(module_source(catalogs), "FAIL_CLOSED_GROK_KWARGS")
+        self.assertEqual(grok["provider"], "grok")
+        self.assertIs(grok["allow_local_fallback"], False)
+        sql = string_constants(module_source(catalogs))
+        self.assertTrue(any("INSERT INTO" in value for value in sql))
+        self.assertFalse(any(value.strip().upper().startswith("DELETE FROM") for value in sql))
+        from jevops.jev import typesafe_is_configured, typesafe_session
+        from jevops.tactics import IDENT, LEMMA_STOPWORDS, SIMP_RW_OPEN
+
+        self.assertIn("simp", LEMMA_STOPWORDS)
+        self.assertTrue(IDENT.search("ι_timeOrderF"))
+        self.assertTrue(SIMP_RW_OPEN.search("simp [foo]"))
+        loaded = jev.load_typesafe_inference(fallback=True)
+        self.assertTrue(loaded["available"])
+        self.assertTrue(callable(loaded["Choice"]))
+        session, skip = typesafe_session(fallback=True)
+        if skip is None:
+            self.assertTrue(callable(session["Choice"]))
+            self.assertTrue(typesafe_is_configured(fallback=True))
+        else:
+            self.assertEqual(skip["reason"], "no_key")
+
+        class _Pin:
+            lean_tag = "v4.26.0"
+            git_commit = "abc"
+
+        class _Resolver:
+            def __init__(self, home):
+                self.home = home
+
+            def resolve_tag(self, tag, git_commit="", require_installed=True):
+                return {"lean_tag": tag, "git_commit": git_commit, "home": self.home, "installed": require_installed}
+
+        resolved = lean.resolve_tag_pin(_Pin(), resolver_cls=_Resolver, elan_home="/elan")
+        self.assertEqual(resolved["lean_tag"], "v4.26.0")
+        self.assertEqual(resolved["home"], "/elan")
+        from jevops.outer import EXCLUSIVE_FLOCK_CHILD
+        from jevops.search import load_code_symbol_vector_index
+
+        self.assertIn("fcntl.flock(fd, 2 | 4)", EXCLUSIVE_FLOCK_CHILD)
+        self.assertNotIn("LOCK_EX", EXCLUSIVE_FLOCK_CHILD)
+        self.assertEqual(catalogs.FIRE_T, 0.7)
+        self.assertEqual(catalogs.FIRE_T_LEAF, 0.45)
+        self.assertIn("Core.InitsUpdatesComm", catalogs.HIGH_STAKES)
+        self.assertEqual(catalogs.SOURCE_WEIGHT["jsonld"], 1.02)
+        self.assertIn("INSERT INTO", catalogs.INSERT_RECEIPT_SQL)
+        self.assertIn("SELECT qualified_name", catalogs.SYMBOLS_SQL)
+        lean_src = module_source(lean)
+        self.assertIn("ipfs_datasets_py.logic.hammers.frontends.lean_toolchain", imported_names(lean_src))
+        self.assertIn("run_lean_process", imported_names(lean_src))
+        self.assertIn("admit_lean_proof_text", imported_names(lean_src))
+        from jevops import board as board_mod
+        from jevops import search as search_mod
+
+        self.assertIn("DatabaseTaskSource", imported_names(module_source(board_mod)))
+        self.assertIn("search_code_symbol_vector_index", imported_names(module_source(search_mod)))
+        self.assertTrue(callable(load_code_symbol_vector_index))
+        self.assertIn('print(json.dumps({"severity": "warning", "data": "hasSorry"', lean.FAKE_LEAN_COMPILE)
+        self.assertIn('print(json.dumps({"severity": "information", "data": "ok"', lean.FAKE_LEAN_COMPILE)
+        self.assertIn('path.read_text(encoding="utf-8")', lean.FAKE_LEAN_COMPILE)
+        self.assertIn('path.read_text(encoding="utf-8")', lean.FAKE_LEAN_PATH_A)
+        self.assertIn("os.execv(args[1], args[1:])", lean.FAKE_LAKE_EXEC)
+        self.assertEqual(catalogs.DOCKER0_HOST, "172.17.0.1")
+        self.assertEqual(catalogs.CASCADE_BEAM_K, 2)
+        self.assertIn("will_unsolve_refine", catalogs.FAIL_NOULS)
+        self.assertEqual(catalogs.ALL_FEATURES[0][0], "likely_compiles")
+        self.assertEqual(catalogs.STRATA_FIRST_TAG, "v4.26.0")
+        self.assertEqual(catalogs.PUTNAM_MODULE, "Putnam.Candidate")
+        self.assertEqual(catalogs.FORBIDDEN_PUTNAM_BASENAME, "Tmp.lean")
+        self.assertEqual(catalogs.MEASUREMENT_MAX_HEARTBEATS, 400000)
+        self.assertEqual(catalogs.THEOREM_TASKS["Core.InitsUpdatesComm"], "LRA-019")
+        self.assertIn("LRA-S09", catalogs.BLOCKED)
+        self.assertEqual(catalogs.MISTRAL_MODEL, "labs-leanstral-1-5")
+        self.assertEqual(catalogs.MISTRAL_API_HOST, "api.mistral.ai")
+        self.assertEqual(catalogs.ALLOWED_TYPESAFE_MODES, ("off", "distill", "inloop"))
+        self.assertIn("hammer_before_llm", catalogs.ROUTE_NOUL_KEYS)
+        self.assertEqual(
+            catalogs.FROZEN_WARMUP_SHA256,
+            "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+        )
+        self.assertEqual(catalogs.WARMUP_N, 15)
+        self.assertIn("statement", catalogs.REQUIRED_JSONL_FIELDS)
+        self.assertEqual(lean.FORBIDDEN_PROOF_TOKENS, ("theorem", "lemma", "import", "open"))
+        self.assertIn(" := by\n", lean.BODY_BY_PREFIXES)
+        self.assertEqual(catalogs.SMALL_CANARY_NAMES[0], "CallElimCorrect.substOldPostSubset")
+        self.assertEqual(catalogs.UNSOLVED_RELPATH, "Strata/Unsolved.lean")
+        self.assertIn("grok", catalogs.ALLOWED_GROK_PROVIDERS)
+        self.assertIn("find", __import__("jevops.repair", fromlist=["ASSIGN_SCAN_METHODS"]).ASSIGN_SCAN_METHODS)
 
 
 if __name__ == "__main__":
