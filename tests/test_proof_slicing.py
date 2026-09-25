@@ -1,11 +1,78 @@
 from __future__ import annotations
 
 import shutil
+import hashlib
 
 import pytest
 
-from jevops.proof_slicing import deletion_variants, minimize_checked
+from jevops.proof_slicing import arity_repair_variants, deletion_variants, minimize_checked
 from jevops.router_tuning import _lean_compiler
+
+
+STATEMENT = "theorem repair_fixture (h : True) : True"
+
+
+def arity_error(term="ih h ?m.42"):
+    return {"severity": "error", "message": "Function expected at\n  " + term
+        + "\nbut this term has type\n  True\n\nNote: Expected a function because this term is being applied to the argument\n  ?_"}
+
+
+def repair(source, diagnostics=None, **kw):
+    return arity_repair_variants(source, STATEMENT, [arity_error()] if diagnostics is None else diagnostics,
+                                diagnostics_source_sha256=kw.pop("digest", hashlib.sha256(source.encode()).hexdigest()), **kw)
+
+
+@pytest.mark.parametrize("callee", ["ih", "recursiveProof", "ih'", "υπόθεση"])
+@pytest.mark.parametrize("tactic", ["apply", "refine", "exact"])
+def test_repair_pairs_the_reported_extra_argument_with_its_explicit_goal_block(callee, tactic):
+    source = STATEMENT + f" := by\n  {tactic} ({callee} h ?_ ?_).2.2\n    . exact h\n    . trivial"
+    rows = repair(source, [arity_error(f"{callee} h ?m.42")])
+    assert len(rows) == 1
+    kind, candidate, provenance = rows[0]
+    assert kind == "repair_overapplied_hole" and provenance[0] == "unverified_diagnostic_repair"
+    assert candidate == STATEMENT + f" := by\n  {tactic} ({callee} h ?_).2.2\n    . exact h"
+
+
+def test_repair_preserves_unrelated_later_branches_and_nested_remaining_goals():
+    source = STATEMENT + (" := by\n  case left =>\n    apply (ih h ?_ ?_).2\n"
+        "      . have witness := h\n        exact witness\n      . trivial\n  case right =>\n    exact h")
+    rows = repair(source)
+    assert len(rows) == 1
+    assert "have witness := h\n        exact witness" in rows[0][1]
+    assert rows[0][1].endswith("case right =>\n    exact h")
+    assert "trivial" not in rows[0][1]
+
+
+@pytest.mark.parametrize("body", [
+    "  apply (ih h ?_ ?_).2\n    . exact h",  # incomplete goal mapping
+    "  apply (ih h ?_ ?_).2\n    exact h\n    trivial",  # no explicit blocks
+    "  apply (ih other ?_ ?_).2\n    . exact h\n    . trivial",  # different arguments
+    "  apply (ih (id h) ?_ ?_).2\n    . exact h\n    . trivial",  # unsupported nested argument
+    "  apply (ih h ?_ ?_).2 -- comment\n    . exact h\n    . trivial",
+    "  exact h\n  apply (ih h ?_ ?_).2\n    . exact h\n    . trivial\n"
+    "  apply (ih h ?_ ?_).2\n    . exact h\n    . trivial",  # ambiguous anchor
+])
+def test_unsupported_or_ambiguous_repair_abstains(body):
+    assert repair(STATEMENT + " := by\n" + body) == []
+
+
+@pytest.mark.parametrize("diagnostics", [[], [arity_error(), arity_error()],
+    [arity_error(), {"severity": "error", "message": "simp_all made no progress"}],
+    [{"severity": "error", "message": "maximum number of heartbeats"}],
+    [{"severity": [], "message": "bad"}], [None]])
+def test_unrelated_failure_or_malformed_diagnostics_are_not_a_repair_signal(diagnostics):
+    source = STATEMENT + " := by\n  apply (ih h ?_ ?_).2\n    . exact h\n    . trivial"
+    assert repair(source, diagnostics) == []
+
+
+def test_stale_binding_zero_cap_and_wrong_statement_produce_no_draft():
+    source = STATEMENT + " := by\n  apply (ih h ?_ ?_).2\n    . exact h\n    . trivial"
+    assert repair(source, digest="0"*64) == []
+    assert repair(source, cap=0) == []
+    assert repair(source.replace(STATEMENT, "theorem wrong : True")) == []
+    for cap in (True, -1, 9, 1.5):
+        with pytest.raises(ValueError):
+            repair(source, cap=cap)
 
 
 def test_slicing_preserves_whole_nested_blocks_and_is_bounded():

@@ -1,0 +1,22 @@
+{
+  "native_runtime": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/full15-benchmark-20260923-IrlqY5/runtime",
+    "manifest_sha256": "0dc965d987860cfbae9ff470d52f068fb8ac1f081056f5c89d038d91f23203fc",
+    "content_root": "50f0bcbf23fc64d0b1ffc8bfab6a09641e08943c05011ed6e7840ecd75ac75f0",
+    "file_count": 119,
+    "bytes": 3275512,
+    "proof_verified": false
+  },
+  "report_generator": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/report-code-v3",
+    "manifest_sha256": "833ab5852a2e7940483a8b0fcb609981ca6f429eaeebb6a485180176afb757c2",
+    "content_root": "6ab02eaff3dae14734e805db5b6a2dd34723b9ba3f5d6da89fa4d4e771c57df1",
+    "file_count": 1,
+    "bytes": 17922,
+    "proof_verified": false
+  }
+}

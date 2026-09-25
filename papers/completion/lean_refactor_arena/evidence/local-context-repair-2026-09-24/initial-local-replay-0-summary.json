@@ -1,0 +1,40 @@
+{
+  "schema": "jevops-arena-local/v1",
+  "status": "OBSERVED",
+  "ok": true,
+  "closing_reproduced": false,
+  "proof_admitted": false,
+  "whole_source_checked": false,
+  "binding": {
+    "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+    "trace_sha256": "a8da4fe4374ba85bde943464cbbb6bc7aa044a019798ba7861f48de150bce85e",
+    "dependency_environment_sha256": "17d89aeec54edc1b76b97f27d882a84135f3b780f573e93d0f8644ad2726fb9a",
+    "exporter_sha256": "499ce68eee9ac8c93652e27909f15175983845d71847fc530b6f09e68843e3f9",
+    "event_id": 19,
+    "candidate_sha256": "7fd4ae431e0409954eb0df5044322180c89e6002916a0db3ac469afbb92e910b",
+    "node_budget": 4096,
+    "event_budget": 256
+  },
+  "environment": "7718338005261dd3eee5b66f492f57f266f2b1cf0a3b1c8f3d7fd89be0a12784",
+  "native_sha256": "d11a36a69bdd7603b63fa5970a8c5b61d6a3769509e04ffcd365946de7532900",
+  "request_sha256": "a3f0fb27c52649bf95dbab09d942ac4f16b1d5db6b027f03a952848c3dfaba2d",
+  "baseline": {
+    "axioms": [],
+    "closed_goals_checked": "0",
+    "reason": "Unexpected tactic\n  failed to pretty print term (use 'set_option pp.rawOnError true' for raw representation)",
+    "remaining_goals": null,
+    "status": "rejected"
+  },
+  "proposed": {
+    "axioms": [],
+    "closed_goals_checked": "0",
+    "reason": "Type mismatch\n  Core.updatedStateUpdate\nhas type\n  ?m.210 ?m.211 = some ?m.213 →\n    Imperative.UpdateState ?m.209 ?m.210 ?m.211 ?m.212 (Core.updatedState ?m.210 ?m.211 ?m.212)\nbut is expected to have type\n  Imperative.UpdateState P (Core.updatedStates' σ (ks'.zip vs')) x v\n    (Core.updatedState (Core.updatedStates' σ (ks'.zip vs')) x v)",
+    "remaining_goals": null,
+    "status": "rejected"
+  },
+  "candidate": "exact _root_.Core.updatedStateUpdate",
+  "event_id": "19",
+  "raw_path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-context-repair-20260924-MvhckB/run/local-replay-0.json",
+  "raw_sha256": "2fdd181cf439501f17171f8da05528c382d99a01fdd51bd8ad77302e7c793f4c",
+  "summary_only": true
+}

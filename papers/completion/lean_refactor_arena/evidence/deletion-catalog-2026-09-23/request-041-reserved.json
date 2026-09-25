@@ -1,0 +1,12 @@
+{
+  "pin": {
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+  },
+  "label": "edit-41",
+  "source_sha256": "899de335c62cac888e94acfc4d300f60b0a86a424b3b10336e3e876c89d8c1eb",
+  "plan_id": "f45580980c3d51fa04bd173ec351ce8582be6051c369cc90a0bf76e6a8a86558",
+  "request_id": "88db693ca8018ce05c41cb93ab0b0157f9b14649fabb6b62e72a7d6de82d412f",
+  "context_id": "c05f2041328cf7cd0931ca56ae2c91af99ef4663915803d6dd2c39f6a0d3554e",
+  "operation_units": 1
+}

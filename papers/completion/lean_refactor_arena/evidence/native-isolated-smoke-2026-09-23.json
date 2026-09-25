@@ -1,0 +1,112 @@
+{
+  "schema": "jevops-arena-native-smoke/v1",
+  "evidence_mode": "local_lean",
+  "arena_problem": false,
+  "official_score": null,
+  "worker_metric_parity": "UNCONFIRMED",
+  "processes": 2,
+  "live_model_calls": 0,
+  "reference_source": "theorem arena_smoke (h : True) : True := by\n  have redundant : True := h\n  exact redundant",
+  "candidate_source": "theorem arena_smoke (h : True) : True := by exact h",
+  "reference_tokens": 9,
+  "baseline_context": {
+    "problem": "arena_smoke",
+    "statement": "theorem arena_smoke (h : True) : True",
+    "reference_source": "theorem arena_smoke (h : True) : True := by\n  have redundant : True := h\n  exact redundant",
+    "reference_length": 9,
+    "reference_heartbeats": null,
+    "versions": [
+      {
+        "lean_tag": "v4.26.0",
+        "git_commit": "local-stdlib-smoke"
+      }
+    ],
+    "dependency_digests": [
+      "2810bd000802402fae598ead82911df1b36a965da0e2576236c87d92894bc289"
+    ],
+    "verifier_id": "jevops-native-arena",
+    "verifier_version": "3eccd1390fdcb5b05c5dd0c1600010121f245e6c22081c6feed9472d0b2ca73c",
+    "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+    "header": "",
+    "repository": "",
+    "file_path": "",
+    "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"execution_identity\":\"ba86305579ff2a58be193ee629d3b349d2cf8897721feca5c305498686832f37\",\"execution_policy\":{\"executable\":\"/usr/bin/docker\",\"image_id\":\"sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517\",\"memory_bytes\":2147483648,\"nano_cpus\":1000000000,\"network\":\"none\",\"pids\":64,\"profile\":\"jevops-arena-rootless-docker/v1\",\"read_only_inputs\":true,\"rootless_required\":true,\"separate_proof_checker\":false,\"socket\":\"/run/user/1000/docker.sock\",\"tmp_bytes\":67108864},\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":true,\"reference_branch\":\"independent\",\"timeout\":60}",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  },
+  "calibrated_context": {
+    "problem": "arena_smoke",
+    "statement": "theorem arena_smoke (h : True) : True",
+    "reference_source": "theorem arena_smoke (h : True) : True := by\n  have redundant : True := h\n  exact redundant",
+    "reference_length": 9,
+    "reference_heartbeats": 6,
+    "versions": [
+      {
+        "lean_tag": "v4.26.0",
+        "git_commit": "local-stdlib-smoke"
+      }
+    ],
+    "dependency_digests": [
+      "2810bd000802402fae598ead82911df1b36a965da0e2576236c87d92894bc289"
+    ],
+    "verifier_id": "jevops-native-arena",
+    "verifier_version": "3eccd1390fdcb5b05c5dd0c1600010121f245e6c22081c6feed9472d0b2ca73c",
+    "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+    "header": "",
+    "repository": "",
+    "file_path": "",
+    "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"execution_identity\":\"ba86305579ff2a58be193ee629d3b349d2cf8897721feca5c305498686832f37\",\"execution_policy\":{\"executable\":\"/usr/bin/docker\",\"image_id\":\"sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517\",\"memory_bytes\":2147483648,\"nano_cpus\":1000000000,\"network\":\"none\",\"pids\":64,\"profile\":\"jevops-arena-rootless-docker/v1\",\"read_only_inputs\":true,\"rootless_required\":true,\"separate_proof_checker\":false,\"socket\":\"/run/user/1000/docker.sock\",\"tmp_bytes\":67108864},\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":true,\"reference_branch\":\"independent\",\"timeout\":60}",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  },
+  "baseline": {
+    "request_id": "136516659dd9d0ccf29ba25d29ad7489650ae49456626d1ba97d2f793d529f79",
+    "candidate_sha256": "6a93bc4647b18d4b05f24046821b8bd4e1df4d24267dae8c8e0d8d0582185168",
+    "target": "arena_smoke",
+    "outcome": "VERIFIED",
+    "type_preserved": true,
+    "exit_code": 0,
+    "axiom_output": "'arena_smoke' depends on axioms: []",
+    "heartbeats": 6,
+    "reason": "",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"2810bd000802402fae598ead82911df1b36a965da0e2576236c87d92894bc289\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"execution_identity\":\"ba86305579ff2a58be193ee629d3b349d2cf8897721feca5c305498686832f37\",\"execution_policy\":{\"executable\":\"/usr/bin/docker\",\"image_id\":\"sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517\",\"memory_bytes\":2147483648,\"nano_cpus\":1000000000,\"network\":\"none\",\"pids\":64,\"profile\":\"jevops-arena-rootless-docker/v1\",\"read_only_inputs\":true,\"rootless_required\":true,\"separate_proof_checker\":false,\"socket\":\"/run/user/1000/docker.sock\",\"tmp_bytes\":67108864},\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":6,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":6588,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":6,\"reference_raw_heartbeats\":6608,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1760.279}"
+  },
+  "candidate": {
+    "schema": "jevops-arena-evaluation/v1",
+    "scoring_id": "lra-space-6a1384b-three-axis/v1",
+    "tokenizer_id": "lra-reference-lexical/v1",
+    "official_score": null,
+    "context_id": "756775714a44ecb96eb017ea17a0ffcf4c71e25a5d2ad95b33014e387e50b992",
+    "candidate_sha256": "1f006ed5857c43936267a06ab3df26c54bb2e62aabdf93ce7760bc88a1761e2c",
+    "status": "MEASURED",
+    "length": 3,
+    "score": {
+      "length_reduction_pct": 66.67,
+      "heartbeat_reduction_pct": 50.0,
+      "compatibility_pct": 100.0,
+      "combined_pct": 72.22
+    },
+    "receipts": [
+      {
+        "request_id": "daf724fffad8849e359761513996e6f779c6b0057b675da70d05ce00a80db41d",
+        "candidate_sha256": "1f006ed5857c43936267a06ab3df26c54bb2e62aabdf93ce7760bc88a1761e2c",
+        "target": "arena_smoke",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'arena_smoke' depends on axioms: []",
+        "heartbeats": 3,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"2810bd000802402fae598ead82911df1b36a965da0e2576236c87d92894bc289\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"execution_identity\":\"ba86305579ff2a58be193ee629d3b349d2cf8897721feca5c305498686832f37\",\"execution_policy\":{\"executable\":\"/usr/bin/docker\",\"image_id\":\"sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517\",\"memory_bytes\":2147483648,\"nano_cpus\":1000000000,\"network\":\"none\",\"pids\":64,\"profile\":\"jevops-arena-rootless-docker/v1\",\"read_only_inputs\":true,\"rootless_required\":true,\"separate_proof_checker\":false,\"socket\":\"/run/user/1000/docker.sock\",\"tmp_bytes\":67108864},\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":3,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":3955,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":6,\"reference_raw_heartbeats\":6608,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1859.043}"
+      }
+    ],
+    "evidence_mode": "local_lean",
+    "reason": ""
+  }
+}

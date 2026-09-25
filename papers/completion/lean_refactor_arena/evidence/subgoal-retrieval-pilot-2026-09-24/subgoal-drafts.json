@@ -1,0 +1,4602 @@
+{
+  "schema": "jevops-local-application-batch/v1",
+  "request": {
+    "schema": "jevops-local-application-request/v1",
+    "record_sha256": "8531dba47f5c2ccb5526c9596f06804c66f4cf6971d1533baf6c1ffb61311625",
+    "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+    "trace_sha256": "b70d9bc4cb9cc803994ea39ee739ae71793b84106a7e3b6bfc5ecfd9d7a0bd35",
+    "capture_environment": "1774064a30c0bc91405ff0bace602b3a1f4ee48bfb07ad6587794eb0a399e6a3",
+    "environment_sha256": "7850d60019c0c8b12fe6c1209bf7a3accbc7cd11a414291f002a48bcb5ce217d",
+    "origin_sha256": "bb47228a07490ccce5b8655620cc033777ac6599c98f404d2e79d4fa80b9ee14",
+    "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+    "scope_sha256": "ce007814c091f5de37a3e2e66b0e229f14dbc829f9eade5ab78928214867c16d",
+    "effective_scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+    "declaration": "Core.InitsUpdatesComm",
+    "target": "Core.InitsUpdatesComm",
+    "methods": [
+      "assumption",
+      "apply",
+      "intro",
+      "constructor"
+    ],
+    "cap": 1,
+    "top_k": 4,
+    "max_scan": 512,
+    "max_events": 64,
+    "max_query_nodes": 256,
+    "ranking_bytes": 1048576,
+    "feature_method": "goal-and-local-type-constants/v1",
+    "tokenizer_id": "lra-reference-lexical/v1",
+    "strategy": "application-materialization/v1",
+    "max_applications": 4,
+    "span_order": "matching-head-v1",
+    "final_filter": "strictly-fewer-source-tokens/v1",
+    "retrieval": "typed-head-v1",
+    "head_steps": 256,
+    "span_priority": "matching-head-and-at-least-three-tokens/v1",
+    "fallback_every": 4,
+    "search": "subgoal-v1",
+    "max_steps": 96,
+    "max_depth": 4,
+    "primitive_reservation_ceiling": 384,
+    "max_pool": 64,
+    "max_retrievals": 32,
+    "retrieval_top_k": 4,
+    "subgoal_method": "raw-head-with-initial-fallback/v1",
+    "retrieval_reservation_ceiling": 128,
+    "request_sha256": "3909401d69b81ec9b111df03c4ef53dc5e9c7225bbe0bb862408374de24dbdb1"
+  },
+  "events": [
+    {
+      "event_id": 2,
+      "event_sha256": "37766966c93e0d0c329ca91059cc20b1949b31c320511d0c38603246c169daa8",
+      "span_tokens": 223,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "6c946b9d6753f1d456aad72337edee3fe7775e189bca72b4e9201cfa6d8a9f40",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore List",
+        "nodes_visited": 126,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "other",
+        "name": null,
+        "arity": 0
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "a860f4fc8832c0b4be6527912b81f8e8e1bbf994f5c56e0a944e2df492a0fb0f",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 11,
+            "score_denominator": 29,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 25,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "score_numerator": 9,
+            "score_denominator": 25,
+            "premise_sha256": "97a8b5090864cf71f955b6732b606665e8c93a03a4a66374a23581456bb994ae",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.UpdateStatesNotDefMonotone'",
+            "score_numerator": 9,
+            "score_denominator": 26,
+            "premise_sha256": "d3060f9310cd5de260607127673ee609e174364be3a6ec5fd5c4821693ccb334",
+            "head_priority": 1
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "other",
+          "name": null,
+          "arity": 0
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 6,
+      "event_sha256": "e8d63db10af7f2d5fd8270d649a4878becb5050ca640e3c498ada07c1dc4b958",
+      "span_tokens": 165,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "45945bfb34f201524002cedd632e05a1907f9c09683c8d61c4cf921b83fd250f",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 166,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "And",
+        "arity": 2
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "And",
+          "arity": 2
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 8,
+      "event_sha256": "ef5afbcc41e748ee5ff37f964d502d13f0d2c3468d28d8c7b3eb7852d469de45",
+      "span_tokens": 152,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "3b9981d2d24462885231f988007df37853e3e57cddc5fac334b3e66707b6a41b",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 166,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "And",
+        "arity": 2
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "And",
+          "arity": 2
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 11,
+      "event_sha256": "ef90cf60b0b0ff18019a912f7a9dfdc4d3126282519c7e8d1ef4d149418658c8",
+      "span_tokens": 126,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "ce9738f3ca4294601675818cbff765fe40455e380b8674a4017cb1800ca3e709",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 146,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "other",
+        "name": null,
+        "arity": 0
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 1
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "other",
+          "name": null,
+          "arity": 0
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 12,
+      "event_sha256": "08506569f9e7e49c1dcb425be728d8d9c87fe3074060028977bc3e97072463ed",
+      "span_tokens": 125,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "ce9738f3ca4294601675818cbff765fe40455e380b8674a4017cb1800ca3e709",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 146,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "other",
+        "name": null,
+        "arity": 0
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 1
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "other",
+          "name": null,
+          "arity": 0
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 13,
+      "event_sha256": "2d0b06ca42353bd955ade4bce77c643962f313c051c3b6500beece344ca23df1",
+      "span_tokens": 94,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "3ea83c3d0684eb23eb1e971c798bb0711e754bbc36badaa7e4103dc631b03471",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 157,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.UpdateState",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStateUpdate",
+            "score_numerator": 4,
+            "score_denominator": 17,
+            "premise_sha256": "ca010bb5ef427223648e706b68bf40c332ac287162f72a2219b7b0bd580187ce",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.UpdateState",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 14,
+      "event_sha256": "16239c9a33bd3577211e82dc1a82435e03353eb318e3b2be3a3f6a595bad47a9",
+      "span_tokens": 52,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "5a95edd3758fb33d2d62221e84748b6c8d433d0177cd96df0f9c1270b171acce",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedState Core.updatedStates Core.updatedStates' Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length List.zip Nat",
+        "nodes_visited": 164,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.UpdateState",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "29d1900e47c3f5a6363af611af5d52afd419424bb0a229d073a3c26842075359",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStateUpdate",
+            "score_numerator": 5,
+            "score_denominator": 19,
+            "premise_sha256": "ca010bb5ef427223648e706b68bf40c332ac287162f72a2219b7b0bd580187ce",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 43,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 5,
+            "score_denominator": 18,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 13,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.UpdateState",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 17,
+      "event_sha256": "b56c01e52403b8bcd8b639e508bb28d7c6b30dc42bbe64143551309b7bd0967b",
+      "span_tokens": 34,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "0f958e1bcb10bbdc4889bbda4f091ff28b926795934075f8603707d1bd2e23ab",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedState Core.updatedStates Core.updatedStates' Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length List.zip Nat Option Option.some",
+        "nodes_visited": 179,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.UpdateState",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "95ee9c39b07fd24403aa2f2662d25d71228c9da43a0b80353f9046f43e148701",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStateUpdate",
+            "score_numerator": 4,
+            "score_denominator": 13,
+            "premise_sha256": "ca010bb5ef427223648e706b68bf40c332ac287162f72a2219b7b0bd580187ce",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 6,
+            "score_denominator": 23,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 10,
+            "score_denominator": 39,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 11,
+            "score_denominator": 43,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.UpdateState",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 20,
+      "event_sha256": "1ec08a2e8fffb9da0a64bf482ca9d210b18664235fd18fc54860fdd324047f92",
+      "span_tokens": 30,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "45f3458d82f82ce48b58f9f6bba35e4d21c79e4d2370d589772e03a6d2e83ebc",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedState Core.updatedStates Core.updatedStates' Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length List.zip Nat Option Option.some",
+        "nodes_visited": 179,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.UpdateState",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "95ee9c39b07fd24403aa2f2662d25d71228c9da43a0b80353f9046f43e148701",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStateUpdate",
+            "score_numerator": 4,
+            "score_denominator": 13,
+            "premise_sha256": "ca010bb5ef427223648e706b68bf40c332ac287162f72a2219b7b0bd580187ce",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 6,
+            "score_denominator": 23,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 10,
+            "score_denominator": 39,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 11,
+            "score_denominator": 43,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.UpdateState",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 26,
+      "event_sha256": "9bb714a0e48f22d0be86edf59eedc69ba86b465631a7fc21ce8fac042520f3cc",
+      "span_tokens": 29,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "87f84162d0cd6899d4b331a138ef5390cf2c238ac8cc786f362ee34c20a39a00",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.instMembership List.length List.unzip Membership.mem Nat Not Prod.fst",
+        "nodes_visited": 170,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Not",
+        "arity": 1
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "db062fc075b157c73e88417d2cb5fef8924c42fcac04be3f48db82673b74e487",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 6,
+            "score_denominator": 23,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 10,
+            "score_denominator": 39,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 14,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 43,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Not",
+          "arity": 1
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 27,
+      "event_sha256": "bb49ab5ff4621d800b61f0a347ea5cf655823ac5f7aa6ae4dd7bdbfca358aa38",
+      "span_tokens": 28,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "87f84162d0cd6899d4b331a138ef5390cf2c238ac8cc786f362ee34c20a39a00",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.instMembership List.length List.unzip Membership.mem Nat Not Prod.fst",
+        "nodes_visited": 170,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Not",
+        "arity": 1
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "db062fc075b157c73e88417d2cb5fef8924c42fcac04be3f48db82673b74e487",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 6,
+            "score_denominator": 23,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 10,
+            "score_denominator": 39,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 14,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 43,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Not",
+          "arity": 1
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 4,
+      "event_sha256": "8cfc483af8526ec99672e6c60d1754479f7f6c69cd0b5b3fc4a341c0145799b5",
+      "span_tokens": 20,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "64eb5f5bf3e1cd178be2a4dd097adaf24c072862db90a0cf264023ccb0db38c0",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.isDefined List List.length List.nil Nat",
+        "nodes_visited": 131,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "And",
+        "arity": 2
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "e9722569e4312b904222ab241670e0bd222baf8bb35c213b076eac9638693362",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 35,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 32,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "score_numerator": 9,
+            "score_denominator": 32,
+            "premise_sha256": "97a8b5090864cf71f955b6732b606665e8c93a03a4a66374a23581456bb994ae",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStatesNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "d3060f9310cd5de260607127673ee609e174364be3a6ec5fd5c4821693ccb334",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "And",
+          "arity": 2
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 31,
+      "event_sha256": "3c144f5fee367810d26546c3c5861a4ffdf1101c2f8ba7b7418a33563a6d7ab5",
+      "span_tokens": 20,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "2927ef35b918a42f099013fb5fed5c47e224e81139dfbeacb8140c7c9808d352",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 157,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Core.UpdateStates",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Core.UpdateStates",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 32,
+      "event_sha256": "922e8c7ff7db8e5c312bf6175a82575a3344d67a1911bec9a96d9bb0ac73d1b5",
+      "span_tokens": 19,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "2927ef35b918a42f099013fb5fed5c47e224e81139dfbeacb8140c7c9808d352",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 157,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Core.UpdateStates",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Core.UpdateStates",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 9,
+      "event_sha256": "2b59d0dfca3f3a59ac16ac429c56f013bfbb2ca8d9337749318064ccf11c6d2b",
+      "span_tokens": 17,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "7f365f2f9f1cf9809d414c32404ec739b964f0985d2347e9015929dae7043972",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 146,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "other",
+        "name": null,
+        "arity": 0
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 1
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "other",
+          "name": null,
+          "arity": 0
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 22,
+      "event_sha256": "5ca5216ac8aba2d052df283e2f0d0c491a50fdfaf4c7da9e67bb8473b5f50d52",
+      "span_tokens": 11,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "b2c271e1a4429ebecf31a391140c4015cece0f4cacb9ccae517b2cd42ed9e09e",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined Imperative.isNotDefined List List.cons List.length Nat Option Option.some",
+        "nodes_visited": 166,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.isNotDefined",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "0b603894fd55c0a1bc0000a6d0969d65957b9b7c12edd8e845f53567f8911134",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 11,
+            "score_denominator": 36,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "score_numerator": 11,
+            "score_denominator": 37,
+            "premise_sha256": "97a8b5090864cf71f955b6732b606665e8c93a03a4a66374a23581456bb994ae",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStatesNotDefMonotone'",
+            "score_numerator": 11,
+            "score_denominator": 38,
+            "premise_sha256": "d3060f9310cd5de260607127673ee609e174364be3a6ec5fd5c4821693ccb334",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 7,
+            "score_denominator": 20,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.isNotDefined",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 33,
+      "event_sha256": "3d924389aeb8bb181b879d7fb7564d56eca91ef7461d4ebacdbfc3ee75c808aa",
+      "span_tokens": 8,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "31b2701384d7827cbffb831ec420b3c2b43b06cb5a153ed88482bdebe2f26a3d",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 146,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.isDefined",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.isDefined",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 28,
+      "event_sha256": "e1ab26f3d9073d1805d003e86f0e629586e2c5ad71611dd95fea6a8c669c9446",
+      "span_tokens": 6,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "08b40cb563f6489028ef515ba8c73f477c2286a141a33f49534ac2e95782cd22",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 157,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Eq",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 1,
+            "score_denominator": 4,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Eq",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 15,
+      "event_sha256": "a7f687207f7e4f0198c94798914959f17fcdbdec1cb1448c1f82f34b495b5308",
+      "span_tokens": 5,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "df5bf8f2def2bdc77842441d6cd57d9f854f3e3f01137860f3a3e8dcc37090ff",
+        "query": "And Bool Bool.false Bool.true Core.InitStates Core.UpdateStates Core.updatedState Core.updatedStates Core.updatedStates' Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length List.zip Nat Option Option.none",
+        "nodes_visited": 179,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.UpdateState",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "d071b0e329ec2e838b2e4dd838df0752fe107c043ee2c824c9b16636f59b6d86",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStateUpdate",
+            "score_numerator": 5,
+            "score_denominator": 23,
+            "premise_sha256": "ca010bb5ef427223648e706b68bf40c332ac287162f72a2219b7b0bd580187ce",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 4,
+            "score_denominator": 17,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 5,
+            "score_denominator": 22,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 9,
+            "score_denominator": 47,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.UpdateState",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 24,
+      "event_sha256": "430a7bfa8cd6895103d6d2cd744513df78c9104a2c03bf797afebc4704dc0bbe",
+      "span_tokens": 4,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "e79db16a5af19cf98f641277fbf797bcd74345de8224d609d9ee3c41e471006f",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.Nodup List.cons List.length Nat Option Option.some",
+        "nodes_visited": 165,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "List.Nodup",
+        "arity": 2
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "00cfb545d7c41de3086f2790b350b7fded1d40729acaf298113dec486a7361a2",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 5,
+            "score_denominator": 19,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 13,
+            "score_denominator": 41,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 2,
+            "score_denominator": 7,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 11,
+            "score_denominator": 39,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "List.Nodup",
+          "arity": 2
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 10,
+      "event_sha256": "f3a2e115d332457de6a85cc0e600634c41c76031589e8f812188d8a49ba063a7",
+      "span_tokens": 3,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "28de4a62c9ddfe364ef2f2e5d135bfdd78e1074c5e7e7fd43a0e97da9dc7c964",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.Nodup List.cons List.length Nat",
+        "nodes_visited": 148,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "List.Nodup",
+        "arity": 2
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "92868c89b963fe4694d80a67050e56b5cb085c3c74953d161f84d3976750f1aa",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 2,
+            "score_denominator": 7,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 13,
+            "score_denominator": 38,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 5,
+            "score_denominator": 16,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 9,
+            "score_denominator": 35,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "List.Nodup",
+          "arity": 2
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 23,
+      "event_sha256": "6180aeb35146c16a7bdb5fe4d3e365210822ebaf1459bf76042d3079e649bff9",
+      "span_tokens": 3,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "1335a8b305bc7743cc352dd941649d99f751ff437b1708db90a7d64035de58df",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined Imperative.isNotDefined List List.cons List.length Nat Option Option.some",
+        "nodes_visited": 166,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.isNotDefined",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "0b603894fd55c0a1bc0000a6d0969d65957b9b7c12edd8e845f53567f8911134",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 11,
+            "score_denominator": 36,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "score_numerator": 11,
+            "score_denominator": 37,
+            "premise_sha256": "97a8b5090864cf71f955b6732b606665e8c93a03a4a66374a23581456bb994ae",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStatesNotDefMonotone'",
+            "score_numerator": 11,
+            "score_denominator": 38,
+            "premise_sha256": "d3060f9310cd5de260607127673ee609e174364be3a6ec5fd5c4821693ccb334",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 7,
+            "score_denominator": 20,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.isNotDefined",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 25,
+      "event_sha256": "bcac71f0d87278cddb1cdd6efcaab41ce1a69ac73c031cb77816fdbd5ec63a8a",
+      "span_tokens": 3,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "e79db16a5af19cf98f641277fbf797bcd74345de8224d609d9ee3c41e471006f",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.Nodup List.cons List.length Nat Option Option.some",
+        "nodes_visited": 165,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "List.Nodup",
+        "arity": 2
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "00cfb545d7c41de3086f2790b350b7fded1d40729acaf298113dec486a7361a2",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 5,
+            "score_denominator": 19,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 13,
+            "score_denominator": 41,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 2,
+            "score_denominator": 7,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 11,
+            "score_denominator": 39,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "List.Nodup",
+          "arity": 2
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 35,
+      "event_sha256": "6ad83819ce1cd08bf5c30847d57c3c8944c0029b473a6479ee8242f1126c10fe",
+      "span_tokens": 2,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "3274e0263a4fcfa5b56db18ad7dc68c4446671759022dbf9767aa0d794dea860",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 149,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Eq",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 1,
+            "score_denominator": 4,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Eq",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 5,
+      "event_sha256": "670669eb22e84eb56e620d5a5ecb1d6f0d89841dc04bb111c306a3bf638a2bc2",
+      "span_tokens": 1,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "e0f6c29dfbd3a2defb7af0c0568cc9fec01d920948d9699c4be95e30b61b2673",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.isDefined List List.nil",
+        "nodes_visited": 113,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Core.UpdateStates",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "43bb8bd83383e09741f3a1b4ba1d3255aedc5c3eee05d9ada733bb61894acd91",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 29,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "score_numerator": 9,
+            "score_denominator": 29,
+            "premise_sha256": "97a8b5090864cf71f955b6732b606665e8c93a03a4a66374a23581456bb994ae",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStatesNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 10,
+            "premise_sha256": "d3060f9310cd5de260607127673ee609e174364be3a6ec5fd5c4821693ccb334",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Core.UpdateStates",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 16,
+      "event_sha256": "3d3d12bb0502031c515634892e015668c57dee5b3f922816f67091f173191221",
+      "span_tokens": 1,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "df5bf8f2def2bdc77842441d6cd57d9f854f3e3f01137860f3a3e8dcc37090ff",
+        "query": "And Bool Bool.false Bool.true Core.InitStates Core.UpdateStates Core.updatedState Core.updatedStates Core.updatedStates' Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length List.zip Nat Option Option.none",
+        "nodes_visited": 179,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.UpdateState",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "d071b0e329ec2e838b2e4dd838df0752fe107c043ee2c824c9b16636f59b6d86",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStateUpdate",
+            "score_numerator": 5,
+            "score_denominator": 23,
+            "premise_sha256": "ca010bb5ef427223648e706b68bf40c332ac287162f72a2219b7b0bd580187ce",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 4,
+            "score_denominator": 17,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 5,
+            "score_denominator": 22,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 9,
+            "score_denominator": 47,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.UpdateState",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 21,
+      "event_sha256": "68d36c51f89ea1e72f939535c09475969bed6d71e4e24e8afd06c9704b057e3c",
+      "span_tokens": 1,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "f39419a0233ec685dd300135aae39aa948990bedb89d14e76c26bc78f119ef35",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat Option Option.some",
+        "nodes_visited": 170,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Eq",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "b648bdad3c4468e4a032150a6f45eb62c45316fdc1fb348980542f41bf0759ba",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 11,
+            "score_denominator": 37,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 10,
+            "score_denominator": 33,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 3,
+            "score_denominator": 10,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStateUpdate",
+            "score_numerator": 2,
+            "score_denominator": 7,
+            "premise_sha256": "ca010bb5ef427223648e706b68bf40c332ac287162f72a2219b7b0bd580187ce",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Eq",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 29,
+      "event_sha256": "21856db730df444f36d810cfc0b441e8247f7940bc01afc22dbd1699052fb990",
+      "span_tokens": 1,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "08b40cb563f6489028ef515ba8c73f477c2286a141a33f49534ac2e95782cd22",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 157,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Eq",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 1,
+            "score_denominator": 4,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Eq",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 30,
+      "event_sha256": "c996d7efd89268096d3e7d513e5760a2dc0b56eccedb9524a85b653a2ca2aec8",
+      "span_tokens": 1,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "0747b414cbc1ae52677e49036e63e72d885b0f5de198dda4ec054aa8e20629a5",
+        "query": "And Bool Bool.true Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists False Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState List List.instMembership List.length Membership.mem Nat Option Option.isSome Option.none",
+        "nodes_visited": 178,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "False",
+        "arity": 0
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "079a696725155587dadd376995bdd366ac0f6a1922a5db890f2450abe6ac34eb",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 6,
+            "score_denominator": 23,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 14,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 43,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "score_numerator": 9,
+            "score_denominator": 43,
+            "premise_sha256": "97a8b5090864cf71f955b6732b606665e8c93a03a4a66374a23581456bb994ae",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "False",
+          "arity": 0
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 34,
+      "event_sha256": "f7b78d8b76d3d6fb8cbefcb633cee0e589a55bff24b557b622a4fcdef1e22e79",
+      "span_tokens": 1,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "e98b565530b08d776d0f765dad2d30b6ac06b7bedfd4536f53af96e71713cd5c",
+        "query": "And Bool Bool.true Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState List List.instMembership List.length Membership.mem Nat Option.isSome",
+        "nodes_visited": 176,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "other",
+        "name": null,
+        "arity": 0
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "15cece825861306f27ee2fab837140dd0e3aeabc1e3a8884a0747f1dba9eb0a7",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 2,
+            "score_denominator": 7,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 9,
+            "score_denominator": 38,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 3,
+            "score_denominator": 13,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "score_numerator": 3,
+            "score_denominator": 13,
+            "premise_sha256": "97a8b5090864cf71f955b6732b606665e8c93a03a4a66374a23581456bb994ae",
+            "head_priority": 1
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "other",
+          "name": null,
+          "arity": 0
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 36,
+      "event_sha256": "a356f2d885bc3d9d89e8aa1897378c1fbaa6ba4dcc8f7d93c9f78d0058d3498c",
+      "span_tokens": 1,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "3274e0263a4fcfa5b56db18ad7dc68c4446671759022dbf9767aa0d794dea860",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 149,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Eq",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 1,
+            "score_denominator": 4,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Eq",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    }
+  ],
+  "proposals": [],
+  "drafts": [],
+  "origins": [],
+  "base_tokens": 224,
+  "policy": "typed-head-then-native-application/v1",
+  "status": "ABSTAINED",
+  "truncated": true,
+  "native_verifier_calls": 4,
+  "external_calls_attempted": 0,
+  "proof_verified": false,
+  "proof_admitted": false,
+  "whole_source_checked": false,
+  "fresh_verification_required": true,
+  "training_enabled": false,
+  "promoted": false,
+  "official_score": null,
+  "applications": [
+    {
+      "event_id": 13,
+      "premises": [
+        "Core.updatedStateUpdate",
+        "Core.UpdateStateDefined'",
+        "Core.updatedStatesInit",
+        "Core.UpdateStateNotDefMonotone'"
+      ],
+      "max_steps": 96,
+      "max_depth": 4,
+      "subgoal_pool": [
+        {
+          "name": "Core.InitStatesNodup",
+          "head": "List.Nodup"
+        },
+        {
+          "name": "Core.InitStatesNotDefined",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.InitStatesSomeMonotone",
+          "head": "Eq"
+        },
+        {
+          "name": "Core.UpdateStateDefined'",
+          "head": "Imperative.isDefined"
+        },
+        {
+          "name": "Core.UpdateStateNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.UpdateStatesNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.updatedStateUpdate",
+          "head": "Imperative.UpdateState"
+        },
+        {
+          "name": "Core.updatedStatesInit",
+          "head": "Core.InitStates"
+        }
+      ],
+      "max_retrievals": 32,
+      "retrieval_top_k": 4
+    },
+    {
+      "event_id": 14,
+      "premises": [
+        "Core.updatedStateUpdate",
+        "Core.updatedStatesInit",
+        "Core.UpdateStateDefined'",
+        "Core.UpdateStateNotDefMonotone'"
+      ],
+      "max_steps": 96,
+      "max_depth": 4,
+      "subgoal_pool": [
+        {
+          "name": "Core.InitStatesNodup",
+          "head": "List.Nodup"
+        },
+        {
+          "name": "Core.InitStatesNotDefined",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.InitStatesSomeMonotone",
+          "head": "Eq"
+        },
+        {
+          "name": "Core.UpdateStateDefined'",
+          "head": "Imperative.isDefined"
+        },
+        {
+          "name": "Core.UpdateStateNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.UpdateStatesNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.updatedStateUpdate",
+          "head": "Imperative.UpdateState"
+        },
+        {
+          "name": "Core.updatedStatesInit",
+          "head": "Core.InitStates"
+        }
+      ],
+      "max_retrievals": 32,
+      "retrieval_top_k": 4
+    },
+    {
+      "event_id": 17,
+      "premises": [
+        "Core.updatedStateUpdate",
+        "Core.updatedStatesInit",
+        "Core.UpdateStateDefined'",
+        "Core.InitStatesSomeMonotone"
+      ],
+      "max_steps": 96,
+      "max_depth": 4,
+      "subgoal_pool": [
+        {
+          "name": "Core.InitStatesNodup",
+          "head": "List.Nodup"
+        },
+        {
+          "name": "Core.InitStatesNotDefined",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.InitStatesSomeMonotone",
+          "head": "Eq"
+        },
+        {
+          "name": "Core.UpdateStateDefined'",
+          "head": "Imperative.isDefined"
+        },
+        {
+          "name": "Core.UpdateStateNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.UpdateStatesNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.updatedStateUpdate",
+          "head": "Imperative.UpdateState"
+        },
+        {
+          "name": "Core.updatedStatesInit",
+          "head": "Core.InitStates"
+        }
+      ],
+      "max_retrievals": 32,
+      "retrieval_top_k": 4
+    },
+    {
+      "event_id": 2,
+      "premises": [
+        "Core.updatedStatesInit",
+        "Core.InitStatesNodup",
+        "Core.InitStatesNotDefined",
+        "Core.UpdateStatesNotDefMonotone'"
+      ],
+      "max_steps": 96,
+      "max_depth": 4,
+      "subgoal_pool": [
+        {
+          "name": "Core.InitStatesNodup",
+          "head": "List.Nodup"
+        },
+        {
+          "name": "Core.InitStatesNotDefined",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.InitStatesSomeMonotone",
+          "head": "Eq"
+        },
+        {
+          "name": "Core.UpdateStateDefined'",
+          "head": "Imperative.isDefined"
+        },
+        {
+          "name": "Core.UpdateStateNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.UpdateStatesNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.updatedStateUpdate",
+          "head": "Imperative.UpdateState"
+        },
+        {
+          "name": "Core.updatedStatesInit",
+          "head": "Core.InitStates"
+        }
+      ],
+      "max_retrievals": 32,
+      "retrieval_top_k": 4
+    }
+  ],
+  "subgoal_pool": {
+    "schema": "jevops-subgoal-pool/v1",
+    "status": "READY",
+    "index_sha256": "05f2ed41cd6ce4a735a040a130639bdcf54fd21ca319e7be7ef4bea096674525",
+    "scope_sha256": "a5a1ac6cbc52be97f261bf6ea9c9759735111c17bdd73959761f16ae32bdc639",
+    "target": "Core.InitsUpdatesComm",
+    "max_pool": 64,
+    "entries_scanned": 8,
+    "excluded_count": 0,
+    "eligible_count": 8,
+    "entries": [
+      {
+        "name": "Core.InitStatesNodup",
+        "head": "List.Nodup"
+      },
+      {
+        "name": "Core.InitStatesNotDefined",
+        "head": "Imperative.isNotDefined"
+      },
+      {
+        "name": "Core.InitStatesSomeMonotone",
+        "head": "Eq"
+      },
+      {
+        "name": "Core.UpdateStateDefined'",
+        "head": "Imperative.isDefined"
+      },
+      {
+        "name": "Core.UpdateStateNotDefMonotone'",
+        "head": "Imperative.isNotDefined"
+      },
+      {
+        "name": "Core.UpdateStatesNotDefMonotone'",
+        "head": "Imperative.isNotDefined"
+      },
+      {
+        "name": "Core.updatedStateUpdate",
+        "head": "Imperative.UpdateState"
+      },
+      {
+        "name": "Core.updatedStatesInit",
+        "head": "Core.InitStates"
+      }
+    ],
+    "proof_verified": false
+  },
+  "attempts": [
+    {
+      "event_id": 13,
+      "premises": [
+        "Core.updatedStateUpdate",
+        "Core.UpdateStateDefined'",
+        "Core.updatedStatesInit",
+        "Core.UpdateStateNotDefMonotone'"
+      ],
+      "max_steps": 96,
+      "max_depth": 4,
+      "subgoal_pool": [
+        {
+          "name": "Core.InitStatesNodup",
+          "head": "List.Nodup"
+        },
+        {
+          "name": "Core.InitStatesNotDefined",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.InitStatesSomeMonotone",
+          "head": "Eq"
+        },
+        {
+          "name": "Core.UpdateStateDefined'",
+          "head": "Imperative.isDefined"
+        },
+        {
+          "name": "Core.UpdateStateNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.UpdateStatesNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.updatedStateUpdate",
+          "head": "Imperative.UpdateState"
+        },
+        {
+          "name": "Core.updatedStatesInit",
+          "head": "Core.InitStates"
+        }
+      ],
+      "max_retrievals": 32,
+      "retrieval_top_k": 4,
+      "status": "NO_CHECKED_CLOSURE",
+      "closing_reproduced": false,
+      "receipt_sha256": "a8b821fb4a223248e26fe33a3f966e9d0957b4be306f7ef89129ee855d5a0b48",
+      "binding": {
+        "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "trace_sha256": "b70d9bc4cb9cc803994ea39ee739ae71793b84106a7e3b6bfc5ecfd9d7a0bd35",
+        "dependency_environment_sha256": "7850d60019c0c8b12fe6c1209bf7a3accbc7cd11a414291f002a48bcb5ce217d",
+        "exporter_sha256": "17690bee6bf665d383df7b7ba5c45ab64e61ea0a85f9bc36384d55e328b2428c",
+        "event_id": 13,
+        "node_budget": 4096,
+        "event_budget": 256,
+        "operation": "subgoal-backward-materialization/v1",
+        "premises": [
+          "Core.updatedStateUpdate",
+          "Core.UpdateStateDefined'",
+          "Core.updatedStatesInit",
+          "Core.UpdateStateNotDefMonotone'"
+        ],
+        "max_steps": 96,
+        "max_depth": 4,
+        "subgoal_pool": [
+          {
+            "name": "Core.InitStatesNodup",
+            "head": "List.Nodup"
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "head": "Imperative.isNotDefined"
+          },
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "head": "Eq"
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "head": "Imperative.isDefined"
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "head": "Imperative.isNotDefined"
+          },
+          {
+            "name": "Core.UpdateStatesNotDefMonotone'",
+            "head": "Imperative.isNotDefined"
+          },
+          {
+            "name": "Core.updatedStateUpdate",
+            "head": "Imperative.UpdateState"
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "head": "Core.InitStates"
+          }
+        ],
+        "max_retrievals": 32,
+        "retrieval_top_k": 4
+      },
+      "search_accounting": {
+        "attempted_steps": 28,
+        "depth_cutoffs": 1,
+        "max_depth": 4,
+        "max_retrievals": 32,
+        "max_steps": 96,
+        "path": null,
+        "premises": [
+          "Core.updatedStateUpdate",
+          "Core.UpdateStateDefined'",
+          "Core.updatedStatesInit",
+          "Core.UpdateStateNotDefMonotone'"
+        ],
+        "retrieval_exhausted": false,
+        "retrieval_top_k": 4,
+        "retrievals": [
+          {
+            "depth": 1,
+            "head": "Eq",
+            "id": 0,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.UpdateStateDefined'",
+              "Core.updatedStatesInit"
+            ]
+          },
+          {
+            "depth": 2,
+            "head": "Eq",
+            "id": 1,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.UpdateStateDefined'",
+              "Core.updatedStatesInit"
+            ]
+          },
+          {
+            "depth": 3,
+            "head": "Eq",
+            "id": 2,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.UpdateStateDefined'",
+              "Core.updatedStatesInit"
+            ]
+          }
+        ],
+        "schema": "jevops-local-search/v2",
+        "script": null,
+        "step_exhausted": false,
+        "subgoal_pool": [
+          {
+            "head": "List.Nodup",
+            "name": "Core.InitStatesNodup"
+          },
+          {
+            "head": "Imperative.isNotDefined",
+            "name": "Core.InitStatesNotDefined"
+          },
+          {
+            "head": "Eq",
+            "name": "Core.InitStatesSomeMonotone"
+          },
+          {
+            "head": "Imperative.isDefined",
+            "name": "Core.UpdateStateDefined'"
+          },
+          {
+            "head": "Imperative.isNotDefined",
+            "name": "Core.UpdateStateNotDefMonotone'"
+          },
+          {
+            "head": "Imperative.isNotDefined",
+            "name": "Core.UpdateStatesNotDefMonotone'"
+          },
+          {
+            "head": "Imperative.UpdateState",
+            "name": "Core.updatedStateUpdate"
+          },
+          {
+            "head": "Core.InitStates",
+            "name": "Core.updatedStatesInit"
+          }
+        ],
+        "trace": [
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateNotDefMonotone'",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "constructor",
+            "applied": true,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": true,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": true,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          }
+        ]
+      }
+    },
+    {
+      "event_id": 14,
+      "premises": [
+        "Core.updatedStateUpdate",
+        "Core.updatedStatesInit",
+        "Core.UpdateStateDefined'",
+        "Core.UpdateStateNotDefMonotone'"
+      ],
+      "max_steps": 96,
+      "max_depth": 4,
+      "subgoal_pool": [
+        {
+          "name": "Core.InitStatesNodup",
+          "head": "List.Nodup"
+        },
+        {
+          "name": "Core.InitStatesNotDefined",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.InitStatesSomeMonotone",
+          "head": "Eq"
+        },
+        {
+          "name": "Core.UpdateStateDefined'",
+          "head": "Imperative.isDefined"
+        },
+        {
+          "name": "Core.UpdateStateNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.UpdateStatesNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.updatedStateUpdate",
+          "head": "Imperative.UpdateState"
+        },
+        {
+          "name": "Core.updatedStatesInit",
+          "head": "Core.InitStates"
+        }
+      ],
+      "max_retrievals": 32,
+      "retrieval_top_k": 4,
+      "status": "NO_CHECKED_CLOSURE",
+      "closing_reproduced": false,
+      "receipt_sha256": "e2441cb3df5c716ff1636447c0922867470108c75dd39ea07d750e934c52e54d",
+      "binding": {
+        "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "trace_sha256": "b70d9bc4cb9cc803994ea39ee739ae71793b84106a7e3b6bfc5ecfd9d7a0bd35",
+        "dependency_environment_sha256": "7850d60019c0c8b12fe6c1209bf7a3accbc7cd11a414291f002a48bcb5ce217d",
+        "exporter_sha256": "17690bee6bf665d383df7b7ba5c45ab64e61ea0a85f9bc36384d55e328b2428c",
+        "event_id": 14,
+        "node_budget": 4096,
+        "event_budget": 256,
+        "operation": "subgoal-backward-materialization/v1",
+        "premises": [
+          "Core.updatedStateUpdate",
+          "Core.updatedStatesInit",
+          "Core.UpdateStateDefined'",
+          "Core.UpdateStateNotDefMonotone'"
+        ],
+        "max_steps": 96,
+        "max_depth": 4,
+        "subgoal_pool": [
+          {
+            "name": "Core.InitStatesNodup",
+            "head": "List.Nodup"
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "head": "Imperative.isNotDefined"
+          },
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "head": "Eq"
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "head": "Imperative.isDefined"
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "head": "Imperative.isNotDefined"
+          },
+          {
+            "name": "Core.UpdateStatesNotDefMonotone'",
+            "head": "Imperative.isNotDefined"
+          },
+          {
+            "name": "Core.updatedStateUpdate",
+            "head": "Imperative.UpdateState"
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "head": "Core.InitStates"
+          }
+        ],
+        "max_retrievals": 32,
+        "retrieval_top_k": 4
+      },
+      "search_accounting": {
+        "attempted_steps": 49,
+        "depth_cutoffs": 2,
+        "max_depth": 4,
+        "max_retrievals": 32,
+        "max_steps": 96,
+        "path": null,
+        "premises": [
+          "Core.updatedStateUpdate",
+          "Core.updatedStatesInit",
+          "Core.UpdateStateDefined'",
+          "Core.UpdateStateNotDefMonotone'"
+        ],
+        "retrieval_exhausted": false,
+        "retrieval_top_k": 4,
+        "retrievals": [
+          {
+            "depth": 1,
+            "head": "Eq",
+            "id": 0,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.updatedStatesInit",
+              "Core.UpdateStateDefined'"
+            ]
+          },
+          {
+            "depth": 2,
+            "head": "Eq",
+            "id": 1,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.updatedStatesInit",
+              "Core.UpdateStateDefined'"
+            ]
+          },
+          {
+            "depth": 3,
+            "head": "Eq",
+            "id": 2,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.updatedStatesInit",
+              "Core.UpdateStateDefined'"
+            ]
+          },
+          {
+            "depth": 1,
+            "head": "Eq",
+            "id": 3,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.updatedStatesInit",
+              "Core.UpdateStateDefined'"
+            ]
+          },
+          {
+            "depth": 2,
+            "head": "Eq",
+            "id": 4,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.updatedStatesInit",
+              "Core.UpdateStateDefined'"
+            ]
+          },
+          {
+            "depth": 3,
+            "head": "Eq",
+            "id": 5,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.updatedStatesInit",
+              "Core.UpdateStateDefined'"
+            ]
+          }
+        ],
+        "schema": "jevops-local-search/v2",
+        "script": null,
+        "step_exhausted": false,
+        "subgoal_pool": [
+          {
+            "head": "List.Nodup",
+            "name": "Core.InitStatesNodup"
+          },
+          {
+            "head": "Imperative.isNotDefined",
+            "name": "Core.InitStatesNotDefined"
+          },
+          {
+            "head": "Eq",
+            "name": "Core.InitStatesSomeMonotone"
+          },
+          {
+            "head": "Imperative.isDefined",
+            "name": "Core.UpdateStateDefined'"
+          },
+          {
+            "head": "Imperative.isNotDefined",
+            "name": "Core.UpdateStateNotDefMonotone'"
+          },
+          {
+            "head": "Imperative.isNotDefined",
+            "name": "Core.UpdateStatesNotDefMonotone'"
+          },
+          {
+            "head": "Imperative.UpdateState",
+            "name": "Core.updatedStateUpdate"
+          },
+          {
+            "head": "Core.InitStates",
+            "name": "Core.updatedStatesInit"
+          }
+        ],
+        "trace": [
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": true,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": true,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": true,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateNotDefMonotone'",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "constructor",
+            "applied": true,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 3
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": true,
+            "depth": 1,
+            "retrieval_id": 3
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 4
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": true,
+            "depth": 2,
+            "retrieval_id": 4
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 5
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 5
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 5
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 5
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 5
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 5
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 5
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 4
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 4
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 4
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 4
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 4
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 3
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 3
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 3
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 3
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 3
+          }
+        ]
+      }
+    },
+    {
+      "event_id": 17,
+      "premises": [
+        "Core.updatedStateUpdate",
+        "Core.updatedStatesInit",
+        "Core.UpdateStateDefined'",
+        "Core.InitStatesSomeMonotone"
+      ],
+      "max_steps": 96,
+      "max_depth": 4,
+      "subgoal_pool": [
+        {
+          "name": "Core.InitStatesNodup",
+          "head": "List.Nodup"
+        },
+        {
+          "name": "Core.InitStatesNotDefined",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.InitStatesSomeMonotone",
+          "head": "Eq"
+        },
+        {
+          "name": "Core.UpdateStateDefined'",
+          "head": "Imperative.isDefined"
+        },
+        {
+          "name": "Core.UpdateStateNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.UpdateStatesNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.updatedStateUpdate",
+          "head": "Imperative.UpdateState"
+        },
+        {
+          "name": "Core.updatedStatesInit",
+          "head": "Core.InitStates"
+        }
+      ],
+      "max_retrievals": 32,
+      "retrieval_top_k": 4,
+      "status": "NO_CHECKED_CLOSURE",
+      "closing_reproduced": false,
+      "receipt_sha256": "c8a3364a2f0ed03bc674c00fb71e4c770805dc2771f234c70933dc8433043dae",
+      "binding": {
+        "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "trace_sha256": "b70d9bc4cb9cc803994ea39ee739ae71793b84106a7e3b6bfc5ecfd9d7a0bd35",
+        "dependency_environment_sha256": "7850d60019c0c8b12fe6c1209bf7a3accbc7cd11a414291f002a48bcb5ce217d",
+        "exporter_sha256": "17690bee6bf665d383df7b7ba5c45ab64e61ea0a85f9bc36384d55e328b2428c",
+        "event_id": 17,
+        "node_budget": 4096,
+        "event_budget": 256,
+        "operation": "subgoal-backward-materialization/v1",
+        "premises": [
+          "Core.updatedStateUpdate",
+          "Core.updatedStatesInit",
+          "Core.UpdateStateDefined'",
+          "Core.InitStatesSomeMonotone"
+        ],
+        "max_steps": 96,
+        "max_depth": 4,
+        "subgoal_pool": [
+          {
+            "name": "Core.InitStatesNodup",
+            "head": "List.Nodup"
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "head": "Imperative.isNotDefined"
+          },
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "head": "Eq"
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "head": "Imperative.isDefined"
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "head": "Imperative.isNotDefined"
+          },
+          {
+            "name": "Core.UpdateStatesNotDefMonotone'",
+            "head": "Imperative.isNotDefined"
+          },
+          {
+            "name": "Core.updatedStateUpdate",
+            "head": "Imperative.UpdateState"
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "head": "Core.InitStates"
+          }
+        ],
+        "max_retrievals": 32,
+        "retrieval_top_k": 4
+      },
+      "search_accounting": {
+        "attempted_steps": 96,
+        "depth_cutoffs": 12,
+        "max_depth": 4,
+        "max_retrievals": 32,
+        "max_steps": 96,
+        "path": null,
+        "premises": [
+          "Core.updatedStateUpdate",
+          "Core.updatedStatesInit",
+          "Core.UpdateStateDefined'",
+          "Core.InitStatesSomeMonotone"
+        ],
+        "retrieval_exhausted": false,
+        "retrieval_top_k": 4,
+        "retrievals": [
+          {
+            "depth": 1,
+            "head": "Eq",
+            "id": 0,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.updatedStatesInit",
+              "Core.UpdateStateDefined'"
+            ]
+          },
+          {
+            "depth": 2,
+            "head": "Eq",
+            "id": 1,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.updatedStatesInit",
+              "Core.UpdateStateDefined'"
+            ]
+          },
+          {
+            "depth": 2,
+            "head": "Core.InitStates",
+            "id": 2,
+            "selected": [
+              "Core.updatedStatesInit",
+              "Core.updatedStateUpdate",
+              "Core.UpdateStateDefined'",
+              "Core.InitStatesSomeMonotone"
+            ]
+          },
+          {
+            "depth": 3,
+            "head": "Eq",
+            "id": 3,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.updatedStatesInit",
+              "Core.UpdateStateDefined'"
+            ]
+          },
+          {
+            "depth": 3,
+            "head": "Imperative.isNotDefined",
+            "id": 4,
+            "selected": [
+              "Core.InitStatesNotDefined",
+              "Core.UpdateStateNotDefMonotone'",
+              "Core.UpdateStatesNotDefMonotone'",
+              "Core.updatedStateUpdate"
+            ]
+          },
+          {
+            "depth": 3,
+            "head": "Imperative.InitState",
+            "id": 5,
+            "selected": [
+              "Core.updatedStateUpdate",
+              "Core.updatedStatesInit",
+              "Core.UpdateStateDefined'",
+              "Core.InitStatesSomeMonotone"
+            ]
+          },
+          {
+            "depth": 3,
+            "head": "Eq",
+            "id": 6,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.updatedStatesInit",
+              "Core.UpdateStateDefined'"
+            ]
+          },
+          {
+            "depth": 3,
+            "head": "Core.InitStates",
+            "id": 7,
+            "selected": [
+              "Core.updatedStatesInit",
+              "Core.updatedStateUpdate",
+              "Core.UpdateStateDefined'",
+              "Core.InitStatesSomeMonotone"
+            ]
+          },
+          {
+            "depth": 2,
+            "head": "Core.InitStates",
+            "id": 8,
+            "selected": [
+              "Core.updatedStatesInit",
+              "Core.updatedStateUpdate",
+              "Core.UpdateStateDefined'",
+              "Core.InitStatesSomeMonotone"
+            ]
+          },
+          {
+            "depth": 3,
+            "head": "Eq",
+            "id": 9,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.updatedStatesInit",
+              "Core.UpdateStateDefined'"
+            ]
+          },
+          {
+            "depth": 3,
+            "head": "Imperative.isNotDefined",
+            "id": 10,
+            "selected": [
+              "Core.InitStatesNotDefined",
+              "Core.UpdateStateNotDefMonotone'",
+              "Core.UpdateStatesNotDefMonotone'",
+              "Core.updatedStateUpdate"
+            ]
+          },
+          {
+            "depth": 3,
+            "head": "Imperative.InitState",
+            "id": 11,
+            "selected": [
+              "Core.updatedStateUpdate",
+              "Core.updatedStatesInit",
+              "Core.UpdateStateDefined'",
+              "Core.InitStatesSomeMonotone"
+            ]
+          },
+          {
+            "depth": 1,
+            "head": "Eq",
+            "id": 12,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.updatedStatesInit",
+              "Core.UpdateStateDefined'"
+            ]
+          },
+          {
+            "depth": 2,
+            "head": "Eq",
+            "id": 13,
+            "selected": [
+              "Core.InitStatesSomeMonotone",
+              "Core.updatedStateUpdate",
+              "Core.updatedStatesInit",
+              "Core.UpdateStateDefined'"
+            ]
+          },
+          {
+            "depth": 2,
+            "head": "Core.InitStates",
+            "id": 14,
+            "selected": [
+              "Core.updatedStatesInit",
+              "Core.updatedStateUpdate",
+              "Core.UpdateStateDefined'",
+              "Core.InitStatesSomeMonotone"
+            ]
+          }
+        ],
+        "schema": "jevops-local-search/v2",
+        "script": null,
+        "step_exhausted": true,
+        "subgoal_pool": [
+          {
+            "head": "List.Nodup",
+            "name": "Core.InitStatesNodup"
+          },
+          {
+            "head": "Imperative.isNotDefined",
+            "name": "Core.InitStatesNotDefined"
+          },
+          {
+            "head": "Eq",
+            "name": "Core.InitStatesSomeMonotone"
+          },
+          {
+            "head": "Imperative.isDefined",
+            "name": "Core.UpdateStateDefined'"
+          },
+          {
+            "head": "Imperative.isNotDefined",
+            "name": "Core.UpdateStateNotDefMonotone'"
+          },
+          {
+            "head": "Imperative.isNotDefined",
+            "name": "Core.UpdateStatesNotDefMonotone'"
+          },
+          {
+            "head": "Imperative.UpdateState",
+            "name": "Core.updatedStateUpdate"
+          },
+          {
+            "head": "Core.InitStates",
+            "name": "Core.updatedStatesInit"
+          }
+        ],
+        "trace": [
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": true,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": true,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "assumption",
+            "applied": true,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": true,
+            "depth": 2,
+            "retrieval_id": 2
+          },
+          {
+            "action": "assumption",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 3
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 4
+          },
+          {
+            "action": "apply _root_.Core.InitStatesNotDefined",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 4
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateNotDefMonotone'",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 4
+          },
+          {
+            "action": "apply _root_.Core.UpdateStatesNotDefMonotone'",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 4
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 4
+          },
+          {
+            "action": "intro",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 4
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 4
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 3
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 3
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 3
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 3
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 3
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 3
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 2
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 2
+          },
+          {
+            "action": "constructor",
+            "applied": true,
+            "depth": 2,
+            "retrieval_id": 2
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 5
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 5
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 5
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 5
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 5
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 5
+          },
+          {
+            "action": "constructor",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 5
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": true,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "assumption",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 6
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 7
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 7
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 7
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 7
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 7
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 7
+          },
+          {
+            "action": "constructor",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 7
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 8
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": true,
+            "depth": 2,
+            "retrieval_id": 8
+          },
+          {
+            "action": "assumption",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 9
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 10
+          },
+          {
+            "action": "apply _root_.Core.InitStatesNotDefined",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 10
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateNotDefMonotone'",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 10
+          },
+          {
+            "action": "apply _root_.Core.UpdateStatesNotDefMonotone'",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 10
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 10
+          },
+          {
+            "action": "intro",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 10
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 10
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 9
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 9
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 9
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 9
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 9
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 9
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 8
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 8
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 8
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 8
+          },
+          {
+            "action": "constructor",
+            "applied": true,
+            "depth": 2,
+            "retrieval_id": 8
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 11
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 11
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 11
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 11
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 11
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 11
+          },
+          {
+            "action": "constructor",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 11
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 6
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 6
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 6
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 6
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 6
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 6
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "apply _root_.Core.updatedStateUpdate",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "apply _root_.Core.UpdateStateDefined'",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "constructor",
+            "applied": true,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 12
+          },
+          {
+            "action": "apply _root_.Core.InitStatesSomeMonotone",
+            "applied": true,
+            "depth": 1,
+            "retrieval_id": 12
+          },
+          {
+            "action": "assumption",
+            "applied": true,
+            "depth": 2,
+            "retrieval_id": 13
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 14
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": true,
+            "depth": 2,
+            "retrieval_id": 14
+          }
+        ]
+      }
+    },
+    {
+      "event_id": 2,
+      "premises": [
+        "Core.updatedStatesInit",
+        "Core.InitStatesNodup",
+        "Core.InitStatesNotDefined",
+        "Core.UpdateStatesNotDefMonotone'"
+      ],
+      "max_steps": 96,
+      "max_depth": 4,
+      "subgoal_pool": [
+        {
+          "name": "Core.InitStatesNodup",
+          "head": "List.Nodup"
+        },
+        {
+          "name": "Core.InitStatesNotDefined",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.InitStatesSomeMonotone",
+          "head": "Eq"
+        },
+        {
+          "name": "Core.UpdateStateDefined'",
+          "head": "Imperative.isDefined"
+        },
+        {
+          "name": "Core.UpdateStateNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.UpdateStatesNotDefMonotone'",
+          "head": "Imperative.isNotDefined"
+        },
+        {
+          "name": "Core.updatedStateUpdate",
+          "head": "Imperative.UpdateState"
+        },
+        {
+          "name": "Core.updatedStatesInit",
+          "head": "Core.InitStates"
+        }
+      ],
+      "max_retrievals": 32,
+      "retrieval_top_k": 4,
+      "status": "NO_CHECKED_CLOSURE",
+      "closing_reproduced": false,
+      "receipt_sha256": "8971b56394a2230b39a96e24bec989931f709e37c8715597c12fcac5a2be3aa7",
+      "binding": {
+        "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "trace_sha256": "b70d9bc4cb9cc803994ea39ee739ae71793b84106a7e3b6bfc5ecfd9d7a0bd35",
+        "dependency_environment_sha256": "7850d60019c0c8b12fe6c1209bf7a3accbc7cd11a414291f002a48bcb5ce217d",
+        "exporter_sha256": "17690bee6bf665d383df7b7ba5c45ab64e61ea0a85f9bc36384d55e328b2428c",
+        "event_id": 2,
+        "node_budget": 4096,
+        "event_budget": 256,
+        "operation": "subgoal-backward-materialization/v1",
+        "premises": [
+          "Core.updatedStatesInit",
+          "Core.InitStatesNodup",
+          "Core.InitStatesNotDefined",
+          "Core.UpdateStatesNotDefMonotone'"
+        ],
+        "max_steps": 96,
+        "max_depth": 4,
+        "subgoal_pool": [
+          {
+            "name": "Core.InitStatesNodup",
+            "head": "List.Nodup"
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "head": "Imperative.isNotDefined"
+          },
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "head": "Eq"
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "head": "Imperative.isDefined"
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "head": "Imperative.isNotDefined"
+          },
+          {
+            "name": "Core.UpdateStatesNotDefMonotone'",
+            "head": "Imperative.isNotDefined"
+          },
+          {
+            "name": "Core.updatedStateUpdate",
+            "head": "Imperative.UpdateState"
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "head": "Core.InitStates"
+          }
+        ],
+        "max_retrievals": 32,
+        "retrieval_top_k": 4
+      },
+      "search_accounting": {
+        "attempted_steps": 28,
+        "depth_cutoffs": 1,
+        "max_depth": 4,
+        "max_retrievals": 32,
+        "max_steps": 96,
+        "path": null,
+        "premises": [
+          "Core.updatedStatesInit",
+          "Core.InitStatesNodup",
+          "Core.InitStatesNotDefined",
+          "Core.UpdateStatesNotDefMonotone'"
+        ],
+        "retrieval_exhausted": false,
+        "retrieval_top_k": 4,
+        "retrievals": [
+          {
+            "depth": 1,
+            "head": null,
+            "id": 0,
+            "selected": [
+              "Core.updatedStatesInit",
+              "Core.InitStatesNodup",
+              "Core.InitStatesNotDefined",
+              "Core.UpdateStatesNotDefMonotone'"
+            ]
+          },
+          {
+            "depth": 2,
+            "head": "Exists",
+            "id": 1,
+            "selected": [
+              "Core.updatedStatesInit",
+              "Core.InitStatesNodup",
+              "Core.InitStatesNotDefined",
+              "Core.UpdateStatesNotDefMonotone'"
+            ]
+          },
+          {
+            "depth": 3,
+            "head": null,
+            "id": 2,
+            "selected": [
+              "Core.updatedStatesInit",
+              "Core.InitStatesNodup",
+              "Core.InitStatesNotDefined",
+              "Core.UpdateStatesNotDefMonotone'"
+            ]
+          }
+        ],
+        "schema": "jevops-local-search/v2",
+        "script": null,
+        "step_exhausted": false,
+        "subgoal_pool": [
+          {
+            "head": "List.Nodup",
+            "name": "Core.InitStatesNodup"
+          },
+          {
+            "head": "Imperative.isNotDefined",
+            "name": "Core.InitStatesNotDefined"
+          },
+          {
+            "head": "Eq",
+            "name": "Core.InitStatesSomeMonotone"
+          },
+          {
+            "head": "Imperative.isDefined",
+            "name": "Core.UpdateStateDefined'"
+          },
+          {
+            "head": "Imperative.isNotDefined",
+            "name": "Core.UpdateStateNotDefMonotone'"
+          },
+          {
+            "head": "Imperative.isNotDefined",
+            "name": "Core.UpdateStatesNotDefMonotone'"
+          },
+          {
+            "head": "Imperative.UpdateState",
+            "name": "Core.updatedStateUpdate"
+          },
+          {
+            "head": "Core.InitStates",
+            "name": "Core.updatedStatesInit"
+          }
+        ],
+        "trace": [
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "apply _root_.Core.InitStatesNodup",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "apply _root_.Core.InitStatesNotDefined",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "apply _root_.Core.UpdateStatesNotDefMonotone'",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "intro",
+            "applied": true,
+            "depth": 0,
+            "retrieval_id": null
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "apply _root_.Core.InitStatesNodup",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "apply _root_.Core.InitStatesNotDefined",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "apply _root_.Core.UpdateStatesNotDefMonotone'",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "intro",
+            "applied": true,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "apply _root_.Core.InitStatesNodup",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "apply _root_.Core.InitStatesNotDefined",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "apply _root_.Core.UpdateStatesNotDefMonotone'",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "constructor",
+            "applied": true,
+            "depth": 2,
+            "retrieval_id": 1
+          },
+          {
+            "action": "assumption",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.updatedStatesInit",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.InitStatesNodup",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.InitStatesNotDefined",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "apply _root_.Core.UpdateStatesNotDefMonotone'",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "intro",
+            "applied": false,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "constructor",
+            "applied": true,
+            "depth": 3,
+            "retrieval_id": 2
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 1,
+            "retrieval_id": 0
+          },
+          {
+            "action": "constructor",
+            "applied": false,
+            "depth": 0,
+            "retrieval_id": null
+          }
+        ]
+      }
+    }
+  ],
+  "evidence_mode": "local_lean",
+  "reserved_processes": 4,
+  "attempted_processes": 4,
+  "application_attempts": 114,
+  "roundtrip_attempts": 0,
+  "search_steps_reserved": 384,
+  "search_steps_observed": 201,
+  "unknown_search_processes": 0,
+  "retrievals_reserved": 128,
+  "retrievals_observed": 27,
+  "wall_seconds": 100.8752
+}

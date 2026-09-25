@@ -1,0 +1,366 @@
+{
+  "schema": "jevops-arena-provisioning-continuation/v1",
+  "observed_at": "2026-09-22T23:08:13.475103+00:00",
+  "workspace": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM",
+  "volume_used_bytes": 20749795328,
+  "available_bytes": 23288516608,
+  "artifacts": {
+    "native-baseline-prepared-2026-09-22.json": {
+      "sha256": "007c3f5b9ed8a5fbfd83215acda9f5a16a3ffdb6824ab8f57dbe68e166ce349b",
+      "bytes": 160829
+    },
+    "native-controlled-core-2026-09-22.json": {
+      "sha256": "a2913da5ce25dccc154b9e8450173935b1243de67f1077537c462d1b788b359f",
+      "bytes": 131988
+    },
+    "native-controlled-core-repair-2026-09-22.json": {
+      "sha256": "089264e5a62509bf6b76c2b7cb643a6c5e096e18f272348608de3f073cf7c9da",
+      "bytes": 94087
+    },
+    "core-hlen2-repair-draft.json": {
+      "sha256": "ca04da2f28c0ee09a4853c2898d86b9c7adfc0d6dfee558dadb304794ffe57b1",
+      "bytes": 2467
+    }
+  },
+  "readiness": {
+    "UNMEASURED": 20,
+    "UNAVAILABLE": 16
+  },
+  "readiness_report": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/readiness-prepared-20-idle.json",
+  "readiness_sha256": "dac06aa66fb8e87509e29c9ce76eb4432ba0964f590ac8323e2f3f0a26636164",
+  "git_head": "2c52171e2f54bfa420177db4338ce29fb3276cb8",
+  "worktree_clean": false,
+  "allowance_bytes": 50000000000,
+  "fixed_image_bytes": 49799999488,
+  "setup_reservation_bytes": 200000000,
+  "build_concurrency": 1,
+  "usage_is_peak": false,
+  "runs": [
+    {
+      "schema": "jevops-arena-preparation/v1",
+      "run_id": "1790115537812057608",
+      "command": [
+        "/bin/bash",
+        "-euc",
+        "git clone --no-hardlinks --no-checkout /home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/leanprover/cslib projects/cslib-v4.33.0-rc2; cd projects/cslib-v4.33.0-rc2; git remote set-url origin https://github.com/leanprover/cslib; git checkout --detach 3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc; mkdir -p .lake/packages; git clone --no-hardlinks --no-checkout /home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/leanprover-community/physlib/.lake/packages/mathlib .lake/packages/mathlib; git -C .lake/packages/mathlib remote set-url origin https://github.com/leanprover-community/mathlib4; git -C .lake/packages/mathlib checkout --detach 51e6992efd06126df61a496bebf8f49482a4e129"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "cleanup": "absent_or_daemon_unavailable",
+      "wall_seconds": 36.44566237705294,
+      "log": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790115537812057608.log",
+      "image_id": "sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517",
+      "network_allowed": false,
+      "build_concurrency": 1,
+      "official_score": null,
+      "volume_capacity_bytes": 49018310656,
+      "volume_used_bytes": 17936551936,
+      "report_sha256": "5f26009908fd8576640aeca8289155476b54512fdb642b282367c67507d43dd8",
+      "log_sha256": "a799a57091c18590ea0c2211973ab572cd94b341dba0246b5a4a2773fb19046d"
+    },
+    {
+      "schema": "jevops-arena-preparation/v1",
+      "run_id": "1790115598989863994",
+      "command": [
+        "/bin/bash",
+        "-euc",
+        "export PATH=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan/toolchains/leanprover--lean4---v4.33.0-rc2/bin:/usr/bin:/bin; export MATHLIB_NO_CACHE_ON_UPDATE=1; mapfile -t modules < <(rg --no-filename --no-line-number \"^(public |private |meta )*import (all )?(Mathlib|Aesop|Batteries|Qq|Plausible|ProofWidgets|LeanSearchClient|ImportGraph)(\\\\.|$)\" Cslib | sed -E \"s/^(public |private |meta )*import (all )?//; s/[[:space:]].*$//\" | sort -u); test \"${#modules[@]}\" -gt 0; lake --no-cache exe cache get \"${modules[@]}\""
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "cleanup": "absent_or_daemon_unavailable",
+      "wall_seconds": 665.029619865003,
+      "log": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790115598989863994.log",
+      "image_id": "sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517",
+      "network_allowed": true,
+      "build_concurrency": 1,
+      "official_score": null,
+      "volume_capacity_bytes": 49018310656,
+      "volume_used_bytes": 20704047104,
+      "report_sha256": "a5035011fb9d394331ea9a77444b897a9170a573f3547cfb7cb0c9baa79ae782",
+      "log_sha256": "aa21b315a9f5d936623a7e2e82ef75ef8c1ed62e786efda42ffa71cb0768edc7"
+    },
+    {
+      "schema": "jevops-arena-preparation/v1",
+      "run_id": "1790116326117401096",
+      "command": [
+        "/usr/bin/env",
+        "PATH=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan/toolchains/leanprover--lean4---v4.33.0-rc2/bin:/usr/bin:/bin",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan/toolchains/leanprover--lean4---v4.33.0-rc2/bin/lake",
+        "--no-cache",
+        "build",
+        "+Cslib.Languages.LambdaCalculus.LocallyNameless.Fsub.Safety:deps",
+        "+Cslib.Languages.CombinatoryLogic.Confluence:deps",
+        "+Cslib.Languages.CCS.BehaviouralTheory:deps"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "cleanup": "absent_or_daemon_unavailable",
+      "wall_seconds": 188.49058202002198,
+      "log": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790116326117401096.log",
+      "image_id": "sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517",
+      "network_allowed": false,
+      "build_concurrency": 1,
+      "official_score": null,
+      "volume_capacity_bytes": 49018310656,
+      "volume_used_bytes": 20749053952,
+      "report_sha256": "ee878b6bbe746889923a44b8f99d5f35ef6aa3d62658de49a07006bee0a37be8",
+      "log_sha256": "1dd1c0bf8c4324cc29f2e31d3869c05322a6cd01b64786de4bfc12d8fc25bb05"
+    }
+  ],
+  "projects_manifest": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects-prepared-20.json",
+  "projects_manifest_sha256": "a7f91757fc6918c506884a03bc7938023fc0672d8f30e3b6d9183802177c62ec",
+  "baseline": {
+    "status": "COMPLETE",
+    "required_version_checks": 36,
+    "verified": 17,
+    "unavailable": 19,
+    "native_processes": 17
+  },
+  "deletion_trial": {
+    "status": "COMPLETE",
+    "native_processes": 36,
+    "verified_controls": 12,
+    "rejected_candidate_checks": 24,
+    "promoted": false,
+    "runner_hash_semantics": "source file at report emission, not loaded-bytecode attestation; minor failure-channel edits during run; native boundary and fixed sources unchanged"
+  },
+  "manual_repair_trial": {
+    "status": "COMPLETE",
+    "native_processes": 24,
+    "verified_controls": 12,
+    "verified_candidate_checks": 12,
+    "required_versions": 3,
+    "repetitions_per_order": 2,
+    "observations": [
+      {
+        "label": "repair-Hlen2-induction-arity",
+        "source_sha256": "3f74af1d98e2cde080156c83f59ecaa01276d6edd43747448d3da86529709105",
+        "provenance": "Manual diagnostic-guided draft: remove Hlen2, its induction-hypothesis argument and the obsolete goal block. Not verified at creation; guided by native-controlled-core-2026-09-22.json.",
+        "status": "MEASURED",
+        "reference_tokens": 224,
+        "candidate_tokens": 216,
+        "length_reduction_pct": 3.57142857142857,
+        "verified_pins": [
+          {
+            "lean_tag": "v4.29.1",
+            "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+          },
+          {
+            "lean_tag": "v4.27.0",
+            "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+          },
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "required_pins": [
+          {
+            "lean_tag": "v4.29.1",
+            "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+          },
+          {
+            "lean_tag": "v4.27.0",
+            "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+          },
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "heartbeat_result": "LOWER_IN_BOTH_ORDERS",
+        "strata": [
+          {
+            "version": {
+              "lean_tag": "v4.29.1",
+              "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+            },
+            "branch_order": "reference-first",
+            "status": "MEASURED",
+            "control_raw": [
+              4227569,
+              4227568
+            ],
+            "candidate_raw": [
+              2625874,
+              2625874
+            ],
+            "control_median_raw": 4227568.5,
+            "candidate_median_raw": 2625874,
+            "paired_savings_raw": [
+              1601695,
+              1601694
+            ],
+            "observed_range_raw": 1,
+            "comparison": "LOWER"
+          },
+          {
+            "version": {
+              "lean_tag": "v4.29.1",
+              "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+            },
+            "branch_order": "candidate-first",
+            "status": "MEASURED",
+            "control_raw": [
+              4227602,
+              4227600
+            ],
+            "candidate_raw": [
+              2625908,
+              2625906
+            ],
+            "control_median_raw": 4227601,
+            "candidate_median_raw": 2625907,
+            "paired_savings_raw": [
+              1601694,
+              1601694
+            ],
+            "observed_range_raw": 2,
+            "comparison": "LOWER"
+          },
+          {
+            "version": {
+              "lean_tag": "v4.27.0",
+              "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+            },
+            "branch_order": "reference-first",
+            "status": "MEASURED",
+            "control_raw": [
+              4657776,
+              4657777
+            ],
+            "candidate_raw": [
+              2732961,
+              2732961
+            ],
+            "control_median_raw": 4657776.5,
+            "candidate_median_raw": 2732961,
+            "paired_savings_raw": [
+              1924815,
+              1924816
+            ],
+            "observed_range_raw": 1,
+            "comparison": "LOWER"
+          },
+          {
+            "version": {
+              "lean_tag": "v4.27.0",
+              "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+            },
+            "branch_order": "candidate-first",
+            "status": "MEASURED",
+            "control_raw": [
+              4657791,
+              4657791
+            ],
+            "candidate_raw": [
+              2732979,
+              2732978
+            ],
+            "control_median_raw": 4657791,
+            "candidate_median_raw": 2732978.5,
+            "paired_savings_raw": [
+              1924812,
+              1924813
+            ],
+            "observed_range_raw": 1,
+            "comparison": "LOWER"
+          },
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "reference-first",
+            "status": "MEASURED",
+            "control_raw": [
+              4689118,
+              4689118
+            ],
+            "candidate_raw": [
+              2701014,
+              2701014
+            ],
+            "control_median_raw": 4689118,
+            "candidate_median_raw": 2701014,
+            "paired_savings_raw": [
+              1988104,
+              1988104
+            ],
+            "observed_range_raw": 0,
+            "comparison": "LOWER"
+          },
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "candidate-first",
+            "status": "MEASURED",
+            "control_raw": [
+              4689131,
+              4689133
+            ],
+            "candidate_raw": [
+              2701027,
+              2701027
+            ],
+            "control_median_raw": 4689132,
+            "candidate_median_raw": 2701027,
+            "paired_savings_raw": [
+              1988104,
+              1988106
+            ],
+            "observed_range_raw": 2,
+            "comparison": "LOWER"
+          }
+        ],
+        "observed_pareto_improvement": true,
+        "statistical_significance_claimed": false,
+        "promoted": false,
+        "official_score": null
+      }
+    ],
+    "automatic_search_discovery": false,
+    "runner_source_unchanged_during_run": true,
+    "promoted": false
+  },
+  "next_baseline": {
+    "status": "RUNNING",
+    "pid_at_observation": 3892731,
+    "max_processes": 3,
+    "only_prepared_project": "cslib v4.33.0-rc2",
+    "output": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/baseline-cslib-rc2.json",
+    "holds_single_build_lock": true,
+    "new_verifications_claimed": 0,
+    "continuous_service": false
+  },
+  "tests": [
+    {
+      "command": "python -m pytest -q --test-seal=off tests/test_arena.py tests/test_arena_prepare.py tests/test_arena_projects.py tests/test_arena_trial.py tests/test_arena_lean.py tests/test_arena_module_audit.py tests/test_seals.py",
+      "passed": 274,
+      "skipped": 99,
+      "wall_seconds": 36.58,
+      "mode": "offline; native cases require explicit opt-in"
+    },
+    {
+      "command": "TMPDIR=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp ELAN_HOME=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan JEVOPS_ARENA_NATIVE_TESTS=1 python -m pytest -q --test-seal=off tests/test_arena_lean.py tests/test_arena_module_audit.py --tb=short",
+      "passed": 124,
+      "skipped": 16,
+      "actual_native_cases": 83,
+      "wall_seconds": 1007.81,
+      "skip_reason": "optional v4.34 toolchain not linked into the isolated Elan home"
+    }
+  ],
+  "full_repository_suite_run": false,
+  "live_model_calls": 0,
+  "official_score": null,
+  "local_combined_pct": null,
+  "limitations": [
+    "One manually repaired warm-up theorem; selected using its own diagnostics, not held out.",
+    "Native heartbeat method has unconfirmed organizer-worker parity; no wall-time speedup or statistical-significance claim.",
+    "Three newly prepared corpus checks still running; 16 other checks still lack environments.",
+    "No continuous optimization loop, training, automatic promotion, shared-checkout mutation, or Git commit/push."
+  ]
+}

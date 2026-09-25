@@ -1,0 +1,14 @@
+{
+  "schema": "jevops-arena-local/v1",
+  "status": "ERROR",
+  "mode": "capture",
+  "ok": false,
+  "evidence_mode": "local_lean",
+  "proof_admitted": false,
+  "whole_source_checked": false,
+  "os_sandbox": false,
+  "reserved_processes": 1,
+  "attempted_processes": 1,
+  "request_sha256": "565191126c6e412c383eb2c064f98d0fa30a81007c96a7754dadf687deed3442",
+  "reason": "ValueError: local driver failed: uncaught exception: trace byte budget\n"
+}

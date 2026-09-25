@@ -1,0 +1,2368 @@
+{
+  "schema": "jevops-local-application-batch/v1",
+  "request": {
+    "schema": "jevops-local-application-request/v1",
+    "record_sha256": "8531dba47f5c2ccb5526c9596f06804c66f4cf6971d1533baf6c1ffb61311625",
+    "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+    "trace_sha256": "934ec923f32397d8fef214eb4d4de2f56911a75dce177e421dd8bc14c8c391d9",
+    "capture_environment": "4f46fb4d6ab4f83f9070d71455908080f6bae95d694a1b3308921a2e6e4f336e",
+    "environment_sha256": "e3d8a124a0c862c7763ad3c899ee130096ba24ee23c6a4b864b563ad881f0900",
+    "origin_sha256": "d7202d8a29ded7650ca11669557444252f907dd6272a912a215e66026d44ef08",
+    "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+    "scope_sha256": "7d0f92cebb68bc6a25c6081adb7cb326ddbde332e4ced9489217c471b4c65da4",
+    "effective_scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+    "declaration": "Core.InitsUpdatesComm",
+    "target": "Core.InitsUpdatesComm",
+    "methods": [
+      "apply_assumption"
+    ],
+    "cap": 1,
+    "top_k": 4,
+    "max_scan": 512,
+    "max_events": 64,
+    "max_query_nodes": 256,
+    "ranking_bytes": 1048576,
+    "feature_method": "goal-and-local-type-constants/v1",
+    "tokenizer_id": "lra-reference-lexical/v1",
+    "strategy": "application-materialization/v1",
+    "max_applications": 4,
+    "span_order": "matching-head-v1",
+    "final_filter": "strictly-fewer-source-tokens/v1",
+    "retrieval": "typed-head-v1",
+    "head_steps": 256,
+    "span_priority": "matching-head-and-at-least-three-tokens/v1",
+    "fallback_every": 4,
+    "request_sha256": "803f0acd12a8234fa5a9eace6ebba2c6fa35b2556798df47e10269ef5e4f1886"
+  },
+  "events": [
+    {
+      "event_id": 2,
+      "event_sha256": "37766966c93e0d0c329ca91059cc20b1949b31c320511d0c38603246c169daa8",
+      "span_tokens": 223,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "6c946b9d6753f1d456aad72337edee3fe7775e189bca72b4e9201cfa6d8a9f40",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore List",
+        "nodes_visited": 126,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "other",
+        "name": null,
+        "arity": 0
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "a860f4fc8832c0b4be6527912b81f8e8e1bbf994f5c56e0a944e2df492a0fb0f",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 11,
+            "score_denominator": 29,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 25,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "score_numerator": 9,
+            "score_denominator": 25,
+            "premise_sha256": "97a8b5090864cf71f955b6732b606665e8c93a03a4a66374a23581456bb994ae",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.UpdateStatesNotDefMonotone'",
+            "score_numerator": 9,
+            "score_denominator": 26,
+            "premise_sha256": "d3060f9310cd5de260607127673ee609e174364be3a6ec5fd5c4821693ccb334",
+            "head_priority": 1
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "other",
+          "name": null,
+          "arity": 0
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 6,
+      "event_sha256": "e8d63db10af7f2d5fd8270d649a4878becb5050ca640e3c498ada07c1dc4b958",
+      "span_tokens": 165,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "45945bfb34f201524002cedd632e05a1907f9c09683c8d61c4cf921b83fd250f",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 166,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "And",
+        "arity": 2
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "And",
+          "arity": 2
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 8,
+      "event_sha256": "ef5afbcc41e748ee5ff37f964d502d13f0d2c3468d28d8c7b3eb7852d469de45",
+      "span_tokens": 152,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "3b9981d2d24462885231f988007df37853e3e57cddc5fac334b3e66707b6a41b",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 166,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "And",
+        "arity": 2
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "And",
+          "arity": 2
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 11,
+      "event_sha256": "ef90cf60b0b0ff18019a912f7a9dfdc4d3126282519c7e8d1ef4d149418658c8",
+      "span_tokens": 126,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "ce9738f3ca4294601675818cbff765fe40455e380b8674a4017cb1800ca3e709",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 146,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "other",
+        "name": null,
+        "arity": 0
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 1
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "other",
+          "name": null,
+          "arity": 0
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 12,
+      "event_sha256": "08506569f9e7e49c1dcb425be728d8d9c87fe3074060028977bc3e97072463ed",
+      "span_tokens": 125,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "ce9738f3ca4294601675818cbff765fe40455e380b8674a4017cb1800ca3e709",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 146,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "other",
+        "name": null,
+        "arity": 0
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 1
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "other",
+          "name": null,
+          "arity": 0
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 13,
+      "event_sha256": "2d0b06ca42353bd955ade4bce77c643962f313c051c3b6500beece344ca23df1",
+      "span_tokens": 94,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "3ea83c3d0684eb23eb1e971c798bb0711e754bbc36badaa7e4103dc631b03471",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 157,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.UpdateState",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStateUpdate",
+            "score_numerator": 4,
+            "score_denominator": 17,
+            "premise_sha256": "ca010bb5ef427223648e706b68bf40c332ac287162f72a2219b7b0bd580187ce",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.UpdateState",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 14,
+      "event_sha256": "16239c9a33bd3577211e82dc1a82435e03353eb318e3b2be3a3f6a595bad47a9",
+      "span_tokens": 52,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "5a95edd3758fb33d2d62221e84748b6c8d433d0177cd96df0f9c1270b171acce",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedState Core.updatedStates Core.updatedStates' Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length List.zip Nat",
+        "nodes_visited": 164,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.UpdateState",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "29d1900e47c3f5a6363af611af5d52afd419424bb0a229d073a3c26842075359",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStateUpdate",
+            "score_numerator": 5,
+            "score_denominator": 19,
+            "premise_sha256": "ca010bb5ef427223648e706b68bf40c332ac287162f72a2219b7b0bd580187ce",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 43,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 5,
+            "score_denominator": 18,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 13,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.UpdateState",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 17,
+      "event_sha256": "b56c01e52403b8bcd8b639e508bb28d7c6b30dc42bbe64143551309b7bd0967b",
+      "span_tokens": 34,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "0f958e1bcb10bbdc4889bbda4f091ff28b926795934075f8603707d1bd2e23ab",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedState Core.updatedStates Core.updatedStates' Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length List.zip Nat Option Option.some",
+        "nodes_visited": 179,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.UpdateState",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "95ee9c39b07fd24403aa2f2662d25d71228c9da43a0b80353f9046f43e148701",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStateUpdate",
+            "score_numerator": 4,
+            "score_denominator": 13,
+            "premise_sha256": "ca010bb5ef427223648e706b68bf40c332ac287162f72a2219b7b0bd580187ce",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 6,
+            "score_denominator": 23,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 10,
+            "score_denominator": 39,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 11,
+            "score_denominator": 43,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.UpdateState",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 20,
+      "event_sha256": "1ec08a2e8fffb9da0a64bf482ca9d210b18664235fd18fc54860fdd324047f92",
+      "span_tokens": 30,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "45f3458d82f82ce48b58f9f6bba35e4d21c79e4d2370d589772e03a6d2e83ebc",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedState Core.updatedStates Core.updatedStates' Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length List.zip Nat Option Option.some",
+        "nodes_visited": 179,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.UpdateState",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "95ee9c39b07fd24403aa2f2662d25d71228c9da43a0b80353f9046f43e148701",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStateUpdate",
+            "score_numerator": 4,
+            "score_denominator": 13,
+            "premise_sha256": "ca010bb5ef427223648e706b68bf40c332ac287162f72a2219b7b0bd580187ce",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 6,
+            "score_denominator": 23,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 10,
+            "score_denominator": 39,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 11,
+            "score_denominator": 43,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.UpdateState",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 26,
+      "event_sha256": "9bb714a0e48f22d0be86edf59eedc69ba86b465631a7fc21ce8fac042520f3cc",
+      "span_tokens": 29,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "87f84162d0cd6899d4b331a138ef5390cf2c238ac8cc786f362ee34c20a39a00",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.instMembership List.length List.unzip Membership.mem Nat Not Prod.fst",
+        "nodes_visited": 170,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Not",
+        "arity": 1
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "db062fc075b157c73e88417d2cb5fef8924c42fcac04be3f48db82673b74e487",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 6,
+            "score_denominator": 23,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 10,
+            "score_denominator": 39,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 14,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 43,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Not",
+          "arity": 1
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 27,
+      "event_sha256": "bb49ab5ff4621d800b61f0a347ea5cf655823ac5f7aa6ae4dd7bdbfca358aa38",
+      "span_tokens": 28,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "87f84162d0cd6899d4b331a138ef5390cf2c238ac8cc786f362ee34c20a39a00",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.instMembership List.length List.unzip Membership.mem Nat Not Prod.fst",
+        "nodes_visited": 170,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Not",
+        "arity": 1
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "db062fc075b157c73e88417d2cb5fef8924c42fcac04be3f48db82673b74e487",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 6,
+            "score_denominator": 23,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 10,
+            "score_denominator": 39,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 14,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 43,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Not",
+          "arity": 1
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 4,
+      "event_sha256": "8cfc483af8526ec99672e6c60d1754479f7f6c69cd0b5b3fc4a341c0145799b5",
+      "span_tokens": 20,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "64eb5f5bf3e1cd178be2a4dd097adaf24c072862db90a0cf264023ccb0db38c0",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.isDefined List List.length List.nil Nat",
+        "nodes_visited": 131,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "And",
+        "arity": 2
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "e9722569e4312b904222ab241670e0bd222baf8bb35c213b076eac9638693362",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 35,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 32,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "score_numerator": 9,
+            "score_denominator": 32,
+            "premise_sha256": "97a8b5090864cf71f955b6732b606665e8c93a03a4a66374a23581456bb994ae",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStatesNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "d3060f9310cd5de260607127673ee609e174364be3a6ec5fd5c4821693ccb334",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "And",
+          "arity": 2
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 31,
+      "event_sha256": "3c144f5fee367810d26546c3c5861a4ffdf1101c2f8ba7b7418a33563a6d7ab5",
+      "span_tokens": 20,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "2927ef35b918a42f099013fb5fed5c47e224e81139dfbeacb8140c7c9808d352",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 157,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Core.UpdateStates",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Core.UpdateStates",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 32,
+      "event_sha256": "922e8c7ff7db8e5c312bf6175a82575a3344d67a1911bec9a96d9bb0ac73d1b5",
+      "span_tokens": 19,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "2927ef35b918a42f099013fb5fed5c47e224e81139dfbeacb8140c7c9808d352",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 157,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Core.UpdateStates",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Core.UpdateStates",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 9,
+      "event_sha256": "2b59d0dfca3f3a59ac16ac429c56f013bfbb2ca8d9337749318064ccf11c6d2b",
+      "span_tokens": 17,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "7f365f2f9f1cf9809d414c32404ec739b964f0985d2347e9015929dae7043972",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 146,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "other",
+        "name": null,
+        "arity": 0
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 1
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "other",
+          "name": null,
+          "arity": 0
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 22,
+      "event_sha256": "5ca5216ac8aba2d052df283e2f0d0c491a50fdfaf4c7da9e67bb8473b5f50d52",
+      "span_tokens": 11,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "b2c271e1a4429ebecf31a391140c4015cece0f4cacb9ccae517b2cd42ed9e09e",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined Imperative.isNotDefined List List.cons List.length Nat Option Option.some",
+        "nodes_visited": 166,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.isNotDefined",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "0b603894fd55c0a1bc0000a6d0969d65957b9b7c12edd8e845f53567f8911134",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 11,
+            "score_denominator": 36,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "score_numerator": 11,
+            "score_denominator": 37,
+            "premise_sha256": "97a8b5090864cf71f955b6732b606665e8c93a03a4a66374a23581456bb994ae",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStatesNotDefMonotone'",
+            "score_numerator": 11,
+            "score_denominator": 38,
+            "premise_sha256": "d3060f9310cd5de260607127673ee609e174364be3a6ec5fd5c4821693ccb334",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 7,
+            "score_denominator": 20,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.isNotDefined",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 33,
+      "event_sha256": "3d924389aeb8bb181b879d7fb7564d56eca91ef7461d4ebacdbfc3ee75c808aa",
+      "span_tokens": 8,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "31b2701384d7827cbffb831ec420b3c2b43b06cb5a153ed88482bdebe2f26a3d",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 146,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.isDefined",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 34,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.isDefined",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 28,
+      "event_sha256": "e1ab26f3d9073d1805d003e86f0e629586e2c5ad71611dd95fea6a8c669c9446",
+      "span_tokens": 6,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "08b40cb563f6489028ef515ba8c73f477c2286a141a33f49534ac2e95782cd22",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 157,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Eq",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 1,
+            "score_denominator": 4,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Eq",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 15,
+      "event_sha256": "a7f687207f7e4f0198c94798914959f17fcdbdec1cb1448c1f82f34b495b5308",
+      "span_tokens": 5,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "df5bf8f2def2bdc77842441d6cd57d9f854f3e3f01137860f3a3e8dcc37090ff",
+        "query": "And Bool Bool.false Bool.true Core.InitStates Core.UpdateStates Core.updatedState Core.updatedStates Core.updatedStates' Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length List.zip Nat Option Option.none",
+        "nodes_visited": 179,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.UpdateState",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "d071b0e329ec2e838b2e4dd838df0752fe107c043ee2c824c9b16636f59b6d86",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStateUpdate",
+            "score_numerator": 5,
+            "score_denominator": 23,
+            "premise_sha256": "ca010bb5ef427223648e706b68bf40c332ac287162f72a2219b7b0bd580187ce",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 4,
+            "score_denominator": 17,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 5,
+            "score_denominator": 22,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 9,
+            "score_denominator": 47,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.UpdateState",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 24,
+      "event_sha256": "430a7bfa8cd6895103d6d2cd744513df78c9104a2c03bf797afebc4704dc0bbe",
+      "span_tokens": 4,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "e79db16a5af19cf98f641277fbf797bcd74345de8224d609d9ee3c41e471006f",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.Nodup List.cons List.length Nat Option Option.some",
+        "nodes_visited": 165,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "List.Nodup",
+        "arity": 2
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "00cfb545d7c41de3086f2790b350b7fded1d40729acaf298113dec486a7361a2",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 5,
+            "score_denominator": 19,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 13,
+            "score_denominator": 41,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 2,
+            "score_denominator": 7,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 11,
+            "score_denominator": 39,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "List.Nodup",
+          "arity": 2
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 10,
+      "event_sha256": "f3a2e115d332457de6a85cc0e600634c41c76031589e8f812188d8a49ba063a7",
+      "span_tokens": 3,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "28de4a62c9ddfe364ef2f2e5d135bfdd78e1074c5e7e7fd43a0e97da9dc7c964",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.Nodup List.cons List.length Nat",
+        "nodes_visited": 148,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "List.Nodup",
+        "arity": 2
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "92868c89b963fe4694d80a67050e56b5cb085c3c74953d161f84d3976750f1aa",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 2,
+            "score_denominator": 7,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 13,
+            "score_denominator": 38,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 5,
+            "score_denominator": 16,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 9,
+            "score_denominator": 35,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "List.Nodup",
+          "arity": 2
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 23,
+      "event_sha256": "6180aeb35146c16a7bdb5fe4d3e365210822ebaf1459bf76042d3079e649bff9",
+      "span_tokens": 3,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "1335a8b305bc7743cc352dd941649d99f751ff437b1708db90a7d64035de58df",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined Imperative.isNotDefined List List.cons List.length Nat Option Option.some",
+        "nodes_visited": 166,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.isNotDefined",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "0b603894fd55c0a1bc0000a6d0969d65957b9b7c12edd8e845f53567f8911134",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 11,
+            "score_denominator": 36,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "score_numerator": 11,
+            "score_denominator": 37,
+            "premise_sha256": "97a8b5090864cf71f955b6732b606665e8c93a03a4a66374a23581456bb994ae",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStatesNotDefMonotone'",
+            "score_numerator": 11,
+            "score_denominator": 38,
+            "premise_sha256": "d3060f9310cd5de260607127673ee609e174364be3a6ec5fd5c4821693ccb334",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 7,
+            "score_denominator": 20,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.isNotDefined",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 25,
+      "event_sha256": "bcac71f0d87278cddb1cdd6efcaab41ce1a69ac73c031cb77816fdbd5ec63a8a",
+      "span_tokens": 3,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "e79db16a5af19cf98f641277fbf797bcd74345de8224d609d9ee3c41e471006f",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.Nodup List.cons List.length Nat Option Option.some",
+        "nodes_visited": 165,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "List.Nodup",
+        "arity": 2
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "00cfb545d7c41de3086f2790b350b7fded1d40729acaf298113dec486a7361a2",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 5,
+            "score_denominator": 19,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 13,
+            "score_denominator": 41,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 2,
+            "score_denominator": 7,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 11,
+            "score_denominator": 39,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "List.Nodup",
+          "arity": 2
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "matching-head"
+    },
+    {
+      "event_id": 35,
+      "event_sha256": "6ad83819ce1cd08bf5c30847d57c3c8944c0029b473a6479ee8242f1126c10fe",
+      "span_tokens": 2,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "3274e0263a4fcfa5b56db18ad7dc68c4446671759022dbf9767aa0d794dea860",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 149,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Eq",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 1,
+            "score_denominator": 4,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Eq",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 5,
+      "event_sha256": "670669eb22e84eb56e620d5a5ecb1d6f0d89841dc04bb111c306a3bf638a2bc2",
+      "span_tokens": 1,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "e0f6c29dfbd3a2defb7af0c0568cc9fec01d920948d9699c4be95e30b61b2673",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.isDefined List List.nil",
+        "nodes_visited": 113,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Core.UpdateStates",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "43bb8bd83383e09741f3a1b4ba1d3255aedc5c3eee05d9ada733bb61894acd91",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 29,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "score_numerator": 9,
+            "score_denominator": 29,
+            "premise_sha256": "97a8b5090864cf71f955b6732b606665e8c93a03a4a66374a23581456bb994ae",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStatesNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 10,
+            "premise_sha256": "d3060f9310cd5de260607127673ee609e174364be3a6ec5fd5c4821693ccb334",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Core.UpdateStates",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 16,
+      "event_sha256": "3d3d12bb0502031c515634892e015668c57dee5b3f922816f67091f173191221",
+      "span_tokens": 1,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "df5bf8f2def2bdc77842441d6cd57d9f854f3e3f01137860f3a3e8dcc37090ff",
+        "query": "And Bool Bool.false Bool.true Core.InitStates Core.UpdateStates Core.updatedState Core.updatedStates Core.updatedStates' Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length List.zip Nat Option Option.none",
+        "nodes_visited": 179,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Imperative.UpdateState",
+        "arity": 5
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "d071b0e329ec2e838b2e4dd838df0752fe107c043ee2c824c9b16636f59b6d86",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStateUpdate",
+            "score_numerator": 5,
+            "score_denominator": 23,
+            "premise_sha256": "ca010bb5ef427223648e706b68bf40c332ac287162f72a2219b7b0bd580187ce",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 4,
+            "score_denominator": 17,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 5,
+            "score_denominator": 22,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 9,
+            "score_denominator": 47,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Imperative.UpdateState",
+          "arity": 5
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 21,
+      "event_sha256": "68d36c51f89ea1e72f939535c09475969bed6d71e4e24e8afd06c9704b057e3c",
+      "span_tokens": 1,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "f39419a0233ec685dd300135aae39aa948990bedb89d14e76c26bc78f119ef35",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat Option Option.some",
+        "nodes_visited": 170,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Eq",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "b648bdad3c4468e4a032150a6f45eb62c45316fdc1fb348980542f41bf0759ba",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 11,
+            "score_denominator": 37,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 10,
+            "score_denominator": 33,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 3,
+            "score_denominator": 10,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStateUpdate",
+            "score_numerator": 2,
+            "score_denominator": 7,
+            "premise_sha256": "ca010bb5ef427223648e706b68bf40c332ac287162f72a2219b7b0bd580187ce",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Eq",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 29,
+      "event_sha256": "21856db730df444f36d810cfc0b441e8247f7940bc01afc22dbd1699052fb990",
+      "span_tokens": 1,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "08b40cb563f6489028ef515ba8c73f477c2286a141a33f49534ac2e95782cd22",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 157,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Eq",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 1,
+            "score_denominator": 4,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Eq",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 30,
+      "event_sha256": "c996d7efd89268096d3e7d513e5760a2dc0b56eccedb9524a85b653a2ca2aec8",
+      "span_tokens": 1,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "0747b414cbc1ae52677e49036e63e72d885b0f5de198dda4ec054aa8e20629a5",
+        "query": "And Bool Bool.true Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists False Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState List List.instMembership List.length Membership.mem Nat Option Option.isSome Option.none",
+        "nodes_visited": 178,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "False",
+        "arity": 0
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "079a696725155587dadd376995bdd366ac0f6a1922a5db890f2450abe6ac34eb",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 6,
+            "score_denominator": 23,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 14,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 9,
+            "score_denominator": 43,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "score_numerator": 9,
+            "score_denominator": 43,
+            "premise_sha256": "97a8b5090864cf71f955b6732b606665e8c93a03a4a66374a23581456bb994ae",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "False",
+          "arity": 0
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 34,
+      "event_sha256": "f7b78d8b76d3d6fb8cbefcb633cee0e589a55bff24b557b622a4fcdef1e22e79",
+      "span_tokens": 1,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "e98b565530b08d776d0f765dad2d30b6ac06b7bedfd4536f53af96e71713cd5c",
+        "query": "And Bool Bool.true Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState List List.instMembership List.length Membership.mem Nat Option.isSome",
+        "nodes_visited": 176,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "other",
+        "name": null,
+        "arity": 0
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "15cece825861306f27ee2fab837140dd0e3aeabc1e3a8884a0747f1dba9eb0a7",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 2,
+            "score_denominator": 7,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 9,
+            "score_denominator": 38,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.InitStatesNodup",
+            "score_numerator": 3,
+            "score_denominator": 13,
+            "premise_sha256": "02c25e111c46f211175dbf1dfb77805a289109d2e77e4261af895af774d85206",
+            "head_priority": 1
+          },
+          {
+            "name": "Core.InitStatesNotDefined",
+            "score_numerator": 3,
+            "score_denominator": 13,
+            "premise_sha256": "97a8b5090864cf71f955b6732b606665e8c93a03a4a66374a23581456bb994ae",
+            "head_priority": 1
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "other",
+          "name": null,
+          "arity": 0
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    },
+    {
+      "event_id": 36,
+      "event_sha256": "a356f2d885bc3d9d89e8aa1897378c1fbaa6ba4dcc8f7d93c9f78d0058d3498c",
+      "span_tokens": 1,
+      "status": "RANKED",
+      "observation": {
+        "feature_method": "goal-and-local-type-constants/v1",
+        "state_sha256": "3274e0263a4fcfa5b56db18ad7dc68c4446671759022dbf9767aa0d794dea860",
+        "query": "And Core.InitStates Core.UpdateStates Core.updatedStates Eq Exists Imperative.PureExpr Imperative.PureExpr.Expr Imperative.PureExpr.Ident Imperative.SemanticStore Imperative.UpdateState Imperative.isDefined List List.cons List.length Nat",
+        "nodes_visited": 149,
+        "status": "READY"
+      },
+      "goal_head": {
+        "kind": "const",
+        "name": "Eq",
+        "arity": 3
+      },
+      "ranking": {
+        "schema": "jevops-premise-ranking/v2",
+        "index_sha256": "041e381bf03a3137c9899b1cebca0eebaacd4f735bae8f317247359829edb8bf",
+        "feature_method": "raw-conclusion-head-priority/v1",
+        "scope_sha256": "40b810ae936d89ae0ca3fdef6decaa21eeece8fa51767204824e879b742ac183",
+        "goal_sha256": "2c5360e9f765a5d5941f28abe4bb339d218adcced83ace107a0fb77fa9aec2bc",
+        "target": "Core.InitsUpdatesComm",
+        "top_k": 4,
+        "max_scan": 512,
+        "considered": 8,
+        "status": "RANKED",
+        "matches": [
+          {
+            "name": "Core.InitStatesSomeMonotone",
+            "score_numerator": 1,
+            "score_denominator": 4,
+            "premise_sha256": "e8503f90a0eb2bc37b412534013aab353dce467533aa9356a37a61ced1e8f257",
+            "head_priority": 0
+          },
+          {
+            "name": "Core.UpdateStateDefined'",
+            "score_numerator": 1,
+            "score_denominator": 3,
+            "premise_sha256": "4c33f4b43d0e79c7563fd25a86373503e3c8c8c8e8ea5fb3999e4eb80224a1c6",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.updatedStatesInit",
+            "score_numerator": 12,
+            "score_denominator": 37,
+            "premise_sha256": "24716ef798cff069098aff427fd0a55744ccb63c51bce4a760ce4434dde61c7b",
+            "head_priority": 2
+          },
+          {
+            "name": "Core.UpdateStateNotDefMonotone'",
+            "score_numerator": 3,
+            "score_denominator": 11,
+            "premise_sha256": "f5b16f2ac8c98b2f7306a9bcc733adc96554a1484777a41b51da74f27c80d2ac",
+            "head_priority": 2
+          }
+        ],
+        "excluded": [],
+        "proof_verified": false,
+        "conclusion": {
+          "kind": "const",
+          "name": "Eq",
+          "arity": 3
+        },
+        "fallback_slots": 1
+      },
+      "span_priority": "fallback"
+    }
+  ],
+  "proposals": [],
+  "drafts": [],
+  "origins": [],
+  "base_tokens": 224,
+  "policy": "typed-head-then-native-application/v1",
+  "status": "ABSTAINED",
+  "truncated": true,
+  "native_verifier_calls": 4,
+  "external_calls_attempted": 0,
+  "proof_verified": false,
+  "proof_admitted": false,
+  "whole_source_checked": false,
+  "fresh_verification_required": true,
+  "training_enabled": false,
+  "promoted": false,
+  "official_score": null,
+  "applications": [
+    {
+      "event_id": 13,
+      "premise": "Core.updatedStateUpdate"
+    },
+    {
+      "event_id": 14,
+      "premise": "Core.updatedStateUpdate"
+    },
+    {
+      "event_id": 17,
+      "premise": "Core.updatedStateUpdate"
+    },
+    {
+      "event_id": 2,
+      "premise": "Core.updatedStatesInit"
+    }
+  ],
+  "attempts": [
+    {
+      "event_id": 13,
+      "premise": "Core.updatedStateUpdate",
+      "status": "NO_CHECKED_CLOSURE",
+      "closing_reproduced": false,
+      "receipt_sha256": "72f1c9a750c9adc89429771ecee28f46438085e704da6b2856b63a93691053e9",
+      "binding": {
+        "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "trace_sha256": "934ec923f32397d8fef214eb4d4de2f56911a75dce177e421dd8bc14c8c391d9",
+        "dependency_environment_sha256": "e3d8a124a0c862c7763ad3c899ee130096ba24ee23c6a4b864b563ad881f0900",
+        "exporter_sha256": "17690bee6bf665d383df7b7ba5c45ab64e61ea0a85f9bc36384d55e328b2428c",
+        "event_id": 13,
+        "candidate_sha256": "bee31e9ad04ec12ac7c8a60e05d0cd453c1c443c69e49b540652fd49f69bdaa0",
+        "node_budget": 4096,
+        "event_budget": 256,
+        "operation": "application-materialization/v1",
+        "premise": "Core.updatedStateUpdate"
+      },
+      "baseline_outcome": {
+        "axioms": [
+          "Quot.sound",
+          "Classical.choice",
+          "propext"
+        ],
+        "closed_goals_checked": "1",
+        "remaining_goals": "0",
+        "status": "closed_kernel_checked"
+      },
+      "search_outcome": {
+        "axioms": [],
+        "closed_goals_checked": "0",
+        "reason": "Tactic `apply` failed: could not unify the conclusion of `@Core.updatedStateUpdate`\n  Imperative.UpdateState ?P ?σ ?h ?v (Core.updatedState ?σ ?h ?v)\nwith the goal\n  Imperative.UpdateState P (Core.updatedStates σ ks' vs') x v (Core.updatedStates σ₀ ks' vs')\n\nNote: The full type of `@Core.updatedStateUpdate` is\n  ∀ {P : Imperative.PureExpr} {σ : Imperative.SemanticStore P} {h : P.Ident} {v v' : P.Expr},\n    σ h = some v' → Imperative.UpdateState P σ h v (Core.updatedState σ h v)\n\ncase refine_2.a\nP : Imperative.PureExpr\nσ✝ σ' : Imperative.SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : Imperative.SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : Imperative.SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : Imperative.SemanticStore P\nHup : Imperative.UpdateState P σ x v σ₀\nHups : Core.UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : Imperative.SemanticStore P},\n    Core.InitStates σ₁ ks' vs' σ'' →\n      Imperative.isDefined σ₁ xs →\n        xs.length = vs.length →\n          ",
+        "remaining_goals": null,
+        "status": "rejected"
+      },
+      "roundtrip_outcome": null
+    },
+    {
+      "event_id": 14,
+      "premise": "Core.updatedStateUpdate",
+      "status": "NO_CHECKED_CLOSURE",
+      "closing_reproduced": false,
+      "receipt_sha256": "70cfa3a87ba80ca57067b43731dc5656e070ce7968cdf3a1c18053f5cc58616b",
+      "binding": {
+        "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "trace_sha256": "934ec923f32397d8fef214eb4d4de2f56911a75dce177e421dd8bc14c8c391d9",
+        "dependency_environment_sha256": "e3d8a124a0c862c7763ad3c899ee130096ba24ee23c6a4b864b563ad881f0900",
+        "exporter_sha256": "17690bee6bf665d383df7b7ba5c45ab64e61ea0a85f9bc36384d55e328b2428c",
+        "event_id": 14,
+        "candidate_sha256": "bee31e9ad04ec12ac7c8a60e05d0cd453c1c443c69e49b540652fd49f69bdaa0",
+        "node_budget": 4096,
+        "event_budget": 256,
+        "operation": "application-materialization/v1",
+        "premise": "Core.updatedStateUpdate"
+      },
+      "baseline_outcome": {
+        "axioms": [
+          "Quot.sound",
+          "propext",
+          "Classical.choice"
+        ],
+        "closed_goals_checked": "1",
+        "remaining_goals": "0",
+        "status": "closed_kernel_checked"
+      },
+      "search_outcome": {
+        "axioms": [],
+        "closed_goals_checked": "0",
+        "reason": "Tactic `assumption` failed\n\ncase refine_2.a.a\nP : Imperative.PureExpr\nσ✝ σ' : Imperative.SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : Imperative.SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : Imperative.SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : Imperative.SemanticStore P\nHup : Imperative.UpdateState P σ x v σ₀\nHups : Core.UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : Imperative.SemanticStore P},\n    Core.InitStates σ₁ ks' vs' σ'' →\n      Imperative.isDefined σ₁ xs →\n        xs.length = vs.length →\n          Core.updatedStates σ₀ ks' vs' = Core.updatedStates σ₀ ks' vs' ∧\n            Core.InitStates σ₀ ks' vs' (Core.updatedStates σ₀ ks' vs') ∧\n              Core.UpdateStates (Core.updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : Imperative.SemanticStore P\nHinit : Core.InitStates σ₁ ks' vs' σ''\nHk : Imperative.isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ Core.updatedStates' σ (ks'.zip vs') x = some ?refine_2.a.v'",
+        "remaining_goals": null,
+        "status": "rejected"
+      },
+      "roundtrip_outcome": null
+    },
+    {
+      "event_id": 17,
+      "premise": "Core.updatedStateUpdate",
+      "status": "NO_CHECKED_CLOSURE",
+      "closing_reproduced": false,
+      "receipt_sha256": "c1ad153e82aa5fb5b993482d490a54a46fdf285f41e344528a8cba6a84c228f6",
+      "binding": {
+        "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "trace_sha256": "934ec923f32397d8fef214eb4d4de2f56911a75dce177e421dd8bc14c8c391d9",
+        "dependency_environment_sha256": "e3d8a124a0c862c7763ad3c899ee130096ba24ee23c6a4b864b563ad881f0900",
+        "exporter_sha256": "17690bee6bf665d383df7b7ba5c45ab64e61ea0a85f9bc36384d55e328b2428c",
+        "event_id": 17,
+        "candidate_sha256": "bee31e9ad04ec12ac7c8a60e05d0cd453c1c443c69e49b540652fd49f69bdaa0",
+        "node_budget": 4096,
+        "event_budget": 256,
+        "operation": "application-materialization/v1",
+        "premise": "Core.updatedStateUpdate"
+      },
+      "baseline_outcome": {
+        "axioms": [
+          "propext",
+          "Quot.sound",
+          "Classical.choice"
+        ],
+        "closed_goals_checked": "1",
+        "remaining_goals": "0",
+        "status": "closed_kernel_checked"
+      },
+      "search_outcome": {
+        "axioms": [],
+        "closed_goals_checked": "0",
+        "reason": "Tactic `assumption` failed\n\ncase h_1.a\nP : Imperative.PureExpr\nσ✝ σ' : Imperative.SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : Imperative.SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : Imperative.SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : Imperative.SemanticStore P\nHup : Imperative.UpdateState P σ x v σ₀\nHups : Core.UpdateStates σ₀ xs vs σ₁\nσ'' : Imperative.SemanticStore P\nx✝ : Option P.Expr\nval✝ : P.Expr\nih :\n  ∀ {σ'' : Imperative.SemanticStore P},\n    Core.InitStates σ₁ ks' vs' σ'' →\n      Imperative.isDefined σ₁ xs → Core.InitStates σ₀ ks' vs' (Core.updatedStates σ₀ ks' vs')\nHinit : Core.InitStates σ₁ ks' vs' σ''\nHk : Imperative.isDefined σ₁ (x :: xs)\nHlen2 : xs.length = vs.length\nheq✝ : σ x = some val✝\n⊢ Core.updatedStates' σ (ks'.zip vs') x = some ?h_1.v'",
+        "remaining_goals": null,
+        "status": "rejected"
+      },
+      "roundtrip_outcome": null
+    },
+    {
+      "event_id": 2,
+      "premise": "Core.updatedStatesInit",
+      "status": "NO_CHECKED_CLOSURE",
+      "closing_reproduced": false,
+      "receipt_sha256": "fbb9a5fd94160c4405572b1e2540a9e7ac7205045f36a780741a46a9548e1685",
+      "binding": {
+        "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "trace_sha256": "934ec923f32397d8fef214eb4d4de2f56911a75dce177e421dd8bc14c8c391d9",
+        "dependency_environment_sha256": "e3d8a124a0c862c7763ad3c899ee130096ba24ee23c6a4b864b563ad881f0900",
+        "exporter_sha256": "17690bee6bf665d383df7b7ba5c45ab64e61ea0a85f9bc36384d55e328b2428c",
+        "event_id": 2,
+        "candidate_sha256": "4d794a26513ece86e0f9b766847d2e81ab4edfb7451f89ab64127fc3d0080607",
+        "node_budget": 4096,
+        "event_budget": 256,
+        "operation": "application-materialization/v1",
+        "premise": "Core.updatedStatesInit"
+      },
+      "baseline_outcome": {
+        "axioms": [
+          "Quot.sound",
+          "propext",
+          "Classical.choice"
+        ],
+        "closed_goals_checked": "1",
+        "remaining_goals": "0",
+        "status": "closed_kernel_checked"
+      },
+      "search_outcome": {
+        "axioms": [],
+        "closed_goals_checked": "0",
+        "reason": "Tactic `apply` failed: could not unify the conclusion of `@Core.updatedStatesInit`\n  Imperative.isNotDefined ?σ ?hs → List.Nodup ?hs → Core.InitStates ?σ ?hs ?vs (Core.updatedStates ?σ ?hs ?vs)\nwith the goal\n  Core.UpdateStates σ ks vs σ' →\n    Core.InitStates σ' ks' vs' σ'' →\n      ∃ σ₁, σ₁ = Core.updatedStates σ ks' vs' ∧ Core.InitStates σ ks' vs' σ₁ ∧ Core.UpdateStates σ₁ ks vs σ''\n\nNote: The full type of `@Core.updatedStatesInit` is\n  ∀ {P : Imperative.PureExpr} {σ : Imperative.SemanticStore P} {hs : List P.Ident} {vs : List P.Expr},\n    hs.length = vs.length →\n      Imperative.isNotDefined σ hs → hs.Nodup → Core.InitStates σ hs vs (Core.updatedStates σ hs vs)\n\nP : Imperative.PureExpr\nσ σ' σ'' : Imperative.SemanticStore P\nks ks' : List P.Ident\nvs vs' : List P.Expr\n⊢ Core.UpdateStates σ ks vs σ' →\n    Core.InitStates σ' ks' vs' σ'' →\n      ∃ σ₁, σ₁ = Core.updatedStates σ ks' vs' ∧ Core.InitStates σ ks' vs' σ₁ ∧ Core.UpdateStates σ₁ ks vs σ''",
+        "remaining_goals": null,
+        "status": "rejected"
+      },
+      "roundtrip_outcome": null
+    }
+  ],
+  "evidence_mode": "local_lean",
+  "reserved_processes": 4,
+  "attempted_processes": 4,
+  "application_attempts": 4,
+  "roundtrip_attempts": 0,
+  "wall_seconds": 115.8572
+}

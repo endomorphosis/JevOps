@@ -1,0 +1,157 @@
+{
+  "schema": "jevops-solver-nomination-diagnostics/v1",
+  "scope": "historical consistency and discovery diagnostics only",
+  "proof_verified": false,
+  "fresh_native_processes": 0,
+  "official_score": null,
+  "arms": {
+    "dual-first": {
+      "tokens": [
+        185,
+        197
+      ],
+      "raw_heartbeats": [
+        2324400,
+        2274909
+      ],
+      "token_increase_pct": 6.486486486486487,
+      "heartbeat_reduction_pct": 2.129194630872483,
+      "nomination_normalized_gain": {
+        "numerator": -96087,
+        "denominator": 2205200
+      },
+      "nomination_gain_negative": true,
+      "parser_rejections": [
+        {
+          "attempt": 2,
+          "kind": "solver-suggestion",
+          "errors": [
+            {
+              "position": {
+                "column": 10,
+                "line": 9
+              },
+              "message": "unexpected identifier; expected command"
+            }
+          ],
+          "source_sha256": "5889ad90dc84d261cbc535ba2f79c90914d142eb904c4e76739eddf4ffaef351"
+        },
+        {
+          "attempt": 3,
+          "kind": "solver-suggestion",
+          "errors": [
+            {
+              "position": {
+                "column": 10,
+                "line": 9
+              },
+              "message": "unexpected identifier; expected command"
+            }
+          ],
+          "source_sha256": "1c13c5bda5083fc472b094e005462cb1df68e3871d8c44a6aa9c3dc98a2ccf0e"
+        }
+      ],
+      "retained_replacements": [
+        "        simp_all only [forall_const, imp_false, implies_true, List.mem_append, true_or]\n"
+      ],
+      "attempt_outcomes": [
+        "VERIFIED",
+        "VERIFIED",
+        "REJECTED",
+        "REJECTED",
+        "VERIFIED",
+        "VERIFIED",
+        "REJECTED",
+        "VERIFIED"
+      ],
+      "omitted": {
+        "byte_limit": 0,
+        "draft_limit": 0,
+        "duplicate": 0,
+        "not_shorter": 0,
+        "query_sites": 16,
+        "state_limit": 0,
+        "support_windows": 0,
+        "unsupported": 0
+      }
+    },
+    "aggregate": {
+      "tokens": [
+        185,
+        197
+      ],
+      "raw_heartbeats": [
+        2324397,
+        2274903
+      ],
+      "token_increase_pct": 6.486486486486487,
+      "heartbeat_reduction_pct": 2.1293264446650033,
+      "nomination_normalized_gain": {
+        "numerator": -6245458,
+        "denominator": 143337815
+      },
+      "nomination_gain_negative": true,
+      "parser_rejections": [
+        {
+          "attempt": 2,
+          "kind": "solver-suggestion",
+          "errors": [
+            {
+              "position": {
+                "column": 10,
+                "line": 9
+              },
+              "message": "unexpected identifier; expected command"
+            }
+          ],
+          "source_sha256": "5889ad90dc84d261cbc535ba2f79c90914d142eb904c4e76739eddf4ffaef351"
+        },
+        {
+          "attempt": 3,
+          "kind": "solver-suggestion",
+          "errors": [
+            {
+              "position": {
+                "column": 10,
+                "line": 9
+              },
+              "message": "unexpected identifier; expected command"
+            }
+          ],
+          "source_sha256": "1c13c5bda5083fc472b094e005462cb1df68e3871d8c44a6aa9c3dc98a2ccf0e"
+        }
+      ],
+      "retained_replacements": [
+        "        simp_all only [forall_const, imp_false, implies_true, List.mem_append, true_or]\n"
+      ],
+      "attempt_outcomes": [
+        "VERIFIED",
+        "VERIFIED",
+        "REJECTED",
+        "REJECTED",
+        "VERIFIED",
+        "VERIFIED",
+        "REJECTED",
+        "VERIFIED"
+      ],
+      "omitted": {
+        "byte_limit": 0,
+        "draft_limit": 0,
+        "duplicate": 0,
+        "not_shorter": 0,
+        "query_sites": 16,
+        "state_limit": 0,
+        "support_windows": 0,
+        "unsupported": 0
+      }
+    }
+  },
+  "checks": {
+    "plan_identity": true,
+    "resource_ledger": true,
+    "native_count": true,
+    "no_selection": true,
+    "same_work_and_outcomes": true
+  },
+  "status": "CONSISTENT"
+}

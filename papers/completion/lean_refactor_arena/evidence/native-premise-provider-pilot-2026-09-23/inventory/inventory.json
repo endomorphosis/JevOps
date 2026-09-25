@@ -1,0 +1,38 @@
+{
+  "schema": "jevops-premise-index/v1",
+  "environment_sha256": "9d58b293589edfa5b65145b8e5b18f69f5a672aadb5b0372d8d94c21716b162b",
+  "premises": [
+    {
+      "name": "CallElimCorrect.List.Subset.app",
+      "type_text": "∀ {α : Type u_1} {a c b : List α}, a.Subset c → b.Subset c → (a ++ b).Subset c",
+      "origin": "Strata@451e5f047bafa010d178856db76c00029bfa4d7f/prefix",
+      "split": "library",
+      "aliases": [],
+      "dependencies": []
+    },
+    {
+      "name": "CallElimCorrect.List.Subset.trans",
+      "type_text": "∀ {α : Type u_1} {a b c : List α}, a.Subset b → b.Subset c → a.Subset c",
+      "origin": "Strata@451e5f047bafa010d178856db76c00029bfa4d7f/prefix",
+      "split": "library",
+      "aliases": [],
+      "dependencies": []
+    },
+    {
+      "name": "List.Subset.empty",
+      "type_text": "∀ {α : Type u_1} {s : List α}, [].Subset s",
+      "origin": "Strata@451e5f047bafa010d178856db76c00029bfa4d7f/library",
+      "split": "library",
+      "aliases": [],
+      "dependencies": []
+    },
+    {
+      "name": "List.Subset.refl",
+      "type_text": "∀ {α : Type u_1} (l : List α), l ⊆ l",
+      "origin": "Lean@v4.26.0/stdlib",
+      "split": "library",
+      "aliases": [],
+      "dependencies": []
+    }
+  ]
+}

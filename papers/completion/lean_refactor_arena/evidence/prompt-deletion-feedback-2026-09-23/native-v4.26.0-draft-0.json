@@ -1,0 +1,23 @@
+{
+  "pin": {
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+  },
+  "label": "draft-0",
+  "source_sha256": "d3b0f4b8ccc3fd6339156b886fa9567a690edf54d4e7165bd0bbc1aee07e458d",
+  "status": "REJECTED",
+  "receipt": {
+    "request_id": "47655eaacd49becf31b7c4243771472f3dadcb29a0d575bc6be33b0a0a9c2cc9",
+    "candidate_sha256": "d3b0f4b8ccc3fd6339156b886fa9567a690edf54d4e7165bd0bbc1aee07e458d",
+    "target": "Core.InitsUpdatesComm",
+    "outcome": "REJECTED",
+    "type_preserved": false,
+    "exit_code": 0,
+    "axiom_output": "",
+    "heartbeats": null,
+    "reason": "candidate_errors",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"1da12f411b31bbf7e4a4cfcc39fd4026d97fc23385d4115a4567722241340710\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"`simp` made no progress\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":5345.328}"
+  },
+  "context_id": "7296a0c77c98e61824bc027ca3ef68966fc4a840bc433d6a9c41267893d579a7",
+  "wall_seconds": 7.7188
+}

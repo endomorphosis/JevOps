@@ -1,0 +1,539 @@
+{
+  "schema": "jevops-arena-native-readiness/v1",
+  "required_version_checks": 36,
+  "completed_version_checks": 3,
+  "official_score": null,
+  "rows": [
+    {
+      "name": "CallElimCorrect.substOldPostSubset",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "CallElimCorrect.extractedOldExprInVars",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "lean_tag": "v4.29.1",
+      "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "lean_tag": "v4.27.0",
+      "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "fundamental_theorem_of_variational_calculus'",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "FieldSpecification.WickAlgebra.\u03b9_timeOrderF_superCommuteF_eq_time",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "320661a170ad994e2e8df85a0efc3cf91064b930cce8b54e0a9fe4d5ec6682f4",
+        "candidate_sha256": "e8b89255b06b284c8a4f4ba9a140c458d8c4640f63014c9c0037585855039be7",
+        "target": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress' depends on axioms: [propext, Quot.sound, Classical.choice]",
+        "heartbeats": 60077,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"71baa6bdd8012480e2de4092c13484bb5b7fd6f9a8b48a85eac642491817e9e9\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8b18978322de05a8f3dba51ef03cf5461676c17\",\"lean_version\":\"4.33.0-rc2\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":60077,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":60077555,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"reference_heartbeats\":60077,\"reference_raw_heartbeats\":60077644,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":207289.993}"
+      },
+      "context": {
+        "problem": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+        "statement": "lemma Typing.progress (der : Typing [] t \u03c4) : t.Value \u2228 \u2203 t', t \u2b62\u03b2\u1d5b t'",
+        "reference_source": "lemma Typing.progress (der : Typing [] t \u03c4) : t.Value \u2228 \u2203 t', t \u2b62\u03b2\u1d5b t' := by\n  generalize eq : [] = \u0393 at der\n  have der' : Typing \u0393 t \u03c4 := der\n  induction der <;> subst eq\n  case var mem => grind\n  case app t\u2081 _ _ t\u2082 l r ih_l ih_r =>\n    right\n    cases ih_l rfl l with\n    | inl val_l =>\n        cases ih_r rfl r with\n        | inl val_r =>\n            have \u27e8\u03c3, t\u2081, eq\u27e9 := l.canonical_form_abs val_l\n            exists t\u2081 ^\u1d57\u1d57 t\u2082\n            grind\n        | inr red_r =>\n            obtain \u27e8t\u2082', _\u27e9 := red_r\n            exists t\u2081.app t\u2082'\n            grind\n    | inr red_l =>\n        obtain \u27e8t\u2081', _\u27e9 := red_l\n        exists t\u2081'.app t\u2082\n        grind\n  case tapp \u03c3' der _ ih =>\n    right\n    specialize ih rfl der\n    cases ih with\n    | inl val =>\n        obtain \u27e8_, t, _\u27e9 := der.canonical_form_tabs val\n        exists t ^\u1d57\u1d5e \u03c3'\n        grind\n    | inr red =>\n        obtain \u27e8t', _\u27e9 := red\n        exists .tapp t' \u03c3'\n        grind\n  case let' t\u2081 \u03c3 t\u2082 \u03c4 L der _ ih _ =>\n    right\n    cases ih rfl der with\n    | inl _ =>\n        exists t\u2082 ^\u1d57\u1d57 t\u2081\n        grind\n    | inr red =>\n        obtain \u27e8t\u2081', _\u27e9 := red\n        exists t\u2081'.let' t\u2082\n        grind\n  case inl der _ ih =>\n    cases (ih rfl der) with\n    | inl val => grind\n    | inr red =>\n        right\n        obtain \u27e8t', _\u27e9 := red\n        exists .inl t'\n        grind\n  case inr der _ ih =>\n    cases (ih rfl der) with\n    | inl val => grind\n    | inr red =>\n        right\n        obtain \u27e8t', _\u27e9 := red\n        exists .inr t'\n        grind\n  case case t\u2081 _ _ t\u2082 _ t\u2083 _ der _ _ ih _ _ =>\n    right\n    cases ih rfl der with\n    | inl val =>\n        have \u27e8t\u2081, lr\u27e9 := der.canonical_form_sum val\n        cases lr <;> [exists t\u2082 ^\u1d57\u1d57 t\u2081; exists t\u2083 ^\u1d57\u1d57 t\u2081] <;> grind\n    | inr red =>\n        obtain \u27e8t\u2081', _\u27e9 := red\n        exists t\u2081'.case t\u2082 t\u2083\n        grind\n  case sub => grind\n  case abs \u03c3 _ \u03c4 L _ _=>\n    left\n    constructor\n    apply LC.abs L\n    \u00b7 grind only [\u2192 wf, cases Term.LC]\n    \u00b7 grind only [\u2192 wf]\n  case tabs L _ _=>\n    left\n    constructor\n    apply LC.tabs L\n    \u00b7 grind only [\u2192 wf, cases Term.LC]\n    \u00b7 grind only [\u2192 wf]",
+        "reference_length": 408,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.33.0-rc2",
+            "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc"
+          }
+        ],
+        "dependency_digests": [
+          "71baa6bdd8012480e2de4092c13484bb5b7fd6f9a8b48a85eac642491817e9e9"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/leanprover/cslib",
+        "file_path": "Cslib/Languages/LambdaCalculus/LocallyNameless/Fsub/Safety.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "599659317cc1a35f9dad2d067350816e568b0ba109f7604b30bed77fdc93eb55"
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "d1939d98a74a4972295afeb75ed046e89624f659ba13fddf3261734ba9ead2df",
+        "candidate_sha256": "35f528e8e77dceff098e735cfb0ee98ea989fecca8258a7d59632f211cc5ffdc",
+        "target": "Cslib.SKI.parallelReduction_diamond",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Cslib.SKI.parallelReduction_diamond' depends on axioms: [Classical.choice, propext, Quot.sound]",
+        "heartbeats": 1647,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"e2accd739cff76ce650bc0d491a47c2e3fb645fb0247e9fb29a65c00de56d470\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8b18978322de05a8f3dba51ef03cf5461676c17\",\"lean_version\":\"4.33.0-rc2\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Classical.choice\",\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":1647,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":1647169,\"reason\":\"\",\"reference_axioms\":[\"Classical.choice\",\"propext\",\"Quot.sound\"],\"reference_heartbeats\":1647,\"reference_raw_heartbeats\":1647646,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":168593.561}"
+      },
+      "context": {
+        "problem": "Cslib.SKI.parallelReduction_diamond",
+        "statement": "theorem parallelReduction_diamond : Diamond ParallelReduction",
+        "reference_source": "theorem parallelReduction_diamond : Diamond ParallelReduction := by\n  intro a a\u2081 a\u2082 h\u2081 h\u2082\n  cases h\u2081\n  case refl => exact \u27e8a\u2082, h\u2082, .refl a\u2082\u27e9\n  case par a a' b b' ha' hb' =>\n    cases h\u2082\n    case refl =>\n      use a' \u2b1d b'\n      exact \u27e8.refl (a' \u2b1d b'), .par ha' hb'\u27e9\n    case par a'' b'' ha'' hb'' =>\n      let \u27e8a\u2083, ha\u27e9 := parallelReduction_diamond ha' ha''\n      let \u27e8b\u2083, hb\u27e9 := parallelReduction_diamond hb' hb''\n      use a\u2083 \u2b1d b\u2083\n      constructor\n      \u00b7 exact .par ha.1 hb.1\n      \u00b7 exact .par ha.2 hb.2\n    case red_I =>\n      rw [I_irreducible a' ha']\n      use b', .red_I b'\n    case red_K =>\n      let \u27e8a\u2082', ha\u2082'\u27e9 := Ka_irreducible a\u2082 a' ha'\n      rw [ha\u2082'.2]\n      use a\u2082'\n      exact \u27e8.red_K a\u2082' b', ha\u2082'.1\u27e9\n    case red_S a c =>\n      let \u27e8a'', c', h\u27e9 := Sab_irreducible a c a' ha'\n      rw [h.2.2]\n      use a'' \u2b1d b' \u2b1d (c' \u2b1d b'), .red_S a'' c' b'\n      apply ParallelReduction.par <;>\n        apply ParallelReduction.par <;>\n        grind\n  case red_I =>\n    cases h\u2082\n    case refl => use a\u2081; exact \u27e8.refl a\u2081, .red_I a\u2081\u27e9\n    case par c a\u2081' hc ha =>\n      rw [I_irreducible c hc]\n      use a\u2081'\n      exact \u27e8ha, .red_I a\u2081'\u27e9\n    case red_I => use a\u2081; exact \u27e8.refl a\u2081, .refl a\u2081\u27e9\n  case red_K c =>\n    cases h\u2082\n    case refl => use a\u2081; exact \u27e8.refl a\u2081, .red_K a\u2081 c\u27e9\n    case par a' c' ha hc =>\n      let \u27e8a\u2081', h'\u27e9 := Ka_irreducible a\u2081 a' ha\n      rw [h'.2]\n      use a\u2081'\n      exact \u27e8h'.1, .red_K a\u2081' c'\u27e9\n    case red_K =>\n      use a\u2081; exact \u27e8.refl a\u2081, .refl a\u2081\u27e9\n  case red_S a b c =>\n    cases h\u2082\n    case refl =>\n      use a \u2b1d c \u2b1d (b \u2b1d c)\n      exact \u27e8.refl _, .red_S ..\u27e9\n    case par d c' hd hc =>\n      let \u27e8a', b', h\u27e9 := Sab_irreducible a b d hd\n      rw [h.2.2]\n      use a' \u2b1d c' \u2b1d (b' \u2b1d c')\n      constructor\n      \u00b7 apply ParallelReduction.par\n        \u00b7 exact .par h.left hc\n        \u00b7 exact .par h.2.1 hc\n      \u00b7 exact .red_S ..\n    case red_S => exact \u27e8a \u2b1d c \u2b1d (b \u2b1d c), .refl _, .refl _,\u27e9",
+        "reference_length": 407,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.33.0-rc2",
+            "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc"
+          }
+        ],
+        "dependency_digests": [
+          "e2accd739cff76ce650bc0d491a47c2e3fb645fb0247e9fb29a65c00de56d470"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/leanprover/cslib",
+        "file_path": "Cslib/Languages/CombinatoryLogic/Confluence.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "c49993a13865d015869f74ac7b17e618619ba2a3884ddef772b109882e76dd61"
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.30.0",
+      "git_commit": "c7944a9fb44c3298f1a960a5e574ab23a6ab8ed5",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "cab3fcd7aa5fa9406d55e15e8732975153234e94416963b5f51458cfcbd9791f",
+        "candidate_sha256": "90ec3fb53d6c4e9485868b3d1f1bceac5de6abc8b429d456281744fd1b0fa828",
+        "target": "Cslib.CCS.bisimilarity_congr_choice",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Cslib.CCS.bisimilarity_congr_choice' depends on axioms: [Classical.choice, propext, Quot.sound]",
+        "heartbeats": 4023,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d4a3fb466bcd4d522fb7d50d2c027e589f5f8667e9b144ebdea3d165dd9c808e\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8b18978322de05a8f3dba51ef03cf5461676c17\",\"lean_version\":\"4.33.0-rc2\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Classical.choice\",\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":4023,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4023993,\"reason\":\"\",\"reference_axioms\":[\"Classical.choice\",\"propext\",\"Quot.sound\"],\"reference_heartbeats\":4024,\"reference_raw_heartbeats\":4024005,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":157085.182}"
+      },
+      "context": {
+        "problem": "Cslib.CCS.bisimilarity_congr_choice",
+        "statement": "theorem bisimilarity_congr_choice :\n    (p ~[lts (defs := defs)] q) \u2192 (choice p r) ~[lts (defs := defs)] (choice q r)",
+        "reference_source": "theorem bisimilarity_congr_choice :\n    (p ~[lts (defs := defs)] q) \u2192 (choice p r) ~[lts (defs := defs)] (choice q r) := by\n  intro h\n  exists @ChoiceBisim _ _ defs\n  constructor\n  \u00b7 constructor; assumption\n  intro s1 s2 r \u03bc\n  constructor\n  case left =>\n    intro s1' htr\n    cases r\n    case choice p q r hbisim =>\n      obtain \u27e8rel, hr, hb\u27e9 := hbisim\n      cases htr\n      case choiceL a b c htr =>\n        obtain \u27e8s2', htr2, hr2\u27e9 := hb.follow_fst hr htr\n        exists s2'\n        constructor\n        \u00b7 apply Tr.choiceL htr2\n        \u00b7 constructor\n          apply hb.le_bisimilarity _ _ hr2\n      case choiceR a b c htr =>\n        exists s1'\n        constructor\n        \u00b7 apply Tr.choiceR htr\n        \u00b7 constructor\n          apply HomBisimilarity.refl\n    case bisim hbisim =>\n      obtain \u27e8rel, hr, hb\u27e9 := hbisim\n      obtain \u27e8s2', htr2, hr2\u27e9 := hb.follow_fst hr htr\n      exists s2'\n      constructor\n      \u00b7 assumption\n      constructor\n      apply hb.le_bisimilarity _ _ hr2\n  case right =>\n    intro s2' htr\n    cases r\n    case choice p q r hbisim =>\n      obtain \u27e8rel, hr, hb\u27e9 := hbisim\n      cases htr\n      case choiceL a b c htr =>\n        obtain \u27e8s1', htr1, hr1\u27e9 := hb.follow_snd hr htr\n        exists s1'\n        constructor\n        \u00b7 apply Tr.choiceL htr1\n        \u00b7 constructor\n          apply hb.le_bisimilarity _ _ hr1\n      case choiceR a b c htr =>\n        exists s2'\n        constructor\n        \u00b7 apply Tr.choiceR htr\n        \u00b7 constructor\n          apply HomBisimilarity.refl\n    case bisim hbisim =>\n      obtain \u27e8rel, hr, hb\u27e9 := hbisim\n      obtain \u27e8s1', htr1, hr1\u27e9 := hb.follow_snd hr htr\n      exists s1'\n      constructor\n      \u00b7 assumption\n      \u00b7 constructor\n        apply hb.le_bisimilarity _ _ hr1",
+        "reference_length": 251,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.33.0-rc2",
+            "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc"
+          }
+        ],
+        "dependency_digests": [
+          "d4a3fb466bcd4d522fb7d50d2c027e589f5f8667e9b144ebdea3d165dd9c808e"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/leanprover/cslib",
+        "file_path": "Cslib/Languages/CCS/BehaviouralTheory.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "ecf0aab2fae4cfc6c20d51c7ab01af067a9874b421fe95fe4721495c29c17409"
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.28.0",
+      "git_commit": "673fa440714eb1949b8b50a28f2a4f52b1837e9b",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_a4",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_a4",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_a4",
+      "lean_tag": "v4.27.0",
+      "git_commit": "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_b2",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_b2",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1995_a3",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1995_a3",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1995_a3",
+      "lean_tag": "v4.27.0",
+      "git_commit": "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    }
+  ],
+  "projects": [
+    {
+      "repository": "https://github.com/leanprover/cslib",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.33.0-rc2",
+      "kind": "repo",
+      "resolve_lake_manifest": true
+    }
+  ],
+  "corpus_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+  "processes": 3,
+  "measurement": "command-elaboration-internal-heartbeats-div-1000/v1",
+  "local_combined_pct": null,
+  "worker_metric_parity": "UNCONFIRMED",
+  "fingerprint_file_reads": 272095,
+  "fingerprint_stat_hits": 56,
+  "live_model_calls": 0
+}

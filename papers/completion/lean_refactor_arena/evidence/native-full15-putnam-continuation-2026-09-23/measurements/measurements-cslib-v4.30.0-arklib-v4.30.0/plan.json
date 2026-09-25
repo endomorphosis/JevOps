@@ -1,0 +1,69 @@
+{
+  "schema": "jevops-arena-native-continuation-plan/v1",
+  "jobs": [
+    {
+      "name": "cslib-v4.30.0",
+      "binding": {
+        "repository": "https://github.com/leanprover/cslib",
+        "lean_tag": "v4.30.0",
+        "git_commit": "c7944a9fb44c3298f1a960a5e574ab23a6ab8ed5",
+        "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0",
+        "kind": "repo",
+        "resolve_lake_manifest": true
+      }
+    },
+    {
+      "name": "arklib-v4.30.0",
+      "binding": {
+        "repository": "https://github.com/Verified-zkEVM/ArkLib",
+        "lean_tag": "v4.30.0",
+        "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+        "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0",
+        "kind": "repo",
+        "resolve_lake_manifest": true
+      },
+      "command": [
+        "/usr/bin/env",
+        "PATH=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan/toolchains/leanprover--lean4---v4.30.0/bin:/usr/bin:/bin",
+        "/usr/bin/python3",
+        "-B",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_exact.py",
+        "--destination",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0",
+        "--tag",
+        "v4.30.0",
+        "--commit",
+        "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+        "--repository",
+        "https://github.com/Verified-zkEVM/ArkLib",
+        "--source",
+        "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib",
+        "--target",
+        "ArkLib.Data.CodingTheory.ProximityGap.DG25.MainResults",
+        "--target",
+        "ArkLib.ProofSystem.Binius.BinaryBasefold.Prelude",
+        "--cache",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0",
+        "--cache",
+        "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib"
+      ],
+      "minimum_free_bytes": 3000000000
+    }
+  ],
+  "previous_baseline": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/full15-benchmark-20260923-IrlqY5/baseline.json",
+  "snapshot_manifest_sha256": "0dc965d987860cfbae9ff470d52f068fb8ac1f081056f5c89d038d91f23203fc",
+  "corpus_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+  "lean_timeout_seconds": 900,
+  "per_environment_wall_timeout_seconds": 5400,
+  "maximum_new_native_processes": 4,
+  "live_model_calls": 0,
+  "training_enabled": false,
+  "isolation": "trusted-local",
+  "additional_build_reports": [
+    {
+      "name": "arklib-v4.30.0",
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790152583426052327.json",
+      "sha256": "cd084bf3b2506e8d333e186df6e6294700bea9f661cf53ecb862d6b586a23835"
+    }
+  ]
+}

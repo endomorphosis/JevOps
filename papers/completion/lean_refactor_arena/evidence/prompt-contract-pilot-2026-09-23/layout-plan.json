@@ -1,0 +1,18 @@
+{
+  "record": {
+    "name": "LayoutRegression",
+    "statement": "theorem LayoutRegression : True \u2227 True",
+    "src": "theorem LayoutRegression : True \u2227 True := by\n  constructor\n  \u00b7 exact True.intro\n  \u00b7 exact True.intro",
+    "version_info": [
+      {
+        "v4.26.0": "layout-regression"
+      }
+    ]
+  },
+  "sources": {
+    "old-strip-reproducer": "theorem LayoutRegression : True \u2227 True := by\nconstructor\n  \u00b7 exact True.intro\n  \u00b7 exact True.intro",
+    "fixed-fence-roundtrip": "theorem LayoutRegression : True \u2227 True := by\n  constructor\n  \u00b7 exact True.intro\n  \u00b7 exact True.intro"
+  },
+  "max_processes": 2,
+  "purpose": "non-Arena layout regression; not model improvement"
+}

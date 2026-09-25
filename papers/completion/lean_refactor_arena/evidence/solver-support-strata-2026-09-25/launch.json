@@ -1,0 +1,45 @@
+{
+  "schema": "jevops-fixed-strata-support-launch/v1",
+  "command": [
+    "/home/barberb/.local/bin/python",
+    "-I",
+    "-B",
+    "-c",
+    "import sys, runpy; from pathlib import Path; sys.path.insert(0, sys.argv[1]); m = runpy.run_path(str(Path(sys.argv[1]) / sys.argv[2])); raise SystemExit(m[\"experiment\"](Path(sys.argv[3]), Path(sys.argv[4])))",
+    "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/solver-support-strata-e5jizgat/source",
+    "papers/completion/lean_refactor_arena/evidence/solver-support-strata-2026-09-25/run_experiment.py",
+    "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/solver-support-strata-e5jizgat/experiment",
+    "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work"
+  ],
+  "run_root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/solver-support-strata-e5jizgat",
+  "created": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "CREATED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/solver-support-strata-e5jizgat/source",
+    "manifest_sha256": "da4a59884768c622ea83341c70a092f31fb918cf29e13ddb00fd8bb17095fbd9",
+    "content_root": "52cb465b9fe737b5e619075f88557799f9fc1a9495b5b9f6757a509d98f4513c",
+    "file_count": 1979,
+    "bytes": 50836200,
+    "proof_verified": false
+  },
+  "before": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/solver-support-strata-e5jizgat/source",
+    "manifest_sha256": "da4a59884768c622ea83341c70a092f31fb918cf29e13ddb00fd8bb17095fbd9",
+    "content_root": "52cb465b9fe737b5e619075f88557799f9fc1a9495b5b9f6757a509d98f4513c",
+    "file_count": 1979,
+    "bytes": 50836200,
+    "proof_verified": false
+  },
+  "free_bytes_before": 814247936,
+  "max_bytes": 50000000000,
+  "native_check_ceiling": 48,
+  "preparation_lock": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/single-build.lock",
+  "os_sandbox": false,
+  "downloads": 0,
+  "builds": 0,
+  "live_model_calls": 0,
+  "promoted": false,
+  "official_score": null
+}

@@ -1,0 +1,168 @@
+{
+  "schema": "jevops-local-premise-pilot/v1",
+  "plan_id": "84fcd6b4bee7bd21afe88042e3e7bee69e81400a69851ce800d676a5216a1295",
+  "status": "COMPLETE",
+  "controls": [
+    {
+      "request_id": "6925fc29cdf85c0ba49bc07ae7e043e44ab6f83bc80185d7233fb67691329390",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4227,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"71a22545bf35442e28aff82ad1637ec389740ded98aacfc9968a6745e06cedd4\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227568,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227600,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":13711.559}"
+    },
+    {
+      "request_id": "acea4cb0bdaf7784a4dfe2b80b793811924fbbf0a64ad226f7dde5a44793af68",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4657,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"83f86dc5ea6b196bd3c05fc51f5517f3b957d9e72c1ee93b13bb36e883a8548d\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657774,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657791,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15829.367}"
+    },
+    {
+      "request_id": "03b74707f18fd0000f73fb7c26f3d13a10c62feb6748ee461ff3d0b2bba82a38",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4689,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"6cbd927056a74a2ba6c6e768bb43daac9254ab048be46e25f66d8d869c7a1cfb\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689118,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689132,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":6955.203}"
+    }
+  ],
+  "screen": [],
+  "families": {
+    "raw": {
+      "drafts": 0,
+      "cap": 1,
+      "verified": 0,
+      "status": "ABSTAINED",
+      "application_attempts": 126,
+      "roundtrip_attempts": 0,
+      "wall_seconds": 98.041,
+      "truncated": true,
+      "search_steps_reserved": 384,
+      "search_steps_observed": 349,
+      "unknown_search_processes": 0,
+      "retrievals_reserved": 128,
+      "retrievals_observed": 47,
+      "discharge_checks_reserved": 1024,
+      "discharge_checks_observed": 310,
+      "discharge_skips": 135,
+      "cycle_checks_reserved": 1024,
+      "cycle_checks_observed": 51,
+      "cycle_prunes": 0,
+      "cycle_nodes_observed": 5090
+    },
+    "observe": {
+      "drafts": 0,
+      "cap": 1,
+      "verified": 0,
+      "status": "ABSTAINED",
+      "application_attempts": 126,
+      "roundtrip_attempts": 0,
+      "wall_seconds": 96.9558,
+      "truncated": true,
+      "search_steps_reserved": 384,
+      "search_steps_observed": 349,
+      "unknown_search_processes": 0,
+      "retrievals_reserved": 128,
+      "retrievals_observed": 47,
+      "discharge_checks_reserved": 1024,
+      "discharge_checks_observed": 310,
+      "discharge_skips": 135,
+      "cycle_checks_reserved": 1024,
+      "cycle_checks_observed": 51,
+      "cycle_prunes": 0,
+      "cycle_nodes_observed": 6862,
+      "cycle_expr_nodes_observed": 6371,
+      "cycle_level_nodes_observed": 491,
+      "cycle_term_dereferences_observed": 277,
+      "cycle_level_dereferences_observed": 0
+    },
+    "guarded": {
+      "drafts": 0,
+      "cap": 1,
+      "verified": 0,
+      "status": "ABSTAINED",
+      "application_attempts": 126,
+      "roundtrip_attempts": 0,
+      "wall_seconds": 102.0877,
+      "truncated": true,
+      "search_steps_reserved": 384,
+      "search_steps_observed": 349,
+      "unknown_search_processes": 0,
+      "retrievals_reserved": 128,
+      "retrievals_observed": 47,
+      "discharge_checks_reserved": 1024,
+      "discharge_checks_observed": 310,
+      "discharge_skips": 135,
+      "cycle_checks_reserved": 1024,
+      "cycle_checks_observed": 51,
+      "cycle_prunes": 0,
+      "cycle_nodes_observed": 6862,
+      "cycle_expr_nodes_observed": 6371,
+      "cycle_level_nodes_observed": 491,
+      "cycle_term_dereferences_observed": 277,
+      "cycle_level_dereferences_observed": 0
+    }
+  },
+  "all_pin_verified": [],
+  "measurement": null,
+  "evidence_mode": "trusted_local_native",
+  "os_sandbox": false,
+  "training": false,
+  "promoted": false,
+  "official_score": null,
+  "model_calls": 0,
+  "api_cost": null,
+  "electricity_cost": null,
+  "reason": "screened_fixed_candidates_no_promotion",
+  "reserved_processes": 19,
+  "native_processes": 19,
+  "charges": [
+    {
+      "label": "control-v4.29.1",
+      "units": 1
+    },
+    {
+      "label": "control-v4.27.0",
+      "units": 1
+    },
+    {
+      "label": "control-v4.26.0",
+      "units": 1
+    },
+    {
+      "label": "all-pin-inventory",
+      "units": 3
+    },
+    {
+      "label": "project-capture",
+      "units": 1
+    },
+    {
+      "label": "raw-application-discovery",
+      "units": 4
+    },
+    {
+      "label": "observe-application-discovery",
+      "units": 4
+    },
+    {
+      "label": "guarded-application-discovery",
+      "units": 4
+    }
+  ],
+  "wall_seconds": 513.9291
+}

@@ -1,0 +1,252 @@
+{
+  "schema": "jevops-arena-report-audit/v1",
+  "status": "CONSISTENT",
+  "checks": {
+    "supported_status": true,
+    "supported_schema": true,
+    "protocol_matches_report": true,
+    "plan_identity": true,
+    "implementation_reported_unchanged": true,
+    "supported_evidence_mode": true,
+    "no_promotion_or_training_claim": true,
+    "selected_matches_screen_analysis": true,
+    "screen.design": true,
+    "screen.record": true,
+    "screen.cache_disabled": true,
+    "screen.runner_identity": true,
+    "screen.mode": true,
+    "screen.receipt_claims": true,
+    "screen.sample_ids_unique": true,
+    "screen.cost_analysis": true,
+    "screen.precommitted_design": true,
+    "screen.invocation_accounting": true,
+    "screen.native_accounting": true,
+    "confirmation.design": true,
+    "confirmation.record": true,
+    "confirmation.cache_disabled": true,
+    "confirmation.runner_identity": true,
+    "confirmation.mode": true,
+    "confirmation.receipt_claims": true,
+    "confirmation.sample_ids_unique": true,
+    "confirmation.cost_analysis": true,
+    "confirmation.fixed_winner": true,
+    "confirmation.design_parameters": true,
+    "confirmation.contexts_match": true,
+    "confirmation.invocation_accounting": true,
+    "confirmation.native_accounting": true,
+    "total_accounting": true,
+    "budget": true,
+    "selection_commitment": true,
+    "confirmation_present": true,
+    "confirmed_gates": true,
+    "recommendation_binding": true,
+    "confirmation_mode": true
+  },
+  "phases": {
+    "screen": {
+      "scheduled": 12,
+      "observed": 12,
+      "statuses": {
+        "VERIFIED": 12
+      },
+      "reported_native_processes": 12,
+      "rows": {
+        "control": {
+          "label": "control",
+          "source_sha256": "9839fbd7f2dedf9c22190403722dc98210c990a14188a042ddf41ab5e050496c",
+          "tokens": 1372,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              27475681,
+              27475681
+            ],
+            [
+              27479265,
+              27479265
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.32.0": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "solver-0": {
+          "label": "solver-0",
+          "source_sha256": "2f89279db2c503d15d2513478675ec4b4276ca70be3cd2274ee148dae3bf78e7",
+          "tokens": 1365,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              27554621,
+              27554621
+            ],
+            [
+              27558205,
+              27558205
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.32.0": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "longer-intermediate": {
+          "label": "longer-intermediate",
+          "source_sha256": "6c63e10bf7734d16f8eaf2aad0bcf6b531ee27ea28c14a706e05ea439016fb37",
+          "tokens": 1377,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              25104564,
+              25104564
+            ],
+            [
+              25108148,
+              25108148
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.32.0": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        }
+      },
+      "strata": [
+        {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+          "branch_order": "reference-first"
+        },
+        {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+          "branch_order": "candidate-first"
+        }
+      ],
+      "selected_vs_incumbent": {
+        "baseline_tokens": 1372,
+        "candidate_tokens": 1377,
+        "mean_raw_heartbeat_reduction_pct": [
+          8.629875270425513,
+          8.628749713647732
+        ]
+      }
+    },
+    "confirmation": {
+      "scheduled": 12,
+      "observed": 12,
+      "statuses": {
+        "VERIFIED": 12
+      },
+      "reported_native_processes": 12,
+      "rows": {
+        "control": {
+          "label": "control",
+          "source_sha256": "9839fbd7f2dedf9c22190403722dc98210c990a14188a042ddf41ab5e050496c",
+          "tokens": 1372,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              27475681,
+              27475681,
+              27475681
+            ],
+            [
+              27479265,
+              27479265,
+              27479265
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.32.0": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "longer-intermediate": {
+          "label": "longer-intermediate",
+          "source_sha256": "6c63e10bf7734d16f8eaf2aad0bcf6b531ee27ea28c14a706e05ea439016fb37",
+          "tokens": 1377,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              25104564,
+              25104564,
+              25104564
+            ],
+            [
+              25108148,
+              25108148,
+              25108148
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.32.0": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        }
+      },
+      "strata": [
+        {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+          "branch_order": "reference-first"
+        },
+        {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+          "branch_order": "candidate-first"
+        }
+      ],
+      "selected_vs_incumbent": {
+        "baseline_tokens": 1372,
+        "candidate_tokens": 1377,
+        "mean_raw_heartbeat_reduction_pct": [
+          8.629875270425513,
+          8.628749713647732
+        ]
+      }
+    }
+  },
+  "proof_verified": false,
+  "fresh_native_processes": 0,
+  "promoted": false,
+  "training_enabled": false,
+  "official_score": null,
+  "reported_selector_status": "CONFIRMED_LOCAL_IMPROVEMENT",
+  "errors": [],
+  "protocol_content_sha256": "66b22d998636e084c36851c5626bc84da23576b18483ae54705d01716859a2d4",
+  "report_content_sha256": "c6657d513e4083335667b70e8ea1500933defdc99f50bf2946c58133a6386ca5",
+  "legacy_policy_defaults_used": false,
+  "problem": "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema",
+  "selected": "longer-intermediate",
+  "objective": "aggregate-local-v1",
+  "reason": "",
+  "reported_counts": {
+    "requests_reserved": 24,
+    "verifier_invocations": 24,
+    "native_processes": 24
+  },
+  "analysis_code_sha256": "bc1e35df92f820366430909e42a45e996b8e0befd10c9ad7bd80fa9a6b737f66",
+  "analysis_code_matches_recorded": true
+}

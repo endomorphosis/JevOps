@@ -1,0 +1,12 @@
+{
+  "request_id": "f91863b43e320960bbb5dba7d3605ad6ff4a21c601194f94a1191212d00a1315",
+  "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+  "target": "Core.InitsUpdatesComm",
+  "outcome": "VERIFIED",
+  "type_preserved": true,
+  "exit_code": 0,
+  "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+  "heartbeats": 4657,
+  "reason": "",
+  "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"de30c22202f4714443ec329bdc9fe32caca4c79982d154e0866d981ad3b29217\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657774,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657791,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":14388.907}"
+}

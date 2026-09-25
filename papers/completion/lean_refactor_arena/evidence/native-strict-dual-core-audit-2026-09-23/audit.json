@@ -1,0 +1,376 @@
+{
+  "schema": "jevops-arena-report-audit/v1",
+  "status": "CONSISTENT",
+  "checks": {
+    "supported_status": true,
+    "supported_schema": true,
+    "protocol_matches_report": true,
+    "plan_identity": true,
+    "implementation_reported_unchanged": true,
+    "supported_evidence_mode": true,
+    "no_promotion_or_training_claim": true,
+    "selected_matches_screen_analysis": true,
+    "screen.design": true,
+    "screen.record": true,
+    "screen.cache_disabled": true,
+    "screen.runner_identity": true,
+    "screen.mode": true,
+    "screen.receipt_claims": true,
+    "screen.sample_ids_unique": true,
+    "screen.cost_analysis": true,
+    "screen.precommitted_design": true,
+    "screen.invocation_accounting": true,
+    "screen.native_accounting": true,
+    "confirmation.design": true,
+    "confirmation.record": true,
+    "confirmation.cache_disabled": true,
+    "confirmation.runner_identity": true,
+    "confirmation.mode": true,
+    "confirmation.receipt_claims": true,
+    "confirmation.sample_ids_unique": true,
+    "confirmation.cost_analysis": true,
+    "confirmation.fixed_winner": true,
+    "confirmation.design_parameters": true,
+    "confirmation.contexts_match": true,
+    "confirmation.invocation_accounting": true,
+    "confirmation.native_accounting": true,
+    "total_accounting": true,
+    "budget": true,
+    "selection_commitment": true,
+    "confirmation_present": true,
+    "confirmed_gates": true,
+    "recommendation_binding": true,
+    "confirmation_mode": true
+  },
+  "phases": {
+    "screen": {
+      "scheduled": 24,
+      "observed": 24,
+      "statuses": {
+        "VERIFIED": 24
+      },
+      "reported_native_processes": 24,
+      "rows": {
+        "control": {
+          "label": "control",
+          "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+          "tokens": 224,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              4227570,
+              4227568
+            ],
+            [
+              4227602,
+              4227603
+            ],
+            [
+              4657774,
+              4657804
+            ],
+            [
+              4657791,
+              4657791
+            ],
+            [
+              4689119,
+              4689124
+            ],
+            [
+              4689131,
+              4689131
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.29.1": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "v4.27.0": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "v4.26.0": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "repair-Hlen2-induction-arity": {
+          "label": "repair-Hlen2-induction-arity",
+          "source_sha256": "3f74af1d98e2cde080156c83f59ecaa01276d6edd43747448d3da86529709105",
+          "tokens": 216,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2625874,
+              2625874
+            ],
+            [
+              2625907,
+              2625906
+            ],
+            [
+              2732961,
+              2732961
+            ],
+            [
+              2732978,
+              2732978
+            ],
+            [
+              2701014,
+              2701014
+            ],
+            [
+              2701027,
+              2701027
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.29.1": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "v4.27.0": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "v4.26.0": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        }
+      },
+      "strata": [
+        {
+          "lean_tag": "v4.29.1",
+          "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9",
+          "branch_order": "reference-first"
+        },
+        {
+          "lean_tag": "v4.29.1",
+          "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9",
+          "branch_order": "candidate-first"
+        },
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d",
+          "branch_order": "reference-first"
+        },
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d",
+          "branch_order": "candidate-first"
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "reference-first"
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "candidate-first"
+        }
+      ],
+      "selected_vs_incumbent": {
+        "baseline_tokens": 224,
+        "candidate_tokens": 216,
+        "mean_raw_heartbeat_reduction_pct": [
+          37.88690379743063,
+          37.88662723139179,
+          41.324929059689055,
+          41.32458927418598,
+          42.39829358228402,
+          42.398133044267695
+        ]
+      }
+    },
+    "confirmation": {
+      "scheduled": 24,
+      "observed": 24,
+      "statuses": {
+        "VERIFIED": 24
+      },
+      "reported_native_processes": 24,
+      "rows": {
+        "control": {
+          "label": "control",
+          "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+          "tokens": 224,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              4227568,
+              4227568
+            ],
+            [
+              4227600,
+              4227600
+            ],
+            [
+              4657775,
+              4657774
+            ],
+            [
+              4657791,
+              4657792
+            ],
+            [
+              4689118,
+              4689118
+            ],
+            [
+              4689131,
+              4689133
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.29.1": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "v4.27.0": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "v4.26.0": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "repair-Hlen2-induction-arity": {
+          "label": "repair-Hlen2-induction-arity",
+          "source_sha256": "3f74af1d98e2cde080156c83f59ecaa01276d6edd43747448d3da86529709105",
+          "tokens": 216,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2625874,
+              2625874
+            ],
+            [
+              2625906,
+              2625906
+            ],
+            [
+              2732961,
+              2732961
+            ],
+            [
+              2732978,
+              2732978
+            ],
+            [
+              2701014,
+              2701014
+            ],
+            [
+              2701027,
+              2701027
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.29.1": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "v4.27.0": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "v4.26.0": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        }
+      },
+      "strata": [
+        {
+          "lean_tag": "v4.29.1",
+          "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9",
+          "branch_order": "reference-first"
+        },
+        {
+          "lean_tag": "v4.29.1",
+          "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9",
+          "branch_order": "candidate-first"
+        },
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d",
+          "branch_order": "reference-first"
+        },
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d",
+          "branch_order": "candidate-first"
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "reference-first"
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "candidate-first"
+        }
+      ],
+      "selected_vs_incumbent": {
+        "baseline_tokens": 224,
+        "candidate_tokens": 216,
+        "mean_raw_heartbeat_reduction_pct": [
+          37.88688910503628,
+          37.88660232756173,
+          41.32474639980961,
+          41.324595572816,
+          42.39825058785043,
+          42.398145328389134
+        ]
+      }
+    }
+  },
+  "proof_verified": false,
+  "fresh_native_processes": 0,
+  "promoted": false,
+  "training_enabled": false,
+  "official_score": null,
+  "reported_selector_status": "CONFIRMED_LOCAL_IMPROVEMENT",
+  "errors": [],
+  "protocol_content_sha256": "07b1835ba351018185056c46f966460be3b32e7010751896b594fbc7eb7dad08",
+  "report_content_sha256": "f471f79c72c1d24bc0f861c319c8947503f681dfc77bd2661d53a32221a697d3",
+  "legacy_policy_defaults_used": false,
+  "problem": "Core.InitsUpdatesComm",
+  "selected": "repair-Hlen2-induction-arity",
+  "objective": "strict-dual-v1",
+  "reason": "",
+  "reported_counts": {
+    "requests_reserved": 48,
+    "verifier_invocations": 48,
+    "native_processes": 48
+  },
+  "analysis_code_sha256": "b6b242e8ce6b68e32714a37cb9ee816132d2857ab8cc76922f57153b0deff36c",
+  "analysis_code_matches_recorded": false
+}

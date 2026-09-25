@@ -1,0 +1,1197 @@
+{
+  "schema": "jevops-arena-native-readiness/v1",
+  "required_version_checks": 36,
+  "completed_version_checks": 17,
+  "official_score": null,
+  "rows": [
+    {
+      "name": "CallElimCorrect.substOldPostSubset",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "9dd488d50ca78b080cc169bfe866e24e1f00257575316f5cc0274a6c0e6d2dc8",
+        "candidate_sha256": "dbdbf6e6ea4e52714e1c16cef7626602865b5f0b737c5397d71c0f6fbfc59fc4",
+        "target": "CallElimCorrect.substOldPostSubset",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.substOldPostSubset' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 5205,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"96643b2572e4660400192af3b09850d87cb4e3a3accaba15802c5bee0825f590\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":5205,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":5205992,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":5206,\"reference_raw_heartbeats\":5206059,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15860.943}"
+      },
+      "context": {
+        "problem": "CallElimCorrect.substOldPostSubset",
+        "statement": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1])",
+        "reference_source": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1]) := by\n  induction post <;> simp [substOld]\n  case fvar =>\n    intros x Hin\n    rename_i m name ty2\n    simp at m\n    simp at name\n    simp at ty2\n\n    simp_all\n  case op =>\n    intros x Hin\n    rename_i m name ty2\n    simp at m\n    simp at name\n    simp at ty2\n    simp_all\n  case const =>\n    intros x Hin\n    rename_i m name\n    simp at m\n    simp_all\n  case bvar =>\n    intros x Hin\n    rename_i m d\n    simp at m\n    simp_all\n  case abs ih =>\n    exact ih\n  case ite cih tih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case app ih1 ih2 =>\n    split\n    . split\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n    . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply ih1 <;> assumption\n        intros x Hin\n        simp_all\n        cases Hin <;> simp_all\n      . apply List.Subset.trans\n        apply ih2 <;> assumption\n        intros x Hin\n        simp_all\n  case quant trih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      rename_i m1 k1 ty1 trigger1 e1\n      have assoc := List.append_assoc (Lambda.LExpr.LExpr.getVars trigger1) (Lambda.LExpr.LExpr.getVars e1) [h1]\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+        "reference_length": 313,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "dependency_digests": [
+          "96643b2572e4660400192af3b09850d87cb4e3a3accaba15802c5bee0825f590"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/strata-org/Strata",
+        "file_path": "Strata/Transform/CallElimCorrect.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "b4fa464eb6f18b693d9fd14eab8b5414b125524fd4d8fedd0e010b5a44682d93"
+    },
+    {
+      "name": "CallElimCorrect.extractedOldExprInVars",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "ca5748ee28209141bbdc45bc65ebea525a0d3fba6be99f7c5c64ca744a213cde",
+        "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "target": "CallElimCorrect.extractedOldExprInVars",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 2607,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"f1b9332837a3f289aaf6519f65030deca7ac147f6c73a0bc70dbb232ad4b756a\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607572,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":14120.891}"
+      },
+      "context": {
+        "problem": "CallElimCorrect.extractedOldExprInVars",
+        "statement": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post)",
+        "reference_source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+        "reference_length": 222,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "dependency_digests": [
+          "f1b9332837a3f289aaf6519f65030deca7ac147f6c73a0bc70dbb232ad4b756a"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/strata-org/Strata",
+        "file_path": "Strata/Transform/CallElimCorrect.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "b4c5d6793967ef2677956b9355d0753ae0109ca3ed928b79c4ed00e38134f039"
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "lean_tag": "v4.29.1",
+      "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "ca36db2ffc8ad8c137daf097dcd3fc5bedc244f1c562368001b95f0a0848b7c0",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4227,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"f5029489cb432b39ba658f57934eef73b9f3c171bc9f4b4b398652c2db117013\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227571,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227601,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":13747.949}"
+      },
+      "context": {
+        "problem": "Core.InitsUpdatesComm",
+        "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+        "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+        "reference_length": 224,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.29.1",
+            "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+          }
+        ],
+        "dependency_digests": [
+          "f5029489cb432b39ba658f57934eef73b9f3c171bc9f4b4b398652c2db117013"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/strata-org/Strata",
+        "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "3ae9fdc37ec1316fe7e769f2554f482fc4360eda8d4419cd31dbe61961caf879"
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "lean_tag": "v4.27.0",
+      "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "e01ddf9c3e3b147f6685dbbb9ad1dbb4c5315e3c996aa0a6d99abea017ae6b30",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4657,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"eb41e08da8f4cb927ba189f2c24b65e685e84dcabdfe734af10bfb1bdd62febe\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657774,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657791,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":14366.869}"
+      },
+      "context": {
+        "problem": "Core.InitsUpdatesComm",
+        "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+        "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+        "reference_length": 224,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.27.0",
+            "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+          }
+        ],
+        "dependency_digests": [
+          "eb41e08da8f4cb927ba189f2c24b65e685e84dcabdfe734af10bfb1bdd62febe"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/strata-org/Strata",
+        "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "f207c500bdb70b6846891ba916f981a8e6316390279ef4e1df0690c9f0a07372"
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "7d5fe1becef8fb85c0fee27b6da8e44d6a79d1c8e8b97b4e6df7c4032c619fa6",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4689,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"eaa27a967b541a3ecfcc766ea239f2079d73684f029974ffdea4301832a02a76\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689118,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689131,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":3780.482}"
+      },
+      "context": {
+        "problem": "Core.InitsUpdatesComm",
+        "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+        "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+        "reference_length": 224,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "dependency_digests": [
+          "eaa27a967b541a3ecfcc766ea239f2079d73684f029974ffdea4301832a02a76"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/strata-org/Strata",
+        "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "11b1c455aeebd78091175cbcd5200ae9294acfb9bd27a1667cfbeaec453dbccb"
+    },
+    {
+      "name": "fundamental_theorem_of_variational_calculus'",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "6ef34f36c0b8f5416b3ffde59a4783cd30963222ada276801b70a5a5588dae1f",
+        "candidate_sha256": "ae3a05ebcb1ec68d71b29734366ba8e73e3d3068bcc3a53e5b71ec3990bc84dd",
+        "target": "fundamental_theorem_of_variational_calculus'",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'fundamental_theorem_of_variational_calculus'' depends on axioms: [propext, Quot.sound, Classical.choice]",
+        "heartbeats": 12454,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"4dd41f50f2b13a8f31986040a7709568ff2ce442952c185539efcb2e463739b5\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"8c9756b28d64dab099da31a4c09229a9e6a2ef35\",\"lean_version\":\"4.32.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":12454,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":12454940,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"reference_heartbeats\":12492,\"reference_raw_heartbeats\":12492507,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":18073.833}"
+      },
+      "context": {
+        "problem": "fundamental_theorem_of_variational_calculus'",
+        "statement": "lemma fundamental_theorem_of_variational_calculus' {f : Y \u2192 V}\n    (\u03bc : Measure Y) [IsFiniteMeasureOnCompacts \u03bc] [\u03bc.IsOpenPosMeasure]\n    [OpensMeasurableSpace Y]\n    (hf : Continuous f) (hg : \u2200 g, IsTestFunction g \u2192 \u222b x, \u27eaf x, g x\u27eb_\u211d \u2202\u03bc = 0) :\n    f = 0",
+        "reference_source": "lemma fundamental_theorem_of_variational_calculus' {f : Y \u2192 V}\n    (\u03bc : Measure Y) [IsFiniteMeasureOnCompacts \u03bc] [\u03bc.IsOpenPosMeasure]\n    [OpensMeasurableSpace Y]\n    (hf : Continuous f) (hg : \u2200 g, IsTestFunction g \u2192 \u222b x, \u27eaf x, g x\u27eb_\u211d \u2202\u03bc = 0) :\n    f = 0 := by\n  -- assume \u00ac(f = 0)\n    rw [funext_iff]; by_contra h\u2080\n    obtain \u27e8x\u2080, hx0\u27e9 := not_forall.1 h\u2080\n    simp at hx0 -- hx0 : f x\u2080 \u2260 0\n\n  -- [1] Proof that `f` is continuous at `x\u2080`.\n  -- Embed into the true IP-space `WithLp 2 V`.\n    let f\u2082 : Y \u2192 WithLp 2 V := toL2 \u211d \u2218 f\n    let x\u2082 := f\u2082 x\u2080\n  -- x\u2082 \u2260 0 because `fromL2 (toL2 (f x\u2080)) = f x\u2080`\n    have hx2 : x\u2082 \u2260 0 := by\n      intro h; apply hx0; exact congrArg (fromL2 \u211d) h\n  -- continuity of f\u2082 at x\u2080\n    have hcont\u2082 : ContinuousAt f\u2082 x\u2080 := ((toL2 \u211d).continuous.comp hf).continuousAt\n\n  -- [2] find open neighborhood guaranteeing positive inner product with the center, based on\n  -- which the test function `g` will be constructed.\n  -- pick \u03b4\u2082 so that on B(x\u2080, \u03b4\u2082), \u2016f\u2082 x - x\u2082\u2016 < \u2016x\u2082\u2016/2\n    obtain \u27e8\u03b4\u2082, h\u03b4\u2082_pos, h\u03b4\u2082\u27e9 :=\n    Metric.continuousAt_iff.mp hcont\u2082 (\u2016x\u2082\u2016 / 2)\n      (by simpa [half_pos] using (norm_pos_iff.mpr hx2))\n  -- now the usual \u201cadd & subtract\u201d proof inside WithLp 2 V\n    have inner_pos\u2082 : \u2200 x (hx : x \u2208 Metric.ball x\u2080 \u03b4\u2082), 0 < (\u27eaf\u2082 x, x\u2082\u27eb_\u211d : \u211d) := by\n      intros x hx\n    -- hx : x \u2208 ball x\u2080 \u03b4\u2082, so dist x x\u2080 < \u03b4\u2082, hence\n    -- this is |\u27eau,v\u27eb| \u2264 \u2016u\u2016 * \u2016v\u2016, in the genuine InnerProductSpace on WithLp 2 V\n      have hclose : \u2016f\u2082 x - x\u2082\u2016 < \u2016x\u2082\u2016 / 2 := by\n        convert h\u03b4\u2082 hx using 1\n        exact mem_sphere_iff_norm.mp rfl\n      have hself : \u27eax\u2082, x\u2082\u27eb_\u211d = \u2016x\u2082\u2016^2 := real_inner_self_eq_norm_sq (x\u2082 : WithLp 2 V)\n      -- Cauchy\u2013Schwarz in `WithLp 2 V` bounds the cross term from below\n      have hcs : -(\u2016f\u2082 x - x\u2082\u2016 * \u2016x\u2082\u2016) \u2264 \u27eaf\u2082 x - x\u2082, x\u2082\u27eb_\u211d :=\n        neg_le_of_abs_le (abs_real_inner_le_norm _ _)\n      have hxp : 0 < \u2016x\u2082\u2016 := norm_pos_iff.mpr hx2\n      have inner_eq_self_add_diff : \u27eaf\u2082 x, x\u2082\u27eb_\u211d = \u27eax\u2082, x\u2082\u27eb_\u211d + \u27eaf\u2082 x - x\u2082, x\u2082\u27eb_\u211d := by\n        rw [\u2190 inner_add_left]; simp\n      nlinarith [inner_eq_self_add_diff, hcs, hself, hclose, hxp,\n        mul_lt_mul_of_pos_right hclose hxp]\n  -- pull `inner_pos\u2082` back to V via `fromL2`:\n    have inner_pos_V : \u2200 x \u2208 Metric.ball x\u2080 \u03b4\u2082, 0 < \u27eaf x, f x\u2080\u27eb_\u211d := fun x hx => inner_pos\u2082 x hx\n    -- now we have a genuine positive integrand on a set of positive measure.\n\n  -- [3] `g` construction using bump function.\n    have bump_exists : \u2203 \u03c6 : Y \u2192 \u211d, IsTestFunction \u03c6 \u2227 \u03c6 x\u2080 > 0 \u2227\n        (\u2200 x \u2208 Function.support \u03c6, 0 \u2264 \u03c6 x) \u2227\n        Function.support \u03c6 \u2286 Metric.ball x\u2080 (\u03b4\u2082/2) \u2227\n        (\u2200 x \u2208 Metric.closedBall x\u2080 (\u03b4\u2082/4), 0 < \u03c6 x) := by\n        -- use `hasContDiffBump_of_innerProductSpace`, leveraging `[innerProductSpace Y]`\n          haveI : HasContDiffBump Y := hasContDiffBump_of_innerProductSpace Y\n          let \u03c61 : ContDiffBump x\u2080 :=\n            \u27e8\u03b4\u2082 / 4, \u03b4\u2082 / 2, by positivity, by linarith\u27e9\n          refine \u27e8\u03c61.toFun, \u27e8\u03c61.contDiff, \u03c61.hasCompactSupport\u27e9,\n            \u03c61.pos_of_mem_ball (Metric.mem_ball_self \u03c61.rOut_pos), fun x _ => \u03c61.nonneg,\n            by rw [ContDiffBump.support_eq], fun x hx => \u03c61.pos_of_mem_ball ?_\u27e9\n        -- the closed ball of radius `\u03b4\u2082/4` lies in the open ball of radius `rOut = \u03b4\u2082/2`\n          rw [Metric.mem_closedBall] at hx\n          exact Metric.mem_ball.mpr (lt_of_le_of_lt hx (by show \u03b4\u2082 / 4 < \u03b4\u2082 / 2; linarith))\n    obtain \u27e8\u03c6, h\u03c6_testfun, h\u03c6_pos_x\u2080, h\u03c6_non_neg, h\u03c6_support_subset, h\u03c6_pos_inner\u27e9 :=\n      bump_exists\n  -- Define test function g(x) = \u03c6(x) * f(x\u2080)\n    let g : Y \u2192 V := fun x => \u03c6 x \u2022 f x\u2080\n  -- Show that g is a test function: `\u03c6` is a test function and `f x\u2080` is smooth (constant)\n    have hg_test : IsTestFunction g := IsTestFunction.smul_right h\u03c6_testfun contDiff_const\n\n  -- [4] Derive contradiction. First compute the integral \u222b \u27eaf x, g x\u27eb\n  -- [4.1] \u222b \u03c6 x * \u27eaf x, f x\u2080\u27eb = 0\n    have key_integral := hg g hg_test\n  -- linearity of inner product in the second argument turns the integrand into `\u03c6 x * \u27eaf x, f x\u2080\u27eb`\n    simp only [g, inner_smul_right'] at key_integral\n\n  -- [4.2] 0 < \u222b x, \u03c6 x * \u27eaf x, f x\u2080\u27eb_\u211d \u2202\u03bc. Sketch: on the support of \u03c6 (which is contained in\n  -- B(x\u2080, \u03b4/2) \u2286 B(x\u2080, \u03b4)), we have \u27eaf x, f x\u2080\u27eb > \u2016f x\u2080\u2016\u00b2/2 > 0 by our choice of \u03b4.\n  -- Since \u03c6 is nonnegative on its support and positive somewhere, this gives the contradiction.\n\n  -- [4.2.1] Integrability of the integrand: `integrable_prod` .\n    have support_subset : Function.support \u03c6 \u2286 Metric.ball x\u2080 \u03b4\u2082 :=\n      h\u03c6_support_subset.trans (Metric.ball_subset_ball (by linarith))\n    have supp_subset2 : Function.support (fun x => \u03c6 x * \u27eaf x, f x\u2080\u27eb_\u211d) \u2286 Function.support \u03c6 := by\n      intro x hprod h\u03c60\n    -- if \u03c6 x = 0 then \u03c6 x * inner = 0, contradiction\n      simp [h\u03c60] at hprod\n    have hinner_cont : Continuous (fun x => \u27eaf x, f x\u2080\u27eb_\u211d) :=\n      Continuous.inner' (f : Y \u2192 V) (fun _ => f x\u2080) hf continuous_const\n    have integrable_prod :\n      Integrable (fun x => \u03c6 x * \u27eaf x, f x\u2080\u27eb_\u211d) \u03bc :=\n    -- (i) build a `HasCompactSupport` witness for the product\n      (Continuous.mul h\u03c6_testfun.smooth.continuous hinner_cont).integrable_of_hasCompactSupport\n        (h\u03c6_testfun.supp.mono supp_subset2)\n\n  -- [4.2.2] Nonnegativity everywhere (`h_nonneg`)\n    have h_nonneg : \u2200 x, 0 \u2264 \u03c6 x * \u27eaf x, f x\u2080\u27eb_\u211d := by\n      intro x\n      by_cases hx : x \u2208 Function.support \u03c6\n      \u00b7 -- on the support, \u03c6 \u2265 0 and \u27eaf x, f x\u2080\u27eb > 0\n        exact mul_nonneg (h\u03c6_non_neg x hx) (inner_pos_V x (support_subset hx)).le\n      \u00b7 -- off the support, \u03c6 x = 0 so the product is 0\n        simp [Function.notMem_support.mp hx]\n\n  -- [4.2.3] That closed ball has positive measure, and is contained in the support\n    -- every nonempty open set has positive measure\n    have h\u03bc_ball : 0 < \u03bc (Metric.ball x\u2080 (\u03b4\u2082/4)) :=\n      Metric.isOpen_ball.measure_pos \u03bc (Metric.nonempty_ball.mpr (by linarith))\n    have h\u03bc : 0 < \u03bc (Metric.closedBall x\u2080 (\u03b4\u2082/4)) :=\n      lt_of_lt_of_le h\u03bc_ball (measure_mono Metric.ball_subset_closedBall)\n    have closedBall_subset_support :\n        Metric.closedBall x\u2080 (\u03b4\u2082/4)\n          \u2286 Function.support (fun x => \u03c6 x * \u27eaf x, f x\u2080\u27eb_\u211d) := by\n        intro x hx\n        have h\u03c6x := h\u03c6_pos_inner x hx\n        have hin : 0 < \u27eaf x, f x\u2080\u27eb_\u211d :=\n          inner_pos_V x (Metric.closedBall_subset_ball (by linarith) hx)\n        simp only [Function.support_mul, Set.mem_inter_iff, Function.mem_support, ne_eq]\n        constructor\n        \u00b7 linarith\n        \u00b7 linarith\n\n  -- [4.2.4] putting everything together: positivity contradicts `key_integral : \u222b ... = 0`\n    have integral_pos : 0 < \u222b x, \u03c6 x * \u27eaf x, f x\u2080\u27eb_\u211d \u2202\u03bc :=\n      (integral_pos_iff_support_of_nonneg h_nonneg integrable_prod).mpr\n        (lt_of_lt_of_le h\u03bc (measure_mono closedBall_subset_support))\n    linarith",
+        "reference_length": 851,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.32.0",
+            "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+          }
+        ],
+        "dependency_digests": [
+          "4dd41f50f2b13a8f31986040a7709568ff2ce442952c185539efcb2e463739b5"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/leanprover-community/physlib",
+        "file_path": "Physlib/Mathematics/VariationalCalculus/Basic.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "1525c04dca2cb3cd5ac76227bf1a94ca517ae957a092862d99048335d5f2b6e6"
+    },
+    {
+      "name": "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "445bb67dd7dea9c6e0bb1ab213f45c0504de2d50e872e619fce0f07db12f5b08",
+        "candidate_sha256": "9839fbd7f2dedf9c22190403722dc98210c990a14188a042ddf41ab5e050496c",
+        "target": "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema' depends on axioms: [propext, Quot.sound, Classical.choice]",
+        "heartbeats": 27475,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"ee8d415b097d518b8f3a77b2157a1c5bede008375e5271f2a89472c33577aedc\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"8c9756b28d64dab099da31a4c09229a9e6a2ef35\",\"lean_version\":\"4.32.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":27475,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":27475681,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"reference_heartbeats\":27479,\"reference_raw_heartbeats\":27479265,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":28466.152}"
+      },
+      "context": {
+        "problem": "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema",
+        "statement": "lemma time_deriv_time_deriv_electricField_of_isExtrema {A : ElectromagneticPotential d}\n    {\ud835\udcd5 : FreeSpace}\n    (hA : ContDiff \u211d \u221e A) (J : LorentzCurrentDensity d)\n    (hJ : ContDiff \u211d \u221e J) (h : IsExtrema \ud835\udcd5 A J)\n    (t : Time) (x : Space d) (i : Fin d) :\n    \u2202\u209c (\u2202\u209c (A.electricField \ud835\udcd5.c \u00b7 x i)) t =\n      \ud835\udcd5.c ^ 2 * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n      \ud835\udcd5.c ^ 2 / \ud835\udcd5.\u03b5\u2080 * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n      \ud835\udcd5.c ^ 2 * \ud835\udcd5.\u03bc\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t",
+        "reference_source": "lemma time_deriv_time_deriv_electricField_of_isExtrema {A : ElectromagneticPotential d}\n    {\ud835\udcd5 : FreeSpace}\n    (hA : ContDiff \u211d \u221e A) (J : LorentzCurrentDensity d)\n    (hJ : ContDiff \u211d \u221e J) (h : IsExtrema \ud835\udcd5 A J)\n    (t : Time) (x : Space d) (i : Fin d) :\n    \u2202\u209c (\u2202\u209c (A.electricField \ud835\udcd5.c \u00b7 x i)) t =\n      \ud835\udcd5.c ^ 2 * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n      \ud835\udcd5.c ^ 2 / \ud835\udcd5.\u03b5\u2080 * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n      \ud835\udcd5.c ^ 2 * \ud835\udcd5.\u03bc\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n  have hEs : \u2200 j, ContDiff \u211d 2 (fun y => A.electricField \ud835\udcd5.c t y j) :=\n    fun j => electricField_apply_contDiff_space (i := j) (hA.of_le (right_eq_inf.mp rfl)) t\n  have hEd : \u2200 j k, Differentiable \u211d (\u2202[k] (fun y => A.electricField \ud835\udcd5.c t y j)) :=\n    fun j k => Space.deriv_differentiable (hEs j) k\n  have hBt : \u2200 j, Differentiable \u211d\n      (fun s => \u2202[j] (fun y => A.magneticFieldMatrix \ud835\udcd5.c s y (j, i)) x) :=\n    fun j => Space.space_deriv_differentiable_time (i := j)\n      (magneticFieldMatrix_contDiff _ (hA.of_le (right_eq_inf.mp rfl)) (j, i)) x\n  have hJt : Differentiable \u211d (fun s => J.currentDensity \ud835\udcd5.c s x i) :=\n    LorentzCurrentDensity.currentDensity_apply_differentiable_time (hJ.differentiable (by simp)) x i\n  calc _\n    _= \u2202\u209c (fun t =>\n      1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, Space.deriv j (fun x => magneticFieldMatrix \ud835\udcd5.c A t x (j, i)) x -\n      1 / \ud835\udcd5.\u03b5\u2080 * LorentzCurrentDensity.currentDensity \ud835\udcd5.c J t x i) t := by\n        conv_lhs =>\n          enter [1]\n          change fun t => \u2202\u209c (A.electricField \ud835\udcd5.c \u00b7 x i) t\n          enter [t]\n          rw [Time.deriv_euclid (electricField_differentiable_time\n            (hA.of_le (right_eq_inf.mp rfl)) _),\n            time_deriv_electricField_of_isExtrema hA J hJ h]\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2202\u209c (fun t => \u2211 j, \u2202[j] (A.magneticFieldMatrix \ud835\udcd5.c t \u00b7 (j, i)) x) t -\n      1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n      rw [Time.deriv_eq]\n      rw [fderiv_fun_sub]\n      simp only [one_div, mul_inv_rev, FunLike.coe_sub, Pi.sub_apply]\n      rw [fderiv_const_mul (Differentiable.fun_sum fun j _ => hBt j).differentiableAt]\n      rw [fderiv_const_mul hJt.differentiableAt]\n      simp [Time.deriv_eq]\n      \u00b7 exact ((Differentiable.fun_sum fun j _ => hBt j).const_mul _).differentiableAt\n      \u00b7 exact hJt.differentiableAt.const_mul _\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * ((\u2211 j, \u2202\u209c (fun t => \u2202[j] (A.magneticFieldMatrix \ud835\udcd5.c t \u00b7 (j, i)) x)) t) -\n      1 / \ud835\udcd5.\u03b5\u2080 * (\u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t) := by\n      congr\n      rw [Time.deriv_eq]\n      rw [fderiv_fun_sum fun i _ => (hBt i).differentiableAt]\n      simp only [FunLike.coe_sum, Finset.sum_apply]\n      rfl\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * (\u2211 j, \u2202[j] (fun x => \u2202\u209c (A.magneticFieldMatrix \ud835\udcd5.c \u00b7 x (j, i)) t)) x -\n        1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n      congr\n      simp only [Finset.sum_apply]\n      congr\n      funext k\n      rw [Space.time_deriv_comm_space_deriv]\n      apply magneticFieldMatrix_contDiff\n      apply hA.of_le (right_eq_inf.mp rfl)\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) *(\u2211 j, \u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x -\n        \u2202[i] (A.electricField \ud835\udcd5.c t \u00b7 j) x)) x -\n        1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        simp only [Finset.sum_apply]\n        congr\n        funext k\n        congr\n        funext x\n        rw [time_deriv_magneticFieldMatrix _ (hA.of_le (ENat.LEInfty.out))]\n    _ = (1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x -\n          \u2202[j] (fun x => \u2202[i] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x)) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        simp only [Finset.sum_apply]\n        congr\n        funext j\n        rw [Space.deriv_eq_fderiv_basis]\n        rw [fderiv_fun_sub (hEd _ _).differentiableAt (hEd _ _).differentiableAt]\n        simp [\u2190 Space.deriv_eq_fderiv_basis]\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[i] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by simp [mul_sub]\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n        1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[i] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x) -\n        1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        funext j\n        rw [Space.deriv_commute _ (hEs _), Space.deriv_eq_fderiv_basis]\n      _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * (\u2202[i] (fun x => \u2211 j, \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        rw [Space.deriv_eq_fderiv_basis]\n        rw [fderiv_fun_sum]\n        simp [\u2190 Space.deriv_eq_fderiv_basis]\n        intro j _\n        exact (hEd j j).differentiableAt\n      _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * (\u2202[i] (fun x => (\u2207 \u2b1d (A.electricField \ud835\udcd5.c t)) x) x) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        rfl\n      _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080 ^ 2) * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr 2\n        rw [isExtrema_iff_gauss_ampere_magneticFieldMatrix] at h\n\n        conv_lhs =>\n          enter [2, 2, x]\n          rw [(h t x).1]\n        trans 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * Space.deriv i\n            (fun x => (1/ \ud835\udcd5.\u03b5\u2080) * LorentzCurrentDensity.chargeDensity \ud835\udcd5.c J t x) x\n        \u00b7 congr\n          funext x\n          ring\n        \u00b7 rw [Space.deriv_eq_fderiv_basis]\n          rw [fderiv_const_mul]\n          simp [\u2190 Space.deriv_eq_fderiv_basis]\n          field_simp\n          apply Differentiable.differentiableAt\n          apply LorentzCurrentDensity.chargeDensity_differentiable_space\n          exact hJ.differentiable (by simp)\n        \u00b7 exact hA\n        \u00b7 exact hJ\n      _ = \ud835\udcd5.c ^ 2 * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n            \ud835\udcd5.c ^ 2 / \ud835\udcd5.\u03b5\u2080 * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n            \ud835\udcd5.c ^ 2 * \ud835\udcd5.\u03bc\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n          simp [FreeSpace.c_sq]\n          field_simp",
+        "reference_length": 1372,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.32.0",
+            "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+          }
+        ],
+        "dependency_digests": [
+          "ee8d415b097d518b8f3a77b2157a1c5bede008375e5271f2a89472c33577aedc"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/leanprover-community/physlib",
+        "file_path": "Physlib/Electromagnetism/Dynamics/IsExtrema.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "381dd21a398bc27e03c6c062b584c3f5756cfff66bf9e79039142c9c845365f4"
+    },
+    {
+      "name": "FieldSpecification.WickAlgebra.\u03b9_timeOrderF_superCommuteF_eq_time",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "93841248f4a767005466e9e009b07bea05c6b7f9ab04cbd50eaf4ea5770a5532",
+        "candidate_sha256": "b0b0bdda4094c15be7cfd13caee9f73b03ddf22c9de85a90567a1291cc6f0306",
+        "target": "FieldSpecification.WickAlgebra.\u03b9_timeOrderF_superCommuteF_eq_time",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'FieldSpecification.WickAlgebra.\u03b9_timeOrderF_superCommuteF_eq_time' depends on axioms: [propext, Quot.sound, Classical.choice]",
+        "heartbeats": 42721,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"4d6fbc499ea22d98b091ff867be51b0accbdcffc5bd124cfc2154c0404edce0b\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"8c9756b28d64dab099da31a4c09229a9e6a2ef35\",\"lean_version\":\"4.32.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":42721,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":42721998,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"reference_heartbeats\":42722,\"reference_raw_heartbeats\":42722817,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":21908.296}"
+      },
+      "context": {
+        "problem": "FieldSpecification.WickAlgebra.\u03b9_timeOrderF_superCommuteF_eq_time",
+        "statement": "lemma \u03b9_timeOrderF_superCommuteF_eq_time {\u03c6 \u03c8 : \ud835\udcd5.CrAnFieldOp}\n    (h\u03c6\u03c8 : crAnTimeOrderRel \u03c6 \u03c8) (h\u03c8\u03c6 : crAnTimeOrderRel \u03c8 \u03c6) (a b : \ud835\udcd5.FieldOpFreeAlgebra) :\n    \u03b9 \ud835\udce3\u1da0(a * [ofCrAnOpF \u03c6, ofCrAnOpF \u03c8]\u209bF * b) =\n    \u03b9 ([ofCrAnOpF \u03c6, ofCrAnOpF \u03c8]\u209bF * \ud835\udce3\u1da0(a * b))",
+        "reference_source": "lemma \u03b9_timeOrderF_superCommuteF_eq_time {\u03c6 \u03c8 : \ud835\udcd5.CrAnFieldOp}\n    (h\u03c6\u03c8 : crAnTimeOrderRel \u03c6 \u03c8) (h\u03c8\u03c6 : crAnTimeOrderRel \u03c8 \u03c6) (a b : \ud835\udcd5.FieldOpFreeAlgebra) :\n    \u03b9 \ud835\udce3\u1da0(a * [ofCrAnOpF \u03c6, ofCrAnOpF \u03c8]\u209bF * b) =\n    \u03b9 ([ofCrAnOpF \u03c6, ofCrAnOpF \u03c8]\u209bF * \ud835\udce3\u1da0(a * b)) := by\n  let pb (b : \ud835\udcd5.FieldOpFreeAlgebra) (hc : b \u2208 Submodule.span \u2102 (Set.range ofCrAnListFBasis)) :\n    Prop := \u03b9 \ud835\udce3\u1da0(a * [ofCrAnOpF \u03c6, ofCrAnOpF \u03c8]\u209bF * b) =\n    \u03b9 ([ofCrAnOpF \u03c6, ofCrAnOpF \u03c8]\u209bF * \ud835\udce3\u1da0(a * b))\n  change pb b (Basis.mem_span _ b)\n  apply Submodule.span_induction\n  \u00b7 rintro x \u27e8\u03c6s, rfl\u27e9\n    simp only [ofListBasis_eq_ofList, map_mul, pb]\n    let pa (a : \ud835\udcd5.FieldOpFreeAlgebra) (hc : a \u2208 Submodule.span \u2102 (Set.range ofCrAnListFBasis)) :\n      Prop := \u03b9 \ud835\udce3\u1da0(a * [ofCrAnOpF \u03c6, ofCrAnOpF \u03c8]\u209bF * ofCrAnListF \u03c6s) =\n      \u03b9 ([ofCrAnOpF \u03c6, ofCrAnOpF \u03c8]\u209bF * \ud835\udce3\u1da0(a* ofCrAnListF \u03c6s))\n    change pa a (Basis.mem_span _ a)\n    apply Submodule.span_induction\n    \u00b7 rintro x \u27e8\u03c6s', rfl\u27e9\n      simp only [ofListBasis_eq_ofList, map_mul, pa]\n      calc _\n        /- Split the commutator. -/\n        _ = crAnTimeOrderSign (\u03c6s' ++ \u03c6 :: \u03c8 :: \u03c6s) \u2022\n          \u03b9 (ofCrAnListF (crAnTimeOrderList (\u03c6s' ++ \u03c6 :: \u03c8 :: \u03c6s))) -\n            crAnTimeOrderSign (\u03c6s' ++ \u03c8 :: \u03c6 :: \u03c6s) \u2022\n          \ud835\udce2(\ud835\udcd5.crAnStatistics \u03c6, \ud835\udcd5.crAnStatistics \u03c8) \u2022\n            \u03b9 (ofCrAnListF (crAnTimeOrderList (\u03c6s' ++ \u03c8 :: \u03c6 :: \u03c6s))) := by\n          conv_lhs =>\n            rw [\u2190 ofCrAnListF_singleton, \u2190 ofCrAnListF_singleton,\n              superCommuteF_ofCrAnListF_ofCrAnListF]\n            simp [mul_sub, sub_mul, \u2190 ofCrAnListF_append]\n            rw [timeOrderF_ofCrAnListF, timeOrderF_ofCrAnListF]\n          simp only [map_smul, sub_right_inj]\n          module\n        /- Simplify the signs. -/\n        _ = crAnTimeOrderSign (\u03c6s' ++ \u03c6 :: \u03c8 :: \u03c6s) \u2022\n          (\u03b9 (ofCrAnListF (crAnTimeOrderList (\u03c6s' ++ \u03c6 :: \u03c8 :: \u03c6s))) -\n          \ud835\udce2(\ud835\udcd5.crAnStatistics \u03c6, \ud835\udcd5.crAnStatistics \u03c8) \u2022\n            \u03b9 (ofCrAnListF (crAnTimeOrderList (\u03c6s' ++ \u03c8 :: \u03c6 :: \u03c6s)))) := by\n          rw [crAnTimeOrderSign_swap_eq_time h\u03c6\u03c8 h\u03c8\u03c6]\n          module\n        /- Splitting the time-ordered lists. -/\n        _ = crAnTimeOrderSign (\u03c6s' ++ [\u03c6, \u03c8] ++ \u03c6s) \u2022\n          (\u03b9 (ofCrAnListF (List.takeWhile (fun c => \u00accrAnTimeOrderRel \u03c6 c)\n                (List.insertionSort crAnTimeOrderRel (\u03c6s' ++ \u03c6s)))) *\n              \u03b9 (ofCrAnListF (List.filter (fun c =>\n                (crAnTimeOrderRel \u03c6 c \u2227 crAnTimeOrderRel c \u03c6)) \u03c6s')) *\n              \u03b9 (ofCrAnListF [\u03c6, \u03c8]) *\n              \u03b9 (ofCrAnListF (List.filter (fun c =>\n                (crAnTimeOrderRel \u03c6 c \u2227 crAnTimeOrderRel c \u03c6)) \u03c6s)) *\n              \u03b9 (ofCrAnListF (List.filter (fun c => (crAnTimeOrderRel \u03c6 c \u2227 \u00accrAnTimeOrderRel c \u03c6))\n                (List.insertionSort crAnTimeOrderRel (\u03c6s' ++ \u03c6s)))) -\n          \ud835\udce2(\ud835\udcd5.crAnStatistics \u03c6, \ud835\udcd5.crAnStatistics \u03c8) \u2022\n          \u03b9 (ofCrAnListF (List.takeWhile (fun c => \u00accrAnTimeOrderRel \u03c6 c)\n                      (List.insertionSort crAnTimeOrderRel (\u03c6s' ++ \u03c6s)))) *\n              \u03b9 (ofCrAnListF (List.filter (fun c =>\n                (crAnTimeOrderRel \u03c6 c \u2227 crAnTimeOrderRel c \u03c6)) \u03c6s')) *\n              \u03b9 (ofCrAnListF [\u03c8, \u03c6]) *\n              \u03b9 (ofCrAnListF (List.filter (fun c =>\n                (crAnTimeOrderRel \u03c6 c \u2227 crAnTimeOrderRel c \u03c6)) \u03c6s)) *\n              \u03b9 (ofCrAnListF\n              (List.filter (fun c => decide (crAnTimeOrderRel \u03c6 c \u2227 \u00accrAnTimeOrderRel c \u03c6))\n                (List.insertionSort crAnTimeOrderRel (\u03c6s' ++ \u03c6s))))) := by\n          have h1 := insertionSort_of_eq_list \ud835\udcd5.crAnTimeOrderRel \u03c6 \u03c6s' [\u03c6, \u03c8] \u03c6s\n            (by simp_all)\n          rw [crAnTimeOrderList, show \u03c6s' ++ \u03c6 :: \u03c8 :: \u03c6s = \u03c6s' ++ [\u03c6, \u03c8] ++ \u03c6s by simp, h1]\n          have h2 := insertionSort_of_eq_list \ud835\udcd5.crAnTimeOrderRel \u03c6 \u03c6s' [\u03c8, \u03c6] \u03c6s\n            (by simp_all)\n          rw [crAnTimeOrderList, show \u03c6s' ++ \u03c8 :: \u03c6 :: \u03c6s = \u03c6s' ++ [\u03c8, \u03c6] ++ \u03c6s by simp, h2]\n          repeat rw [ofCrAnListF_append]\n          simp\n        _ = crAnTimeOrderSign (\u03c6s' ++ [\u03c6, \u03c8] ++ \u03c6s) \u2022\n            (\u03b9 (ofCrAnListF (List.takeWhile (fun c => \u00accrAnTimeOrderRel \u03c6 c)\n                (List.insertionSort crAnTimeOrderRel (\u03c6s' ++ \u03c6s)))) *\n              \u03b9 (ofCrAnListF (List.filter (fun c => (crAnTimeOrderRel \u03c6 c \u2227\n                crAnTimeOrderRel c \u03c6)) \u03c6s')) *\n              (\u03b9 (ofCrAnListF [\u03c6, \u03c8]) - \ud835\udce2(\ud835\udcd5.crAnStatistics \u03c6, \ud835\udcd5.crAnStatistics \u03c8) \u2022\n                \u03b9 (ofCrAnListF [\u03c8, \u03c6])) *\n              \u03b9 (ofCrAnListF (List.filter (fun c => (crAnTimeOrderRel \u03c6 c \u2227\n                crAnTimeOrderRel c \u03c6)) \u03c6s)) *\n              \u03b9 (ofCrAnListF (List.filter (fun c => (crAnTimeOrderRel \u03c6 c \u2227 \u00accrAnTimeOrderRel c \u03c6))\n                (List.insertionSort crAnTimeOrderRel (\u03c6s' ++ \u03c6s))))) := by\n            simp [mul_sub, sub_mul]\n        _ = crAnTimeOrderSign (\u03c6s' ++ [\u03c6, \u03c8] ++ \u03c6s) \u2022\n            (\u03b9 (ofCrAnListF (List.takeWhile (fun c => \u00accrAnTimeOrderRel \u03c6 c)\n                (List.insertionSort crAnTimeOrderRel (\u03c6s' ++ \u03c6s)))) *\n              \u03b9 (ofCrAnListF (List.filter (fun c => (crAnTimeOrderRel \u03c6 c \u2227\n                crAnTimeOrderRel c \u03c6)) \u03c6s')) *\n              \u03b9 [ofCrAnOpF \u03c6, ofCrAnOpF \u03c8]\u209bF *\n              \u03b9 (ofCrAnListF (List.filter (fun c => (crAnTimeOrderRel \u03c6 c \u2227\n                crAnTimeOrderRel c \u03c6)) \u03c6s)) *\n              \u03b9 (ofCrAnListF (List.filter (fun c => (crAnTimeOrderRel \u03c6 c \u2227 \u00accrAnTimeOrderRel c \u03c6))\n                (List.insertionSort crAnTimeOrderRel (\u03c6s' ++ \u03c6s))))) := by\n            congr\n            rw [superCommuteF_ofCrAnOpF_ofCrAnOpF, \u2190 ofCrAnListF_singleton,\n              \u2190 ofCrAnListF_singleton]\n            simp [\u2190 ofCrAnListF_append]\n      rw [Subalgebra.mem_center_iff.mp (\u03b9_superCommuteF_ofCrAnOpF_ofCrAnOpF_mem_center \u03c6 \u03c8)]\n      repeat rw [mul_assoc]\n      rw [\u2190 map_mul, \u2190 map_mul, \u2190 map_mul, \u2190 ofCrAnListF_append, \u2190 ofCrAnListF_append,\n        \u2190 ofCrAnListF_append]\n      have h1 := insertionSort_of_takeWhile_filter \ud835\udcd5.crAnTimeOrderRel \u03c6 \u03c6s' \u03c6s\n      simp [decide_not, Bool.decide_and, List.append_assoc, List.cons_append] at h1 \u22a2\n      rw [\u2190 h1, \u2190 crAnTimeOrderList]\n      by_cases hq : (\ud835\udcd5 |>\u209b \u03c6) \u2260 (\ud835\udcd5 |>\u209b \u03c8)\n      \u00b7 simp [\u03b9_superCommuteF_of_diff_statistic hq]\n      \u00b7 rw [crAnTimeOrderSign, Wick.koszulSign_eq_rel_eq_stat _ _ h\u03c6\u03c8 h\u03c8\u03c6 (by simp_all),\n          \u2190 crAnTimeOrderSign, \u2190 ofCrAnListF_append, timeOrderF_ofCrAnListF]\n        simp only [map_smul, Algebra.mul_smul_comm]\n    \u00b7 simp only [map_mul, zero_mul, map_zero, mul_zero, pa]\n    \u00b7 intro x y hx hy hpx hpy\n      simp_all [pa,mul_add, add_mul]\n    \u00b7 intro x hx hpx\n      simp_all [pa]\n  \u00b7 simp only [map_mul, mul_zero, map_zero, pb]\n  \u00b7 intro x y hx hy hpx hpy\n    simp_all [pb,mul_add]\n  \u00b7 intro x hx hpx\n    simp_all [pb]",
+        "reference_length": 1217,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.32.0",
+            "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+          }
+        ],
+        "dependency_digests": [
+          "4d6fbc499ea22d98b091ff867be51b0accbdcffc5bd124cfc2154c0404edce0b"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/leanprover-community/physlib",
+        "file_path": "Physlib/QFT/PerturbationTheory/WickAlgebra/TimeOrder.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "d93c95f23355ea8f3cc48f9d2599f9c8bae1b17b13fd413fee4cc6f75e0df4a0"
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "pinned_toolchain_missing: v4.33.0-rc2"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "bda3460632b8e0fb8f9b4d82327d59869ae046998b12572487eaeb4e0e580b63",
+        "candidate_sha256": "e8b89255b06b284c8a4f4ba9a140c458d8c4640f63014c9c0037585855039be7",
+        "target": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress' depends on axioms: [propext, Quot.sound, Classical.choice]",
+        "heartbeats": 62219,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"f6d25d99e02712dfc675c9826290a760bf7729a6cee29458396263156a6cef24\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"8c9756b28d64dab099da31a4c09229a9e6a2ef35\",\"lean_version\":\"4.32.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":62219,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":62219847,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"reference_heartbeats\":62226,\"reference_raw_heartbeats\":62226516,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":323112.024}"
+      },
+      "context": {
+        "problem": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+        "statement": "lemma Typing.progress (der : Typing [] t \u03c4) : t.Value \u2228 \u2203 t', t \u2b62\u03b2\u1d5b t'",
+        "reference_source": "lemma Typing.progress (der : Typing [] t \u03c4) : t.Value \u2228 \u2203 t', t \u2b62\u03b2\u1d5b t' := by\n  generalize eq : [] = \u0393 at der\n  have der' : Typing \u0393 t \u03c4 := der\n  induction der <;> subst eq\n  case var mem => grind\n  case app t\u2081 _ _ t\u2082 l r ih_l ih_r =>\n    right\n    cases ih_l rfl l with\n    | inl val_l =>\n        cases ih_r rfl r with\n        | inl val_r =>\n            have \u27e8\u03c3, t\u2081, eq\u27e9 := l.canonical_form_abs val_l\n            exists t\u2081 ^\u1d57\u1d57 t\u2082\n            grind\n        | inr red_r =>\n            obtain \u27e8t\u2082', _\u27e9 := red_r\n            exists t\u2081.app t\u2082'\n            grind\n    | inr red_l =>\n        obtain \u27e8t\u2081', _\u27e9 := red_l\n        exists t\u2081'.app t\u2082\n        grind\n  case tapp \u03c3' der _ ih =>\n    right\n    specialize ih rfl der\n    cases ih with\n    | inl val =>\n        obtain \u27e8_, t, _\u27e9 := der.canonical_form_tabs val\n        exists t ^\u1d57\u1d5e \u03c3'\n        grind\n    | inr red =>\n        obtain \u27e8t', _\u27e9 := red\n        exists .tapp t' \u03c3'\n        grind\n  case let' t\u2081 \u03c3 t\u2082 \u03c4 L der _ ih _ =>\n    right\n    cases ih rfl der with\n    | inl _ =>\n        exists t\u2082 ^\u1d57\u1d57 t\u2081\n        grind\n    | inr red =>\n        obtain \u27e8t\u2081', _\u27e9 := red\n        exists t\u2081'.let' t\u2082\n        grind\n  case inl der _ ih =>\n    cases (ih rfl der) with\n    | inl val => grind\n    | inr red =>\n        right\n        obtain \u27e8t', _\u27e9 := red\n        exists .inl t'\n        grind\n  case inr der _ ih =>\n    cases (ih rfl der) with\n    | inl val => grind\n    | inr red =>\n        right\n        obtain \u27e8t', _\u27e9 := red\n        exists .inr t'\n        grind\n  case case t\u2081 _ _ t\u2082 _ t\u2083 _ der _ _ ih _ _ =>\n    right\n    cases ih rfl der with\n    | inl val =>\n        have \u27e8t\u2081, lr\u27e9 := der.canonical_form_sum val\n        cases lr <;> [exists t\u2082 ^\u1d57\u1d57 t\u2081; exists t\u2083 ^\u1d57\u1d57 t\u2081] <;> grind\n    | inr red =>\n        obtain \u27e8t\u2081', _\u27e9 := red\n        exists t\u2081'.case t\u2082 t\u2083\n        grind\n  case sub => grind\n  case abs \u03c3 _ \u03c4 L _ _=>\n    left\n    constructor\n    apply LC.abs L\n    \u00b7 grind only [\u2192 wf, cases Term.LC]\n    \u00b7 grind only [\u2192 wf]\n  case tabs L _ _=>\n    left\n    constructor\n    apply LC.tabs L\n    \u00b7 grind only [\u2192 wf, cases Term.LC]\n    \u00b7 grind only [\u2192 wf]",
+        "reference_length": 408,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.32.0",
+            "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df"
+          }
+        ],
+        "dependency_digests": [
+          "f6d25d99e02712dfc675c9826290a760bf7729a6cee29458396263156a6cef24"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/leanprover/cslib",
+        "file_path": "Cslib/Languages/LambdaCalculus/LocallyNameless/Fsub/Safety.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "a0b86183fcca21a4fffa124c9ebe1c582a4c019179d78aa0b1c3ef7ae9bd5238"
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "0be89652ff2e8601a766e026d99b5c2e9eff555251a0b192eaa366f37cb962bd",
+        "candidate_sha256": "e8b89255b06b284c8a4f4ba9a140c458d8c4640f63014c9c0037585855039be7",
+        "target": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress' depends on axioms: [propext, Quot.sound, Classical.choice]",
+        "heartbeats": 62199,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"99659cd1cfd6008b883107625df97ab052c333a11921f19b28d424dadee7778a\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"68218e876d2a38b1985b8590fff244a83c321783\",\"lean_version\":\"4.31.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":62199,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":62199029,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"reference_heartbeats\":62193,\"reference_raw_heartbeats\":62193224,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":19965.868}"
+      },
+      "context": {
+        "problem": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+        "statement": "lemma Typing.progress (der : Typing [] t \u03c4) : t.Value \u2228 \u2203 t', t \u2b62\u03b2\u1d5b t'",
+        "reference_source": "lemma Typing.progress (der : Typing [] t \u03c4) : t.Value \u2228 \u2203 t', t \u2b62\u03b2\u1d5b t' := by\n  generalize eq : [] = \u0393 at der\n  have der' : Typing \u0393 t \u03c4 := der\n  induction der <;> subst eq\n  case var mem => grind\n  case app t\u2081 _ _ t\u2082 l r ih_l ih_r =>\n    right\n    cases ih_l rfl l with\n    | inl val_l =>\n        cases ih_r rfl r with\n        | inl val_r =>\n            have \u27e8\u03c3, t\u2081, eq\u27e9 := l.canonical_form_abs val_l\n            exists t\u2081 ^\u1d57\u1d57 t\u2082\n            grind\n        | inr red_r =>\n            obtain \u27e8t\u2082', _\u27e9 := red_r\n            exists t\u2081.app t\u2082'\n            grind\n    | inr red_l =>\n        obtain \u27e8t\u2081', _\u27e9 := red_l\n        exists t\u2081'.app t\u2082\n        grind\n  case tapp \u03c3' der _ ih =>\n    right\n    specialize ih rfl der\n    cases ih with\n    | inl val =>\n        obtain \u27e8_, t, _\u27e9 := der.canonical_form_tabs val\n        exists t ^\u1d57\u1d5e \u03c3'\n        grind\n    | inr red =>\n        obtain \u27e8t', _\u27e9 := red\n        exists .tapp t' \u03c3'\n        grind\n  case let' t\u2081 \u03c3 t\u2082 \u03c4 L der _ ih _ =>\n    right\n    cases ih rfl der with\n    | inl _ =>\n        exists t\u2082 ^\u1d57\u1d57 t\u2081\n        grind\n    | inr red =>\n        obtain \u27e8t\u2081', _\u27e9 := red\n        exists t\u2081'.let' t\u2082\n        grind\n  case inl der _ ih =>\n    cases (ih rfl der) with\n    | inl val => grind\n    | inr red =>\n        right\n        obtain \u27e8t', _\u27e9 := red\n        exists .inl t'\n        grind\n  case inr der _ ih =>\n    cases (ih rfl der) with\n    | inl val => grind\n    | inr red =>\n        right\n        obtain \u27e8t', _\u27e9 := red\n        exists .inr t'\n        grind\n  case case t\u2081 _ _ t\u2082 _ t\u2083 _ der _ _ ih _ _ =>\n    right\n    cases ih rfl der with\n    | inl val =>\n        have \u27e8t\u2081, lr\u27e9 := der.canonical_form_sum val\n        cases lr <;> [exists t\u2082 ^\u1d57\u1d57 t\u2081; exists t\u2083 ^\u1d57\u1d57 t\u2081] <;> grind\n    | inr red =>\n        obtain \u27e8t\u2081', _\u27e9 := red\n        exists t\u2081'.case t\u2082 t\u2083\n        grind\n  case sub => grind\n  case abs \u03c3 _ \u03c4 L _ _=>\n    left\n    constructor\n    apply LC.abs L\n    \u00b7 grind only [\u2192 wf, cases Term.LC]\n    \u00b7 grind only [\u2192 wf]\n  case tabs L _ _=>\n    left\n    constructor\n    apply LC.tabs L\n    \u00b7 grind only [\u2192 wf, cases Term.LC]\n    \u00b7 grind only [\u2192 wf]",
+        "reference_length": 408,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.31.0",
+            "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266"
+          }
+        ],
+        "dependency_digests": [
+          "99659cd1cfd6008b883107625df97ab052c333a11921f19b28d424dadee7778a"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/leanprover/cslib",
+        "file_path": "Cslib/Languages/LambdaCalculus/LocallyNameless/Fsub/Safety.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "91af5791f21946d780293be243cff8c388b5f890b0c04d9cbaffbabbdb7e55dc"
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "pinned_toolchain_missing: v4.33.0-rc2"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "74b3af1ad68b1e9eb55c050f0a80b381ae1a1fd07347c5ce5230cfe93f4edabf",
+        "candidate_sha256": "35f528e8e77dceff098e735cfb0ee98ea989fecca8258a7d59632f211cc5ffdc",
+        "target": "Cslib.SKI.parallelReduction_diamond",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Cslib.SKI.parallelReduction_diamond' depends on axioms: [Classical.choice, propext, Quot.sound]",
+        "heartbeats": 1656,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"8fe790e564e5a953451f42fa9107e9bc4ab04f2827ca61f3313f4041d5d7d398\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"8c9756b28d64dab099da31a4c09229a9e6a2ef35\",\"lean_version\":\"4.32.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Classical.choice\",\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":1656,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":1656956,\"reason\":\"\",\"reference_axioms\":[\"Classical.choice\",\"propext\",\"Quot.sound\"],\"reference_heartbeats\":1657,\"reference_raw_heartbeats\":1657407,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":292645.628}"
+      },
+      "context": {
+        "problem": "Cslib.SKI.parallelReduction_diamond",
+        "statement": "theorem parallelReduction_diamond : Diamond ParallelReduction",
+        "reference_source": "theorem parallelReduction_diamond : Diamond ParallelReduction := by\n  intro a a\u2081 a\u2082 h\u2081 h\u2082\n  cases h\u2081\n  case refl => exact \u27e8a\u2082, h\u2082, .refl a\u2082\u27e9\n  case par a a' b b' ha' hb' =>\n    cases h\u2082\n    case refl =>\n      use a' \u2b1d b'\n      exact \u27e8.refl (a' \u2b1d b'), .par ha' hb'\u27e9\n    case par a'' b'' ha'' hb'' =>\n      let \u27e8a\u2083, ha\u27e9 := parallelReduction_diamond ha' ha''\n      let \u27e8b\u2083, hb\u27e9 := parallelReduction_diamond hb' hb''\n      use a\u2083 \u2b1d b\u2083\n      constructor\n      \u00b7 exact .par ha.1 hb.1\n      \u00b7 exact .par ha.2 hb.2\n    case red_I =>\n      rw [I_irreducible a' ha']\n      use b', .red_I b'\n    case red_K =>\n      let \u27e8a\u2082', ha\u2082'\u27e9 := Ka_irreducible a\u2082 a' ha'\n      rw [ha\u2082'.2]\n      use a\u2082'\n      exact \u27e8.red_K a\u2082' b', ha\u2082'.1\u27e9\n    case red_S a c =>\n      let \u27e8a'', c', h\u27e9 := Sab_irreducible a c a' ha'\n      rw [h.2.2]\n      use a'' \u2b1d b' \u2b1d (c' \u2b1d b'), .red_S a'' c' b'\n      apply ParallelReduction.par <;>\n        apply ParallelReduction.par <;>\n        grind\n  case red_I =>\n    cases h\u2082\n    case refl => use a\u2081; exact \u27e8.refl a\u2081, .red_I a\u2081\u27e9\n    case par c a\u2081' hc ha =>\n      rw [I_irreducible c hc]\n      use a\u2081'\n      exact \u27e8ha, .red_I a\u2081'\u27e9\n    case red_I => use a\u2081; exact \u27e8.refl a\u2081, .refl a\u2081\u27e9\n  case red_K c =>\n    cases h\u2082\n    case refl => use a\u2081; exact \u27e8.refl a\u2081, .red_K a\u2081 c\u27e9\n    case par a' c' ha hc =>\n      let \u27e8a\u2081', h'\u27e9 := Ka_irreducible a\u2081 a' ha\n      rw [h'.2]\n      use a\u2081'\n      exact \u27e8h'.1, .red_K a\u2081' c'\u27e9\n    case red_K =>\n      use a\u2081; exact \u27e8.refl a\u2081, .refl a\u2081\u27e9\n  case red_S a b c =>\n    cases h\u2082\n    case refl =>\n      use a \u2b1d c \u2b1d (b \u2b1d c)\n      exact \u27e8.refl _, .red_S ..\u27e9\n    case par d c' hd hc =>\n      let \u27e8a', b', h\u27e9 := Sab_irreducible a b d hd\n      rw [h.2.2]\n      use a' \u2b1d c' \u2b1d (b' \u2b1d c')\n      constructor\n      \u00b7 apply ParallelReduction.par\n        \u00b7 exact .par h.left hc\n        \u00b7 exact .par h.2.1 hc\n      \u00b7 exact .red_S ..\n    case red_S => exact \u27e8a \u2b1d c \u2b1d (b \u2b1d c), .refl _, .refl _,\u27e9",
+        "reference_length": 407,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.32.0",
+            "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df"
+          }
+        ],
+        "dependency_digests": [
+          "8fe790e564e5a953451f42fa9107e9bc4ab04f2827ca61f3313f4041d5d7d398"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/leanprover/cslib",
+        "file_path": "Cslib/Languages/CombinatoryLogic/Confluence.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "205da7a0cc2a465cedd4600975832d409f31947b107498ebe38ead99306a949a"
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "4143bce3282373bf722a50650f02243f7ddd593d1f3f62ca1e98d84f54763572",
+        "candidate_sha256": "35f528e8e77dceff098e735cfb0ee98ea989fecca8258a7d59632f211cc5ffdc",
+        "target": "Cslib.SKI.parallelReduction_diamond",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Cslib.SKI.parallelReduction_diamond' depends on axioms: [Classical.choice, propext, Quot.sound]",
+        "heartbeats": 1643,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"099cf0f62afc42a6de8584d7e84179f46ca9904728d7f48ccab3a807cf3396e1\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"68218e876d2a38b1985b8590fff244a83c321783\",\"lean_version\":\"4.31.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Classical.choice\",\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":1643,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":1643120,\"reason\":\"\",\"reference_axioms\":[\"Classical.choice\",\"propext\",\"Quot.sound\"],\"reference_heartbeats\":1643,\"reference_raw_heartbeats\":1643503,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":18572.81}"
+      },
+      "context": {
+        "problem": "Cslib.SKI.parallelReduction_diamond",
+        "statement": "theorem parallelReduction_diamond : Diamond ParallelReduction",
+        "reference_source": "theorem parallelReduction_diamond : Diamond ParallelReduction := by\n  intro a a\u2081 a\u2082 h\u2081 h\u2082\n  cases h\u2081\n  case refl => exact \u27e8a\u2082, h\u2082, .refl a\u2082\u27e9\n  case par a a' b b' ha' hb' =>\n    cases h\u2082\n    case refl =>\n      use a' \u2b1d b'\n      exact \u27e8.refl (a' \u2b1d b'), .par ha' hb'\u27e9\n    case par a'' b'' ha'' hb'' =>\n      let \u27e8a\u2083, ha\u27e9 := parallelReduction_diamond ha' ha''\n      let \u27e8b\u2083, hb\u27e9 := parallelReduction_diamond hb' hb''\n      use a\u2083 \u2b1d b\u2083\n      constructor\n      \u00b7 exact .par ha.1 hb.1\n      \u00b7 exact .par ha.2 hb.2\n    case red_I =>\n      rw [I_irreducible a' ha']\n      use b', .red_I b'\n    case red_K =>\n      let \u27e8a\u2082', ha\u2082'\u27e9 := Ka_irreducible a\u2082 a' ha'\n      rw [ha\u2082'.2]\n      use a\u2082'\n      exact \u27e8.red_K a\u2082' b', ha\u2082'.1\u27e9\n    case red_S a c =>\n      let \u27e8a'', c', h\u27e9 := Sab_irreducible a c a' ha'\n      rw [h.2.2]\n      use a'' \u2b1d b' \u2b1d (c' \u2b1d b'), .red_S a'' c' b'\n      apply ParallelReduction.par <;>\n        apply ParallelReduction.par <;>\n        grind\n  case red_I =>\n    cases h\u2082\n    case refl => use a\u2081; exact \u27e8.refl a\u2081, .red_I a\u2081\u27e9\n    case par c a\u2081' hc ha =>\n      rw [I_irreducible c hc]\n      use a\u2081'\n      exact \u27e8ha, .red_I a\u2081'\u27e9\n    case red_I => use a\u2081; exact \u27e8.refl a\u2081, .refl a\u2081\u27e9\n  case red_K c =>\n    cases h\u2082\n    case refl => use a\u2081; exact \u27e8.refl a\u2081, .red_K a\u2081 c\u27e9\n    case par a' c' ha hc =>\n      let \u27e8a\u2081', h'\u27e9 := Ka_irreducible a\u2081 a' ha\n      rw [h'.2]\n      use a\u2081'\n      exact \u27e8h'.1, .red_K a\u2081' c'\u27e9\n    case red_K =>\n      use a\u2081; exact \u27e8.refl a\u2081, .refl a\u2081\u27e9\n  case red_S a b c =>\n    cases h\u2082\n    case refl =>\n      use a \u2b1d c \u2b1d (b \u2b1d c)\n      exact \u27e8.refl _, .red_S ..\u27e9\n    case par d c' hd hc =>\n      let \u27e8a', b', h\u27e9 := Sab_irreducible a b d hd\n      rw [h.2.2]\n      use a' \u2b1d c' \u2b1d (b' \u2b1d c')\n      constructor\n      \u00b7 apply ParallelReduction.par\n        \u00b7 exact .par h.left hc\n        \u00b7 exact .par h.2.1 hc\n      \u00b7 exact .red_S ..\n    case red_S => exact \u27e8a \u2b1d c \u2b1d (b \u2b1d c), .refl _, .refl _,\u27e9",
+        "reference_length": 407,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.31.0",
+            "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266"
+          }
+        ],
+        "dependency_digests": [
+          "099cf0f62afc42a6de8584d7e84179f46ca9904728d7f48ccab3a807cf3396e1"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/leanprover/cslib",
+        "file_path": "Cslib/Languages/CombinatoryLogic/Confluence.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "8bb1185e61861120e533079a77ee69b90b29dfeb0397852d7dcb2ee311393fc5"
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.30.0",
+      "git_commit": "c7944a9fb44c3298f1a960a5e574ab23a6ab8ed5",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "pinned_toolchain_missing: v4.33.0-rc2"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "fd3262f9872f0bc937660d1126f196107efded474d638af72eb55df7e027a7a1",
+        "candidate_sha256": "90ec3fb53d6c4e9485868b3d1f1bceac5de6abc8b429d456281744fd1b0fa828",
+        "target": "Cslib.CCS.bisimilarity_congr_choice",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Cslib.CCS.bisimilarity_congr_choice' depends on axioms: [Classical.choice, propext, Quot.sound]",
+        "heartbeats": 4024,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"c063ecddb803c032f6a9ec39cb230a9cdb84c2061f76f7315e52a07147d59a94\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"8c9756b28d64dab099da31a4c09229a9e6a2ef35\",\"lean_version\":\"4.32.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Classical.choice\",\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":4024,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4024952,\"reason\":\"\",\"reference_axioms\":[\"Classical.choice\",\"propext\",\"Quot.sound\"],\"reference_heartbeats\":4024,\"reference_raw_heartbeats\":4024964,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":608578.747}"
+      },
+      "context": {
+        "problem": "Cslib.CCS.bisimilarity_congr_choice",
+        "statement": "theorem bisimilarity_congr_choice :\n    (p ~[lts (defs := defs)] q) \u2192 (choice p r) ~[lts (defs := defs)] (choice q r)",
+        "reference_source": "theorem bisimilarity_congr_choice :\n    (p ~[lts (defs := defs)] q) \u2192 (choice p r) ~[lts (defs := defs)] (choice q r) := by\n  intro h\n  exists @ChoiceBisim _ _ defs\n  constructor\n  \u00b7 constructor; assumption\n  intro s1 s2 r \u03bc\n  constructor\n  case left =>\n    intro s1' htr\n    cases r\n    case choice p q r hbisim =>\n      obtain \u27e8rel, hr, hb\u27e9 := hbisim\n      cases htr\n      case choiceL a b c htr =>\n        obtain \u27e8s2', htr2, hr2\u27e9 := hb.follow_fst hr htr\n        exists s2'\n        constructor\n        \u00b7 apply Tr.choiceL htr2\n        \u00b7 constructor\n          apply hb.le_bisimilarity _ _ hr2\n      case choiceR a b c htr =>\n        exists s1'\n        constructor\n        \u00b7 apply Tr.choiceR htr\n        \u00b7 constructor\n          apply HomBisimilarity.refl\n    case bisim hbisim =>\n      obtain \u27e8rel, hr, hb\u27e9 := hbisim\n      obtain \u27e8s2', htr2, hr2\u27e9 := hb.follow_fst hr htr\n      exists s2'\n      constructor\n      \u00b7 assumption\n      constructor\n      apply hb.le_bisimilarity _ _ hr2\n  case right =>\n    intro s2' htr\n    cases r\n    case choice p q r hbisim =>\n      obtain \u27e8rel, hr, hb\u27e9 := hbisim\n      cases htr\n      case choiceL a b c htr =>\n        obtain \u27e8s1', htr1, hr1\u27e9 := hb.follow_snd hr htr\n        exists s1'\n        constructor\n        \u00b7 apply Tr.choiceL htr1\n        \u00b7 constructor\n          apply hb.le_bisimilarity _ _ hr1\n      case choiceR a b c htr =>\n        exists s2'\n        constructor\n        \u00b7 apply Tr.choiceR htr\n        \u00b7 constructor\n          apply HomBisimilarity.refl\n    case bisim hbisim =>\n      obtain \u27e8rel, hr, hb\u27e9 := hbisim\n      obtain \u27e8s1', htr1, hr1\u27e9 := hb.follow_snd hr htr\n      exists s1'\n      constructor\n      \u00b7 assumption\n      \u00b7 constructor\n        apply hb.le_bisimilarity _ _ hr1",
+        "reference_length": 251,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.32.0",
+            "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df"
+          }
+        ],
+        "dependency_digests": [
+          "c063ecddb803c032f6a9ec39cb230a9cdb84c2061f76f7315e52a07147d59a94"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/leanprover/cslib",
+        "file_path": "Cslib/Languages/CCS/BehaviouralTheory.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "f4ce397a049ee20ea1ab6b42e171fa6ea8203ea814f252515d957133809cbc84"
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "25bfce76fcaa3869b3b7fa581909c58a240edbfbe52cbf4ddb86b136522627d1",
+        "candidate_sha256": "90ec3fb53d6c4e9485868b3d1f1bceac5de6abc8b429d456281744fd1b0fa828",
+        "target": "Cslib.CCS.bisimilarity_congr_choice",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Cslib.CCS.bisimilarity_congr_choice' depends on axioms: [Classical.choice, propext, Quot.sound]",
+        "heartbeats": 4020,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d045b0d56c4ba0f9e402c7c70df7ef92940c97d15a5e80f14b7fc9eba59dda7f\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"68218e876d2a38b1985b8590fff244a83c321783\",\"lean_version\":\"4.31.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Classical.choice\",\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":4020,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4020386,\"reason\":\"\",\"reference_axioms\":[\"Classical.choice\",\"propext\",\"Quot.sound\"],\"reference_heartbeats\":4020,\"reference_raw_heartbeats\":4020398,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":14273.856}"
+      },
+      "context": {
+        "problem": "Cslib.CCS.bisimilarity_congr_choice",
+        "statement": "theorem bisimilarity_congr_choice :\n    (p ~[lts (defs := defs)] q) \u2192 (choice p r) ~[lts (defs := defs)] (choice q r)",
+        "reference_source": "theorem bisimilarity_congr_choice :\n    (p ~[lts (defs := defs)] q) \u2192 (choice p r) ~[lts (defs := defs)] (choice q r) := by\n  intro h\n  exists @ChoiceBisim _ _ defs\n  constructor\n  \u00b7 constructor; assumption\n  intro s1 s2 r \u03bc\n  constructor\n  case left =>\n    intro s1' htr\n    cases r\n    case choice p q r hbisim =>\n      obtain \u27e8rel, hr, hb\u27e9 := hbisim\n      cases htr\n      case choiceL a b c htr =>\n        obtain \u27e8s2', htr2, hr2\u27e9 := hb.follow_fst hr htr\n        exists s2'\n        constructor\n        \u00b7 apply Tr.choiceL htr2\n        \u00b7 constructor\n          apply hb.le_bisimilarity _ _ hr2\n      case choiceR a b c htr =>\n        exists s1'\n        constructor\n        \u00b7 apply Tr.choiceR htr\n        \u00b7 constructor\n          apply HomBisimilarity.refl\n    case bisim hbisim =>\n      obtain \u27e8rel, hr, hb\u27e9 := hbisim\n      obtain \u27e8s2', htr2, hr2\u27e9 := hb.follow_fst hr htr\n      exists s2'\n      constructor\n      \u00b7 assumption\n      constructor\n      apply hb.le_bisimilarity _ _ hr2\n  case right =>\n    intro s2' htr\n    cases r\n    case choice p q r hbisim =>\n      obtain \u27e8rel, hr, hb\u27e9 := hbisim\n      cases htr\n      case choiceL a b c htr =>\n        obtain \u27e8s1', htr1, hr1\u27e9 := hb.follow_snd hr htr\n        exists s1'\n        constructor\n        \u00b7 apply Tr.choiceL htr1\n        \u00b7 constructor\n          apply hb.le_bisimilarity _ _ hr1\n      case choiceR a b c htr =>\n        exists s2'\n        constructor\n        \u00b7 apply Tr.choiceR htr\n        \u00b7 constructor\n          apply HomBisimilarity.refl\n    case bisim hbisim =>\n      obtain \u27e8rel, hr, hb\u27e9 := hbisim\n      obtain \u27e8s1', htr1, hr1\u27e9 := hb.follow_snd hr htr\n      exists s1'\n      constructor\n      \u00b7 assumption\n      \u00b7 constructor\n        apply hb.le_bisimilarity _ _ hr1",
+        "reference_length": 251,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.31.0",
+            "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266"
+          }
+        ],
+        "dependency_digests": [
+          "d045b0d56c4ba0f9e402c7c70df7ef92940c97d15a5e80f14b7fc9eba59dda7f"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/leanprover/cslib",
+        "file_path": "Cslib/Languages/CCS/BehaviouralTheory.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "a88ccc7e1b953286ebf22e3148c0df4d72d7e3d4b4817f0d00ed99d3ab173700"
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "ff3b4afa2e3bf22e927e971af08eb2f836b20e092bb9b1687e7e1cf3d08fd0fd",
+        "candidate_sha256": "561da2e1599d85a33fddbdbdb9eca3f05f504c3dfaa7e32d367eef4eba532033",
+        "target": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "heartbeats": 16664,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"66d55361f1de13b49bab23bae81a9ec73f0eb70e7d1b37c5e3451f4e9ddd2215\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"68218e876d2a38b1985b8590fff244a83c321783\",\"lean_version\":\"4.31.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"diagnostics\":[{\"message\":\"automatically included section variable(s) unused in theorem `Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius`:\\n  [CharP L 2]\\n  [NeZero \u2113]\\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\\n  omit [CharP L 2] [NeZero \u2113] in theorem ...\\n\\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  ofNat_pos\\n\\nHint: Omit it from the simp argument list.\\n  simp only [sum_const, Set.toFinset_card, smul_eq_mul, o\u0335f\u0335N\u0335a\u0335t\u0335_\u0335p\u0335o\u0335s\u0335,\u0335 \u0335pow_pos, _root_.mul_le_mul_right,\\n  \u0332  \u0332 \u0332 \u0332 \u0332 \u0332 \u0332 \u0332ge_iff_le]\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  pow_pos\\n\\nHint: Omit it from the simp argument list.\\n  simp only [sum_const, Set.toFinset_card, smul_eq_mul, ofNat_pos, p\u0335o\u0335w\u0335_\u0335p\u0335o\u0335s\u0335,\u0335_root_.mul_le_mul_right,\\n          ge_iff_le]\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  _root_.mul_le_mul_right\\n\\nHint: Omit it from the simp argument list.\\n  simp only [sum_const, Set.toFinset_card, smul_eq_mul, ofNat_pos, pow_pos, _\u0335r\u0335o\u0335o\u0335t\u0335_\u0335.\u0335m\u0335u\u0335l\u0335_\u0335l\u0335e\u0335_\u0335m\u0335u\u0335l\u0335_\u0335r\u0335i\u0335g\u0335h\u0335t\u0335,\u0335 \u0335ge_iff_le]\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"'unfold d_fw at h_sInf_mem' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"}],\"heartbeats\":16664,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":16664207,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"reference_heartbeats\":16666,\"reference_raw_heartbeats\":16666705,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17126.659}"
+      },
+      "context": {
+        "problem": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+        "statement": "theorem fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius (i : Fin \u2113) (steps : \u2115)\n    [NeZero steps] (h_i_add_steps : i.val + steps \u2264 \u2113)\n    (f : OracleFunction \ud835\udd3dq \u03b2 (h_\u2113_add_R_rate := h_\u2113_add_R_rate) \u27e8i, by omega\u27e9)\n  (h_fw_dist_lt : fiberwiseClose \ud835\udd3dq \u03b2 (h_\u2113_add_R_rate := h_\u2113_add_R_rate)\n    (i := i) (steps := steps) (h_i_add_steps := h_i_add_steps) (f := f)) :\n  hammingClose \ud835\udd3dq \u03b2 (h_\u2113_add_R_rate := h_\u2113_add_R_rate) \u27e8i, by omega\u27e9 f",
+        "reference_source": "theorem fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius (i : Fin \u2113) (steps : \u2115)\n    [NeZero steps] (h_i_add_steps : i.val + steps \u2264 \u2113)\n    (f : OracleFunction \ud835\udd3dq \u03b2 (h_\u2113_add_R_rate := h_\u2113_add_R_rate) \u27e8i, by omega\u27e9)\n  (h_fw_dist_lt : fiberwiseClose \ud835\udd3dq \u03b2 (h_\u2113_add_R_rate := h_\u2113_add_R_rate)\n    (i := i) (steps := steps) (h_i_add_steps := h_i_add_steps) (f := f)) :\n  hammingClose \ud835\udd3dq \u03b2 (h_\u2113_add_R_rate := h_\u2113_add_R_rate) \u27e8i, by omega\u27e9 f := by\n  unfold fiberwiseClose at h_fw_dist_lt\n  unfold hammingClose\n  -- 2 * \u0394\u2080(f, \u2191(BBF_Code \ud835\udd3dq \u03b2 \u27e8\u2191i, \u22ef\u27e9)) < \u2191(BBF_CodeDistance \u2113 \ud835\udce1 \u27e8\u2191i, \u22ef\u27e9)\n  let d_fw := fiberwiseDistance \ud835\udd3dq \u03b2 (i := i) steps h_i_add_steps f\n  let C_i := (BBF_Code \ud835\udd3dq \u03b2 (h_\u2113_add_R_rate := h_\u2113_add_R_rate) \u27e8i, by omega\u27e9)\n  let d_H := Code.distFromCode f C_i\n  let d_i := BBF_CodeDistance \u2113 \ud835\udce1 (\u27e8i, by omega\u27e9)\n  let d_i_plus_steps := BBF_CodeDistance \u2113 \ud835\udce1 \u27e8i.val + steps, by omega\u27e9\n\n  have h_d_i_gt_0 : d_i > 0 := by\n    dsimp [d_i, BBF_CodeDistance] -- \u22a2 2 ^ (\u2113 + \ud835\udce1 - \u2191i) - 2 ^ (\u2113 - \u2191i) + 1 > 0\n    have h_exp_lt : \u2113 - i.val < \u2113 + \ud835\udce1 - i.val := by\n      exact Nat.sub_lt_sub_right (a := \u2113) (b := \u2113 + \ud835\udce1) (c := i.val) (by omega) (by\n        apply Nat.lt_add_of_pos_right; exact pos_of_neZero \ud835\udce1)\n    have h_pow_lt : 2 ^ (\u2113 - i.val) < 2 ^ (\u2113 + \ud835\udce1 - i.val) := by\n      exact Nat.pow_lt_pow_right (by norm_num) h_exp_lt\n    omega\n\n  have h_C_i_nonempty : Nonempty C_i := by\n    simp only [nonempty_subtype, C_i]\n    exact Submodule.nonempty (BBF_Code \ud835\udd3dq \u03b2 (h_\u2113_add_R_rate := h_\u2113_add_R_rate) \u27e8i.val, by omega\u27e9)\n\n  -- 1. Relate Hamming distance `d_H` to fiber-wise distance `d_fw`.\n  obtain \u27e8g', h_g'_mem, h_g'_min_card\u27e9 : \u2203 g' \u2208 C_i, d_fw\n    = (fiberwiseDisagreementSet \ud835\udd3dq \u03b2 i steps h_i_add_steps f g').ncard := by\n    -- Let `S` be the set of all possible fiber-wise disagreement sizes.\n    let S := (fun (g : C_i) => (fiberwiseDisagreementSet \ud835\udd3dq \u03b2 i steps h_i_add_steps\n      f g).ncard) '' Set.univ\n    -- The code `C_i` (a submodule) is non-empty, so `S` is also non-empty.\n    have hS_nonempty : S.Nonempty := by\n      refine Set.image_nonempty.mpr ?_\n\n      exact Set.univ_nonempty\n    -- For a non-empty set of natural numbers, `sInf` is an element of the set.\n    have h_sInf_mem : sInf S \u2208 S := Nat.sInf_mem hS_nonempty\n    -- By definition, `d_fw = sInf S`.\n    unfold d_fw at h_sInf_mem\n    -- Since `sInf S` is in the image set `S`, there must be an element `g_subtype` in the domain\n    -- (`C_i`) that maps to it. This `g_subtype` is the codeword we're looking for.\n    rw [Set.mem_image] at h_sInf_mem\n    rcases h_sInf_mem with \u27e8g_subtype, _, h_eq\u27e9\n    -- Extract the codeword and its membership proof.\n    exact \u27e8g_subtype.val, g_subtype.property, by exact id (Eq.symm h_eq)\u27e9\n\n  -- The Hamming distance to any codeword `g'` is bounded by `d_fw * 2 ^ steps`.\n  have h_dist_le_fw_dist_times_fiber_size : (hammingDist f g' : \u2115\u221e) \u2264 d_fw * 2 ^ steps := by\n    -- This proves `dist f g' \u2264 (fiberwiseDisagreementSet ... f g').ncard * 2 ^ steps`\n    -- and lifts to \u2115\u221e. We prove the `Nat` version `hammingDist f g' \u2264 ...`,\n    -- which is equivalent.\n    change (\u0394\u2080(f, g') : \u2115\u221e) \u2264 \u2191d_fw * ((2 ^ steps : \u2115) : \u2115\u221e)\n    rw [\u2190ENat.coe_mul, ENat.coe_le_coe, h_g'_min_card]\n    -- Let \u0394H be the finset of actually bad x points where f and g' disagree.\n    set \u0394H := Finset.filter (fun x => f x \u2260 g' x) Finset.univ\n    have h_dist_eq_card : hammingDist f g' = \u0394H.card := by\n      simp only [hammingDist, ne_eq, \u0394H]\n    rw [h_dist_eq_card]\n    -- Y_bad is the set of quotient points y that THERE EXISTS a bad fiber point x\n    set Y_bad := fiberwiseDisagreementSet \ud835\udd3dq \u03b2 i steps h_i_add_steps f g'\n    simp only at * -- simplify domain indices everywhere\n\n    -- \u22a2 #\u0394H \u2264 Y_bad.ncard * 2 ^ steps\n\n    have hFinType_Y_bad : Fintype Y_bad := by exact Fintype.ofFinite \u2191Y_bad\n    -- Every point of disagreement `x` must belong to a fiber over some `y` in `Y_bad`,\n    -- BY DEFINITION of `Y_bad`. Therefore, `\u0394H` is a subset of the union of the fibers\n    -- of `Y_bad`\n    have h_\u0394H_subset_bad_fiber_points : \u0394H \u2286 Finset.biUnion Y_bad.toFinset\n        (t := fun y => ((qMap_total_fiber \ud835\udd3dq \u03b2 (i := \u27e8i, by omega\u27e9) (steps := steps)\n          (h_i_add_steps := by apply Nat.lt_add_of_pos_right_of_le; omega) (y := y)) ''\n          (Finset.univ : Finset (Fin ((2:\u2115)^steps)))).toFinset) := by\n      -- \u22a2 If any x \u2208 \u0394H, then x \u2208 Union(qMap_total_fiber(y), \u2200 y \u2208 Y_bad)\n      intro x hx_in_\u0394H; -- \u22a2 x \u2208 Union(qMap_total_fiber(y), \u2200 y \u2208 Y_bad)\n      simp only [\u0394H, Finset.mem_filter] at hx_in_\u0394H\n      -- Now we actually apply iterated qMap into x to get y_of_x,\n      -- then x \u2208 qMap_total_fiber(y_of_x) by definition\n      let y_of_x := iteratedQuotientMap \ud835\udd3dq \u03b2 h_\u2113_add_R_rate i steps h_i_add_steps x\n      apply Finset.mem_biUnion.mpr; use y_of_x\n      -- \u22a2 y_of_x \u2208 Y_bad.toFinset \u2227 x \u2208 qMap_total_fiber(y_of_x)\n      have h_elemenet_Y_bad : y_of_x \u2208 Y_bad.toFinset := by\n        -- \u22a2 y \u2208 Y_bad.toFinset\n        simp only [fiberwiseDisagreementSet, iteratedQuotientMap, ne_eq, Subtype.exists,\n          Set.toFinset_setOf, mem_filter, mem_univ, true_and, Y_bad]\n        -- one bad fiber point of y_of_x is x itself\n        let X := x.val\n        have h_X_in_source : X \u2208 sDomain \ud835\udd3dq \u03b2 h_\u2113_add_R_rate (i := \u27e8i, by omega\u27e9) := by\n          exact Submodule.coe_mem x\n        use X\n        use h_X_in_source\n        -- \u22a2 \u0174_steps\u207d\u2071\u207e(X) = y (iterated quotient map) \u2227 \u00acf \u27e8X, \u22ef\u27e9 = g' \u27e8X, \u22ef\u27e9\n        have h_forward_iterated_qmap : Polynomial.eval X\n            (intermediateNormVpoly \ud835\udd3dq \u03b2 h_\u2113_add_R_rate \u27e8\u2191i, by omega\u27e9\n              \u27e8steps, by simp only; omega\u27e9) = y_of_x := by\n          simp only [iteratedQuotientMap, X, y_of_x];\n        have h_eval_diff : f \u27e8X, by omega\u27e9 \u2260 g' \u27e8X, by omega\u27e9 := by\n          unfold X\n          simp only [Subtype.coe_eta, ne_eq, hx_in_\u0394H, not_false_eq_true]\n        simp only [h_forward_iterated_qmap, Subtype.coe_eta, h_eval_diff,\n          not_false_eq_true, and_self]\n      simp only [h_elemenet_Y_bad, true_and]\n\n      set qMapFiber := qMap_total_fiber \ud835\udd3dq \u03b2 (i := \u27e8i, by omega\u27e9) (steps := steps)\n        (h_i_add_steps := by apply Nat.lt_add_of_pos_right_of_le; omega) (y := y_of_x)\n      simp only [coe_univ, Set.image_univ, Set.toFinset_range, mem_image, mem_univ, true_and]\n      use (pointToIterateQuotientIndex (i := \u27e8i, by omega\u27e9) (steps := steps)\n        (h_i_add_steps := by omega) (x := x))\n      have h_res := is_fiber_iff_generates_quotient_point \ud835\udd3dq \u03b2 i steps (by omega)\n        (x := x) (y := y_of_x).mp (by rfl)\n      exact h_res\n    -- \u22a2 #\u0394H \u2264 Y_bad.ncard * 2 ^ steps\n    -- The cardinality of a subset is at most the cardinality of the superset.\n    apply (Finset.card_le_card h_\u0394H_subset_bad_fiber_points).trans\n    -- The cardinality of a disjoint union is the sum of cardinalities.\n    rw [Finset.card_biUnion]\n    \u00b7 -- The size of the sum is the number of bad fibers (`Y_bad.ncard`) times\n      -- the size of each fiber (`2 ^ steps`).\n      simp only [Set.toFinset_card]\n      have h_card_fiber_per_quotient_point := card_qMap_total_fiber \ud835\udd3dq \u03b2\n        (h_\u2113_add_R_rate := h_\u2113_add_R_rate) i steps h_i_add_steps\n      simp only [Set.image_univ, Fintype.card_ofFinset,\n        Subtype.forall] at h_card_fiber_per_quotient_point\n      have h_card_fiber_of_each_y : \u2200 y \u2208 Y_bad.toFinset,\n          Fintype.card ((qMap_total_fiber \ud835\udd3dq \u03b2 (i := \u27e8\u2191i, by omega\u27e9) (steps := steps)\n            (h_i_add_steps := by apply Nat.lt_add_of_pos_right_of_le; omega) (y := y)) ''\n            \u2191(Finset.univ : Finset (Fin ((2:\u2115)^steps)))) = 2 ^ steps := by\n        intro y hy_in_Y_bad\n        have hy_card_fiber_of_y := h_card_fiber_per_quotient_point (a := y) (b := by\n          exact Submodule.coe_mem y)\n        simp only [coe_univ, Set.image_univ, Fintype.card_ofFinset, hy_card_fiber_of_y]\n      rw [Finset.sum_congr rfl h_card_fiber_of_each_y]\n      -- \u22a2 \u2211 x \u2208 Y_bad.toFinset, 2 ^ steps \u2264 Y_bad.encard.toNat * 2 ^ steps\n      simp only [sum_const, Set.toFinset_card, smul_eq_mul, ofNat_pos, pow_pos,\n        _root_.mul_le_mul_right, ge_iff_le]\n      conv_rhs => rw [\u2190_root_.Nat.card_coe_set_eq] -- convert .ncard back to .card\n      -- \u22a2 Fintype.card \u2191Y_bad \u2264 Nat.card \u2191Y_bad\n      simp only [card_eq_fintype_card, le_refl]\n    \u00b7 -- Prove that the fibers for distinct quotient points y\u2081, y\u2082 are disjoint.\n      intro y\u2081 hy\u2081 y\u2082 hy\u2082 hy_ne\n      have h_disjoint := qMap_total_fiber_disjoint (i := \u27e8\u2191i, by omega\u27e9) (steps := steps)\n        (h_i_add_steps := by omega) (y\u2081 := y\u2081) (y\u2082 := y\u2082) (hy_ne := hy_ne)\n      simp only [Function.onFun, coe_univ]\n      exact h_disjoint\n\n  -- The minimum distance `d_H` is bounded by the distance to this specific `g'`.\n  have h_dist_bridge : d_H \u2264 d_fw * 2 ^ steps := by\n    -- exact h_dist_le_fw_dist_times_fiber_size\n    apply le_trans (a := d_H) (c := d_fw * 2 ^ steps) (b := hammingDist f g')\n    \u00b7 -- \u22a2 d_H \u2264 \u2191\u0394\u2080(f, g')\n      simp only [distFromCode, SetLike.mem_coe, hammingDist, ne_eq, d_H];\n      -- \u22a2 \u0394\u2080(f, C_i) \u2264 \u2191\u0394\u2080(f, g')\n      -- \u22a2 sInf {d | \u2203 v \u2208 C_i, \u2191(#{i | f i \u2260 v i}) \u2264 d} \u2264 \u2191(#{i | f i \u2260 g' i})\n      apply sInf_le\n      use g'\n    \u00b7 exact h_dist_le_fw_dist_times_fiber_size\n\n  -- 2. Use the premise : `2 * d_fw < d_{i+steps}`.\n  -- As a `Nat` inequality, this is equivalent to `2 * d_fw \u2264 d_{i+steps} - 1`.\n  have h_fw_bound : 2 * d_fw \u2264 d_i_plus_steps - 1 := by\n    -- Convert the ENat inequality to a Nat inequality using `a < b \u2194 a + 1 \u2264 b`.\n    exact Nat.le_of_lt_succ (WithTop.coe_lt_coe.1 h_fw_dist_lt)\n\n  -- 3. The Algebraic Identity.\n  -- The core of the proof is the identity : `(d_{i+steps} - 1) * 2 ^ steps = d_i - 1`.\n  have h_algebraic_identity : (d_i_plus_steps - 1) * 2 ^ steps = d_i - 1 := by\n    dsimp [d_i, d_i_plus_steps, BBF_CodeDistance]\n    rw [Nat.sub_mul, \u2190Nat.pow_add, \u2190Nat.pow_add];\n    have h1 : \u2113 + \ud835\udce1 - (\u2191i + steps) + steps = \u2113 + \ud835\udce1 - i := by\n      rw [Nat.sub_add_eq_sub_sub_rev (h1 := by omega) (h2 := by omega),\n        Nat.add_sub_cancel (n := i) (m := steps)]\n    have h2 : (\u2113 - (\u2191i + steps) + steps) = \u2113 - i := by\n      rw [Nat.sub_add_eq_sub_sub_rev (h1 := by omega) (h2 := by omega),\n        Nat.add_sub_cancel (n := i) (m := steps)]\n    rw [h1, h2]\n\n  -- 4. Conclusion : Chain the inequalities to prove `2 * d_H < d_i`.\n  -- We know `d_H` is finite, since `C_i` is nonempty.\n  have h_dH_ne_top : d_H \u2260 \u22a4 := by\n    simp only [ne_eq, d_H]\n    rw [Code.distFromCode_eq_top_iff_empty f C_i]\n    exact Set.nonempty_iff_ne_empty'.mp h_C_i_nonempty\n\n  -- We can now work with the `Nat` value of `d_H`.\n  let d_H_nat := ENat.toNat d_H\n  have h_dH_eq : d_H = d_H_nat := (ENat.coe_toNat h_dH_ne_top).symm\n\n  -- The calculation is now done entirely in `Nat`.\n  have h_final_inequality : 2 * d_H_nat \u2264 d_i - 1 := by\n    have h_bridge_nat : d_H_nat \u2264 d_fw * 2 ^ steps := by\n        rw [\u2190ENat.coe_le_coe]\n        exact le_of_eq_of_le (id (Eq.symm h_dH_eq)) h_dist_bridge\n    calc 2 * d_H_nat\n      _ \u2264 2 * (d_fw * 2 ^ steps) := by gcongr\n      _ = (2 * d_fw) * 2 ^ steps := by rw [mul_assoc]\n      _ \u2264 (d_i_plus_steps - 1) * 2 ^ steps := by gcongr;\n      _ = d_i - 1 := h_algebraic_identity\n\n  simp only [d_H, d_H_nat] at h_dH_eq\n  -- This final line is equivalent to the goal statement.\n  rw [h_dH_eq]\n  -- \u22a2 2 * \u2191\u0394\u2080(f, C_i).toNat < \u2191(BBF_CodeDistance \u2113 \ud835\udce1 \u27e8\u2191i, \u22ef\u27e9)\n  change ((2 : \u2115) : \u2115\u221e) * \u2191\u0394\u2080(f, C_i).toNat < \u2191(BBF_CodeDistance \u2113 \ud835\udce1 \u27e8\u2191i, by omega\u27e9)\n  rw [\u2190ENat.coe_mul, ENat.coe_lt_coe]\n  apply Nat.lt_of_le_pred (n := 2 * \u0394\u2080(f, C_i).toNat) (m := d_i) (h := h_d_i_gt_0)\n    (h_final_inequality)",
+        "reference_length": 1463,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.31.0",
+            "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f"
+          }
+        ],
+        "dependency_digests": [
+          "66d55361f1de13b49bab23bae81a9ec73f0eb70e7d1b37c5e3451f4e9ddd2215"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/Verified-zkEVM/ArkLib",
+        "file_path": "ArkLib/ProofSystem/Binius/BinaryBasefold/Prelude.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "c2601c7ac0676c979327cb35af815b6efca4accd624aab77a9f1486c08761411"
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.28.0",
+      "git_commit": "673fa440714eb1949b8b50a28f2a4f52b1837e9b",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "pinned_toolchain_missing: v4.28.0"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "9c8ab38caa73c38a0c5b18024bb2a5251a45c0c0107cd5b2c873b25186d40b57",
+        "candidate_sha256": "67401740132ca27612c5a143c6dd3a90205f5d84a7c0850182c9391592a0752f",
+        "target": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Binius.BinaryBasefold.fold_advances_evaluation_poly' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "heartbeats": 47012,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"0fb82c6c9ebe219a28dc1e8a1a3bae5c900e88189fa9b41241711a41ab5470f2\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"68218e876d2a38b1985b8590fff244a83c321783\",\"lean_version\":\"4.31.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"diagnostics\":[{\"message\":\"`Subtype.eq_iff` has been deprecated: Use `Subtype.ext_iff` instead\\n\\nNote: The updated constant has a different type:\\n  \u2200 {\u03b1 : Sort u} {p : \u03b1 \u2192 Prop} {a1 a2 : { x // p x }}, a1 = a2 \u2194 \u2191a1 = \u2191a2\\ninstead of\\n  \u2200 {\u03b1 : Sort u_1} {p : \u03b1 \u2192 Prop} {a1 a2 : { x // p x }}, a1 = a2 \u2194 \u2191a1 = \u2191a2\",\"severity\":\"warning\"},{\"message\":\"`Subtype.eq_iff` has been deprecated: Use `Subtype.ext_iff` instead\\n\\nNote: The updated constant has a different type:\\n  \u2200 {\u03b1 : Sort u} {p : \u03b1 \u2192 Prop} {a1 a2 : { x // p x }}, a1 = a2 \u2194 \u2191a1 = \u2191a2\\ninstead of\\n  \u2200 {\u03b1 : Sort u_1} {p : \u03b1 \u2192 Prop} {a1 a2 : { x // p x }}, a1 = a2 \u2194 \u2191a1 = \u2191a2\",\"severity\":\"warning\"},{\"message\":\"`AddSubmonoidClass.coe_finset_sum` has been deprecated: Use `AddSubmonoidClass.coe_finsetSum` instead\",\"severity\":\"warning\"},{\"message\":\"`Nat.add_eq_zero` has been deprecated: Use `Nat.add_eq_zero_iff` instead\",\"severity\":\"warning\"},{\"message\":\"automatically included section variable(s) unused in theorem `Binius.BinaryBasefold.fold_advances_evaluation_poly`:\\n  [CharP L 2]\\n  [NeZero \u2113]\\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\\n  omit [CharP L 2] [NeZero \u2113] in theorem ...\\n\\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\",\"severity\":\"warning\"}],\"heartbeats\":47012,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":47012062,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"reference_heartbeats\":47023,\"reference_raw_heartbeats\":47023971,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16883.4}"
+      },
+      "context": {
+        "problem": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+        "statement": "theorem fold_advances_evaluation_poly\n  (i : Fin (\u2113)) (h_i_succ_lt : i + 1 < \u2113 + \ud835\udce1)\n  (coeffs : Fin (2 ^ (\u2113 - \u2191i)) \u2192 L) (r_chal : L) :\n  let P_i : L[X] := intermediateEvaluationPoly \ud835\udd3dq \u03b2 h_\u2113_add_R_rate (i := \u27e8i, by\n    exact Nat.lt_trans (n := i) (k := \u2113+1) (m := \u2113) (h\u2081 := i.isLt) (by exact Nat.lt_add_one \u2113)\n  \u27e9) coeffs\n  let f_i := fun (x : (sDomain \ud835\udd3dq \u03b2 h_\u2113_add_R_rate)\n      \u27e8i, by exact Nat.lt_trans (n := i) (k := r) (m := \u2113) (h\u2081 := by omega) (by omega)\u27e9) =>\n    P_i.eval (x.val : L)\n  let f_i_plus_1 := fold (i := \u27e8i, by omega\u27e9) (h_i := by omega) (f := f_i) (r_chal := r_chal)\n  let new_coeffs := fun j : Fin (2^(\u2113 - (i + 1))) =>\n    (1 - r_chal) * (coeffs \u27e8j.val * 2, by\n      rw [\u2190Nat.add_zero (j.val * 2)]\n      apply mul_two_add_bit_lt_two_pow (c := \u2113 - i) (a := j) (b := \u2113 - (\u2191i + 1))\n        (i := 0) (by omega) (by omega)\n    \u27e9) +\n    r_chal * (coeffs \u27e8j.val * 2 + 1, by\n      apply mul_two_add_bit_lt_two_pow (c := \u2113 - i) (a := j) (b := \u2113 - (\u2191i + 1))\n        (i := 1) (by omega) (by omega)\n    \u27e9)\n  let P_i_plus_1 :=\n    intermediateEvaluationPoly \ud835\udd3dq \u03b2 h_\u2113_add_R_rate (i := \u27e8i+1, by omega\u27e9) new_coeffs\n  \u2200 (y : (sDomain \ud835\udd3dq \u03b2 h_\u2113_add_R_rate)\n    \u27e8i+1, by omega\u27e9), f_i_plus_1 y = P_i_plus_1.eval y.val",
+        "reference_source": "theorem fold_advances_evaluation_poly\n  (i : Fin (\u2113)) (h_i_succ_lt : i + 1 < \u2113 + \ud835\udce1)\n  (coeffs : Fin (2 ^ (\u2113 - \u2191i)) \u2192 L) (r_chal : L) :\n  let P_i : L[X] := intermediateEvaluationPoly \ud835\udd3dq \u03b2 h_\u2113_add_R_rate (i := \u27e8i, by\n    exact Nat.lt_trans (n := i) (k := \u2113+1) (m := \u2113) (h\u2081 := i.isLt) (by exact Nat.lt_add_one \u2113)\n  \u27e9) coeffs\n  let f_i := fun (x : (sDomain \ud835\udd3dq \u03b2 h_\u2113_add_R_rate)\n      \u27e8i, by exact Nat.lt_trans (n := i) (k := r) (m := \u2113) (h\u2081 := by omega) (by omega)\u27e9) =>\n    P_i.eval (x.val : L)\n  let f_i_plus_1 := fold (i := \u27e8i, by omega\u27e9) (h_i := by omega) (f := f_i) (r_chal := r_chal)\n  let new_coeffs := fun j : Fin (2^(\u2113 - (i + 1))) =>\n    (1 - r_chal) * (coeffs \u27e8j.val * 2, by\n      rw [\u2190Nat.add_zero (j.val * 2)]\n      apply mul_two_add_bit_lt_two_pow (c := \u2113 - i) (a := j) (b := \u2113 - (\u2191i + 1))\n        (i := 0) (by omega) (by omega)\n    \u27e9) +\n    r_chal * (coeffs \u27e8j.val * 2 + 1, by\n      apply mul_two_add_bit_lt_two_pow (c := \u2113 - i) (a := j) (b := \u2113 - (\u2191i + 1))\n        (i := 1) (by omega) (by omega)\n    \u27e9)\n  let P_i_plus_1 :=\n    intermediateEvaluationPoly \ud835\udd3dq \u03b2 h_\u2113_add_R_rate (i := \u27e8i+1, by omega\u27e9) new_coeffs\n  \u2200 (y : (sDomain \ud835\udd3dq \u03b2 h_\u2113_add_R_rate)\n    \u27e8i+1, by omega\u27e9), f_i_plus_1 y = P_i_plus_1.eval y.val := by\n  simp only\n  intro y\n  set fiberMap := qMap_total_fiber \ud835\udd3dq \u03b2 (i := \u27e8i, by omega\u27e9) (steps := 1)\n    (h_i_add_steps := by simp only; omega) (y := y)\n  set x\u2080 := fiberMap 0\n  set x\u2081 := fiberMap 1\n  set P_i := intermediateEvaluationPoly \ud835\udd3dq \u03b2 h_\u2113_add_R_rate (i := \u27e8i, by omega\u27e9) coeffs\n  set new_coeffs := fun j : Fin (2^(\u2113 - (i + 1))) =>\n    (1 - r_chal) * (coeffs \u27e8j.val * 2, by\n      have h : j.val * 2 < 2^(\u2113 - (i + 1)) * 2 := by omega\n      have h2 : 2^(\u2113 - i) = 2^(\u2113 - (i + 1)) * 2 := by\n        conv_rhs => enter[2]; rw [\u2190Nat.pow_one 2]\n        rw [\u2190pow_add]; congr\n        rw [Nat.sub_add_eq_sub_sub_rev (h1 := by omega) (h2 := by omega)]\n        -- \u22a2 \u2113 - \u2191i = \u2113 - (\u2191i + 1 - 1)\n        rw [Nat.add_sub_cancel (n := i) (m := 1)]\n      omega\n    \u27e9) +\n    r_chal * (coeffs \u27e8j.val * 2 + 1, by\n      apply mul_two_add_bit_lt_two_pow (c := \u2113 - i) (a := j) (b := \u2113 - (\u2191i + 1)) (i := 1)\n      \u00b7 omega\n      \u00b7 omega\n    \u27e9)\n  have h_eval_qMap_x\u2080 : (AdditiveNTT.qMap \ud835\udd3dq \u03b2 \u27e8i, by omega\u27e9).eval x\u2080.val = y := by\n    have h := iteratedQuotientMap_k_eq_1_is_qMap \ud835\udd3dq \u03b2 h_\u2113_add_R_rate i (by omega) x\u2080\n    simp only [Subtype.eq_iff] at h\n    rw [h.symm]\n    have h_res := is_fiber_iff_generates_quotient_point \ud835\udd3dq \u03b2 i (steps := 1) (by omega)\n      (x := x\u2080) (y := y).mpr (by rw [pointToIterateQuotientIndex_qMap_total_fiber_eq_self])\n    rw [h_res]\n    -- exact qMap_eval_fiber_eq_self \u27e6L\u27e7 \u27e8i + 1, by omega\u27e9 (by simp only; omega) h_i_succ_lt y 0\n  have h_eval_qMap_x\u2081 : (AdditiveNTT.qMap \ud835\udd3dq \u03b2 \u27e8i, by omega\u27e9).eval x\u2081.val = y := by\n    have h := iteratedQuotientMap_k_eq_1_is_qMap \ud835\udd3dq \u03b2 h_\u2113_add_R_rate i (by omega) x\u2081\n    simp only [Subtype.eq_iff] at h\n    rw [h.symm]\n    have h_res := is_fiber_iff_generates_quotient_point \ud835\udd3dq \u03b2 i (steps := 1) (by omega)\n      (x := x\u2081) (y := y).mpr (by rw [pointToIterateQuotientIndex_qMap_total_fiber_eq_self])\n    rw [h_res]\n  have hx\u2080 := qMap_total_fiber_basis_sum_repr \ud835\udd3dq \u03b2 i (steps := 1)\n    (h_i_add_steps := by omega) y 0\n  have hx\u2081 := qMap_total_fiber_basis_sum_repr \ud835\udd3dq \u03b2 i (steps := 1)\n    (h_i_add_steps := by omega) y 1\n  simp only [Fin.isValue] at hx\u2080 hx\u2081\n\n  have h_fiber_diff : x\u2081.val - x\u2080.val = 1 := by\n    simp only [Fin.isValue, x\u2081, x\u2080, fiberMap]\n    rw [hx\u2081, hx\u2080]\n    simp only [Fin.isValue, AddSubmonoidClass.coe_finset_sum, SetLike.val_smul]\n    have h_index : \u2113 + \ud835\udce1 - i = (\u2113 + \ud835\udce1 - (i.val + 1)) + 1 := by omega\n    rw! (castMode := .all) [h_index]\n    rw [Fin.sum_univ_succ, Fin.sum_univ_succ] -- (free_term + y_repr) - (free_term + y_repr) = 1\n    -- First, simplify the free terms\n    simp only [fiber_coeff, eqRec_eq_cast, lt_one_iff, reducePow, Fin.isValue,\n      Fin.coe_ofNat_eq_mod, mod_succ, dite_smul, ite_smul, zero_smul, one_smul, zero_mod]\n    have h_cast_0 :\n        (cast (Eq.symm h_index \u25b8 rfl : Fin (\u2113 + \ud835\udce1 - (\u2191i + 1) + 1) = Fin (\u2113 + \ud835\udce1 - \u2191i)) 0).val =\n        0 := by\n      rw [\u2190Fin.cast_eq_cast (h := by omega)]\n      rw [Fin.cast_val_eq_val (h_eq := by omega)]\n      simp only [Fin.coe_ofNat_eq_mod, mod_succ_eq_iff_lt, succ_eq_add_one, lt_add_iff_pos_left]\n      omega\n    have h_cast_1 :\n        (cast (Eq.symm h_index \u25b8 rfl : Fin (\u2113 + \ud835\udce1 - (\u2191i + 1) + 1) = Fin (\u2113 + \ud835\udce1 - \u2191i)) 1).val =\n        1 := by\n      rw [\u2190Fin.cast_eq_cast (h := by omega)]\n      rw [Fin.cast_val_eq_val (h_eq := by omega)]\n      simp only [Fin.coe_ofNat_eq_mod, mod_succ_eq_iff_lt, succ_eq_add_one,\n        lt_add_iff_pos_left, tsub_pos_iff_lt]\n      omega\n    simp only [h_cast_0, \u2193reduceDIte]\n    have h_getBit_0_of_0 : Nat.getBit (k := 0) (n := 0) = 0 := by\n      simp only [getBit, shiftRight_zero, and_one_is_mod, zero_mod]\n    have h_getBit_0_of_1 : Nat.getBit (k := 0) (n := 1) = 1 := by\n      simp only [getBit, shiftRight_zero, Nat.and_self]\n    simp only [h_getBit_0_of_1, one_ne_zero, \u2193reduceIte, h_getBit_0_of_0, zero_add]\n    rw! (castMode := .all) [\u2190h_index]\n    rw [cast_eq]\n    simp only [get_sDomain_basis, Fin.coe_ofNat_eq_mod, zero_mod, add_zero, cast_eq]\n    rw [normalizedW\u1d62_eval_\u03b2\u1d62_eq_1 \ud835\udd3dq \u03b2]\n    ring_nf\n    conv_rhs => rw [\u2190add_zero (a := 1)]\n    rw [add_sub_assoc]\n    congr 1\n    rw [sub_eq_zero]\n    apply Finset.sum_congr (h := by rfl)\n    simp only [mem_univ, congr_eqRec, Fin.val_succ, Nat.add_eq_zero, one_ne_zero, and_false,\n      \u2193reduceDIte, add_tsub_cancel_right, Fin.eta, imp_self, implies_true]\n  set P_i_plus_1 :=\n    intermediateEvaluationPoly \ud835\udd3dq \u03b2 h_\u2113_add_R_rate (i := \u27e8i+1, by omega\u27e9) new_coeffs\n  -- Set up the even and odd refinement polynomials\n  set P\u2080_coeffs := fun j : Fin (2^(\u2113 - (i + 1))) => coeffs \u27e8j.val * 2, by\n    have h1 : \u2113 - (i + 1) + 1 = \u2113 - i := by omega\n    have h2 : 2^(\u2113 - (i + 1) + 1) = 2^(\u2113 - i) := by rw [h1]\n    have h3 : 2^(\u2113 - (i + 1)) * 2 = 2^(\u2113 - (i + 1) + 1) := by rw [pow_succ]\n    rw [\u2190 h2, \u2190 h3]; omega\u27e9\n  set P\u2081_coeffs := fun j : Fin (2^(\u2113 - (i + 1))) => coeffs \u27e8j.val * 2 + 1, by\n    have h1 : \u2113 - (i + 1) + 1 = \u2113 - i := by omega\n    have h2 : 2^(\u2113 - (i + 1) + 1) = 2^(\u2113 - i) := by rw [h1]\n    have h3 : 2^(\u2113 - (i + 1)) * 2 = 2^(\u2113 - (i + 1) + 1) := by rw [pow_succ]\n    rw [\u2190 h2, \u2190 h3]; omega\u27e9\n  set P\u2080 := evenRefinement \ud835\udd3dq \u03b2 h_\u2113_add_R_rate i coeffs\n  set P\u2081 := oddRefinement \ud835\udd3dq \u03b2 h_\u2113_add_R_rate i coeffs\n  have h_P_i_eval := evaluation_poly_split_identity \ud835\udd3dq \u03b2 h_\u2113_add_R_rate \u27e8i, by omega\u27e9 coeffs\n  -- Equation 39 : P^(i)(X) = P\u2080^(i+1)(q^(i)(X)) + X \u00b7 P\u2081^(i+1)(q^(i)(X))\n  have h_equation_39_x\u2080 : P_i.eval x\u2080.val = P\u2080.eval y.val + x\u2080.val * P\u2081.eval y.val := by\n    simp only [h_P_i_eval, Fin.eta, Polynomial.eval_add, eval_comp,\n      h_eval_qMap_x\u2080, Polynomial.eval_mul, Polynomial.eval_X, P_i, P\u2080, P\u2081]\n  have h_equation_39_x\u2081 : P_i.eval x\u2081.val = P\u2080.eval y.val + x\u2081.val * P\u2081.eval y.val := by\n    simp only [h_P_i_eval, Fin.eta, Polynomial.eval_add, eval_comp,\n      h_eval_qMap_x\u2081, Polynomial.eval_mul, Polynomial.eval_X, P_i, P\u2080, P\u2081]\n  set f_i := fun (x : (sDomain \ud835\udd3dq \u03b2 h_\u2113_add_R_rate) \u27e8i, by omega\u27e9) => P_i.eval (x.val : L)\n  set f_i_plus_1 := fold (i := \u27e8i, by omega\u27e9) (h_i := by omega) (f := f_i) (r_chal := r_chal)\n  -- Unfold the definition of f_i_plus_1 using the fold function\n  have h_fold_def : f_i_plus_1 y =\n      f_i x\u2080 * ((1 - r_chal) * x\u2081.val - r_chal) +\n      f_i x\u2081 * (r_chal - (1 - r_chal) * x\u2080.val) := rfl\n  -- Main calculation following the outline\n  calc f_i_plus_1 y\n    = f_i x\u2080 * ((1 - r_chal) * x\u2081.val - r_chal) +\n        f_i x\u2081 * (r_chal - (1 - r_chal) * x\u2080.val) := h_fold_def\n    _ = P_i.eval x\u2080.val * ((1 - r_chal) * x\u2081.val - r_chal) +\n        P_i.eval x\u2081.val * (r_chal - (1 - r_chal) * x\u2080.val) := by simp only [f_i]\n    _ = (P\u2080.eval y.val + x\u2080.val * P\u2081.eval y.val) * ((1 - r_chal) * x\u2081.val - r_chal) +\n        (P\u2080.eval y.val + x\u2081.val * P\u2081.eval y.val) * (r_chal - (1 - r_chal) * x\u2080.val) := by\n      rw [h_equation_39_x\u2080, h_equation_39_x\u2081]\n    _ = P\u2080.eval y.val * ((1 - r_chal) * x\u2081.val - r_chal + r_chal - (1 - r_chal) * x\u2080.val) +\n        P\u2081.eval y.val * (x\u2080.val * ((1 - r_chal) * x\u2081.val - r_chal) +\n          x\u2081.val * (r_chal - (1 - r_chal) * x\u2080.val)) := by ring\n    _ = P\u2080.eval y.val * ((1 - r_chal) * (x\u2081.val - x\u2080.val)) +\n        P\u2081.eval y.val * ((x\u2081.val - x\u2080.val) * r_chal) := by ring\n    _ = P\u2080.eval y.val * (1 - r_chal) + P\u2081.eval y.val * r_chal := by rw [h_fiber_diff]; ring\n    _ = P_i_plus_1.eval y.val := by\n      simp only [P_i_plus_1, P\u2080, P\u2081, new_coeffs, evenRefinement, oddRefinement,\n        intermediateEvaluationPoly]\n      conv_lhs => enter [1]; rw [mul_comm, \u2190Polynomial.eval_C_mul]\n      conv_lhs => enter [2]; rw [mul_comm, \u2190Polynomial.eval_C_mul]\n      -- \u22a2 eval y (C (1-r) * \u2211...) + eval y (C r * \u2211...) = eval y (\u2211...)\n      rw [\u2190Polynomial.eval_add]\n      -- \u22a2 poly_left.eval y = poly_right.eval y\n      congr\n      simp_rw [mul_sum, \u2190Finset.sum_add_distrib]\n      -- We now prove that the terms inside the sums are equal for each index.\n      apply Finset.sum_congr rfl\n      intro j hj\n      have h_j_lt : j.val < 2 ^ (\u2113 - (\u2191i + 1)) := by\n        rw [Nat.sub_add_eq]\n        omega\n      conv_lhs => enter [1]; rw [mul_comm (a := Polynomial.C (coeffs \u27e8j.val * 2, by\n        rw [\u2190Nat.add_zero (j.val * 2)]\n        apply mul_two_add_bit_lt_two_pow (c := \u2113 - i) (a := j) (b := \u2113 - (\u2191i + 1))\n          (i := 0) (by omega) (by omega)\u27e9)), \u2190mul_assoc,\n        mul_comm (a := Polynomial.C (1 - r_chal))]; rw [mul_assoc]\n      conv_lhs => enter [2]; rw [mul_comm (a := Polynomial.C (coeffs \u27e8j.val * 2 + 1, by\n        apply mul_two_add_bit_lt_two_pow (c := \u2113 - i) (a := j) (b := \u2113 - (\u2191i + 1))\n          (i := 1) (by omega) (by omega)\u27e9)), \u2190mul_assoc,\n        mul_comm (a := Polynomial.C r_chal)]; rw [mul_assoc]\n      conv_rhs => rw [mul_comm]\n      rw [\u2190mul_add]\n      congr\n      simp only [\u2190Polynomial.C_mul, \u2190Polynomial.C_add]",
+        "reference_length": 1906,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.31.0",
+            "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f"
+          }
+        ],
+        "dependency_digests": [
+          "0fb82c6c9ebe219a28dc1e8a1a3bae5c900e88189fa9b41241711a41ab5470f2"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/Verified-zkEVM/ArkLib",
+        "file_path": "ArkLib/ProofSystem/Binius/BinaryBasefold/Prelude.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "94cd00ee6680f2a3227462fb7a9a4b01331a9f00b78713852d9aa8d5fe4de8c0"
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "d25ca52c671371e64e2461c24bff7d08d898bdd691c59f8679ecf7275c23d883",
+        "candidate_sha256": "5e8c33db1f147ea33ed9adae552f5f17c7559384f868799a83392817c2e56979",
+        "target": "interleaved_affine_gaps_imply_tensor_gaps",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'interleaved_affine_gaps_imply_tensor_gaps' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "heartbeats": 9976,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"db574db38701824005ee34d985785e200becbd14a7d80b0df10edd4d11b05993\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"68218e876d2a38b1985b8590fff244a83c321783\",\"lean_version\":\"4.31.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"diagnostics\":[{\"message\":\"automatically included section variable(s) unused in theorem `interleaved_affine_gaps_imply_tensor_gaps`:\\n  [NoZeroDivisors F]\\n  [Fintype A]\\n  [Module.Free F A]\\n  [Nontrivial \u21a5MC]\\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\\n  omit [NoZeroDivisors F] [Fintype A] [Module.Free F A] [Nontrivial \u21a5MC] in theorem ...\\n\\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\",\"severity\":\"warning\"}],\"heartbeats\":9976,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":9976769,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"reference_heartbeats\":9976,\"reference_raw_heartbeats\":9976894,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":20076.893}"
+      },
+      "context": {
+        "problem": "interleaved_affine_gaps_imply_tensor_gaps",
+        "statement": "theorem interleaved_affine_gaps_imply_tensor_gaps\n    (hC_proximityGapAffineLines : e_\u03b5_correlatedAgreementAffineLinesNat\n      (F := F) (A := A) (\u03b9 := \u03b9) (C := MC) (e := e) (\u03b5 := \u03b5))\n    (h_interleaved_gaps : \u2200 m : \u2115, m \u2265 1 \u2192\n      e_\u03b5_correlatedAgreementAffineLinesNat (F := F)\n        (A := InterleavedSymbol A (Fin m)) (\u03b9 := \u03b9) (C := MC ^\u22c8 (Fin m)) e \u03b5) :\n    \u2200 (\u03d1 : \u2115), (h\u03d1_gt_0 : \u03d1 > 0) \u2192 \u03b4_\u03b5_multilinearCorrelatedAgreement_Nat (F := F) (A := A)\n      (\u03b9 := \u03b9) (C := MC) (\u03d1 := \u03d1) (e := e) (\u03b5 := \u03b5)",
+        "reference_source": "theorem interleaved_affine_gaps_imply_tensor_gaps\n    (hC_proximityGapAffineLines : e_\u03b5_correlatedAgreementAffineLinesNat\n      (F := F) (A := A) (\u03b9 := \u03b9) (C := MC) (e := e) (\u03b5 := \u03b5))\n    (h_interleaved_gaps : \u2200 m : \u2115, m \u2265 1 \u2192\n      e_\u03b5_correlatedAgreementAffineLinesNat (F := F)\n        (A := InterleavedSymbol A (Fin m)) (\u03b9 := \u03b9) (C := MC ^\u22c8 (Fin m)) e \u03b5) :\n    \u2200 (\u03d1 : \u2115), (h\u03d1_gt_0 : \u03d1 > 0) \u2192 \u03b4_\u03b5_multilinearCorrelatedAgreement_Nat (F := F) (A := A)\n      (\u03b9 := \u03b9) (C := MC) (\u03d1 := \u03d1) (e := e) (\u03b5 := \u03b5) := by\n    classical\n    intro \u03d1\n    induction \u03d1 with\n    | zero =>\n      intro u\n      contradiction\n    | succ \u03d1_sub_1 ih =>\n      cases \u03d1_sub_1 with\n      | zero =>\n        -- `\u03d1 = 1`\n        simp only [zero_add, gt_iff_lt, zero_lt_one, ModuleCode, forall_const]\n        intro u\n        let toAffineLineEval := multilinearCombine\u2081_eq_affineLineEvaluation (F := F) (u := u)\n        intro hprob_gt\n        simp_rw [toAffineLineEval] at hprob_gt\n        let prob_eq := prob_uniform_singleton_finFun_eq (F := F)\n          (P := fun r => \u0394\u2080(affineLineEvaluation (u 0) (u 1) r, MC) \u2264 e)\n        -- Convert sampling (r \u2190 (Fin 1 \u2192 F)) into sampling (r \u2190 F)\n        simp_rw [prob_eq, Nat.cast_one, ENNReal.coe_one, one_mul] at hprob_gt\n        have h_correlated_agreement := hC_proximityGapAffineLines (u 0) (u 1) hprob_gt\n        simp only [jointProximityNat\u2082, Fin.isValue] at h_correlated_agreement\n        have h_u_eq: u = finMapTwoWords (u 0) (u 1) := by\n          funext rowIdx\n          match rowIdx with\n          | 0 => rfl\n          | 1 => rfl\n        rw [h_u_eq.symm] at h_correlated_agreement\n        exact h_correlated_agreement\n      | succ \u03d1_sub_2 =>\n        intro h\u03d1_gt_0 u hP_multilinearCombine_close_gt\n        -- `\u03d1 \u2265 2`\n        -- set \u03d1_sub_1 := \u03d1_sub_2 + 1\n        let \u03d1 := \u03d1_sub_2 + 1 + 1\n        have h\u03d1 : \u03d1 = \u03d1_sub_2 + 1 + 1 := by rfl\n        -- have hfin\u03d1 : Fin \u03d1 = Fin (\u03d1_sub_2 + 1 + 1) := by rfl\n        set U\u2080 : Fin (2 ^ (\u03d1_sub_2 + 1)) \u2192 Word A \u03b9 :=\n          (splitHalfRowWiseInterleavedWords (\u03d1 := \u03d1_sub_2 + 1) u).1\n        set U\u2081 : Fin (2 ^ (\u03d1_sub_2 + 1)) \u2192 Word A \u03b9 :=\n          (splitHalfRowWiseInterleavedWords (\u03d1 := \u03d1_sub_2 + 1) u).2\n        unfold jointProximityNat\n        simp only\n        -- intro hP_multilinearCombine_close_gt\n        have h_finsnoc_eq_r: \u2200 r: Fin (\u03d1_sub_2 + 1 + 1) \u2192 F,\n          Fin.snoc (fun (i : Fin (\u03d1_sub_2 + 1)) \u21a6 r i.castSucc)\n            (r (Fin.last (\u03d1_sub_2 + 1))) = r := fun r => by\n          funext i\n          have hi_le_lt := i.isLt\n          by_cases h : i = Fin.last (\u03d1_sub_2 + 1)\n          \u00b7 simp only [h, Fin.snoc_last]\n          \u00b7 have h_i_ne_last: i \u2260 Fin.last (\u03d1_sub_2 + 1) := by omega\n            have h_i_ne_last_val: i.val \u2260 Fin.last (\u03d1_sub_2 + 1) := by omega\n            rw [Fin.val_last] at h_i_ne_last_val\n            have h_i_lt: i.val < (\u03d1_sub_2 + 1) := by omega\n            simp only [Fin.snoc, Fin.castSucc_castLT, cast_eq, dite_eq_ite, ite_eq_left_iff, not_lt]\n            simp only [isEmpty_Prop, not_le, h_i_lt, IsEmpty.forall_iff]\n        let P : F \u2192 (Fin (\u03d1_sub_2 + 1) \u2192 F) \u2192 Prop := fun r_last r_init =>\n          \u0394\u2080(multilinearCombine (u:=u) (r:=Fin.snoc r_init r_last), MC) \u2264 e\n        let hP_split_r_last := prob_split_last_uniform_sampling_of_finFun\n          (\u03d1 := \u03d1_sub_2 + 1) (F := F) (P := P)\n        unfold P at hP_split_r_last\n        simp_rw [h_finsnoc_eq_r] at hP_split_r_last\n        rw [hP_split_r_last] at hP_multilinearCombine_close_gt\n        -- Now we have two randomness sampling in hP_multilinearCombine_close_gt :\n        -- `((\u03d1_sub_2 + 1 + 1) * \u03b5) / |\ud835\udd3d|\n          -- < Pr_{ r_last; r_init }[  \u0394\u2080((Fin.snoc r_init r_last)|\u2a02|u, \u2191MC) \u2264 \u2191e)) ]` (0)\n        -- We need to achieve the upperbound for hP_multilinearCombine_close_gt probability by:\n        -- i.e. `Pr_{ r_last; r_init }[  \u0394\u2080((Fin.snoc r_init r_last)|\u2a02|u, \u2191MC) \u2264 \u2191e)) ]`\n        -- `= Pr_{ r_last; r_init }[ \u0394\u2080((r_init)|\u2a02|affineCombine(U\u2080, U\u2081, r_last), \u2191MC) \u2264 \u2191e)) ]`\n        -- `= PR_{ r_last }[ r_init; \u0394\u2080((r_init)|\u2a02|affineCombine(U\u2080, U\u2081, r_last), \u2191MC) \u2264 \u2191e)) ]`\n        -- Divide into two cases: r_last \u2208 R* and r_last \u2209 R*\n        -- `= Pr_{ r_last }[ r_last \u2208 R* \u2227\n          -- Pr_{ r_init }[ \u0394\u2080((r_init)|\u2a02|affineCombine(U\u2080, U\u2081, r_last), \u2191MC) \u2264 \u2191e)) ]` (1)\n        -- `+ Pr_{ r_last }[ r_last \u2209 R* \u2227\n          -- Pr_{ r_init }[ \u0394\u2080((r_init)|\u2a02|affineCombine(U\u2080, U\u2081, r_last), \u2191MC) \u2264 \u2191e)) ]` (2)\n        -- `(1) = Pr_{ r_last }[ r_last \u2208 R* ]` (3)\n        -- `(2): \u2200 r \u2209 R*, it's trivial that the probability\n          -- \u2264 ((\u03d1_sub_2 + 1) * \u03b5) / |\ud835\udd3d|, due to definition of membership of R*` (4)\n\n        -- Combine (0), (3), (4): we have `Pr_{ r_last }[ r_last \u2208 R* ] > \u03b5/|\ud835\udd3d|` (5)\n\n        -- Applying `correlatedAgreement_of_mem_R_star_tensor` to (5), we get\n          -- `\u0394\u2080((r_last)|\u2a02|affineCombine(U\u2080, U\u2081, r_last), \u2191MC) \u2264 \u2191e)) ] > \u03b5/|\ud835\udd3d|` (6)\n        -- This is premise for affineProxmityGaps of interleaved code (`h_interleaved_gaps`)\n          -- for `m = 2^{\u03d1_sub_2 + 1}`, which directly leads to Q.E.D.\n        let  \u03d1_pred := \u03d1_sub_2 + 1\n        have h_\u03d1_pred : \u03d1_pred = \u03d1_sub_2 + 1 := by rfl\n        have h_\u03d1 : \u03d1 = \u03d1_pred + 1 := by rfl\n        -- Step 1: Apply multilinearCombine recursive form\n        -- We need the lemma `multilinearCombine u r = multilinearCombine`\n          -- `(affineLineEvaluation U\u2080 U\u2081 r_last) r_init` where `r = Fin.snoc r_init r_last`\n        have multilinearCombine_snoc_eq_multilinearCombine_affine\n          (r_init : Fin \u03d1_pred \u2192 F) (r_last : F) : multilinearCombine u (Fin.snoc r_init r_last) =\n            multilinearCombine (affineLineEvaluation U\u2080 U\u2081 r_last) r_init := by\n          rw [multilinearCombine_recursive_form]\n          simp only [Fin.snoc_last, Fin.init_snoc]\n          rfl\n        -- Rewrite the probability using this identity\n        simp_rw [multilinearCombine_snoc_eq_multilinearCombine_affine]\n          at hP_multilinearCombine_close_gt\n        -- hP_multilinearCombine_close_gt now looks like:\n        -- Pr_{ r_last \u2190 $\u1d56 F; r_init \u2190 $\u1d56 (Fin \u03d1_pred \u2192 F) }[ \u0394\u2080(multilinearCombine\n            -- (affineLineEvaluation U\u2080 U\u2081 r_last) r_init, \u2191MC) \u2264 \u2191e ] > \u2191(\u2191\u03d1 * \u2191\u03b5) / q\n        -- Step 2 & 3: Define R* and apply Law of Total Probability\n        let R_star_set := R_star_tensor MC (m:=\u03d1_pred) (e:=e) (\u03b5:=\u03b5) U\u2080 U\u2081\n        -- Step 5: Show Pr[R*] > \u03b5 / q\n        have h_prob_Rstar_gt_eps_div_q : Pr_{ let r \u2190 $\u1d56 F }[ r \u2208 R_star_set ]\n          > (\u2191\u03b5 : ENNReal) / (Fintype.card F : ENNReal) := by\n          let res := prob_R_star_gt_threshold (MC := MC) (\u03b5 := \u03b5) (\u03d1 := \u03d1_sub_2 + 1) (u := u)\n            (e := e) (hP_multilinearCombine_close_gt)\n          exact res\n        -- Convert Pr_{}[] to cardinality\n        have h_R_star_card_gt_eps : R_star_set.card > \u03b5 := by\n          rw [prob_uniform_eq_card_filter_div_card] at h_prob_Rstar_gt_eps_div_q -- Needs NNReal\n          simp only [ENNReal.coe_natCast] at h_prob_Rstar_gt_eps_div_q\n          rw [gt_iff_lt] at h_prob_Rstar_gt_eps_div_q\n          have h_cancel_q_denom := ENNReal.div_lt_div_iff_left\n            (a := (\u03b5 : ENNReal))\n            (b := (#(filter (fun r => r \u2208 R_star_set) Finset.univ)))\n            (c := (Fintype.card F : ENNReal)) (hc\u2080 := by simp only [ne_eq,\n            Nat.cast_eq_zero, Fintype.card_ne_zero, not_false_eq_true]) (hc := by simp only [ne_eq,\n              ENNReal.natCast_ne_top, not_false_eq_true])\n          rw [h_cancel_q_denom] at h_prob_Rstar_gt_eps_div_q\n          simp only [filter_univ_mem, Nat.cast_lt] at h_prob_Rstar_gt_eps_div_q\n          exact h_prob_Rstar_gt_eps_div_q\n        -- Step 6: Apply Inductive Hypothesis for r_last \u2208 R*\n        have h_line_close_to_C_m : \u2200 (r : R_star_set),\n          jointProximityNat (u := affineLineEvaluation U\u2080 U\u2081 r.val) (e := e) (C := MC) := by\n          intro r_in_Rstar\n          -- Use the lemma proven earlier\n          apply correlatedAgreement_of_mem_R_star_tensor\n            (ih := fun u_prev => ih (by omega) u_prev ) (u := u)\n        -- Step 7: Apply Affine Gap of Interleaved Code C^(m = 2^(\u03d1_sub_2 + 1))\n        have h_C_m_gap := h_interleaved_gaps (2^(\u03d1_sub_2 + 1)) (Nat.one_le_two_pow)\n        -- Need the hypothesis Pr[...] > \u03b5/q for h_C_m_gap\n        have h_prob_line_gt_eps_div_q :\n          Pr_{ let r \u2190 $\u1d56 F }[\n            \u0394\u2080(affineLineEvaluation (u\u2080 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2080))\n              (u\u2081 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2081)) (r := r),\n              ((MC ^\u22c8 (Fin (2 ^ (\u03d1_sub_2 + 1)))))) \u2264 e\n          ] > (\u2191\u03b5 : ENNReal) / (Fintype.card F : ENNReal) := by\n            -- This is implied by h_prob_Rstar_gt_eps_div_q becuz R* is a subset of the success set\n            apply lt_of_le_of_lt' _ h_prob_Rstar_gt_eps_div_q\n            have h_r_implies: \u2200 (r : F), r \u2208 R_star_set \u2192\n              \u0394\u2080(affineLineEvaluation\n                (u\u2080 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2080))\n                (u\u2081 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2081)) (r := r),\n                ((MC ^\u22c8 (Fin (2 ^ (\u03d1_sub_2 + 1)))))) \u2264 e := by\n              intro r hr_in_Rstar\n              specialize h_line_close_to_C_m \u27e8r, hr_in_Rstar\u27e9\n              unfold jointProximityNat at h_line_close_to_C_m\n              exact h_line_close_to_C_m\n            let Pr_le := Pr_le_Pr_of_implies (D := $\u1d56 F)\n              (g := fun r => \u0394\u2080(affineLineEvaluation\n                (u\u2080 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2080))\n                (u\u2081 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2081)) (r := r),\n                ((MC ^\u22c8 (Fin (2 ^ (\u03d1_sub_2 + 1)))))) \u2264 e)\n              (f := fun r => r \u2208 R_star_set) (h_imp := h_r_implies)\n            simp only at Pr_le\n            exact Pr_le\n        -- Apply the gap property of C^m\n        have h_final_gap : jointProximityNat\u2082\n          (u\u2080 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2080))\n          (u\u2081 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2081)) (e := e)\n          (C := (MC ^\u22c8 (Fin (2^(\u03d1_sub_2 + 1))))) := by\n          apply h_C_m_gap (u\u2080 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2080))\n            (u\u2081 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2081))\n            (h_prob_line_gt_eps_div_q)\n        apply CA_split_rowwise_implies_CA (u := u) (e := e)\n        exact h_final_gap",
+        "reference_length": 1353,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.31.0",
+            "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f"
+          }
+        ],
+        "dependency_digests": [
+          "db574db38701824005ee34d985785e200becbd14a7d80b0df10edd4d11b05993"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/Verified-zkEVM/ArkLib",
+        "file_path": "ArkLib/Data/CodingTheory/ProximityGap/DG25/MainResults.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":180.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "c0c551442dbec57c3f6cd0ce28ac92f603ed0ad918ba78f7614c33ee3f7fc5d1"
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_a4",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "pinned_toolchain_missing: v4.25.0"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_a4",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "putnam_compiled_import_missing: Mathlib"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_a4",
+      "lean_tag": "v4.27.0",
+      "git_commit": "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "[Errno 2] No such file or directory: '/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/putnam_lake/v4.27.0'"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_b2",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "pinned_toolchain_missing: v4.25.0"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_b2",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "putnam_compiled_import_missing: Mathlib"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1995_a3",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "pinned_toolchain_missing: v4.25.0"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1995_a3",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "putnam_compiled_import_missing: Mathlib"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1995_a3",
+      "lean_tag": "v4.27.0",
+      "git_commit": "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "[Errno 2] No such file or directory: '/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/putnam_lake/v4.27.0'"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    }
+  ],
+  "projects": [
+    {
+      "repository": "https://github.com/strata-org/Strata",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "root": "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/strata-org/Strata",
+      "kind": "repo",
+      "resolve_lake_manifest": true
+    },
+    {
+      "repository": "https://github.com/strata-org/Strata",
+      "lean_tag": "v4.29.1",
+      "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9",
+      "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/strata-v4.29.1",
+      "kind": "repo",
+      "resolve_lake_manifest": true
+    },
+    {
+      "repository": "https://github.com/strata-org/Strata",
+      "lean_tag": "v4.27.0",
+      "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d",
+      "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/strata-v4.27.0",
+      "kind": "repo",
+      "resolve_lake_manifest": true
+    },
+    {
+      "repository": "https://github.com/leanprover-community/physlib",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "root": "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/leanprover-community/physlib",
+      "kind": "repo",
+      "resolve_lake_manifest": true
+    },
+    {
+      "repository": "https://github.com/leanprover/cslib",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "root": "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/leanprover/cslib",
+      "kind": "repo",
+      "resolve_lake_manifest": true
+    },
+    {
+      "repository": "https://github.com/leanprover/cslib",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.32.0",
+      "kind": "repo",
+      "resolve_lake_manifest": true
+    },
+    {
+      "repository": "https://github.com/leanprover/cslib",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "root": "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/leanprover/cslib",
+      "kind": "repo",
+      "resolve_lake_manifest": true
+    },
+    {
+      "repository": "https://github.com/leanprover/cslib",
+      "lean_tag": "v4.30.0",
+      "git_commit": "c7944a9fb44c3298f1a960a5e574ab23a6ab8ed5",
+      "root": "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/leanprover/cslib",
+      "kind": "repo",
+      "resolve_lake_manifest": true
+    },
+    {
+      "repository": "https://github.com/Verified-zkEVM/ArkLib",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "root": "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib",
+      "kind": "repo",
+      "resolve_lake_manifest": true
+    },
+    {
+      "repository": "https://github.com/Verified-zkEVM/ArkLib",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "root": "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib",
+      "kind": "repo",
+      "resolve_lake_manifest": true
+    },
+    {
+      "repository": "https://github.com/Verified-zkEVM/ArkLib",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "root": "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib",
+      "kind": "repo",
+      "resolve_lake_manifest": true
+    },
+    {
+      "repository": "https://github.com/Verified-zkEVM/ArkLib",
+      "lean_tag": "v4.28.0",
+      "git_commit": "673fa440714eb1949b8b50a28f2a4f52b1837e9b",
+      "root": "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib",
+      "kind": "repo",
+      "resolve_lake_manifest": true
+    },
+    {
+      "repository": "",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "root": "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/putnam_lake/v4.25.0",
+      "kind": "putnam",
+      "resolve_lake_manifest": true
+    },
+    {
+      "repository": "",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "root": "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/putnam_lake/v4.26.0",
+      "kind": "putnam",
+      "resolve_lake_manifest": true
+    },
+    {
+      "repository": "",
+      "lean_tag": "v4.27.0",
+      "git_commit": "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+      "root": "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/putnam_lake/v4.27.0",
+      "kind": "putnam",
+      "resolve_lake_manifest": true
+    }
+  ],
+  "corpus_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+  "processes": 17,
+  "measurement": "command-elaboration-internal-heartbeats-div-1000/v1",
+  "local_combined_pct": null,
+  "worker_metric_parity": "UNCONFIRMED",
+  "fingerprint_file_reads": 587750,
+  "fingerprint_stat_hits": 1532854,
+  "live_model_calls": 0
+}

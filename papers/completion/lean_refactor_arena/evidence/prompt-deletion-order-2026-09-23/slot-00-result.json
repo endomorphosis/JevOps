@@ -1,0 +1,47 @@
+{
+  "slot": 0,
+  "arm": "before-forward",
+  "repetition": 0,
+  "prompt_sha256": "eb8990c3b3d8e68a9d087aada2b9ead532882b0328cc3e4b8bb2cfe0a38e97d8",
+  "native_verified": null,
+  "official_score": null,
+  "request_settings": {
+    "provider": "leanstral_local",
+    "model_name": "Leanstral",
+    "base_url": "http://172.17.0.1:8080/v1",
+    "max_new_tokens": 1024,
+    "timeout": 180,
+    "temperature": 0,
+    "stop": [
+      "<|im_end|>"
+    ]
+  },
+  "raw": "{\"body\": \"  intros Hup Hinit\\n  exists (updatedStates σ ks' vs')\\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\\n  have Hlen1 := InitStatesLength Hinit\\n  have Hlen2 := UpdateStatesLength Hup\\n  induction Hup generalizing σ''\\n  case update_none =>\\n    simp_all\\n    apply And.intro\\n    refine updatedStatesInit Hlen1 ?_ ?_\\n    exact InitStatesNotDefined Hinit\\n    exact InitStatesNodup Hinit\\n    simp [InitStatesUpdated Hinit]\\n    constructor\\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\\n    refine ⟨rfl, ?_, ?_⟩\\n    . apply updatedStatesInit Hlen1\\n      apply UpdateStateNotDefMonotone' ?_ Hup\\n      apply UpdateStatesNotDefMonotone' ?_ Hups\\n      exact InitStatesNotDefined Hinit\\n      exact InitStatesNodup Hinit\\n    . apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\\n      . simp [UpdateStateUpdated Hup, updatedStates]\\n        rw [← updatedStateComm']\\n        . have Hdef := UpdateStateDefined' Hup\\n          simp [isDefined, Option.isSome] at Hdef\\n          split at Hdef <;> simp_all\\n          next val heq =>\\n          apply updatedStateUpdate (v':=val)\\n          apply InitStatesSomeMonotone heq\\n          apply updatedStatesInit\\n          . simp_all\\n          . apply UpdateStateNotDefMonotone' ?_ Hup\\n            apply UpdateStatesNotDefMonotone' ?_ Hups\\n            apply InitStatesNotDefined Hinit\\n            . simp_all\\n            . exact InitStatesNodup Hinit\\n        . rw [List.unzip_zip] <;> simp_all\\n          have Hnd := InitStatesNotDefined Hinit\\n          simp [isNotDefined, isDefined] at *\\n          apply Not.intro\\n          intros Hin\\n          specialize Hnd _ Hin\\n          simp_all\\n      . apply (ih Hinit ?_ ?_).2.2\\n        . simp [isDefined] at * <;> simp_all\\n        . simp_all\", \"delete_lines\": [1, 2], \"reasoning\": \"The user wants me to shorten the Lean proof without changing its statement, dependencies, or axioms. I need to reduce proof tokens and elaboration heartbeats. The proof has two cases (update_none and update_some) with significant redundancy. I can consolidate the update_none case and remove some of the structural overhead. Let me analyze the proof structure:\\n\\n1. The update_none case has a lot of simp_all and redundant steps\\n2. The update_some case has nested structure with UpdateStates.update_some\\n3. There are many helper lemmas being used\\n\\nLooking at the proof, I notice that lines 1-2 are just the intros and exists. Lines 3-14 are the update_none case. Lines 15-46 are the update_some case.\\n\\nThe update_none case (lines 3-14) seems to be:\\n- Hk is defined but not used in update_none\\n- Hlen1 and Hlen2 are used\\n- The induction has two sub-cases\\n\\nActually, looking more carefully at the structure, I think the best approach is to remove the structural overhead of the induction and cases, and instead use a more direct approach.\\n\\nWait, I need to re-read the proof. The induction is on Hup, and there are two cases:\\n- update_none: when the update is none\\n- update_some: when the update is some\\n\\nIn the update_none case, we have:\\n  simp_all\\n  apply And.intro\\n  refine updatedStatesInit Hlen1 ?_ ?_\\n  exact InitStatesNotDefined Hinit\\n  exact InitStatesNodup Hinit\\n  simp [InitStatesUpdated Hinit]\\n  constructor\\n\\nThis seems to be using updatedStatesInit and InitStatesNotDefined, InitStatesNodup, and then InitStatesUpdated.\\n\\nIn the update_some case, we have:\\n  refine ⟨rfl, ?_, ?_⟩\\n  . apply updatedStatesInit Hlen1\\n    apply UpdateStateNotDefMonotone' ?_ Hup\\n    apply UpdateStatesNotDefMonotone' ?_ Hups\\n    exact InitStatesNotDefined Hinit\\n    exact Init",
+  "raw_sha256": "b03dfaf259648f841eaa7626760ddeab78a8589c2bc81ee8a7526c6f10a84ab4",
+  "trace": {
+    "router_module": "jevops.llm_router",
+    "effective_provider_name": "leanstral_local",
+    "effective_model_name": "Leanstral",
+    "fixture": false,
+    "external_dependency": false,
+    "provider": "leanstral_local",
+    "model": "Leanstral",
+    "reason": "generated",
+    "requested_model": "Leanstral",
+    "response_model": "leanstral_local",
+    "request_id": "chatcmpl-4FTPeugdseY7z5HfW681KbhwUY9L35sG",
+    "finish_reason": "length",
+    "usage": {
+      "prompt_tokens": 2857,
+      "completion_tokens": 1024,
+      "total_tokens": 3881
+    },
+    "endpoint": "http://172.17.0.1:8080/v1/chat/completions",
+    "wall_ms": 51156.52575506829,
+    "server_identity_attested": false,
+    "fallback_used": false
+  },
+  "status": "output_truncated",
+  "strict_contract": false,
+  "wall_seconds": 51.1568
+}

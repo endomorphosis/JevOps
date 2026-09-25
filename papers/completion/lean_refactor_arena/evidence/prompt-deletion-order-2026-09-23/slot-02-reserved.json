@@ -1,0 +1,8 @@
+{
+  "slot": 2,
+  "arm": "after-reverse",
+  "repetition": 0,
+  "plan_id": "53d77e0b542f89304a0864c3858b17468f58c4ff30790f7fc3201f432e576ed8",
+  "attempt_reserved": true,
+  "max_output_tokens_reserved": 1024
+}

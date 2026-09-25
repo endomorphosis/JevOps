@@ -1,0 +1,50 @@
+{
+  "plan_id": "7ec1ba96de5822da301b25dae4ce83d0c52f8009498e6d11259b0737a8aa6f27",
+  "status": "NO_CANDIDATE",
+  "controls": [
+    {
+      "label": "original",
+      "outcome": "VERIFIED"
+    },
+    {
+      "label": "incumbent",
+      "outcome": "VERIFIED"
+    }
+  ],
+  "reservations": {
+    "controls": 2,
+    "discovery": 16,
+    "selection_and_confirmation": 30
+  },
+  "recommended": null,
+  "promoted": false,
+  "official_score": null,
+  "measured_api_cost": null,
+  "live_model_calls": 0,
+  "retries": 0,
+  "proof_receipt_cache_enabled": false,
+  "discovery": {
+    "status": "COMPLETE",
+    "calls": 8,
+    "tokens": [
+      190
+    ],
+    "raw_heartbeats": [
+      2049152
+    ],
+    "truncated": true,
+    "omitted": {
+      "duplicate": 1,
+      "unsupported": 0,
+      "not_shorter": 0,
+      "state_limit": 0,
+      "byte_limit": 0,
+      "support_windows": 0,
+      "query_sites": 9,
+      "draft_limit": 0
+    }
+  },
+  "reason": "bounded_search_found_no_checked_draft_shorter_than_185_token_incumbent",
+  "native_processes": 10,
+  "wall_seconds": 245.3330825790763
+}

@@ -1,0 +1,66 @@
+{
+  "plan_id": "f0b3baf823eb5ca64b6e0fb9f3f6b0bcd5a1d3ce946280129702e343665a9085",
+  "context": {
+    "problem": "LayoutRegression",
+    "statement": "theorem LayoutRegression : True ∧ True",
+    "reference_source": "theorem LayoutRegression : True ∧ True := by\n  constructor\n  · exact True.intro\n  · exact True.intro",
+    "reference_length": 8,
+    "reference_heartbeats": null,
+    "versions": [
+      {
+        "lean_tag": "v4.26.0",
+        "git_commit": "layout-regression"
+      }
+    ],
+    "dependency_digests": [
+      "4aec78abfdaa75782618a155a9c193f102e4822dacc2524e8533c0d500fcdb8a"
+    ],
+    "verifier_id": "jevops-native-arena",
+    "verifier_version": "065cb92e238935970fcd3650edd73390760cb6499ad5495fa3987e21b4c9db0b",
+    "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+    "header": "",
+    "repository": "",
+    "file_path": "",
+    "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":60}",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  },
+  "rows": [
+    {
+      "label": "old-strip-reproducer",
+      "receipt": {
+        "request_id": "cde970d60be56e13ac274c5b2cd444803a408bd9e6dbd4f2a20000dfa90271b3",
+        "candidate_sha256": "ee8652e26c229ed96e05352003e667fb23af190d1695280fad9b3ccf8106af4e",
+        "target": "LayoutRegression",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"4aec78abfdaa75782618a155a9c193f102e4822dacc2524e8533c0d500fcdb8a\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\ncase left\\n⊢ True\\n\\ncase right\\n⊢ True\",\"severity\":\"error\"},{\"message\":\"unexpected token '·'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":2250.239}"
+      },
+      "wall_seconds": 3.726326902047731
+    },
+    {
+      "label": "fixed-fence-roundtrip",
+      "receipt": {
+        "request_id": "37e309134a93573995521b7190091fcbed07c4ca55ebd183511b1fb30a23ab87",
+        "candidate_sha256": "831ffd9bf6d5824758a9a22929c82547b27b5f89a832316fa6853e684904904a",
+        "target": "LayoutRegression",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'LayoutRegression' depends on axioms: []",
+        "heartbeats": 6,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"4aec78abfdaa75782618a155a9c193f102e4822dacc2524e8533c0d500fcdb8a\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":6,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":6002,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":6,\"reference_raw_heartbeats\":6022,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":3027.169}"
+      },
+      "wall_seconds": 5.255157876992598
+    }
+  ],
+  "native_processes": 2
+}

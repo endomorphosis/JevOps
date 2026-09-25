@@ -1,0 +1,8 @@
+{
+  "slot": 5,
+  "arm": "endpoints-forward",
+  "repetition": 1,
+  "plan_id": "0c12f96ec8a9b7d6142a59c095b53195eb424a5ddfc73e3980b284c6e8f0a52b",
+  "attempt_reserved": true,
+  "max_output_tokens_reserved": 1024
+}

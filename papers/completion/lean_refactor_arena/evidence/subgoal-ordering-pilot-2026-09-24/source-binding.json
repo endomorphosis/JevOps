@@ -1,0 +1,22 @@
+{
+  "before": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/subgoal-ordering-20260924-4nvkkH/snapshot",
+    "manifest_sha256": "07a0f66a51184c755fabf51a37beb3853fd8a4a963055c40552fb1fbf5a124d0",
+    "content_root": "3ccb63d168068d99b2d912e9fed31352c0a37bb084fd4839e1cc4f70ceae7a9d",
+    "file_count": 241,
+    "bytes": 4984875,
+    "proof_verified": false
+  },
+  "after": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/subgoal-ordering-20260924-4nvkkH/snapshot",
+    "manifest_sha256": "07a0f66a51184c755fabf51a37beb3853fd8a4a963055c40552fb1fbf5a124d0",
+    "content_root": "3ccb63d168068d99b2d912e9fed31352c0a37bb084fd4839e1cc4f70ceae7a9d",
+    "file_count": 241,
+    "bytes": 4984875,
+    "proof_verified": false
+  }
+}

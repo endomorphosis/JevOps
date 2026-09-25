@@ -1,0 +1,110 @@
+{
+  "schema": "jevops-local-premise-pilot/v1",
+  "plan_id": "b962dbdb055e4e042ae2fb5a5fe8f08bec2c8786142bb67bfb538413fc7e6f70",
+  "status": "COMPLETE",
+  "controls": [
+    {
+      "request_id": "f59c0eec11e3f2a6a6a6a1e0f209fd6d9fd726eb2831a8ed5e193e7138bd6592",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4227,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d55a5e3e98cca5f2364f155f85d67cd9ff32d03d7f3d2729db9f5f0184732491\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227568,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227600,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16282.75}"
+    },
+    {
+      "request_id": "0aa897e204c046c17ed0225b93c09cb4139128eae2ad2b0965085a946d9dca83",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4657,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"370e41a565147dc73324a8d2fd137c76eae7483fc283b12b12ae3211b0df535a\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657776,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657791,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15223.279}"
+    },
+    {
+      "request_id": "c19ec0d9abb3397901adf9f3446b4651e425a2a388d0664541e32c8be088caed",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4689,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"ffe9b532dbe86f93c5e3d991008570d00a0ca885a4cc21d160d2191c0935e64f\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689118,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689131,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":5434.949}"
+    }
+  ],
+  "screen": [],
+  "families": {
+    "lexical": {
+      "drafts": 0,
+      "cap": 1,
+      "verified": 0,
+      "status": "ABSTAINED",
+      "application_attempts": 4,
+      "roundtrip_attempts": 0,
+      "wall_seconds": 106.7038,
+      "truncated": true
+    },
+    "typed": {
+      "drafts": 0,
+      "cap": 1,
+      "verified": 0,
+      "status": "ABSTAINED",
+      "application_attempts": 4,
+      "roundtrip_attempts": 0,
+      "wall_seconds": 103.966,
+      "truncated": true
+    }
+  },
+  "all_pin_verified": [],
+  "measurement": null,
+  "evidence_mode": "trusted_local_native",
+  "os_sandbox": false,
+  "training": false,
+  "promoted": false,
+  "official_score": null,
+  "model_calls": 0,
+  "api_cost": null,
+  "electricity_cost": null,
+  "reason": "screened_fixed_candidates_no_promotion",
+  "reserved_processes": 15,
+  "native_processes": 15,
+  "charges": [
+    {
+      "label": "control-v4.29.1",
+      "units": 1
+    },
+    {
+      "label": "control-v4.27.0",
+      "units": 1
+    },
+    {
+      "label": "control-v4.26.0",
+      "units": 1
+    },
+    {
+      "label": "all-pin-inventory",
+      "units": 3
+    },
+    {
+      "label": "project-capture",
+      "units": 1
+    },
+    {
+      "label": "lexical-application-discovery",
+      "units": 4
+    },
+    {
+      "label": "typed-application-discovery",
+      "units": 4
+    }
+  ],
+  "wall_seconds": 426.4394
+}

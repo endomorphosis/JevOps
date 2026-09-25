@@ -1,0 +1,174 @@
+{
+  "schema": "jevops-experiment-evidence-archive/v1",
+  "hash_meaning": "SHA-256 content identity, not proof or CID",
+  "files": {
+    "draft-0.json": {
+      "sha256": "e4e36725b6fcc4b4658a95e6a4e6ca888633ba06886d37408f982d16f44c0844",
+      "bytes": 2262
+    },
+    "draft-1.json": {
+      "sha256": "d40af7a6106eb9957f471ee5e4207f6e33dff7d03320250ed34ecb75f4b1a24c",
+      "bytes": 2094
+    },
+    "generation-snapshot-check.json": {
+      "sha256": "fd60c7f8157020ac8a35ba0dfe61e6104785436e5a05968745a18d197e4524bd",
+      "bytes": 443
+    },
+    "generation.json": {
+      "sha256": "48574f4794be5ce4e4509edbcd254837f1d7f502e6b0a5567427ec9b60b706e0",
+      "bytes": 21185
+    },
+    "native-plan.json": {
+      "sha256": "eb234acd785406a15126f5d76f9165d9ed6efc3ffe75af2bfe2e0a8627336a15",
+      "bytes": 10738
+    },
+    "native-snapshot-check.json": {
+      "sha256": "fd60c7f8157020ac8a35ba0dfe61e6104785436e5a05968745a18d197e4524bd",
+      "bytes": 443
+    },
+    "native-triage.json": {
+      "sha256": "3d14799379904200608438aa025f85c79f779b84a5b514e7ff9289366d9ac734",
+      "bytes": 21576
+    },
+    "native-v4.26.0-control.json": {
+      "sha256": "d81f474f967cc64f07fca7e9f86b10dfe9456ab6e90ccd44346d66529b11a249",
+      "bytes": 1610
+    },
+    "native-v4.26.0-draft-0.json": {
+      "sha256": "73408f6f2b856fb0f9916665c891996b211610b18f6c8eb404069eeacac2dc37",
+      "bytes": 1325
+    },
+    "native-v4.26.0-draft-1.json": {
+      "sha256": "4cd42fa081f2732f450b561f1633e0327ce7d2a5e41286684805e0a035a3d1ba",
+      "bytes": 2595
+    },
+    "native-v4.27.0-control.json": {
+      "sha256": "e07605e2c6eca69508290b94fb5c470312e861afbba324f4935d4b7643918079",
+      "bytes": 1611
+    },
+    "native-v4.27.0-draft-0.json": {
+      "sha256": "81cf32bbeca97eddbb304936989dcd1c1c92c28a9888763d48281e31f4665703",
+      "bytes": 257
+    },
+    "native-v4.27.0-draft-1.json": {
+      "sha256": "c9d48e46f1fe9d957d5c70271de5070f3f8acac3ff1614db05cba2642ed98024",
+      "bytes": 257
+    },
+    "native-v4.29.1-control.json": {
+      "sha256": "20a45bcb19c136be3571fb0728a96b2768da455568c4a3971dc827a333fb6fb8",
+      "bytes": 1612
+    },
+    "native-v4.29.1-draft-0.json": {
+      "sha256": "e0679bed123d2ab16ad84d7219e2eaa8e5ffdc30b05077aecf739e7005cb35bf",
+      "bytes": 257
+    },
+    "native-v4.29.1-draft-1.json": {
+      "sha256": "c9b7544f1e9965473417abdfb7f52df663cdd1e67b03cbf25093728826be5f5d",
+      "bytes": 257
+    },
+    "plan.json": {
+      "sha256": "3fc7a1ec4372d41e468a8abcf0ffef1518d169d5903da812a0a282bb7210d801",
+      "bytes": 138314
+    },
+    "server-profile.json": {
+      "sha256": "ba80c677f5bd162ec657ca062fff2b0f0b7ac75c11d1e8590a749684fbe7fb41",
+      "bytes": 458
+    },
+    "slot-00-reserved.json": {
+      "sha256": "05198da451a65500cb490200d0cae95a1acd7aaa0aecd7a6ddf47b5d593073b7",
+      "bytes": 214
+    },
+    "slot-00-result.json": {
+      "sha256": "075272a06386899087ee9774208da8ccfc10757eb3b4ef72ca79977a3f63974c",
+      "bytes": 1529
+    },
+    "slot-01-reserved.json": {
+      "sha256": "37c52301f770ab91ffe4d847a178c8f5930bd0a9ea54d2c0e23af3047aabf034",
+      "bytes": 211
+    },
+    "slot-01-result.json": {
+      "sha256": "4ffa90736c8ae5608b23b3eb2a9ae63ae33b350965289f170562747b51ef733d",
+      "bytes": 3934
+    },
+    "slot-02-reserved.json": {
+      "sha256": "5dbf37a053485c9eb40baf761f29eb1fcbb96b52a82724f3e023f1c9f8749e39",
+      "bytes": 211
+    },
+    "slot-02-result.json": {
+      "sha256": "1927fc210e51acff205239b2e605e6439047b121f6d5faa96129e467bcf37239",
+      "bytes": 1476
+    },
+    "slot-03-reserved.json": {
+      "sha256": "ef74968b4b2ab83f91203d606e1e2b26fd5915ee552a2ff8ab54b953dfcb9ba6",
+      "bytes": 214
+    },
+    "slot-03-result.json": {
+      "sha256": "1afad9e970213d8f7c28eae4b49a892a84fb0af57f5820096e9563b8355f4fae",
+      "bytes": 1501
+    },
+    "slot-04-reserved.json": {
+      "sha256": "11d2762308a6ae1deca95a2c432a9fb059184a2258d21ab0a21ab98db6d5681b",
+      "bytes": 211
+    },
+    "slot-04-result.json": {
+      "sha256": "ff1f3f3dd6e22f9d5989b1688f70902a040e76d0faf8ad2f0ae389d88a1bd6a3",
+      "bytes": 1475
+    },
+    "slot-05-reserved.json": {
+      "sha256": "9a608b5b7f227211b1f8f3b4593827064cba274b58e15d5dd3a67a18a4b2b400",
+      "bytes": 214
+    },
+    "slot-05-result.json": {
+      "sha256": "c205267bf0b8d5c1d872d21ff6323a296b84d29786415776ee7e2f57c32d0b07",
+      "bytes": 3765
+    },
+    "slot-06-reserved.json": {
+      "sha256": "bf79bf7f11fbb7d1f4d42737e7dc416f196c860ec5f98fb1f77a8cb373c9aef4",
+      "bytes": 211
+    },
+    "slot-06-result.json": {
+      "sha256": "2d5d863bba7dbbe0bd21435f50029b68ccbeb8f84f67836b2b1ca8dced1a8df5",
+      "bytes": 1503
+    },
+    "slot-07-reserved.json": {
+      "sha256": "5723def1d621bec2c440a022b4d45214931e4a10974ae08e0f5c39cefd761696",
+      "bytes": 214
+    },
+    "slot-07-result.json": {
+      "sha256": "c58193538c0d7a6340aac16e1aab7c1340e20853424322bf0d4abe003a25ac03",
+      "bytes": 3766
+    },
+    "summary.json": {
+      "sha256": "fb97ee879888adff9ffbedc9ba4da5dd84ebfba6aff4c4652bddfd40ed69c609",
+      "bytes": 5642
+    },
+    "snapshot-receipt.json": {
+      "sha256": "a537f90a93b24b0686456f1a2cb3c23f610aa6654870f0f870e16a2946dc74cd",
+      "bytes": 441
+    },
+    "source-snapshot.json": {
+      "sha256": "63a4d9ed09b8adff16b6ce7d66696483f9490f6f7cd6b378ef9dafd8ee6e6f88",
+      "bytes": 32628
+    },
+    "precommitted-design.md": {
+      "sha256": "41a5b642d3a4d45110312c2aac5540d471342e7335544d7824674c1c2f0724b2",
+      "bytes": 6867
+    },
+    "history/archive-manifest.json": {
+      "sha256": "6626bad2552508228af3096405b42911a03d430c7f8775c2e91a9baaf75a29ed",
+      "bytes": 5520
+    },
+    "history/plan.json": {
+      "sha256": "8846c7d9f0d7f59db026c14225dd13b153c760c81b0419c5b4736cb6268588f8",
+      "bytes": 119873
+    },
+    "history/native-plan.json": {
+      "sha256": "8c50e15e1c51faeeb87513fe1049e279140e1b85f19321d3bd9d0beb3fd67e61",
+      "bytes": 10738
+    },
+    "history/native-triage.json": {
+      "sha256": "8ad5e85ad714ded9aa9058ebc9fcbba131194a934caa8658f9f5cf79871ed2dd",
+      "bytes": 21578
+    }
+  }
+}

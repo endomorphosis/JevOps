@@ -1,0 +1,245 @@
+{
+  "schema": "jevops-arena-report-audit/v1",
+  "status": "CONSISTENT",
+  "checks": {
+    "supported_status": true,
+    "supported_schema": true,
+    "protocol_matches_report": true,
+    "plan_identity": true,
+    "implementation_reported_unchanged": true,
+    "supported_evidence_mode": true,
+    "no_promotion_or_training_claim": true,
+    "selected_matches_screen_analysis": true,
+    "screen.design": true,
+    "screen.record": true,
+    "screen.cache_disabled": true,
+    "screen.runner_identity": true,
+    "screen.mode": true,
+    "screen.receipt_claims": true,
+    "screen.sample_ids_unique": true,
+    "screen.cost_analysis": true,
+    "screen.precommitted_design": true,
+    "screen.invocation_accounting": true,
+    "screen.native_accounting": true,
+    "confirmation.design": true,
+    "confirmation.record": true,
+    "confirmation.cache_disabled": true,
+    "confirmation.runner_identity": true,
+    "confirmation.mode": true,
+    "confirmation.receipt_claims": true,
+    "confirmation.sample_ids_unique": true,
+    "confirmation.cost_analysis": true,
+    "confirmation.fixed_winner": true,
+    "confirmation.design_parameters": true,
+    "confirmation.contexts_match": true,
+    "confirmation.invocation_accounting": true,
+    "confirmation.native_accounting": true,
+    "total_accounting": true,
+    "budget": true,
+    "selection_commitment": true,
+    "confirmation_present": true,
+    "confirmed_gates": true,
+    "recommendation_binding": true,
+    "confirmation_mode": true
+  },
+  "phases": {
+    "screen": {
+      "scheduled": 16,
+      "observed": 16,
+      "statuses": {
+        "REJECTED": 8,
+        "VERIFIED": 8
+      },
+      "reported_native_processes": 16,
+      "rows": {
+        "control": {
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "tokens": 222,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2607572,
+              2607572
+            ],
+            [
+              2607587,
+              2607587
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "composition-0": {
+          "label": "composition-0",
+          "source_sha256": "a5762086b70f580cedd8b91f1ffcc1ca3b485afce2d747af667979ecdeae6583",
+          "tokens": 213,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2606022,
+              2606022
+            ],
+            [
+              2606035,
+              2606035
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "composition-1": {
+          "label": "composition-1",
+          "source_sha256": "c14db27e426641e2abf5ea98627b68d0807052fcd7db3fbb3fe90542daeffa34",
+          "tokens": 220,
+          "admissible": false,
+          "reason": "incomplete_cost_coverage",
+          "raw_heartbeats_by_stratum": [
+            [],
+            []
+          ],
+          "axioms_by_version": {}
+        },
+        "composition-2": {
+          "label": "composition-2",
+          "source_sha256": "c3e37a4d161dfeb1e2a3b438f45f77a288f6f53cd227b7c29de93d741ec84244",
+          "tokens": 211,
+          "admissible": false,
+          "reason": "incomplete_cost_coverage",
+          "raw_heartbeats_by_stratum": [
+            [],
+            []
+          ],
+          "axioms_by_version": {}
+        }
+      },
+      "strata": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "reference-first"
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "candidate-first"
+        }
+      ],
+      "selected_vs_incumbent": {
+        "baseline_tokens": 222,
+        "candidate_tokens": 213,
+        "mean_raw_heartbeat_reduction_pct": [
+          0.05944227043395145,
+          0.05951862775814831
+        ]
+      }
+    },
+    "confirmation": {
+      "scheduled": 8,
+      "observed": 8,
+      "statuses": {
+        "VERIFIED": 8
+      },
+      "reported_native_processes": 8,
+      "rows": {
+        "control": {
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "tokens": 222,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2607572,
+              2607572
+            ],
+            [
+              2607587,
+              2607585
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "composition-0": {
+          "label": "composition-0",
+          "source_sha256": "a5762086b70f580cedd8b91f1ffcc1ca3b485afce2d747af667979ecdeae6583",
+          "tokens": 213,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2606024,
+              2606022
+            ],
+            [
+              2606035,
+              2606035
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        }
+      },
+      "strata": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "reference-first"
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "candidate-first"
+        }
+      ],
+      "selected_vs_incumbent": {
+        "baseline_tokens": 222,
+        "candidate_tokens": 213,
+        "mean_raw_heartbeat_reduction_pct": [
+          0.059403920582057346,
+          0.059480300937342356
+        ]
+      }
+    }
+  },
+  "proof_verified": false,
+  "fresh_native_processes": 0,
+  "promoted": false,
+  "training_enabled": false,
+  "official_score": null,
+  "reported_selector_status": "CONFIRMED_LOCAL_IMPROVEMENT",
+  "errors": [],
+  "protocol_content_sha256": "12a139a73da71e7af1e11dcc9cbe93b278d32c4b0e2cc2bcccad3da707d3f14f",
+  "report_content_sha256": "c7cec6a69d2c545c4c951952a137cf7ff8cc139d6f4ebf2bb69cf576591f9d7e",
+  "legacy_policy_defaults_used": false,
+  "problem": "CallElimCorrect.extractedOldExprInVars",
+  "selected": "composition-0",
+  "objective": "strict-dual-v1",
+  "reason": "",
+  "reported_counts": {
+    "requests_reserved": 24,
+    "verifier_invocations": 24,
+    "native_processes": 24
+  },
+  "analysis_code_sha256": "b6b242e8ce6b68e32714a37cb9ee816132d2857ab8cc76922f57153b0deff36c",
+  "analysis_code_matches_recorded": true
+}

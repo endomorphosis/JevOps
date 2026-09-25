@@ -1,0 +1,23 @@
+{
+  "schema": "jevops-lean-refactor-arena-space/v1",
+  "source": {
+    "url": "https://huggingface.co/spaces/delta-lab-ai/lean-refactor-arena",
+    "commit": "6a1384b7e3127f5d556e727d5d53cc17b4acdb40",
+    "commit_date": "2026-09-20T17:25:55-07:00"
+  },
+  "imported_at": "2026-09-22",
+  "destination": "papers/completion/lean_refactor_arena/space",
+  "tracked_file_count": 24,
+  "includes": [
+    "ui",
+    "leaderboard_client",
+    "benchmark_metadata",
+    "warmup_corpus",
+    "heartbeat_records",
+    "docker_metadata",
+    "assets"
+  ],
+  "evaluation_worker_included": false,
+  "official_arena_score_present": false,
+  "core_jevops_dependencies_added": false
+}

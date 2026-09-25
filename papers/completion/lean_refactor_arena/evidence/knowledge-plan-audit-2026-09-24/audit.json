@@ -1,0 +1,34 @@
+{
+  "schema": "jevops-knowledge-planning-audit/v1",
+  "scope": "plan_and_upstream_review_not_full_implementation",
+  "plan_sha256": "59aec14da9ebd552d9f02741ff30f02ef516076e39fcc29c9dca54907559e1ac",
+  "upstream_head": "7f0d38572f92f5fc0cba7a5ddd4bef28523876f3",
+  "reviewed_paths_clean": true,
+  "reviewed_files": {
+    "docs/architecture/knowledge/GRAPHRAG.md": "3575f087ccbda7b8d672aa4ef287534cbe0b643072468a43ea64e3da3b82bb8b",
+    "ipfs_datasets_py/embeddings/sparse_embedding_engine.py": "e6b682c881044283adaed936b62339141aac8a020b04650549d6bc26c45af645",
+    "scripts/ops/intent_ir/audit_skillcenter_cid_indexes.py": "1c28a2d78688a7d37eb4187681ef7757552375d0dca29ce736a5b72aff7fd28e",
+    "ipfs_datasets_py/logic/intent_ir/graphrag/skillcenter_corpus.py": "da9dc5318940111b03f2f775c9640eb7186b2ab01616b2c572679ceec2b442ce",
+    "ipfs_datasets_py/logic/intent_ir/graphrag/skillcenter_corpus_bm25.py": "7e32767e23f2c8bb098f196fc75bb06ec3ceaf93c6950cca9d3aac9f9d0d4785",
+    "ipfs_datasets_py/logic/intent_ir/graphrag/skillcenter_bm25.py": "a7da1a79eb04c3b95be26b90498289d5122ee0924927811b6bd05b19d7a4cd53",
+    "ipfs_datasets_py/logic/intent_ir/graphrag/skillcenter_cid_graph.py": "5762568f218e6fd60c97fa70aba8a0368e1667d99e69046e428e04804ceb7348",
+    "ipfs_datasets_py/logic/intent_ir/graphrag/skillcenter_cid_vectors.py": "7e1b731561c1b73bb513eb6d51bd58acc89a87afbf2888e53b2a2aee539a86bb",
+    "ipfs_datasets_py/logic/intent_ir/graphrag/skillcenter_graphrag.py": "ee4eae2b9ff189f82ed370944848e5b0bf6fd4fe075eed7daaac999760470a87",
+    "ipfs_datasets_py/logic/intent_ir/graphrag/semantic_projector.py": "5bcf203d499481b5cacfc5cd300e55e43f1abf26945d433954c68cc908a21a42",
+    "ipfs_datasets_py/logic/intent_ir/graphrag/retrieval.py": "dc0c8e8bb660d85c002d0e4354c6cb8d9926b9d31b7ac25471a7e6e26a45ca33"
+  },
+  "local_document_links_valid": true,
+  "regression": {
+    "passed": 108,
+    "skipped": 5,
+    "failed": 0,
+    "upstream_writer_interoperability_executed": true
+  },
+  "lean_example_checks": 6,
+  "receipts": {
+    "adapter-regression.xml": "eff0ba9a6f3f31928c4b670ade45fb2442247d98a742cab440a9f265a6030a01",
+    "lean-example.json": "200c7c4c03131ac9955ab110bfdeca9d1cb8654ad72dc1ce8ccbefed82795d63"
+  },
+  "training_enabled": false,
+  "official_score": null
+}

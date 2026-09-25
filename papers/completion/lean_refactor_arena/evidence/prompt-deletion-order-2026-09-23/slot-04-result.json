@@ -1,0 +1,23 @@
+{
+  "slot": 4,
+  "arm": "before-reverse",
+  "repetition": 1,
+  "prompt_sha256": "ef5a35d5cd05746a18d051f55e90f0b06e62f563aac9321a199b1dd7e60a5b1d",
+  "native_verified": null,
+  "official_score": null,
+  "request_settings": {
+    "provider": "leanstral_local",
+    "model_name": "Leanstral",
+    "base_url": "http://172.17.0.1:8080/v1",
+    "max_new_tokens": 1024,
+    "timeout": 180,
+    "temperature": 0,
+    "stop": [
+      "<|im_end|>"
+    ]
+  },
+  "status": "generation_error",
+  "error_type": "LLMRouterError",
+  "error": "local Leanstral HTTP 500; no retry/fallback",
+  "wall_seconds": 50.165
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "jevops-arena-local/v1",
+  "status": "OBSERVED",
+  "ok": true,
+  "closing_reproduced": false,
+  "proof_admitted": false,
+  "whole_source_checked": false,
+  "binding": {
+    "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+    "trace_sha256": "49332ad13aab5bf13b7473765c007c08383ceb4750db178a936a42b59e4a62e4",
+    "dependency_environment_sha256": "1435c3a321326c4fdfb625d3d8dea90a769c7ec5bb7e3a4bf1b22ed0853bae08",
+    "exporter_sha256": "499ce68eee9ac8c93652e27909f15175983845d71847fc530b6f09e68843e3f9",
+    "event_id": 15,
+    "candidate_sha256": "06edacfa5fdcb8ba79cb6858273cb891135c448783f35b57c0ca78b9081ef0ac",
+    "node_budget": 4096,
+    "event_budget": 256
+  },
+  "environment": "ef2c7adea7697d8a8e521759312f67096843043f0ce8fae2b1f93624bc703430",
+  "native_sha256": "4191e4c2dadf71d0b0944ab3dc85b665a674facb0b5a235ceabb1f8aef81b867",
+  "request_sha256": "49d46628d5cd6a3e293b1dcd0fa8d04220bda49c11788f1c2d4c8ec0e1e2a933",
+  "baseline": {
+    "axioms": [
+      "propext"
+    ],
+    "closed_goals_checked": "1",
+    "remaining_goals": "0",
+    "status": "closed_kernel_checked"
+  },
+  "proposed": {
+    "axioms": [],
+    "closed_goals_checked": "0",
+    "reason": "Type mismatch\n  Core.UpdateStateDefined'\nhas type\n  Imperative.UpdateState ?m.208 ?m.209 ?m.212 ?m.211 ?m.210 → Imperative.isDefined ?m.209 [?m.212]\nbut is expected to have type\n  Imperative.UpdateState P (Core.updatedStates' σ (ks'.zip vs')) x v\n    (Core.updatedState (Core.updatedStates' σ (ks'.zip vs')) x v)",
+    "remaining_goals": null,
+    "status": "rejected"
+  },
+  "candidate": "exact _root_.Core.UpdateStateDefined'",
+  "event_id": "15",
+  "raw_path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-context-repair-final-20260924-EZ4CQQ/run/local-replay-1.json",
+  "raw_sha256": "1dbf8aa277f395a1efe0ac5e91a6d6cc5b6e85d2a975886a9c343083dbd883b5",
+  "summary_only": true
+}

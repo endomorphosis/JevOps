@@ -1,0 +1,63 @@
+{
+  "slot": 7,
+  "arm": "ids-reverse",
+  "repetition": 1,
+  "prompt_sha256": "29b8ab4854ca593551b4c234bc2c18cca8b0330c652c9384023990c928682939",
+  "native_verified": null,
+  "official_score": null,
+  "request_settings": {
+    "provider": "leanstral_local",
+    "model_name": "Leanstral",
+    "base_url": "http://172.17.0.1:8080/v1",
+    "max_new_tokens": 1024,
+    "timeout": 180,
+    "temperature": 0,
+    "stop": [
+      "<|im_end|>"
+    ]
+  },
+  "raw": "{\"request_id\": \"abafd34613b9c517\", \"edit_id\": 1}",
+  "raw_sha256": "f623dc8f0a396aa513b44ca6a790732a4712ca0056d7aca1add0e641cbc50f10",
+  "trace": {
+    "router_module": "jevops.llm_router",
+    "effective_provider_name": "leanstral_local",
+    "effective_model_name": "Leanstral",
+    "fixture": false,
+    "external_dependency": false,
+    "provider": "leanstral_local",
+    "model": "Leanstral",
+    "reason": "generated",
+    "tool_calls": [],
+    "requested_model": "Leanstral",
+    "response_model": "leanstral_local",
+    "request_id": "chatcmpl-rAVjpAZkLAbbTFRAj3n7unUiKflqKBOM",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 3764,
+      "completion_tokens": 28,
+      "total_tokens": 3792
+    },
+    "endpoint": "http://172.17.0.1:8080/v1/chat/completions",
+    "wall_ms": 3822.174804052338,
+    "server_identity_attested": false,
+    "fallback_used": false
+  },
+  "resolved_delete_lines": [
+    8,
+    14
+  ],
+  "catalog_sha256": "52677802aa9a72d367b5a883b0b552a21d71b1d948af13ef7e1026e12f052219",
+  "status": "parsed",
+  "strict_contract": true,
+  "edit": {
+    "request_id": "abafd34613b9c517",
+    "edit_id": 1
+  },
+  "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [← updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+  "normalizations": [],
+  "source_sha256": "baabfe7660cbfa6494a1a09cf14341c04d611df70be17cedc3739dba2d8e939b",
+  "intake_error": null,
+  "candidate_tokens_unverified": 204,
+  "exact_reference_bytes": false,
+  "wall_seconds": 3.8311
+}

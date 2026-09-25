@@ -1,0 +1,320 @@
+RUN git clone --no-hardlinks --no-checkout /home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0
+Cloning into '/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0'...
+done.
+RUN git remote set-url origin https://github.com/Verified-zkEVM/ArkLib
+RUN git checkout --detach e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4
+Previous HEAD position was c1712f6c feat(proximity-gap): harden BCIKS20 curve regimes (#640)
+HEAD is now at e6d77b18 lean-bump-v430 (#538)
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/CompPoly
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/CompPoly/.git/
+RUN git remote add origin https://github.com/Verified-zkEVM/CompPoly
+RUN git fetch --depth 1 origin 18c1613e9186c7afa79a4179eea5f4b80d8e9e00
+From https://github.com/Verified-zkEVM/CompPoly
+ * branch            18c1613e9186c7afa79a4179eea5f4b80d8e9e00 -> FETCH_HEAD
+RUN git checkout --detach 18c1613e9186c7afa79a4179eea5f4b80d8e9e00
+HEAD is now at 18c1613 Bump to Lean/Mathlib v4.30.0 (#242)
+RUN cp -a --reflink=auto /home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib/.lake/packages/checkdecls /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/checkdecls
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/doc-gen4
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/doc-gen4/.git/
+RUN git remote add origin https://github.com/leanprover/doc-gen4
+RUN git fetch --depth 1 origin 689fdeecf45e08cc048214680d40cfe2491be78b
+From https://github.com/leanprover/doc-gen4
+ * branch            689fdeecf45e08cc048214680d40cfe2491be78b -> FETCH_HEAD
+RUN git checkout --detach 689fdeecf45e08cc048214680d40cfe2491be78b
+HEAD is now at 689fdee chore: bump toolchain to v4.30.0 (#386)
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/VCVio
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/VCVio/.git/
+RUN git remote add origin https://github.com/Verified-zkEVM/VCV-io
+RUN git fetch --depth 1 origin 5f7707fbeb0c53754580b0a506af8952f75e9019
+From https://github.com/Verified-zkEVM/VCV-io
+ * branch            5f7707fbeb0c53754580b0a506af8952f75e9019 -> FETCH_HEAD
+RUN git checkout --detach 5f7707fbeb0c53754580b0a506af8952f75e9019
+HEAD is now at 5f7707f Bump to Lean/Mathlib v4.30.0 (#427)
+RUN cp -a --reflink=auto /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0/.lake/packages/mathlib /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/mathlib
+RUN cp -a --reflink=auto /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0/.lake/packages/plausible /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/plausible
+RUN cp -a --reflink=auto /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0/.lake/packages/LeanSearchClient /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/LeanSearchClient
+RUN cp -a --reflink=auto /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0/.lake/packages/importGraph /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/importGraph
+RUN cp -a --reflink=auto /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0/.lake/packages/proofwidgets /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/proofwidgets
+RUN cp -a --reflink=auto /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0/.lake/packages/aesop /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/aesop
+RUN cp -a --reflink=auto /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0/.lake/packages/Qq /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/Qq
+RUN cp -a --reflink=auto /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0/.lake/packages/batteries /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/batteries
+RUN cp -a --reflink=auto /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0/.lake/packages/Cli /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/Cli
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/leansqlite
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/leansqlite/.git/
+RUN git remote add origin https://github.com/leanprover/leansqlite
+RUN git fetch --depth 1 origin a1d21d8b5f230205bb04c3bff479383f66802c0b
+From https://github.com/leanprover/leansqlite
+ * branch            a1d21d8b5f230205bb04c3bff479383f66802c0b -> FETCH_HEAD
+RUN git checkout --detach a1d21d8b5f230205bb04c3bff479383f66802c0b
+HEAD is now at a1d21d8 chore: bump toolchain to v4.30.0 (#31)
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/UnicodeBasic
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/UnicodeBasic/.git/
+RUN git remote add origin https://github.com/fgdorais/lean4-unicode-basic
+RUN git fetch --depth 1 origin f8c99ff779ec217063545b3b191747c92e7fbfb3
+From https://github.com/fgdorais/lean4-unicode-basic
+ * branch            f8c99ff779ec217063545b3b191747c92e7fbfb3 -> FETCH_HEAD
+RUN git checkout --detach f8c99ff779ec217063545b3b191747c92e7fbfb3
+HEAD is now at f8c99ff chore: update toolchain v4.30.0
+RUN cp -a --reflink=auto /home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib/.lake/packages/BibtexQuery /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/BibtexQuery
+RUN cp -a --reflink=auto /home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib/.lake/packages/MD4Lean /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/MD4Lean
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/PolyFun
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/PolyFun/.git/
+RUN git remote add origin https://github.com/Verified-zkEVM/PolyFun.git
+RUN git fetch --depth 1 origin 5d3a160ed751b9227af90adb9da41d0eae2e0238
+From https://github.com/Verified-zkEVM/PolyFun
+ * branch            5d3a160ed751b9227af90adb9da41d0eae2e0238 -> FETCH_HEAD
+RUN git checkout --detach 5d3a160ed751b9227af90adb9da41d0eae2e0238
+HEAD is now at 5d3a160 bump to 4.30 in anticipation of bumping vcv/arklib (#7)
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/loom2
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/loom2/.git/
+RUN git remote add origin https://github.com/quangvdao/loom2
+RUN git fetch --depth 1 origin eccaa1ebdb8f8a0c671f04971110c9011787d7c3
+From https://github.com/quangvdao/loom2
+ * branch            eccaa1ebdb8f8a0c671f04971110c9011787d7c3 -> FETCH_HEAD
+RUN git checkout --detach eccaa1ebdb8f8a0c671f04971110c9011787d7c3
+HEAD is now at eccaa1e ci: avoid oversized Lean thread stacks
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/Hax
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/.lake/packages/Hax/.git/
+RUN git remote add origin https://github.com/cryspen/hax
+RUN git fetch --depth 1 origin 492a34e33c8744b9672eb3cf1c982ac40469f7d4
+From https://github.com/cryspen/hax
+ * branch            492a34e33c8744b9672eb3cf1c982ac40469f7d4 -> FETCH_HEAD
+RUN git checkout --detach 492a34e33c8744b9672eb3cf1c982ac40469f7d4
+HEAD is now at 492a34e Merge pull request #2010 from cryspen/lean-barrett
+PREFETCH ["Aesop", "Batteries.Control.AlternativeMonad", "Batteries.Control.Lemmas", "Batteries.Control.OptionT", "Batteries.Data.Fin.Fold", "Batteries.Data.Vector.Lemmas", "Mathlib.Algebra.BigOperators.Fin", "Mathlib.Algebra.BigOperators.Finsupp.Fin", "Mathlib.Algebra.BigOperators.Group.Finset.Basic", "Mathlib.Algebra.BigOperators.Intervals", "Mathlib.Algebra.BigOperators.Ring.Finset", "Mathlib.Algebra.CharP.CharAndCard", "Mathlib.Algebra.CharP.Defs", "Mathlib.Algebra.CharP.Two", "Mathlib.Algebra.Field.Basic", "Mathlib.Algebra.FreeMonoid.Basic", "Mathlib.Algebra.Group.Action.Pointwise.Finset", "Mathlib.Algebra.Group.Hom.Defs", "Mathlib.Algebra.Group.Pi.Basic", "Mathlib.Algebra.Group.TypeTags.Basic", "Mathlib.Algebra.GroupWithZero.Nat", "Mathlib.Algebra.GroupWithZero.Units.Basic", "Mathlib.Algebra.Lie.OfAssociative", "Mathlib.Algebra.MvPolynomial.Degrees", "Mathlib.Algebra.MvPolynomial.Equiv", "Mathlib.Algebra.MvPolynomial.Eval", "Mathlib.Algebra.MvPolynomial.SchwartzZippel", "Mathlib.Algebra.Order.BigOperators.Expect", "Mathlib.Algebra.Order.BigOperators.Group.Finset", "Mathlib.Algebra.Order.Floor.Semifield", "Mathlib.Algebra.Order.Monoid.Defs", "Mathlib.Algebra.Order.Ring.Nat", "Mathlib.Algebra.Order.Ring.Star", "Mathlib.Algebra.Order.Star.Basic", "Mathlib.Algebra.Order.Sub.Basic", "Mathlib.Algebra.Polynomial.Basic", "Mathlib.Algebra.Polynomial.BigOperators", "Mathlib.Algebra.Polynomial.Bivariate", "Mathlib.Algebra.Polynomial.Coeff", "Mathlib.Algebra.Polynomial.Degree.Defs", "Mathlib.Algebra.Polynomial.Degree.Lemmas", "Mathlib.Algebra.Polynomial.Degree.Operations", "Mathlib.Algebra.Polynomial.Degree.SmallDegree", "Mathlib.Algebra.Polynomial.Degree.Units", "Mathlib.Algebra.Polynomial.Eval.Defs", "Mathlib.Algebra.Polynomial.Eval.Degree", "Mathlib.Algebra.Polynomial.FieldDivision", "Mathlib.Algebra.Polynomial.Inductions", "Mathlib.Algebra.Polynomial.OfFn", "Mathlib.Algebra.Polynomial.Roots", "Mathlib.Algebra.Ring.Regular", "Mathlib.Algebra.Ring.TransferInstance", "Mathlib.Algebra.Tropical.Basic", "Mathlib.Analysis.Asymptotics.SuperpolynomialDecay", "Mathlib.Analysis.Convex.Basic", "Mathlib.Analysis.InnerProductSpace.PiL2", "Mathlib.Analysis.Normed.Field.Lemmas", "Mathlib.Analysis.SpecialFunctions.Pow.NNReal", "Mathlib.Analysis.SpecificLimits.Basic", "Mathlib.CategoryTheory.Monad.Types", "Mathlib.Control.Lawful", "Mathlib.Control.Monad.Writer", "Mathlib.Data.BitVec", "Mathlib.Data.DFinsupp.BigOperators", "Mathlib.Data.ENNReal.Inv", "Mathlib.Data.ENat.Basic", "Mathlib.Data.ENat.Defs", "Mathlib.Data.ENat.Lattice", "Mathlib.Data.Fin.Basic", "Mathlib.Data.Fin.SuccPred", "Mathlib.Data.Fin.Tuple.Basic", "Mathlib.Data.Fin.Tuple.Embedding", "Mathlib.Data.Fin.Tuple.Take", "Mathlib.Data.FinEnum", "Mathlib.Data.Finset.BooleanAlgebra", "Mathlib.Data.Finset.Card", "Mathlib.Data.Finset.Insert", "Mathlib.Data.Finset.Preimage", "Mathlib.Data.Finsupp.Basic", "Mathlib.Data.Finsupp.Defs", "Mathlib.Data.Finsupp.Fin", "Mathlib.Data.Finsupp.Order", "Mathlib.Data.Fintype.Basic", "Mathlib.Data.Fintype.BigOperators", "Mathlib.Data.Fintype.Card", "Mathlib.Data.Fintype.EquivFin", "Mathlib.Data.Fintype.Fin", "Mathlib.Data.Fintype.Perm", "Mathlib.Data.Fintype.Pi", "Mathlib.Data.Fintype.Vector", "Mathlib.Data.FunLike.Basic", "Mathlib.Data.List.Fold", "Mathlib.Data.List.GetD", "Mathlib.Data.Matrix.Basic", "Mathlib.Data.Matrix.Block", "Mathlib.Data.Matrix.Mul", "Mathlib.Data.Matrix.Reflection", "Mathlib.Data.NNRat.BigOperators", "Mathlib.Data.NNReal.Basic", "Mathlib.Data.NNReal.Defs", "Mathlib.Data.Nat.Bitwise", "Mathlib.Data.Nat.Cast.Order.Field", "Mathlib.Data.Nat.Choose.Basic", "Mathlib.Data.Nat.Digits.Defs", "Mathlib.Data.Nat.Find", "Mathlib.Data.Nat.GCD.Basic", "Mathlib.Data.Nat.Lattice", "Mathlib.Data.Nat.Log", "Mathlib.Data.PFunctor.Multivariate.Basic", "Mathlib.Data.PFunctor.Univariate.Basic", "Mathlib.Data.PFunctor.Univariate.M", "Mathlib.Data.Real.Basic", "Mathlib.Data.Real.ENatENNReal", "Mathlib.Data.Real.Sqrt", "Mathlib.Data.Set.Basic", "Mathlib.Data.Set.Card", "Mathlib.Data.Set.Defs", "Mathlib.Data.Vector.Basic", "Mathlib.Data.Vector.Defs", "Mathlib.FieldTheory.Finite.Basic", "Mathlib.FieldTheory.Finite.GaloisField", "Mathlib.FieldTheory.RatFunc.AsPolynomial", "Mathlib.InformationTheory.Hamming", "Mathlib.Init", "Mathlib.LinearAlgebra.AffineSpace.AffineSubspace.Defs", "Mathlib.LinearAlgebra.AffineSpace.Combination", "Mathlib.LinearAlgebra.AffineSpace.Pointwise", "Mathlib.LinearAlgebra.FiniteDimensional.Defs", "Mathlib.LinearAlgebra.FreeModule.PID", "Mathlib.LinearAlgebra.FreeModule.StrongRankCondition", "Mathlib.LinearAlgebra.Lagrange", "Mathlib.LinearAlgebra.LinearIndependent.Defs", "Mathlib.LinearAlgebra.Matrix.Adjugate", "Mathlib.LinearAlgebra.Matrix.Determinant.Basic", "Mathlib.LinearAlgebra.Matrix.Determinant.Misc", "Mathlib.LinearAlgebra.Matrix.NonsingularInverse", "Mathlib.LinearAlgebra.Matrix.Polynomial", "Mathlib.LinearAlgebra.Matrix.Rank", "Mathlib.LinearAlgebra.Matrix.Reindex", "Mathlib.LinearAlgebra.Matrix.RowCol", "Mathlib.LinearAlgebra.Matrix.SchurComplement", "Mathlib.LinearAlgebra.Matrix.ToLinearEquiv", "Mathlib.LinearAlgebra.StdBasis", "Mathlib.LinearAlgebra.Vandermonde", "Mathlib.Logic.Equiv.Defs", "Mathlib.Logic.Equiv.Fin.Basic", "Mathlib.Logic.Equiv.Sum", "Mathlib.Logic.Function.Basic", "Mathlib.MeasureTheory.Integral.Lebesgue.Countable", "Mathlib.MeasureTheory.Integral.MeanInequalities", "Mathlib.Order.Basic", "Mathlib.Order.BoundedOrder.Basic", "Mathlib.Order.CompleteLattice.Basic", "Mathlib.Order.CompletePartialOrder", "Mathlib.Order.Fin.Basic", "Mathlib.Order.Interval.Finset.Nat", "Mathlib.Order.Lattice", "Mathlib.Probability.Distributions.Uniform", "Mathlib.Probability.Notation", "Mathlib.Probability.ProbabilityMassFunction.Basic", "Mathlib.Probability.ProbabilityMassFunction.Constructions", "Mathlib.Probability.ProbabilityMassFunction.Monad", "Mathlib.RingTheory.Henselian", "Mathlib.RingTheory.MvPolynomial.Basic", "Mathlib.RingTheory.PicardGroup", "Mathlib.RingTheory.Polynomial.Basic", "Mathlib.RingTheory.Polynomial.Resultant.Basic", "Mathlib.RingTheory.Polynomial.UniqueFactorization", "Mathlib.RingTheory.RegularLocalRing.Defs", "Mathlib.RingTheory.SimpleRing.Principal", "Mathlib.Tactic", "Mathlib.Tactic.Attr.Register", "Mathlib.Tactic.Cases", "Mathlib.Tactic.ComputeDegree", "Mathlib.Tactic.DepRewrite", "Mathlib.Tactic.FinCases", "Mathlib.Tactic.IntervalCases", "Mathlib.Tactic.NormNum", "Mathlib.Tactic.Push", "Mathlib.Tactic.Qify", "Mathlib.Tactic.Ring", "Mathlib.Tactic.Use", "Mathlib.Topology.Algebra.InfiniteSum.ENNReal", "Mathlib.Topology.ContinuousMap.Basic", "Mathlib.Topology.Instances.Discrete", "Mathlib.Topology.MetricSpace.Basic", "Mathlib.Topology.MetricSpace.Bounded", "Mathlib.Topology.MetricSpace.Infsep"]
+RUN lake --no-cache exe cache get Aesop Batteries.Control.AlternativeMonad Batteries.Control.Lemmas Batteries.Control.OptionT Batteries.Data.Fin.Fold Batteries.Data.Vector.Lemmas Mathlib.Algebra.BigOperators.Fin Mathlib.Algebra.BigOperators.Finsupp.Fin Mathlib.Algebra.BigOperators.Group.Finset.Basic Mathlib.Algebra.BigOperators.Intervals Mathlib.Algebra.BigOperators.Ring.Finset Mathlib.Algebra.CharP.CharAndCard Mathlib.Algebra.CharP.Defs Mathlib.Algebra.CharP.Two Mathlib.Algebra.Field.Basic Mathlib.Algebra.FreeMonoid.Basic Mathlib.Algebra.Group.Action.Pointwise.Finset Mathlib.Algebra.Group.Hom.Defs Mathlib.Algebra.Group.Pi.Basic Mathlib.Algebra.Group.TypeTags.Basic Mathlib.Algebra.GroupWithZero.Nat Mathlib.Algebra.GroupWithZero.Units.Basic Mathlib.Algebra.Lie.OfAssociative Mathlib.Algebra.MvPolynomial.Degrees Mathlib.Algebra.MvPolynomial.Equiv Mathlib.Algebra.MvPolynomial.Eval Mathlib.Algebra.MvPolynomial.SchwartzZippel Mathlib.Algebra.Order.BigOperators.Expect Mathlib.Algebra.Order.BigOperators.Group.Finset Mathlib.Algebra.Order.Floor.Semifield Mathlib.Algebra.Order.Monoid.Defs Mathlib.Algebra.Order.Ring.Nat Mathlib.Algebra.Order.Ring.Star Mathlib.Algebra.Order.Star.Basic Mathlib.Algebra.Order.Sub.Basic Mathlib.Algebra.Polynomial.Basic Mathlib.Algebra.Polynomial.BigOperators Mathlib.Algebra.Polynomial.Bivariate Mathlib.Algebra.Polynomial.Coeff Mathlib.Algebra.Polynomial.Degree.Defs Mathlib.Algebra.Polynomial.Degree.Lemmas Mathlib.Algebra.Polynomial.Degree.Operations Mathlib.Algebra.Polynomial.Degree.SmallDegree Mathlib.Algebra.Polynomial.Degree.Units Mathlib.Algebra.Polynomial.Eval.Defs Mathlib.Algebra.Polynomial.Eval.Degree Mathlib.Algebra.Polynomial.FieldDivision Mathlib.Algebra.Polynomial.Inductions Mathlib.Algebra.Polynomial.OfFn Mathlib.Algebra.Polynomial.Roots Mathlib.Algebra.Ring.Regular Mathlib.Algebra.Ring.TransferInstance Mathlib.Algebra.Tropical.Basic Mathlib.Analysis.Asymptotics.SuperpolynomialDecay Mathlib.Analysis.Convex.Basic Mathlib.Analysis.InnerProductSpace.PiL2 Mathlib.Analysis.Normed.Field.Lemmas Mathlib.Analysis.SpecialFunctions.Pow.NNReal Mathlib.Analysis.SpecificLimits.Basic Mathlib.CategoryTheory.Monad.Types Mathlib.Control.Lawful Mathlib.Control.Monad.Writer Mathlib.Data.BitVec Mathlib.Data.DFinsupp.BigOperators Mathlib.Data.ENNReal.Inv Mathlib.Data.ENat.Basic Mathlib.Data.ENat.Defs Mathlib.Data.ENat.Lattice Mathlib.Data.Fin.Basic Mathlib.Data.Fin.SuccPred Mathlib.Data.Fin.Tuple.Basic Mathlib.Data.Fin.Tuple.Embedding Mathlib.Data.Fin.Tuple.Take Mathlib.Data.FinEnum Mathlib.Data.Finset.BooleanAlgebra Mathlib.Data.Finset.Card Mathlib.Data.Finset.Insert Mathlib.Data.Finset.Preimage Mathlib.Data.Finsupp.Basic Mathlib.Data.Finsupp.Defs Mathlib.Data.Finsupp.Fin Mathlib.Data.Finsupp.Order Mathlib.Data.Fintype.Basic Mathlib.Data.Fintype.BigOperators Mathlib.Data.Fintype.Card Mathlib.Data.Fintype.EquivFin Mathlib.Data.Fintype.Fin Mathlib.Data.Fintype.Perm Mathlib.Data.Fintype.Pi Mathlib.Data.Fintype.Vector Mathlib.Data.FunLike.Basic Mathlib.Data.List.Fold Mathlib.Data.List.GetD Mathlib.Data.Matrix.Basic Mathlib.Data.Matrix.Block Mathlib.Data.Matrix.Mul Mathlib.Data.Matrix.Reflection Mathlib.Data.NNRat.BigOperators Mathlib.Data.NNReal.Basic Mathlib.Data.NNReal.Defs Mathlib.Data.Nat.Bitwise Mathlib.Data.Nat.Cast.Order.Field Mathlib.Data.Nat.Choose.Basic Mathlib.Data.Nat.Digits.Defs Mathlib.Data.Nat.Find Mathlib.Data.Nat.GCD.Basic Mathlib.Data.Nat.Lattice Mathlib.Data.Nat.Log Mathlib.Data.PFunctor.Multivariate.Basic Mathlib.Data.PFunctor.Univariate.Basic Mathlib.Data.PFunctor.Univariate.M Mathlib.Data.Real.Basic Mathlib.Data.Real.ENatENNReal Mathlib.Data.Real.Sqrt Mathlib.Data.Set.Basic Mathlib.Data.Set.Card Mathlib.Data.Set.Defs Mathlib.Data.Vector.Basic Mathlib.Data.Vector.Defs Mathlib.FieldTheory.Finite.Basic Mathlib.FieldTheory.Finite.GaloisField Mathlib.FieldTheory.RatFunc.AsPolynomial Mathlib.InformationTheory.Hamming Mathlib.Init Mathlib.LinearAlgebra.AffineSpace.AffineSubspace.Defs Mathlib.LinearAlgebra.AffineSpace.Combination Mathlib.LinearAlgebra.AffineSpace.Pointwise Mathlib.LinearAlgebra.FiniteDimensional.Defs Mathlib.LinearAlgebra.FreeModule.PID Mathlib.LinearAlgebra.FreeModule.StrongRankCondition Mathlib.LinearAlgebra.Lagrange Mathlib.LinearAlgebra.LinearIndependent.Defs Mathlib.LinearAlgebra.Matrix.Adjugate Mathlib.LinearAlgebra.Matrix.Determinant.Basic Mathlib.LinearAlgebra.Matrix.Determinant.Misc Mathlib.LinearAlgebra.Matrix.NonsingularInverse Mathlib.LinearAlgebra.Matrix.Polynomial Mathlib.LinearAlgebra.Matrix.Rank Mathlib.LinearAlgebra.Matrix.Reindex Mathlib.LinearAlgebra.Matrix.RowCol Mathlib.LinearAlgebra.Matrix.SchurComplement Mathlib.LinearAlgebra.Matrix.ToLinearEquiv Mathlib.LinearAlgebra.StdBasis Mathlib.LinearAlgebra.Vandermonde Mathlib.Logic.Equiv.Defs Mathlib.Logic.Equiv.Fin.Basic Mathlib.Logic.Equiv.Sum Mathlib.Logic.Function.Basic Mathlib.MeasureTheory.Integral.Lebesgue.Countable Mathlib.MeasureTheory.Integral.MeanInequalities Mathlib.Order.Basic Mathlib.Order.BoundedOrder.Basic Mathlib.Order.CompleteLattice.Basic Mathlib.Order.CompletePartialOrder Mathlib.Order.Fin.Basic Mathlib.Order.Interval.Finset.Nat Mathlib.Order.Lattice Mathlib.Probability.Distributions.Uniform Mathlib.Probability.Notation Mathlib.Probability.ProbabilityMassFunction.Basic Mathlib.Probability.ProbabilityMassFunction.Constructions Mathlib.Probability.ProbabilityMassFunction.Monad Mathlib.RingTheory.Henselian Mathlib.RingTheory.MvPolynomial.Basic Mathlib.RingTheory.PicardGroup Mathlib.RingTheory.Polynomial.Basic Mathlib.RingTheory.Polynomial.Resultant.Basic Mathlib.RingTheory.Polynomial.UniqueFactorization Mathlib.RingTheory.RegularLocalRing.Defs Mathlib.RingTheory.SimpleRing.Principal Mathlib.Tactic Mathlib.Tactic.Attr.Register Mathlib.Tactic.Cases Mathlib.Tactic.ComputeDegree Mathlib.Tactic.DepRewrite Mathlib.Tactic.FinCases Mathlib.Tactic.IntervalCases Mathlib.Tactic.NormNum Mathlib.Tactic.Push Mathlib.Tactic.Qify Mathlib.Tactic.Ring Mathlib.Tactic.Use Mathlib.Topology.Algebra.InfiniteSum.ENNReal Mathlib.Topology.ContinuousMap.Basic Mathlib.Topology.Instances.Discrete Mathlib.Topology.MetricSpace.Basic Mathlib.Topology.MetricSpace.Bounded Mathlib.Topology.MetricSpace.Infsep
+warning: manifest out of date: git revision of dependency 'VCVio' changed; use `lake update VCVio` to update it
+Current branch: HEAD
+Using cache (Azure) from origin: (some leanprover-community/mathlib4)
+Attempting to download 802 file(s) from leanprover-community/mathlib4 cache
+Downloaded: 1 file(s) [attempted 1/802 = 0%, 95 KB/s], Decompressed: 0Downloaded: 3 file(s) [attempted 3/802 = 0%, 4 KB/s], Decompressed: 1Downloaded: 10 file(s) [attempted 10/802 = 1%, 10 KB/s], Decompressed: 3Downloaded: 19 file(s) [attempted 19/802 = 2%, 25 KB/s], Decompressed: 3Downloaded: 28 file(s) [attempted 28/802 = 3%, 143 KB/s], Decompressed: 3Downloaded: 32 file(s) [attempted 32/802 = 3%, 18 KB/s], Decompressed: 3Downloaded: 34 file(s) [attempted 34/802 = 4%, 50 KB/s], Decompressed: 3Downloaded: 38 file(s) [attempted 38/802 = 4%, 31 KB/s], Decompressed: 3Downloaded: 46 file(s) [attempted 46/802 = 5%, 28 KB/s], Decompressed: 3Downloaded: 49 file(s) [attempted 49/802 = 6%, 73 KB/s], Decompressed: 10Downloaded: 58 file(s) [attempted 58/802 = 7%, 161 KB/s], Decompressed: 10Downloaded: 62 file(s) [attempted 62/802 = 7%, 362 KB/s], Decompressed: 10Downloaded: 67 file(s) [attempted 67/802 = 8%, 21 KB/s], Decompressed: 10Downloaded: 73 file(s) [attempted 73/802 = 9%, 46 KB/s], Decompressed: 10Downloaded: 77 file(s) [attempted 77/802 = 9%, 4 KB/s], Decompressed: 10Downloaded: 83 file(s) [attempted 83/802 = 10%, 13 KB/s], Decompressed: 10Downloaded: 87 file(s) [attempted 87/802 = 10%, 25 KB/s], Decompressed: 10Downloaded: 93 file(s) [attempted 93/802 = 11%, 24 KB/s], Decompressed: 10Downloaded: 99 file(s) [attempted 99/802 = 12%, 10 KB/s], Decompressed: 10Downloaded: 103 file(s) [attempted 103/802 = 12%, 31 KB/s], Decompressed: 10Downloaded: 104 file(s) [attempted 104/802 = 12%, 49 KB/s], Decompressed: 10Downloaded: 112 file(s) [attempted 112/802 = 13%, 23 KB/s], Decompressed: 10Downloaded: 113 file(s) [attempted 113/802 = 14%, 9 KB/s], Decompressed: 49Downloaded: 122 file(s) [attempted 122/802 = 15%, 69 KB/s], Decompressed: 49Downloaded: 129 file(s) [attempted 129/802 = 16%, 8 KB/s], Decompressed: 49Downloaded: 136 file(s) [attempted 136/802 = 16%, 52 KB/s], Decompressed: 49Downloaded: 142 file(s) [attempted 142/802 = 17%, 15 KB/s], Decompressed: 49Downloaded: 145 file(s) [attempted 145/802 = 18%, 31 KB/s], Decompressed: 49Downloaded: 150 file(s) [attempted 150/802 = 18%, 18 KB/s], Decompressed: 49Downloaded: 159 file(s) [attempted 159/802 = 19%, 107 KB/s], Decompressed: 49Downloaded: 161 file(s) [attempted 161/802 = 20%, 110 KB/s], Decompressed: 49Downloaded: 170 file(s) [attempted 170/802 = 21%, 42 KB/s], Decompressed: 49Downloaded: 174 file(s) [attempted 174/802 = 21%, 50 KB/s], Decompressed: 49Downloaded: 178 file(s) [attempted 178/802 = 22%, 14 KB/s], Decompressed: 49Downloaded: 187 file(s) [attempted 187/802 = 23%, 24 KB/s], Decompressed: 49Downloaded: 195 file(s) [attempted 195/802 = 24%, 13 KB/s], Decompressed: 49Downloaded: 200 file(s) [attempted 200/802 = 24%, 148 KB/s], Decompressed: 49Downloaded: 203 file(s) [attempted 203/802 = 25%, 30 KB/s], Decompressed: 49Downloaded: 210 file(s) [attempted 210/802 = 26%, 34 KB/s], Decompressed: 49Downloaded: 217 file(s) [attempted 217/802 = 27%, 72 KB/s], Decompressed: 49Downloaded: 223 file(s) [attempted 223/802 = 27%, 90 KB/s], Decompressed: 49Downloaded: 226 file(s) [attempted 226/802 = 28%, 29 KB/s], Decompressed: 49Downloaded: 234 file(s) [attempted 234/802 = 29%, 119 KB/s], Decompressed: 49Downloaded: 239 file(s) [attempted 239/802 = 29%, 66 KB/s], Decompressed: 49Downloaded: 242 file(s) [attempted 242/802 = 30%, 13 KB/s], Decompressed: 49Downloaded: 246 file(s) [attempted 246/802 = 30%, 21 KB/s], Decompressed: 49Downloaded: 251 file(s) [attempted 251/802 = 31%, 8 KB/s], Decompressed: 49Downloaded: 255 file(s) [attempted 255/802 = 31%, 10 KB/s], Decompressed: 49Downloaded: 259 file(s) [attempted 259/802 = 32%, 165 KB/s], Decompressed: 49Downloaded: 264 file(s) [attempted 264/802 = 32%, 76 KB/s], Decompressed: 49Downloaded: 268 file(s) [attempted 268/802 = 33%, 12 KB/s], Decompressed: 49Downloaded: 275 file(s) [attempted 275/802 = 34%, 39 KB/s], Decompressed: 113Downloaded: 284 file(s) [attempted 284/802 = 35%, 82 KB/s], Decompressed: 113Downloaded: 292 file(s) [attempted 292/802 = 36%, 89 KB/s], Decompressed: 113Downloaded: 298 file(s) [attempted 298/802 = 37%, 6 KB/s], Decompressed: 113Downloaded: 302 file(s) [attempted 302/802 = 37%, 120 KB/s], Decompressed: 113Downloaded: 311 file(s) [attempted 311/802 = 38%, 90 KB/s], Decompressed: 113Downloaded: 317 file(s) [attempted 317/802 = 39%, 29 KB/s], Decompressed: 113Downloaded: 318 file(s) [attempted 318/802 = 39%, 68 KB/s], Decompressed: 113Downloaded: 324 file(s) [attempted 324/802 = 40%, 40 KB/s], Decompressed: 113Downloaded: 328 file(s) [attempted 328/802 = 40%, 26 KB/s], Decompressed: 113Downloaded: 335 file(s) [attempted 335/802 = 41%, 3 KB/s], Decompressed: 113Downloaded: 344 file(s) [attempted 344/802 = 42%, 29 KB/s], Decompressed: 113Downloaded: 348 file(s) [attempted 348/802 = 43%, 59 KB/s], Decompressed: 113Downloaded: 355 file(s) [attempted 355/802 = 44%, 8 KB/s], Decompressed: 113Downloaded: 361 file(s) [attempted 361/802 = 45%, 22 KB/s], Decompressed: 113Downloaded: 365 file(s) [attempted 365/802 = 45%, 49 KB/s], Decompressed: 113Downloaded: 367 file(s) [attempted 367/802 = 45%, 1 KB/s], Decompressed: 113Downloaded: 373 file(s) [attempted 373/802 = 46%, 72 KB/s], Decompressed: 113Downloaded: 377 file(s) [attempted 377/802 = 47%, 49 KB/s], Decompressed: 113Downloaded: 381 file(s) [attempted 381/802 = 47%, 56 KB/s], Decompressed: 113Downloaded: 386 file(s) [attempted 386/802 = 48%, 15 KB/s], Decompressed: 113Downloaded: 390 file(s) [attempted 390/802 = 48%, 35 KB/s], Decompressed: 113Downloaded: 399 file(s) [attempted 399/802 = 49%, 32 KB/s], Decompressed: 113Downloaded: 404 file(s) [attempted 404/802 = 50%, 14 KB/s], Decompressed: 113Downloaded: 408 file(s) [attempted 408/802 = 50%, 66 KB/s], Decompressed: 113Downloaded: 414 file(s) [attempted 414/802 = 51%, 50 KB/s], Decompressed: 113Downloaded: 415 file(s) [attempted 415/802 = 51%, 4 KB/s], Decompressed: 113Downloaded: 419 file(s) [attempted 419/802 = 52%, 166 KB/s], Decompressed: 113Downloaded: 422 file(s) [attempted 422/802 = 52%, 143 KB/s], Decompressed: 113Downloaded: 430 file(s) [attempted 430/802 = 53%, 104 KB/s], Decompressed: 113Downloaded: 436 file(s) [attempted 436/802 = 54%, 16 KB/s], Decompressed: 113Downloaded: 444 file(s) [attempted 444/802 = 55%, 18 KB/s], Decompressed: 113Downloaded: 448 file(s) [attempted 448/802 = 55%, 20 KB/s], Decompressed: 113Downloaded: 453 file(s) [attempted 453/802 = 56%, 26 KB/s], Decompressed: 113Downloaded: 457 file(s) [attempted 457/802 = 56%, 4 KB/s], Decompressed: 113Downloaded: 463 file(s) [attempted 463/802 = 57%, 4 KB/s], Decompressed: 113Downloaded: 466 file(s) [attempted 466/802 = 58%, 7 KB/s], Decompressed: 113Downloaded: 470 file(s) [attempted 470/802 = 58%, 48 KB/s], Decompressed: 113Downloaded: 476 file(s) [attempted 476/802 = 59%, 137 KB/s], Decompressed: 113Downloaded: 481 file(s) [attempted 481/802 = 59%, 50 KB/s], Decompressed: 113Downloaded: 487 file(s) [attempted 487/802 = 60%, 27 KB/s], Decompressed: 113Downloaded: 489 file(s) [attempted 489/802 = 60%, 6 KB/s], Decompressed: 113Downloaded: 492 file(s) [attempted 492/802 = 61%, 166 KB/s], Decompressed: 113Downloaded: 497 file(s) [attempted 497/802 = 61%, 94 KB/s], Decompressed: 113Downloaded: 505 file(s) [attempted 505/802 = 62%, 5 KB/s], Decompressed: 113Downloaded: 513 file(s) [attempted 513/802 = 63%, 34 KB/s], Decompressed: 113Downloaded: 520 file(s) [attempted 520/802 = 64%, 33 KB/s], Decompressed: 113Downloaded: 524 file(s) [attempted 524/802 = 65%, 15 KB/s], Decompressed: 113Downloaded: 528 file(s) [attempted 528/802 = 65%, 41 KB/s], Decompressed: 113Downloaded: 535 file(s) [attempted 535/802 = 66%, 42 KB/s], Decompressed: 113Downloaded: 537 file(s) [attempted 537/802 = 66%, 32 KB/s], Decompressed: 113Downloaded: 546 file(s) [attempted 546/802 = 68%, 12 KB/s], Decompressed: 113Downloaded: 554 file(s) [attempted 554/802 = 69%, 7 KB/s], Decompressed: 113Downloaded: 564 file(s) [attempted 564/802 = 70%, 54 KB/s], Decompressed: 113Downloaded: 573 file(s) [attempted 573/802 = 71%, 64 KB/s], Decompressed: 113Downloaded: 577 file(s) [attempted 577/802 = 71%, 13 KB/s], Decompressed: 275Downloaded: 585 file(s) [attempted 585/802 = 72%, 73 KB/s], Decompressed: 275Downloaded: 594 file(s) [attempted 594/802 = 74%, 57 KB/s], Decompressed: 275Downloaded: 600 file(s) [attempted 600/802 = 74%, 32 KB/s], Decompressed: 275Downloaded: 606 file(s) [attempted 606/802 = 75%, 10 KB/s], Decompressed: 275Downloaded: 611 file(s) [attempted 611/802 = 76%, 18 KB/s], Decompressed: 275Downloaded: 614 file(s) [attempted 614/802 = 76%, 42 KB/s], Decompressed: 275Downloaded: 622 file(s) [attempted 622/802 = 77%, 5 KB/s], Decompressed: 275Downloaded: 625 file(s) [attempted 625/802 = 77%, 21 KB/s], Decompressed: 275Downloaded: 630 file(s) [attempted 630/802 = 78%, 19 KB/s], Decompressed: 275Downloaded: 635 file(s) [attempted 635/802 = 79%, 26 KB/s], Decompressed: 275Downloaded: 641 file(s) [attempted 641/802 = 79%, 29 KB/s], Decompressed: 275Downloaded: 646 file(s) [attempted 646/802 = 80%, 19 KB/s], Decompressed: 275Downloaded: 652 file(s) [attempted 652/802 = 81%, 463 KB/s], Decompressed: 275Downloaded: 657 file(s) [attempted 657/802 = 81%, 9 KB/s], Decompressed: 275Downloaded: 661 file(s) [attempted 661/802 = 82%, 4 KB/s], Decompressed: 275Downloaded: 666 file(s) [attempted 666/802 = 83%, 18 KB/s], Decompressed: 275Downloaded: 671 file(s) [attempted 671/802 = 83%, 4 KB/s], Decompressed: 275Downloaded: 678 file(s) [attempted 678/802 = 84%, 138 KB/s], Decompressed: 275Downloaded: 682 file(s) [attempted 682/802 = 85%, 281 KB/s], Decompressed: 275Downloaded: 689 file(s) [attempted 689/802 = 85%, 30 KB/s], Decompressed: 275Downloaded: 693 file(s) [attempted 693/802 = 86%, 37 KB/s], Decompressed: 275Downloaded: 694 file(s) [attempted 694/802 = 86%, 23 KB/s], Decompressed: 275Downloaded: 698 file(s) [attempted 698/802 = 87%, 30 KB/s], Decompressed: 275Downloaded: 702 file(s) [attempted 702/802 = 87%, 62 KB/s], Decompressed: 275Downloaded: 711 file(s) [attempted 711/802 = 88%, 37 KB/s], Decompressed: 275Downloaded: 721 file(s) [attempted 721/802 = 89%, 18 KB/s], Decompressed: 275Downloaded: 722 file(s) [attempted 722/802 = 90%, 10 KB/s], Decompressed: 275Downloaded: 728 file(s) [attempted 728/802 = 90%, 19 KB/s], Decompressed: 275Downloaded: 734 file(s) [attempted 734/802 = 91%, 7 KB/s], Decompressed: 275Downloaded: 738 file(s) [attempted 738/802 = 92%, 8 KB/s], Decompressed: 275Downloaded: 745 file(s) [attempted 745/802 = 92%, 170 KB/s], Decompressed: 275Downloaded: 749 file(s) [attempted 749/802 = 93%, 12 KB/s], Decompressed: 275Downloaded: 754 file(s) [attempted 754/802 = 94%, 26 KB/s], Decompressed: 275Downloaded: 761 file(s) [attempted 761/802 = 94%, 42 KB/s], Decompressed: 275Downloaded: 766 file(s) [attempted 766/802 = 95%, 7 KB/s], Decompressed: 275Downloaded: 772 file(s) [attempted 772/802 = 96%, 24 KB/s], Decompressed: 275Downloaded: 773 file(s) [attempted 773/802 = 96%, 1 KB/s], Decompressed: 275Downloaded: 778 file(s) [attempted 778/802 = 97%, 5 KB/s], Decompressed: 275Downloaded: 782 file(s) [attempted 782/802 = 97%, 3 KB/s], Decompressed: 275Downloaded: 787 file(s) [attempted 787/802 = 98%, 25 KB/s], Decompressed: 275Downloaded: 792 file(s) [attempted 792/802 = 98%, 54 KB/s], Decompressed: 275Downloaded: 797 file(s) [attempted 797/802 = 99%, 6 KB/s], Decompressed: 275Downloaded: 802 file(s) [attempted 802/802 = 100%, 6 KB/s], Decompressed: 275
+Decompressed 802 file(s)
+Already decompressed 3347 file(s)
+RUN lake --no-cache build +ArkLib.Data.CodingTheory.ProximityGap.DG25.MainResults:deps +ArkLib.ProofSystem.Binius.BinaryBasefold.Prelude:deps
+warning: manifest out of date: git revision of dependency 'VCVio' changed; use `lake update VCVio` to update it
+✔ [2801/2813] Built CompPoly.Data.Fin.BigOperators (44s)
+✔ [2802/2813] Built CompPoly.Data.Classes.DCast (43s)
+✔ [2803/2819] Built ArkLib.Data.CodingTheory.Prelims (44s)
+✔ [2813/2832] Built CompPoly.ToMathlib.Finsupp.Fin (37s)
+⚠ [2814/2832] Built ArkLib.Data.Fin.Basic (41s)
+warning: ArkLib/Data/Fin/Basic.lean:307:4: declaration uses `sorry`
+✔ [2815/2832] Built CompPoly.Data.Nat.Bitwise (42s)
+✔ [2816/2841] Built ArkLib.ToMathlib.Polynomial.DegreeLT (41s)
+✔ [3042/3066] Built CompPoly.ToMathlib.MvPolynomial.Equiv (41s)
+✔ [3043/3067] Built ArkLib.Data.Fin.Lift (42s)
+✔ [3044/3067] Built ArkLib.Data.CodingTheory.Basic.Distance (50s)
+✔ [3045/3067] Built ArkLib.Data.CodingTheory.BerlekampWelch.Sorries (40s)
+✔ [3047/3067] Built ArkLib.Data.Probability.Notation (47s)
+✔ [3048/3067] Built CompPoly.Data.MvPolynomial.Notation (43s)
+✔ [3049/3067] Built ArkLib.Data.Polynomial.Interface (43s)
+✔ [3050/3067] Built ArkLib.Data.CodingTheory.Basic.RelativeDistance (48s)
+✔ [3051/3067] Built ArkLib.Data.Probability.Instances (45s)
+✔ [3054/3071] Built CompPoly.Data.Polynomial.MonomialBasis (43s)
+✔ [3188/3238] Built ArkLib.Data.MvPolynomial.Degrees (42s)
+✔ [3189/3238] Built ArkLib.Data.CodingTheory.Basic.DecodingRadius (46s)
+✔ [3190/3238] Built CompPoly.Data.List.Lemmas (41s)
+✔ [3191/3238] Built CompPoly.Data.Polynomial.Frobenius (45s)
+⚠ [3192/3238] Built ArkLib.Data.MvPolynomial.Interpolation (44s)
+warning: ArkLib/Data/MvPolynomial/Interpolation.lean:256:14: declaration uses `sorry`
+✔ [3193/3238] Built CompPoly.Data.Array.Lemmas (43s)
+✔ [3194/3238] Built ArkLib.Data.CodingTheory.Basic.LinearCode (50s)
+✔ [3195/3238] Built CompPoly.Fields.Binary.AdditiveNTT.NovelPolynomialBasis (45s)
+✔ [3196/3238] Built ArkLib.Data.MvPolynomial.Multilinear (45s)
+✔ [3197/3238] Built CompPoly.Univariate.Raw.Core (41s)
+✔ [3198/3238] Built ArkLib.Data.CodingTheory.BerlekampWelch.ElocPoly (46s)
+✔ [3199/3238] Built CompPoly.Fields.Binary.AdditiveNTT.Domain (44s)
+✔ [3200/3238] Built ArkLib.Data.MvPolynomial.LinearMvExtension (47s)
+✔ [3201/3238] Built CompPoly.Univariate.Raw.Ops (42s)
+✔ [3202/3238] Built ArkLib.Data.CodingTheory.BerlekampWelch.Condition (55s)
+✔ [3203/3239] Built CompPoly.Fields.Binary.AdditiveNTT.Intermediate (45s)
+✔ [3204/3239] Built ArkLib.Data.Matrix.Vandermonde (45s)
+✔ [3206/3247] Built CompPoly.Univariate.Raw.Division (40s)
+✔ [3207/3256] Built ArkLib.Data.CodingTheory.BerlekampWelch.Existence (47s)
+✔ [3209/3258] Built CompPoly.Fields.Binary.AdditiveNTT.Algorithm (44s)
+✔ [3210/3258] Built ArkLib.Data.CodingTheory.ReedSolomon (53s)
+✔ [3213/3261] Built CompPoly.Univariate.Raw.Proofs (51s)
+✔ [3216/3261] Built ArkLib.Data.CodingTheory.BerlekampWelch.BerlekampWelch (49s)
+✔ [3217/3266] Built CompPoly.Data.RingTheory.AlgebraTower (45s)
+✔ [3224/3268] Built CompPoly.Univariate.Basic (46s)
+✔ [3225/3268] Built ArkLib.Data.CodingTheory.InterleavedCode (49s)
+✔ [3226/3268] Built CompPoly.Data.Vector.Basic (41s)
+✔ [3227/3268] Built CompPoly.Fields.Binary.Tower.Support.Preliminaries (48s)
+✔ [3228/3268] Built CompPoly.Univariate.Linear (39s)
+✔ [3229/3269] Built CompPoly.Bivariate.Basic (41s)
+✔ [3230/3269] Built CompPoly.Fields.Binary.Tower.Support.FinHelpers (43s)
+✔ [3231/3274] Built ArkLib.Data.CodingTheory.ProximityGap.Basic (47s)
+✔ [3232/3274] Built ArkLib.Data.Classes.Slice (11s)
+✔ [3233/3274] Built CompPoly.Univariate.ToPoly.Core (44s)
+ℹ [3234/3278] Built ArkLib.Data.Fin.Fold (40s)
+info: ArkLib/Data/Fin/Fold.lean:182:0: 3
+info: ArkLib/Data/Fin/Fold.lean:183:0: 3
+✔ [3236/3278] Built CompPoly.Fields.Binary.Tower.Support.LinearIndependentFin2 (43s)
+✔ [3238/3279] Built ArkLib.Data.Fin.Tuple.Defs (40s)
+✔ [3239/3279] Built ToMathlib.General (41s)
+✔ [3240/3279] Built CompPoly.Univariate.ToPoly.Equiv (42s)
+✔ [3241/3280] Built PolyFun.Control.Monad.Algebra (30s)
+✔ [3242/3287] Built CompPoly.Fields.Binary.Tower.Support.DefiningPoly (44s)
+✔ [3244/3287] Built ArkLib.Data.Fin.Tuple.Notation (43s)
+✔ [3246/3287] Built VCVio.Prelude (45s)
+✔ [3248/3292] Built CompPoly.Univariate.ToPoly.Impl (43s)
+✔ [3249/3292] Built CompPoly.Fields.Binary.Tower.Support.IrreducibilityAndTraceMapProperty (44s)
+✔ [3250/3292] Built PolyFun.Control.Monad.Hom (40s)
+⚠ [3251/3293] Built ArkLib.Data.Fin.Tuple.Lemmas (45s)
+warning: ArkLib/Data/Fin/Tuple/Lemmas.lean:1092:8: declaration uses `sorry`
+✔ [3252/3295] Built ToMathlib.Data.ENNReal.Gauss (40s)
+✔ [3253/3295] Built CompPoly.Bivariate.ToPoly (52s)
+✔ [3254/3295] Built ToMathlib.ProbabilityTheory.SPMF (43s)
+✔ [3255/3295] Built CompPoly.Fields.Binary.Tower.Abstract.Core (49s)
+⚠ [3256/3295] Built ArkLib.Data.Fin.Sigma (45s)
+warning: ArkLib/Data/Fin/Sigma.lean:130:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:137:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:203:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:247:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:304:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:311:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:359:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:367:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:450:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:472:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:484:4: declaration uses `sorry`
+✔ [3257/3304] Built ToMathlib.Control.OptionT (38s)
+✔ [3263/3313] Built CompPoly.ToMathlib.Polynomial.BivariateDegree (44s)
+✔ [3264/3314] Built VCVio.EvalDist.Defs.Support (47s)
+✔ [3265/3317] Built PolyFun.PFunctor.Basic (39s)
+✔ [3266/3317] Built CompPoly.Fields.Binary.Tower.Abstract.Algebra (46s)
+✔ [3267/3317] Built CompPoly.ToMathlib.Polynomial.BivariateMultiplicity (45s)
+✔ [3268/3317] Built CompPoly.ToMathlib.Polynomial.BivariateWeightedDegree (44s)
+✔ [3269/3317] Built PolyFun.PFunctor.Equiv.Basic (39s)
+✔ [3270/3317] Built VCVio.EvalDist.Defs.Basic (50s)
+✔ [3271/3318] Built VCVio.OracleComp.OracleSpec (41s)
+✔ [3272/3318] Built CompPoly.Fields.Binary.Tower.Abstract.Split (45s)
+ℹ [3273/3318] Built ArkLib.Data.Polynomial.Bivariate (44s)
+info: ArkLib/Data/Polynomial/Bivariate.lean:52:17: Try these:
+  [apply] [grind =] for pattern: [@Finset.Nonempty #3 (@Finsupp.support _ #2 #1 #0)]
+  [apply] [grind! .] for pattern: [@Finsupp.support #3 #2 #1 #0]
+info: ArkLib/Data/Polynomial/Bivariate.lean:52:17: Try these:
+  [apply] [grind
+    .] for pattern: [@LE.le `[ℕ] `[instLENat] (@natDegree #3 #2 (@HMul.hMul (Polynomial _ _) (Polynomial _ _) (Polynomial _ _) _ #1 #0)) (@HAdd.hAdd `[ℕ] `[ℕ] `[ℕ] `[instHAdd] (@natDegree _ _ #1) (@natDegree _ _ #0))]
+  [apply] [grind!
+    .] for pattern: [@natDegree #3 #2 (@HMul.hMul (Polynomial _ _) (Polynomial _ _) (Polynomial _ _) _ #1 #0)]
+info: ArkLib/Data/Polynomial/Bivariate.lean:52:17: Try these:
+  [apply] [grind =] for pattern: [@degree #2 #1 #0, @Bot.bot `[WithBot ℕ] `[WithBot.bot]]
+  [apply] [grind .] for pattern: [@degree #2 #1 #0]
+info: ArkLib/Data/Polynomial/Bivariate.lean:52:17: Try these:
+  [apply] [grind .] for pattern: [@LT.lt _ _ (@Bot.bot _ _) (@WithBot.some #2 #0)]
+  [apply] [grind! .] for pattern: [@WithBot.some #2 #0]
+info: ArkLib/Data/Polynomial/Bivariate.lean:52:17: Try this:
+  [apply] [grind =] for pattern: [@IsMaxOn #5 #4 #3 #2 #1 #0]
+info: ArkLib/Data/Polynomial/Bivariate.lean:52:17: Try these:
+  [apply] [grind .] for pattern: [@Finset.sup #7 #8 #6 #5 #3 #4, @Membership.mem _ (Finset _) _ #3 #2]
+  [apply] [grind
+    →] for pattern: [@Membership.mem #8 (Finset _) _ #3 #2, @IsMaxOn _ #7 _ #4 (@SetLike.coe (Finset _) _ _ #3) #2]
+  [apply] [grind <=] for pattern: [@Finset.sup #7 #8 #6 #5 #3 #4, @IsMaxOn _ _ _ #4 (@SetLike.coe (Finset _) _ _ #3) #2]
+info: ArkLib/Data/Polynomial/Bivariate.lean:52:17: Try this:
+  [apply] [grind
+    =] for pattern: [@DFunLike.coe (@LinearMap #5 _ #4 _ _ _ (Polynomial _ _) _ _ _ _) _ _ _ (@Polynomial.monomial _ _ #3) #1, @DFunLike.coe (@LinearMap _ _ _ _ _ _ (Polynomial _ _) _ _ _ _) _ _ _ (@Polynomial.monomial _ _ #2) #0]
+✔ [3274/3318] Built PolyFun.PFunctor.Lens.Basic (38s)
+✔ [3275/3318] Built VCVio.EvalDist.Monad.Basic (48s)
+✔ [3276/3321] Built VCVio.EvalDist.Defs.AlternativeMonad (48s)
+✔ [3277/3321] Built VCVio.OracleComp.OracleQuery (42s)
+✔ [3278/3321] Built CompPoly.Fields.Binary.Tower.Abstract.Basis (57s)
+✔ [3279/3321] Built ArkLib.Data.Polynomial.Trivariate (44s)
+✔ [3280/3321] Built ArkLib.Data.CodingTheory.PolishchukSpielman.Degrees (45s)
+✔ [3281/3321] Built PolyFun.PFunctor.Free.Basic (36s)
+✔ [3282/3321] Built VCVio.EvalDist.Defs.Instances (47s)
+✔ [3283/3321] Built VCVio.EvalDist.Fintype (47s)
+✔ [3284/3323] Built VCVio.EvalDist.Monad.Map (48s)
+✔ [3285/3323] Built VCVio.EvalDist.Defs.Semantics (47s)
+✔ [3286/3323] Built VCVio.OracleComp.HasQuery.Basic (41s)
+✔ [3287/3324] Built CompPoly.Fields.Binary.Tower.Concrete.Core (48s)
+✔ [3288/3326] Built ArkLib.Data.CodingTheory.PolishchukSpielman.Resultant (48s)
+✔ [3289/3326] Built VCVio.EvalDist.Monad.Seq (49s)
+✔ [3290/3326] Built PolyFun.PFunctor.Lens.Cartesian (38s)
+✔ [3291/3326] Built VCVio.OracleComp.OracleComp (46s)
+✔ [3292/3327] Built CompPoly.Fields.Binary.Tower.Concrete.Field (45s)
+✔ [3293/3327] Built ArkLib.Data.CodingTheory.PolishchukSpielman.Existence (48s)
+✔ [3294/3327] Built VCVio.EvalDist.Defs.NeverFails (47s)
+✔ [3295/3327] Built VCVio.EvalDist.Prod (48s)
+✔ [3296/3328] Built VCVio.OracleComp.SimSemantics.QueryImpl.Basic (44s)
+✔ [3297/3328] Built CompPoly.Fields.Binary.Tower.Concrete.Algebra (47s)
+✔ [3298/3328] Built PolyFun.PFunctor.Bound (39s)

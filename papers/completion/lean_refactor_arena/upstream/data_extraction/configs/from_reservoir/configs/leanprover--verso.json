@@ -1,0 +1,36 @@
+{
+    "repo": "https://github.com/leanprover/verso",
+    "commit": "f323aacf146f5c49f3b36810918a14c6c1fe662e",
+    "lean": "leanprover/lean4:v4.13.0-rc4",
+    "name": "verso",
+    "imports": [
+        "Verso",
+        "VersoBlog",
+        "VersoManual",
+        "SimplePage"
+    ],
+    "metadata": {
+        "name": "verso",
+        "owner": "leanprover",
+        "fullName": "leanprover/verso",
+        "description": "Lean documentation authoring tool",
+        "keywords": [],
+        "homepage": null,
+        "license": "Apache-2.0",
+        "createdAt": "2023-12-06T08:49:17Z",
+        "updatedAt": "2024-10-26T16:54:30Z",
+        "stars": 117,
+        "sources": [
+            {
+                "type": "git",
+                "host": "github",
+                "id": "R_kgDOK2YR9A",
+                "fullName": "leanprover/verso",
+                "repoUrl": "https://github.com/leanprover/verso",
+                "gitUrl": "https://github.com/leanprover/verso",
+                "defaultBranch": "main"
+            }
+        ],
+        "schemaVersion": "1.2.0"
+    }
+}

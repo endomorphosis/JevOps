@@ -1,0 +1,105 @@
+{
+  "schema": "jevops-refactor-contract-pilot-summary/v1",
+  "plan_id": "b5b2b3623672ab0fb9f76efd49fe4f96d83ec9b53709bcfe4119179fff12a35f",
+  "problem": "Core.InitsUpdatesComm",
+  "split": "exploratory-public-warmup-not-held-out",
+  "files_sha256": {
+    "plan.json": "70a3b9da670f26490f209e94243302705026576d351f75876447e75757159069",
+    "server-profile.json": "97051d5435a18e9331b7e3fb35d634608b3fc0128dd0f670364deedaae75fec1",
+    "generation.json": "f041f596eaeffb570622593af909444c3e286ff078969751b15acfcf787dd6fc",
+    "native-plan.json": "e811362a5a447109a4af68634436900fa1c8f83c592089fa71a55ddddd15b82a",
+    "native-triage.json": "4c553e2194ed53510e1f9cf6b1637ebed0532d63d219e2ba2867899571900e04",
+    "layout-plan.json": "1fd163530942b2d64142585830e4afb6ba607821d5cbc33034017e41aa39593a",
+    "layout-regression.json": "a8c85236a11db8134aa9bbf95d69f07f34014ad0b3be705355f87465d6f7fc4a",
+    "draft-0.json": "2ff12acc2b354cf45b3feff39bfe3daa18d7defacced885f02010c5ab364638d",
+    "draft-1.json": "806d16fd6a210edd867d4f34b37fe1284edf9e7a3db8e692bdf6cf6bd82c1199"
+  },
+  "generation": {
+    "requests_reserved": 8,
+    "outcomes": {
+      "output_truncated": 5,
+      "contract_mismatch": 1,
+      "parsed": 2
+    },
+    "by_arm": {
+      "user-tactic": {
+        "output_truncated": 2
+      },
+      "user-json": {
+        "contract_mismatch": 1,
+        "parsed": 1
+      },
+      "system-user-tactic": {
+        "output_truncated": 2
+      },
+      "system-user-json": {
+        "output_truncated": 1,
+        "parsed": 1
+      }
+    },
+    "usage_coverage": "all eight responses",
+    "usage": {
+      "prompt_tokens": 10074,
+      "completion_tokens": 5772,
+      "total_tokens": 15846
+    },
+    "summed_request_wall_seconds": 246.4635,
+    "native_execution_during_generation": 0,
+    "candidate_files": [
+      "draft-0.json",
+      "draft-1.json"
+    ]
+  },
+  "native_validity_triage": {
+    "status": "COMPLETE",
+    "requests": 5,
+    "processes": 5,
+    "control_outcomes": {
+      "VERIFIED": 3
+    },
+    "candidate_outcomes": {
+      "REJECTED": 2,
+      "NOT_RUN_AFTER_NON_SUCCESS": 4
+    },
+    "all_pin_verified_candidates": [],
+    "summed_verification_request_wall_seconds": 65.9761,
+    "confirmation_executed": false,
+    "verified_improvements": 0
+  },
+  "layout_regression": {
+    "native_processes": 2,
+    "outcomes": {
+      "old-strip-reproducer": "REJECTED",
+      "fixed-fence-roundtrip": "VERIFIED"
+    },
+    "fixed": true,
+    "model_improvement": false
+  },
+  "offline_tests": {
+    "targeted": {
+      "passed": 308,
+      "skipped": 0,
+      "seconds": 23.78
+    },
+    "additional_boundaries": {
+      "passed": 285,
+      "skipped": 96,
+      "seconds": 3.82
+    },
+    "harness_offline_self_check": true,
+    "full_repository_suite_run": false
+  },
+  "paid_api_cost": null,
+  "electricity_cost": null,
+  "official_score": null,
+  "promotion": false,
+  "limits": [
+    "one previously studied public problem",
+    "two greedy repetitions per treatment",
+    "no holdout or model-quality ranking",
+    "native private scratch is not an OS sandbox",
+    "no performance comparison justified",
+    "unexecuted version checks are not semantic rejection"
+  ],
+  "earlier_experiment_reports_changed": false
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "jevops-arena-local/v1",
+  "status": "ERROR",
+  "reason": "unbound variable in local context",
+  "ok": false,
+  "request_sha256": "366edacc0f874c3d17870afddb4c25e9fc6574d014afd1587aa16fef48d5a38c",
+  "proof_admitted": false,
+  "whole_source_checked": false,
+  "evidence_mode": "local_lean",
+  "events": 37,
+  "lean_version": "4.29.1",
+  "raw_capture_path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-premise-pilot-20260924-TYKeUj/run/capture.json",
+  "raw_capture_sha256": "7664ea568c764d9120a3e5a8f846d4a5692d2f1a8326243eb696b6fc1fd019af",
+  "summary_only": true
+}

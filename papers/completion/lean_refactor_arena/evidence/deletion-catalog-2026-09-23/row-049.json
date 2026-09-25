@@ -1,0 +1,24 @@
+{
+  "pin": {
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+  },
+  "label": "edit-48",
+  "source_sha256": "cb335887b0aec2758d51ea40c1906fdd6b9987dea542618756aca58074a81eff",
+  "status": "REJECTED",
+  "context_id": "c05f2041328cf7cd0931ca56ae2c91af99ef4663915803d6dd2c39f6a0d3554e",
+  "receipt": {
+    "request_id": "3ca826010e3aa4c211e01df4d58a4d41fd873e24e2cbbb8c3e6908660640d504",
+    "candidate_sha256": "cb335887b0aec2758d51ea40c1906fdd6b9987dea542618756aca58074a81eff",
+    "target": "Core.InitsUpdatesComm",
+    "outcome": "REJECTED",
+    "type_preserved": false,
+    "exit_code": 0,
+    "axiom_output": "",
+    "heartbeats": null,
+    "reason": "candidate_errors",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"a07f22759ef3aa7cde70314cc088c5ee99a642ed1a58290a81058642231a79ae\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\ncase a\\nP : PureExpr\\nσ✝ σ' : SemanticStore P\\nks ks' : List P.Ident\\nvs✝ vs' : List P.Expr\\nHlen1 : ks'.length = vs'.length\\nσ : SemanticStore P\\nx : P.Ident\\nv : P.Expr\\nσ₀ : SemanticStore P\\nxs : List P.Ident\\nvs : List P.Expr\\nσ₁ : SemanticStore P\\nHup : UpdateState P σ x v σ₀\\nHups : UpdateStates σ₀ xs vs σ₁\\nσ'' : SemanticStore P\\nx✝ : Option P.Expr\\nval : P.Expr\\nih :\\n  ∀ {σ'' : SemanticStore P},\\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\\nHinit : InitStates σ₁ ks' vs' σ''\\nHk : isDefined σ₁ (x :: xs)\\nHlen2 : xs.length = vs.length\\nheq : σ x = some val\\n⊢ ks'.length = vs'.length\\n\\ncase a\\nP : PureExpr\\nσ✝ σ' : SemanticStore P\\nks ks' : List P.Ident\\nvs✝ vs' : List P.Expr\\nHlen1 : ks'.length = vs'.length\\nσ : SemanticStore P\\nx : P.Ident\\nv : P.Expr\\nσ₀ : SemanticStore P\\nxs : List P.Ident\\nvs : List P.Expr\\nσ₁ : SemanticStore P\\nHup : UpdateState P σ x v σ₀\\nHups : UpdateStates σ₀ xs vs σ₁\\nσ'' : SemanticStore P\\nx✝ : Option P.Expr\\nval : P.Expr\\nih :\\n  ∀ {σ'' : SemanticStore P},\\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\\nHinit : InitStates σ₁ ks' vs' σ''\\nHk : isDefined σ₁ (x :: xs)\\nHlen2 : xs.length = vs.length\\nheq : σ x = some val\\n⊢ isNotDefined σ ks'\\n\\ncase a\\nP : PureExpr\\nσ✝ σ' : SemanticStore P\\nks ks' : List P.Ident\\nvs✝ vs' : List P.Expr\\nHlen1 : ks'.length = vs'.length\\nσ : SemanticStore P\\nx : P.Ident\\nv : P.Expr\\nσ₀ : SemanticStore P\\nxs : List P.Ident\\nvs : List P.Expr\\nσ₁ : SemanticStore P\\nHup : UpdateState P σ x v σ₀\\nHups : UpdateStates σ₀ xs vs σ₁\\nσ'' : SemanticStore P\\nx✝ : Option P.Expr\\nval : P.Expr\\nih :\\n  ∀ {σ'' : SemanticStore P},\\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\\nHinit : InitStates σ₁ ks' vs' σ''\\nHk : isDefined σ₁ (x :: xs)\\nHlen2 : xs.length = vs.length\\nheq : σ x = some val\\n⊢ ks'.Nodup\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6799.333}"
+  },
+  "native_processes": 1,
+  "wall_seconds": 10.2446
+}

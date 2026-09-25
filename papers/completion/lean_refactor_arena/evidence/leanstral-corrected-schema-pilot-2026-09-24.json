@@ -1,0 +1,210 @@
+{
+  "artifacts": [
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-b/preparation.json",
+      "sha256": "167c151f02f19bc8c249c28290c7b559c65e7a03c176a9de604dd0a89c0e6e7c"
+    },
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-b/pilot/report.json",
+      "sha256": "943298af8a4c154b90755dc1ddb016df3f17eb4a3f4c7f6bc09653db83e801d7"
+    },
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-b/pilot/plan.json",
+      "sha256": "d9dfd81b427c3eec300b834a38d25c4052bead49bbadafd7e0232ae10a98f1b6"
+    },
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-b/pilot/calls.sqlite",
+      "sha256": "50c24336c1efc480d0a9d80a8e8d435cf5c87d8d7ee4596460f307e786e2f192"
+    },
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-b/canaries/report.json",
+      "sha256": "356eb9f9b5d37a8b88bb17c7379be0f99da9584f900157931757f62c22765d86"
+    },
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-b/offline/tests.xml",
+      "sha256": "a522a0115607174585c9540ad4812a857f118731dbae5e04672550ff07fcc92e"
+    }
+  ],
+  "bundle": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-b",
+  "cache_policy": "retain_all",
+  "cases": [
+    {
+      "arms": {
+        "schema-constrained": {
+          "attempts_reserved": 3,
+          "best_valid_tokens": null,
+          "known_model_tokens": 4988,
+          "measured_generations": 3,
+          "shorter_valid_attempts": 0,
+          "statuses": {
+            "CHECKED": 2,
+            "INTAKE_REJECTED": 1
+          },
+          "strict_format_attempts": 3,
+          "tokens_observed": 4988,
+          "tokens_reserved": 6801,
+          "trials": [
+            {
+              "all_pin_valid": false,
+              "error_category": null,
+              "http_status": null,
+              "intake_error": "unsupported_proof_envelope",
+              "native_outcomes": [],
+              "status": "INTAKE_REJECTED",
+              "step": 0
+            },
+            {
+              "all_pin_valid": false,
+              "error_category": null,
+              "http_status": null,
+              "intake_error": null,
+              "native_outcomes": [
+                "REJECTED",
+                "REJECTED",
+                "REJECTED"
+              ],
+              "status": "CHECKED",
+              "step": 1
+            },
+            {
+              "all_pin_valid": false,
+              "error_category": null,
+              "http_status": null,
+              "intake_error": null,
+              "native_outcomes": [
+                "REJECTED",
+                "REJECTED",
+                "REJECTED"
+              ],
+              "status": "CHECKED",
+              "step": 2
+            }
+          ],
+          "valid_attempts": 0
+        },
+        "unconstrained": {
+          "attempts_reserved": 3,
+          "best_valid_tokens": null,
+          "known_model_tokens": 5423,
+          "measured_generations": 3,
+          "shorter_valid_attempts": 0,
+          "statuses": {
+            "CHECKED": 1,
+            "FORMAT_REJECTED": 2
+          },
+          "strict_format_attempts": 1,
+          "tokens_observed": 5423,
+          "tokens_reserved": 6801,
+          "trials": [
+            {
+              "all_pin_valid": false,
+              "error_category": null,
+              "http_status": null,
+              "intake_error": null,
+              "native_outcomes": [],
+              "status": "FORMAT_REJECTED",
+              "step": 0
+            },
+            {
+              "all_pin_valid": false,
+              "error_category": null,
+              "http_status": null,
+              "intake_error": null,
+              "native_outcomes": [],
+              "status": "FORMAT_REJECTED",
+              "step": 1
+            },
+            {
+              "all_pin_valid": false,
+              "error_category": null,
+              "http_status": null,
+              "intake_error": null,
+              "native_outcomes": [
+                "REJECTED",
+                "REJECTED",
+                "REJECTED"
+              ],
+              "status": "CHECKED",
+              "step": 2
+            }
+          ],
+          "valid_attempts": 0
+        }
+      },
+      "controls": [
+        {
+          "heartbeats": 4227,
+          "outcome": "VERIFIED",
+          "pin": "v4.29.1"
+        },
+        {
+          "heartbeats": 4657,
+          "outcome": "VERIFIED",
+          "pin": "v4.27.0"
+        },
+        {
+          "heartbeats": 4689,
+          "outcome": "VERIFIED",
+          "pin": "v4.26.0"
+        }
+      ],
+      "problem": "Core.InitsUpdatesComm",
+      "status": "COMPLETE"
+    }
+  ],
+  "comparison_established": false,
+  "complete": true,
+  "evidence_mode": "local_lean",
+  "generated_at": "2026-09-24T01:20:52.810358+00:00",
+  "generator_sha256": "cc03608221f3b3d3d85fa99e28d68ac5e56bbb3e650a24e8ba955e8d76baef0f",
+  "heartbeat_improvement_established": false,
+  "isolation_canaries": {
+    "passed": 9,
+    "passed_gate": true,
+    "tests": 9
+  },
+  "model_calls": 6,
+  "native_requests": 12,
+  "note": "Diagnostic development screen, not a policy promotion or official score. Unknown generation usage stays unknown; reference heartbeats are not compression gains.",
+  "official_score": null,
+  "offline_tests": {
+    "offline": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 277
+    }
+  },
+  "plan_id": "173303ce72aee51f6992caeebdc52b528f7a422028b7f88cd1f1733a81171eec",
+  "promotion": false,
+  "schema": "jevops-frozen-schema-pilot-summary/v1",
+  "snapshot": {
+    "bytes": 8143883,
+    "content_root": "8edeb8ad78e86edf8987ddfa7fd0b4d7451810fc0662482c3e8d645366a2accc",
+    "file_count": 390,
+    "manifest_sha256": "027409715ed248feccf07339c35d12720936a84e98189704f8f8c5f5e0bc5619",
+    "proof_verified": false,
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-b/runtime",
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED"
+  },
+  "storage_cap_bytes": 50000000000,
+  "storage_guard": "passed",
+  "study": "json-schema",
+  "training": false,
+  "watcher_after": {
+    "native_requests_reserved": 164,
+    "official_score": null,
+    "promotions": 0,
+    "router_calls_reserved": 12,
+    "state": "ENVIRONMENT_FAILED"
+  },
+  "watcher_before": {
+    "native_requests_reserved": 164,
+    "official_score": null,
+    "promotions": 0,
+    "router_calls_reserved": 12,
+    "state": "ENVIRONMENT_FAILED"
+  },
+  "watcher_unchanged": true
+}

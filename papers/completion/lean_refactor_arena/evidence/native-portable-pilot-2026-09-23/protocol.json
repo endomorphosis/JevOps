@@ -1,0 +1,309 @@
+{
+  "schema": "jevops-arena-pareto-selection/v1",
+  "policy": "strict-token-reduction-and-separated-heartbeats/v1",
+  "selection_objective": "strict-dual-v1",
+  "heartbeat_noise_floor_raw": 0,
+  "tokenizer_id": "lra-reference-lexical/v1",
+  "measurement": "command-elaboration-internal-heartbeats-div-1000/v1",
+  "implementation": {
+    "arena_pareto.py": "b6b242e8ce6b68e32714a37cb9ee816132d2857ab8cc76922f57153b0deff36c",
+    "arena_trial.py": "24a413e6e893f8bb9c1be5277ea6e9486a7b152a7f8030be943c02528af7ccb6"
+  },
+  "screen": {
+    "schema": "jevops-arena-controlled-trial/v1",
+    "record": {
+      "name": "CallElimCorrect.extractedOldExprInVars",
+      "source": "strata",
+      "statement": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post)",
+      "src": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+      "proof_length": 222,
+      "num_lines": 82,
+      "header": "",
+      "file_path": "Strata/Transform/CallElimCorrect.lean",
+      "url": "https://github.com/strata-org/Strata",
+      "start_line": 2733,
+      "end_line": 2814,
+      "version_info": [
+        {
+          "v4.26.0": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ]
+    },
+    "arms": [
+      {
+        "label": "control",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+        "provenance": "unchanged-reference"
+      },
+      {
+        "label": "historical-260",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+        "provenance": "historical git 680c83db61c747d409f066750e3d753099008a52; filename uses legacy counter; new native verification required"
+      },
+      {
+        "label": "composition-0",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+        "provenance": "unverified deterministic composition: port_drop_unfold_before_split"
+      },
+      {
+        "label": "composition-1",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      simp_all",
+        "provenance": "unverified deterministic composition: port_drop_intro_before_simp_all"
+      },
+      {
+        "label": "composition-2",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      simp_all",
+        "provenance": "unverified deterministic composition: port_drop_unfold_before_split -> port_drop_intro_before_simp_all"
+      }
+    ],
+    "repetitions": 2,
+    "seed": 68103,
+    "orders": [
+      "reference-first",
+      "candidate-first"
+    ],
+    "plan_id": "369ac4c19af296b8d617a8cb83691be47fc53b690d3bf64c5e000d73a76cc0cf",
+    "planned_requests": 20,
+    "schedule": [
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "9e5dac4793f0cc61b73af9bba2d20488e2d93e2ab8973d8bcf6db58282f84f37"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-2",
+        "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+        "sample_id": "c4a7e4fbcc4edbf2ed981ab2ec523d9345a34f336e37d46cd2d35a743d98da44"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-1",
+        "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+        "sample_id": "c7f7aecaa01682fbfee43e2a20d482a961b82636277351ebd8b73e390b7ce464"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "9f9c7b049b68468c2ee2e087255c10dbd88918b03c2b9bb56af41b762f5b080e"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-0",
+        "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+        "sample_id": "c2a0e88717fced85f798f8ca95dc417b8ed984ddc6592b5a90bcc5e585097416"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-0",
+        "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+        "sample_id": "29dcf40e303d442818aae217c2338965a3d1ee76345fd847c50caf412a88dbd9"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-1",
+        "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+        "sample_id": "174f25479309f1c0bd3aac35952494c2800809bfc56bb5f461f2570f019bf4d8"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-2",
+        "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+        "sample_id": "2b16b1dfba86b518ab71f94f1ab46e726c22b1055a500d834ea01768312ac3c3"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "85459b2562d0c516b9d5f9dae10571ccf555c6bba95f00838b88f058c28c6cd5"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "ebdb2dbe19c64254bc478981edb0dfb9ddac54facc89ea5f09d33058baf52e38"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-0",
+        "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+        "sample_id": "b24789a08ce13cbbde33c51c5dd500644ae99e6c077a128ff540c1ef213e5862"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-2",
+        "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+        "sample_id": "84c7acb7dca36f72fef702be0917fe456ad620c4c1235163e8e0401cfead7f4f"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-1",
+        "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+        "sample_id": "f560c7a034ba23e252d0d18c4f333d1302ee8e2c1b64626ab972ed12da796931"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "3054ca295dc2685c2e0f8e059277a12e121381fa9aab48459634afa61e140fa9"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "327fbbf0c6305ccf3b1ede4c37fdf3623ad3261a76d787fad12546cf27c43f54"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-1",
+        "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+        "sample_id": "5060e9a20962ca0cb340a114dd19c2170fe9526e1c5b01df1256529a8872d9f2"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "fc339fef8c20e323452f235167e8e4e38624dbf66abcd9bac3d406d5567d979b"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-2",
+        "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+        "sample_id": "222de1195bc7a08372dda4a738c6aaa9464f3b728f0ac74ca3b13e3412e0bb7c"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "64bedf6fb75075c61c8c2714f69ee4a83e5c51e771a22c55f2234349f519c567"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-0",
+        "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+        "sample_id": "88ab0831101e7751aa86bdb4732f596d446c7d0b61c394abd257b2dca83da837"
+      }
+    ]
+  },
+  "incumbent_label": "historical-260",
+  "candidate_labels": [
+    "composition-0",
+    "composition-1",
+    "composition-2"
+  ],
+  "confirmation_repetitions": 2,
+  "confirmation_seed": 68104,
+  "confirmation_request_reserve": 12,
+  "required_request_budget": 32,
+  "selection_order": [
+    "tokens",
+    "worst_mean_heartbeat_ratio_to_incumbent",
+    "label"
+  ],
+  "unknown_comparison": "abstain",
+  "retries": 0,
+  "confirmation_alternatives": 0,
+  "plan_id": "6a6cdbe8b43c24363701fd0493111a00163397a2bcbf8324293247b103ec2d41"
+}

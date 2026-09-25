@@ -1,0 +1,490 @@
+{
+  "schema": "jevops-graph-refinement-measurement/v1",
+  "native_artifacts_sha256": {
+    "training.json": "18bd68147633701aef64dd1cdcf3872012ac42b5982bc5784e0979a882e11c4c",
+    "evaluation.json": "d50b8362fffae064a68e74c796968ba2d7410070e816e2206993459fea410911"
+  },
+  "freeze_sha256": "9008f6c08255bcb18b5d5cb0729947f394467f84401c79367011389a83b21afd",
+  "selected": "multiscale_batch_0.15",
+  "epochs": 80,
+  "seed": 17,
+  "torch_version": "2.13.0+cu130",
+  "toolchain": [
+    "4.34.0",
+    "293d5d0c0c3f3dded4688b3ccd6a33939ac5102b"
+  ],
+  "training_compiles": 3,
+  "evaluation_compiles": 16,
+  "initial_layer_diagnostics": [
+    {
+      "norms": [
+        5.000968077799647,
+        5.012189872470353
+      ],
+      "pair_distances": [
+        {
+          "l2": 0.17290450796583132,
+          "left": 0,
+          "relative_l2": 0.03457420748862424,
+          "right": 1
+        }
+      ],
+      "radius": 0
+    },
+    {
+      "norms": [
+        2.510462198769828,
+        2.51385771190384
+      ],
+      "pair_distances": [
+        {
+          "l2": 0.08711703293890939,
+          "left": 0,
+          "relative_l2": 0.03470159119766803,
+          "right": 1
+        }
+      ],
+      "radius": 1
+    },
+    {
+      "norms": [
+        1.1054655742190072,
+        1.1037382125563873
+      ],
+      "pair_distances": [
+        {
+          "l2": 0.03719805371131098,
+          "left": 0,
+          "relative_l2": 0.03364921945904175,
+          "right": 1
+        }
+      ],
+      "radius": 2
+    }
+  ],
+  "training_statistics": {
+    "fixed_graph": {
+      "correct": 2,
+      "cross_entropy": 0.36083384358544535,
+      "expected_cosine_loss": 0.29682597932134136,
+      "updates": 160,
+      "examples_seen": 160,
+      "config": {
+        "learning_rate": 0.15,
+        "selectable": false,
+        "update": "online"
+      }
+    },
+    "frozen_multiscale": {
+      "correct": 2,
+      "cross_entropy": 0.6618830177146399,
+      "expected_cosine_loss": 0.4837859873668474,
+      "updates": 80,
+      "examples_seen": 160,
+      "config": {
+        "learning_rate": 0.15,
+        "selectable": false,
+        "update": "batch"
+      }
+    },
+    "last_batch_0.05": {
+      "correct": 2,
+      "cross_entropy": 0.6927608011361124,
+      "expected_cosine_loss": 0.4998028215769933,
+      "updates": 80,
+      "examples_seen": 160,
+      "config": {
+        "learning_rate": 0.05,
+        "pooling": "last",
+        "selectable": true,
+        "update": "batch"
+      }
+    },
+    "last_batch_0.15": {
+      "correct": 2,
+      "cross_entropy": 0.6919145228969836,
+      "expected_cosine_loss": 0.49937067689698367,
+      "updates": 80,
+      "examples_seen": 160,
+      "config": {
+        "learning_rate": 0.15,
+        "pooling": "last",
+        "selectable": true,
+        "update": "batch"
+      }
+    },
+    "last_batch_0.25": {
+      "correct": 2,
+      "cross_entropy": 0.6908229976890867,
+      "expected_cosine_loss": 0.49881272243332364,
+      "updates": 80,
+      "examples_seen": 160,
+      "config": {
+        "learning_rate": 0.25,
+        "pooling": "last",
+        "selectable": true,
+        "update": "batch"
+      }
+    },
+    "last_online_0.05": {
+      "correct": 1,
+      "cross_entropy": 0.6926414362943594,
+      "expected_cosine_loss": 0.4997398709843505,
+      "updates": 160,
+      "examples_seen": 160,
+      "config": {
+        "learning_rate": 0.05,
+        "pooling": "last",
+        "selectable": true,
+        "update": "online"
+      }
+    },
+    "last_online_0.15": {
+      "correct": 1,
+      "cross_entropy": 0.691502293902262,
+      "expected_cosine_loss": 0.4991152709955214,
+      "updates": 160,
+      "examples_seen": 160,
+      "config": {
+        "learning_rate": 0.15,
+        "pooling": "last",
+        "selectable": true,
+        "update": "online"
+      }
+    },
+    "last_online_0.25": {
+      "correct": 1,
+      "cross_entropy": 0.6903947026618086,
+      "expected_cosine_loss": 0.49845255510003594,
+      "updates": 160,
+      "examples_seen": 160,
+      "config": {
+        "learning_rate": 0.25,
+        "pooling": "last",
+        "selectable": true,
+        "update": "online"
+      }
+    },
+    "multiscale_batch_0.05": {
+      "correct": 2,
+      "cross_entropy": 0.6824370840508618,
+      "expected_cosine_loss": 0.49450487200303594,
+      "updates": 80,
+      "examples_seen": 160,
+      "config": {
+        "learning_rate": 0.05,
+        "pooling": "multiscale",
+        "selectable": true,
+        "update": "batch"
+      }
+    },
+    "multiscale_batch_0.15": {
+      "correct": 2,
+      "cross_entropy": 0.6599954140877085,
+      "expected_cosine_loss": 0.48279015065365094,
+      "updates": 80,
+      "examples_seen": 160,
+      "config": {
+        "learning_rate": 0.15,
+        "pooling": "multiscale",
+        "selectable": true,
+        "update": "batch"
+      }
+    },
+    "multiscale_batch_0.25": {
+      "correct": 1,
+      "cross_entropy": 0.6940374080447689,
+      "expected_cosine_loss": 0.47438119435350984,
+      "updates": 80,
+      "examples_seen": 160,
+      "config": {
+        "learning_rate": 0.25,
+        "pooling": "multiscale",
+        "selectable": true,
+        "update": "batch"
+      }
+    },
+    "multiscale_online_0.05": {
+      "correct": 2,
+      "cross_entropy": 0.6871644194969055,
+      "expected_cosine_loss": 0.49693103722067433,
+      "updates": 160,
+      "examples_seen": 160,
+      "config": {
+        "learning_rate": 0.05,
+        "pooling": "multiscale",
+        "selectable": true,
+        "update": "online"
+      }
+    },
+    "multiscale_online_0.15": {
+      "correct": 1,
+      "cross_entropy": 0.6749365813086563,
+      "expected_cosine_loss": 0.4904417819231117,
+      "updates": 160,
+      "examples_seen": 160,
+      "config": {
+        "learning_rate": 0.15,
+        "pooling": "multiscale",
+        "selectable": true,
+        "update": "online"
+      }
+    },
+    "multiscale_online_0.25": {
+      "correct": 1,
+      "cross_entropy": 0.6623566392063983,
+      "expected_cosine_loss": 0.48288665941377634,
+      "updates": 160,
+      "examples_seen": 160,
+      "config": {
+        "learning_rate": 0.25,
+        "pooling": "multiscale",
+        "selectable": true,
+        "update": "online"
+      }
+    },
+    "node_bag": {
+      "correct": 2,
+      "cross_entropy": 0.6683458750019444,
+      "expected_cosine_loss": 0.48718113265848617,
+      "updates": 80,
+      "examples_seen": 160,
+      "config": {
+        "learning_rate": 0.15,
+        "selectable": false,
+        "update": "batch"
+      }
+    }
+  },
+  "summary": {
+    "multiscale_batch_0.15": {
+      "sample_count": 8,
+      "loss_sample_count": 8,
+      "valid_count": 8,
+      "nonregressing_count": 8,
+      "verified_saved_tokens": 48,
+      "cross_entropy": 0.6766862619020781,
+      "expected_cosine_loss": 0.49148645862707646
+    },
+    "last_online_0.15": {
+      "sample_count": 8,
+      "loss_sample_count": 8,
+      "valid_count": 4,
+      "nonregressing_count": 4,
+      "verified_saved_tokens": 64,
+      "cross_entropy": 0.6925808629998479,
+      "expected_cosine_loss": 0.49968219502039735
+    },
+    "fixed_graph": {
+      "sample_count": 8,
+      "loss_sample_count": 8,
+      "valid_count": 8,
+      "nonregressing_count": 8,
+      "verified_saved_tokens": 48,
+      "cross_entropy": 0.6298332391695166,
+      "expected_cosine_loss": 0.46342431328917033
+    },
+    "frozen_multiscale": {
+      "sample_count": 8,
+      "loss_sample_count": 8,
+      "valid_count": 8,
+      "nonregressing_count": 8,
+      "verified_saved_tokens": 48,
+      "cross_entropy": 0.6774390483128637,
+      "expected_cosine_loss": 0.4918806301123127
+    },
+    "node_bag": {
+      "sample_count": 8,
+      "loss_sample_count": 8,
+      "valid_count": 8,
+      "nonregressing_count": 8,
+      "verified_saved_tokens": 48,
+      "cross_entropy": 0.6806101154177776,
+      "expected_cosine_loss": 0.4935363801179328
+    }
+  },
+  "by_split": {
+    "validation": {
+      "multiscale_batch_0.15": {
+        "sample_count": 2,
+        "loss_sample_count": 2,
+        "valid_count": 2,
+        "nonregressing_count": 2,
+        "verified_saved_tokens": 16,
+        "cross_entropy": 0.6678432843322553,
+        "expected_cosine_loss": 0.48691103766783644
+      },
+      "last_online_0.15": {
+        "sample_count": 2,
+        "loss_sample_count": 2,
+        "valid_count": 1,
+        "nonregressing_count": 1,
+        "verified_saved_tokens": 16,
+        "cross_entropy": 0.69222376867578,
+        "expected_cosine_loss": 0.49950739647849185
+      },
+      "fixed_graph": {
+        "sample_count": 2,
+        "loss_sample_count": 2,
+        "valid_count": 2,
+        "nonregressing_count": 2,
+        "verified_saved_tokens": 16,
+        "cross_entropy": 0.6732884027971842,
+        "expected_cosine_loss": 0.48975240644674767
+      },
+      "frozen_multiscale": {
+        "sample_count": 2,
+        "loss_sample_count": 2,
+        "valid_count": 2,
+        "nonregressing_count": 2,
+        "verified_saved_tokens": 16,
+        "cross_entropy": 0.6689837419657123,
+        "expected_cosine_loss": 0.4875119346013987
+      },
+      "node_bag": {
+        "sample_count": 2,
+        "loss_sample_count": 2,
+        "valid_count": 2,
+        "nonregressing_count": 2,
+        "verified_saved_tokens": 16,
+        "cross_entropy": 0.6735125762193965,
+        "expected_cosine_loss": 0.48987304560117867
+      }
+    },
+    "canary": {
+      "multiscale_batch_0.15": {
+        "sample_count": 2,
+        "loss_sample_count": 2,
+        "valid_count": 2,
+        "nonregressing_count": 2,
+        "verified_saved_tokens": 16,
+        "cross_entropy": 0.6711649505115982,
+        "expected_cosine_loss": 0.4886029525152291
+      },
+      "last_online_0.15": {
+        "sample_count": 2,
+        "loss_sample_count": 2,
+        "valid_count": 1,
+        "nonregressing_count": 1,
+        "verified_saved_tokens": 16,
+        "cross_entropy": 0.692674288721998,
+        "expected_cosine_loss": 0.4997409879014372
+      },
+      "fixed_graph": {
+        "sample_count": 2,
+        "loss_sample_count": 2,
+        "valid_count": 2,
+        "nonregressing_count": 2,
+        "verified_saved_tokens": 0,
+        "cross_entropy": 0.6862196925641573,
+        "expected_cosine_loss": 0.4922222756747393
+      },
+      "frozen_multiscale": {
+        "sample_count": 2,
+        "loss_sample_count": 2,
+        "valid_count": 2,
+        "nonregressing_count": 2,
+        "verified_saved_tokens": 16,
+        "cross_entropy": 0.6721278222499918,
+        "expected_cosine_loss": 0.48911440131975625
+      },
+      "node_bag": {
+        "sample_count": 2,
+        "loss_sample_count": 2,
+        "valid_count": 2,
+        "nonregressing_count": 2,
+        "verified_saved_tokens": 16,
+        "cross_entropy": 0.6763280546077141,
+        "expected_cosine_loss": 0.49134016645682055
+      }
+    },
+    "holdout": {
+      "multiscale_batch_0.15": {
+        "sample_count": 4,
+        "loss_sample_count": 4,
+        "valid_count": 4,
+        "nonregressing_count": 4,
+        "verified_saved_tokens": 16,
+        "cross_entropy": 0.6838684063822297,
+        "expected_cosine_loss": 0.4952159221626201
+      },
+      "last_online_0.15": {
+        "sample_count": 4,
+        "loss_sample_count": 4,
+        "valid_count": 2,
+        "nonregressing_count": 2,
+        "verified_saved_tokens": 32,
+        "cross_entropy": 0.6927126973008068,
+        "expected_cosine_loss": 0.4997401978508301
+      },
+      "fixed_graph": {
+        "sample_count": 4,
+        "loss_sample_count": 4,
+        "valid_count": 4,
+        "nonregressing_count": 4,
+        "verified_saved_tokens": 32,
+        "cross_entropy": 0.5799124306583626,
+        "expected_cosine_loss": 0.4358612855175972
+      },
+      "frozen_multiscale": {
+        "sample_count": 4,
+        "loss_sample_count": 4,
+        "valid_count": 4,
+        "nonregressing_count": 4,
+        "verified_saved_tokens": 16,
+        "cross_entropy": 0.6843223145178755,
+        "expected_cosine_loss": 0.49544809226404796
+      },
+      "node_bag": {
+        "sample_count": 4,
+        "loss_sample_count": 4,
+        "valid_count": 4,
+        "nonregressing_count": 4,
+        "verified_saved_tokens": 16,
+        "cross_entropy": 0.686299915422,
+        "expected_cosine_loss": 0.496466154206866
+      }
+    }
+  },
+  "gates": {
+    "complete_validity": true,
+    "complete_cost_and_loss_coverage": true,
+    "baseline_complete_loss_coverage": true,
+    "baseline_savings_nonregression": true,
+    "cross_entropy_nonregression": false,
+    "expected_cosine_loss_nonregression": false,
+    "all_splits_pass": false
+  },
+  "split_gates": {
+    "validation": {
+      "complete_validity": true,
+      "complete_cost_and_loss_coverage": true,
+      "baseline_complete_loss_coverage": true,
+      "baseline_savings_nonregression": true,
+      "cross_entropy_nonregression": true,
+      "expected_cosine_loss_nonregression": true
+    },
+    "canary": {
+      "complete_validity": true,
+      "complete_cost_and_loss_coverage": true,
+      "baseline_complete_loss_coverage": true,
+      "baseline_savings_nonregression": true,
+      "cross_entropy_nonregression": true,
+      "expected_cosine_loss_nonregression": true
+    },
+    "holdout": {
+      "complete_validity": true,
+      "complete_cost_and_loss_coverage": true,
+      "baseline_complete_loss_coverage": true,
+      "baseline_savings_nonregression": false,
+      "cross_entropy_nonregression": false,
+      "expected_cosine_loss_nonregression": false
+    }
+  },
+  "ok": false,
+  "models_unchanged": true,
+  "semantic_family_decontamination": false,
+  "checkpoint_promoted": false,
+  "official_score": null,
+  "gate_metrics_from_receipt_replay": true
+}

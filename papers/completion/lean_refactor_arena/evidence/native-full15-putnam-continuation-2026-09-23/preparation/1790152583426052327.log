@@ -1,0 +1,2525 @@
+warning: manifest out of date: git revision of dependency 'VCVio' changed; use `lake update VCVio` to update it
+⚠ [1310/1332] Replayed ArkLib.Data.Fin.Basic
+warning: ArkLib/Data/Fin/Basic.lean:307:4: declaration uses `sorry`
+⚠ [2822/2841] Replayed ArkLib.Data.MvPolynomial.Interpolation
+warning: ArkLib/Data/MvPolynomial/Interpolation.lean:256:14: declaration uses `sorry`
+ℹ [3126/3151] Replayed ArkLib.Data.Polynomial.Bivariate
+info: ArkLib/Data/Polynomial/Bivariate.lean:52:17: Try these:
+  [apply] [grind =] for pattern: [@Finset.Nonempty #3 (@Finsupp.support _ #2 #1 #0)]
+  [apply] [grind! .] for pattern: [@Finsupp.support #3 #2 #1 #0]
+info: ArkLib/Data/Polynomial/Bivariate.lean:52:17: Try these:
+  [apply] [grind
+    .] for pattern: [@LE.le `[ℕ] `[instLENat] (@natDegree #3 #2 (@HMul.hMul (Polynomial _ _) (Polynomial _ _) (Polynomial _ _) _ #1 #0)) (@HAdd.hAdd `[ℕ] `[ℕ] `[ℕ] `[instHAdd] (@natDegree _ _ #1) (@natDegree _ _ #0))]
+  [apply] [grind!
+    .] for pattern: [@natDegree #3 #2 (@HMul.hMul (Polynomial _ _) (Polynomial _ _) (Polynomial _ _) _ #1 #0)]
+info: ArkLib/Data/Polynomial/Bivariate.lean:52:17: Try these:
+  [apply] [grind =] for pattern: [@degree #2 #1 #0, @Bot.bot `[WithBot ℕ] `[WithBot.bot]]
+  [apply] [grind .] for pattern: [@degree #2 #1 #0]
+info: ArkLib/Data/Polynomial/Bivariate.lean:52:17: Try these:
+  [apply] [grind .] for pattern: [@LT.lt _ _ (@Bot.bot _ _) (@WithBot.some #2 #0)]
+  [apply] [grind! .] for pattern: [@WithBot.some #2 #0]
+info: ArkLib/Data/Polynomial/Bivariate.lean:52:17: Try this:
+  [apply] [grind =] for pattern: [@IsMaxOn #5 #4 #3 #2 #1 #0]
+info: ArkLib/Data/Polynomial/Bivariate.lean:52:17: Try these:
+  [apply] [grind .] for pattern: [@Finset.sup #7 #8 #6 #5 #3 #4, @Membership.mem _ (Finset _) _ #3 #2]
+  [apply] [grind
+    →] for pattern: [@Membership.mem #8 (Finset _) _ #3 #2, @IsMaxOn _ #7 _ #4 (@SetLike.coe (Finset _) _ _ #3) #2]
+  [apply] [grind <=] for pattern: [@Finset.sup #7 #8 #6 #5 #3 #4, @IsMaxOn _ _ _ #4 (@SetLike.coe (Finset _) _ _ #3) #2]
+info: ArkLib/Data/Polynomial/Bivariate.lean:52:17: Try this:
+  [apply] [grind
+    =] for pattern: [@DFunLike.coe (@LinearMap #5 _ #4 _ _ _ (Polynomial _ _) _ _ _ _) _ _ _ (@Polynomial.monomial _ _ #3) #1, @DFunLike.coe (@LinearMap _ _ _ _ _ _ (Polynomial _ _) _ _ _ _) _ _ _ (@Polynomial.monomial _ _ #2) #0]
+ℹ [3248/3275] Replayed ArkLib.Data.Fin.Fold
+info: ArkLib/Data/Fin/Fold.lean:182:0: 3
+info: ArkLib/Data/Fin/Fold.lean:183:0: 3
+⚠ [3258/3287] Replayed ArkLib.Data.Fin.Tuple.Lemmas
+warning: ArkLib/Data/Fin/Tuple/Lemmas.lean:1092:8: declaration uses `sorry`
+⚠ [3259/3287] Replayed ArkLib.Data.Fin.Sigma
+warning: ArkLib/Data/Fin/Sigma.lean:130:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:137:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:203:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:247:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:304:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:311:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:359:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:367:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:450:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:472:8: declaration uses `sorry`
+warning: ArkLib/Data/Fin/Sigma.lean:484:4: declaration uses `sorry`
+✔ [3287/3317] Built ArkLib.Data.CodingTheory.PolishchukSpielman.PolishchukSpielman (65s)
+✔ [3290/3318] Built VCVio.EvalDist.Option (64s)
+✔ [3297/3323] Built VCVio.EvalDist.Bool (64s)
+✔ [3300/3323] Built CompPoly.Fields.Binary.Tower.Concrete.Basis (66s)
+✔ [3302/3323] Built ArkLib.Data.CodingTheory.PolishchukSpielman (44s)
+✔ [3303/3324] Built VCVio.OracleComp.SimSemantics.SimulateQ (46s)
+✔ [3304/3324] Built VCVio.EvalDist.Instances.OptionT (46s)
+✔ [3306/3328] Built CompPoly.Fields.Binary.AdditiveNTT.Impl (46s)
+✔ [3307/3328] Built VCVio.OracleComp.QueryTracking.Structures (51s)
+✔ [3308/3333] Built VCVio.OracleComp.EvalDist (52s)
+✔ [3309/3335] Built ArkLib.Data.CodingTheory.ProximityGap.BCIKS20.Prelude (54s)
+✔ [3310/3335] Built CompPoly.Fields.Binary.AdditiveNTT.Correctness (53s)
+✔ [3311/3335] Built PolyFun.Control.Trace (18s)
+✔ [3312/3335] Built ToMathlib.Control.WriterT (27s)
+✔ [3313/3335] Built VCVio.OracleComp.Coercions.SubSpec (46s)
+✔ [3314/3335] Built VCVio.OracleComp.ProbComp (47s)
+✔ [3315/3340] Built VCVio.OracleComp.SimSemantics.StateT.Basic (47s)
+✔ [3316/3340] Built ArkLib.Data.CodingTheory.ProximityGap.BCIKS20.AffineLines.BWMatrix (59s)
+✔ [3317/3340] Built ArkLib.Data.CodingTheory.ProximityGap.BCIKS20.ErrorBound (50s)
+✔ [3318/3340] Built CompPoly.Fields.Binary.AdditiveNTT.AdditiveNTT (46s)
+✔ [3319/3340] Built VCVio.OracleComp.SimSemantics.WriterT.Basic (48s)
+✔ [3320/3340] Built VCVio.OracleComp.Coercions.Add (52s)
+✔ [3321/3340] Built VCVio.OracleComp.ProbCompLift (46s)
+✔ [3322/3343] Built VCVio.OracleComp.Constructions.SampleableType (49s)
+✔ [3323/3343] Built ToMathlib.Data.ENNReal.AbsDiff (37s)
+✔ [3324/3343] Built ToMathlib.Control.Monad.RelationalAlgebra (28s)
+✔ [3325/3343] Built ArkLib.Data.CodingTheory.ProximityGap.BCIKS20.AffineLines.GoodCoeffs (50s)
+✔ [3326/3343] Built VCVio.OracleComp.SimSemantics.QueryImpl.Constructions (47s)
+✔ [3327/3343] Built VCVio.CryptoFoundations.AsymmEncAlg.Defs (47s)
+✔ [3328/3347] Built ToMathlib.Control.Monad.Transformer (19s)
+✔ [3329/3347] Built ArkLib.OracleReduction.Prelude (49s)
+✔ [3330/3347] Built ToMathlib.Probability.ProbabilityMassFunction.TotalVariation (39s)
+✔ [3331/3347] Built ArkLib.Data.CodingTheory.ProximityGap.BCIKS20.AffineLines.JointAgreement (53s)
+✔ [3332/3347] Built VCVio.OracleComp.QueryTracking.Tracing (48s)
+✔ [3333/3349] Built VCVio.OracleComp.SimSemantics.Append (47s)
+✔ [3334/3349] Built VCVio.EvalDist.List (48s)
+✔ [3335/3349] Built ToMathlib.ProbabilityTheory.Coupling (38s)
+✔ [3336/3349] Built VCVio.ProgramLogic.Unary.HoarePropTriple (46s)
+✔ [3337/3349] Built VCVio.EvalDist.TVDist (47s)
+✔ [3338/3349] Built ArkLib.Data.CodingTheory.ProximityGap.BCIKS20.AffineLines.UniqueDecoding (49s)
+✔ [3339/3349] Built VCVio.OracleComp.QueryTracking.CountingOracle (50s)
+✔ [3340/3353] Built VCVio.OracleComp.SimSemantics.StateT.StateProjection (48s)
+✔ [3510/3524] Built VCVio.OracleComp.Constructions.Replicate (49s)
+✔ [3511/3526] Built ArkLib.Data.CodingTheory.ProximityGap.DG25.Basic (51s)
+✔ [3514/3529] Built VCVio.OracleComp.QueryTracking.QueryBound (50s)
+✔ [3515/3530] Built PolyFun.Control.Monad.Free (43s)
+✔ [3516/3530] Built VCVio.ProgramLogic.Relational.Basic (49s)
+✔ [3517/3531] Built VCVio.CryptoFoundations.Asymptotics.Negligible (45s)
+✔ [3518/3531] Built VCVio.CryptoFoundations.SecExp (49s)
+✔ [3519/3531] Built VCVio.CryptoFoundations.CommitmentScheme (47s)
+✔ [3520/3531] Built ToMathlib.Control.StateT (42s)
+✔ [3521/3531] Built VCVio.ProgramLogic.Relational.SimulateQ (53s)
+✔ [3522/3531] Built VCVio.CryptoFoundations.FiatShamir.QueryBounds (47s)
+✔ [3523/3531] Built VCVio.CryptoFoundations.DataEncapMech (48s)
+✔ [3524/3533] Built VCVio.CryptoFoundations.Asymptotics.Security (48s)
+✔ [3525/3533] Built VCVio.CryptoFoundations.AsymmEncAlg.INDCPA.OneTime (47s)
+✔ [3526/3533] Built VCVio.CryptoFoundations.AsymmEncAlg.INDCCA (47s)
+✔ [3527/3534] Built VCVio.CryptoFoundations.AsymmEncAlg.INDCPA.Oracle (53s)
+✔ [3528/3538] Built VCVio.CryptoFoundations.IdenSchemeWithAbort (50s)
+✔ [3529/3538] Built VCVio.CryptoFoundations.Asymptotics.ReductionCost (50s)
+✔ [3530/3539] Built VCVio.OracleComp.QueryTracking.LoggingOracle (50s)
+✔ [3531/3540] Built VCVio.CryptoFoundations.AsymmEncAlg.INDCPA.GenericLift (51s)
+✔ [3532/3540] Built VCVio.OracleComp.SimSemantics.StateT.PreservesInv (47s)
+✔ [3533/3540] Built VCVio.CryptoFoundations.SigmaProtocol (46s)
+✔ [3534/3541] Built VCVio.CryptoFoundations.HardnessAssumptions.HardRelation (46s)
+✔ [3535/3545] Built VCVio.OracleComp.HasQuery.Morphism (47s)
+✔ [3536/3545] Built VCVio.CryptoFoundations.AsymmEncAlg.INDCPA (49s)
+✔ [3538/3556] Built Loom.LatticeExt (1.0s)
+✔ [3539/3556] Built Loom.LatticeExt:c.o (385ms)
+✔ [3540/3565] Built Loom.LatticeExt:dynlib (95ms)
+✔ [3541/3565] Built Loom.ExceptPost (1.8s)
+✔ [3542/3575] Built Loom.ExceptPost:c.o (143ms)
+✔ [3543/3576] Built Loom.ExceptPost:dynlib (58ms)
+✔ [3544/3578] Built Loom.Frame (1.6s)
+✔ [3545/3578] Built Loom.Frame:c.o (84ms)
+✔ [3546/3578] Built VCVio.OracleComp.QueryTracking.CachingOracle (48s)
+✔ [3547/3578] Built Loom.PredTrans (1.7s)
+✔ [3548/3578] Built Loom.Frame:dynlib (62ms)
+✔ [3549/3578] Built ToMathlib.Probability.ProbabilityMassFunction.TailSums (38s)
+✔ [3550/3578] Built Loom.PredTrans:c.o (124ms)
+✔ [3551/3578] Built VCVio.OracleComp.SimSemantics.StateT.BundledSemantics (49s)
+✔ [3552/3578] Built Loom.PredTrans:dynlib (114ms)
+✔ [3553/3579] Built VCVio.ProgramLogic.Relational.QuantitativeDefs (49s)
+✔ [3554/3580] Built Loom.WP.Basic (1.8s)
+✔ [3555/3581] Built Loom.WP.Basic:c.o (101ms)
+✔ [3556/3582] Built Loom.WP.Basic:dynlib (64ms)
+⚠ [3557/3583] Built Loom.WP.Lemmas (2.4s)
+warning: Loom/WP/Lemmas.lean:217:71: This simp argument is unused:
+  OptionT.run
+
+Hint: Omit it from the simp argument list.
+  simp only [wp, MonadExceptOf.tryCatch, OptionT.tryCatch, OptionT.mk,̵ ̵O̵p̵t̵i̵o̵n̵T̵.̵r̵u̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: Loom/WP/Lemmas.lean:319:64: This simp argument is unused:
+  OptionT.run
+
+Hint: Omit it from the simp argument list.
+  simp only [wp, MonadLift.monadLift, OptionT.mk, OptionT.lift,̵ ̵O̵p̵t̵i̵o̵n̵T̵.̵r̵u̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: Loom/WP/Lemmas.lean:679:32: This simp argument is unused:
+  OptionT.run
+
+Hint: Omit it from the simp argument list.
+  simp only [wp, OrElse.orElse,̵ ̵O̵p̵t̵i̵o̵n̵T̵.̵r̵u̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✔ [3558/3584] Built Loom.WP.Lemmas:c.o (124ms)
+✔ [3559/3584] Built Loom.WP.Lemmas:dynlib (59ms)
+✔ [3560/3588] Built Loom.WP (1.6s)
+✔ [3561/3588] Built Loom.WP:c.o (81ms)
+✔ [3562/3588] Built Loom.WP:dynlib (67ms)
+✔ [3563/3588] Built VCVio.OracleComp.QueryTracking.RandomOracle.Basic (49s)
+✔ [3564/3588] Built VCVio.CryptoFoundations.SignatureAlg (49s)
+✔ [3565/3590] Built Loom.Triple.Basic (1.6s)
+✔ [3566/3592] Built Loom.Triple.Basic:c.o (126ms)
+✔ [3567/3592] Built Loom.Triple.Basic:dynlib (67ms)
+✔ [3568/3592] Built VCVio.ProgramLogic.Tactics.Common.Suggestions (17s)
+✔ [3569/3599] Built Loom (11s)
+✔ [3570/3599] Built Loom:c.o (72ms)
+✔ [3571/3599] Built Loom:shared (64ms)
+✔ [3572/3599] Built VCVio.OracleComp.QueryTracking.WriterCost (50s)
+✔ [3573/3599] Built Loom.Tactic.Attr (9.7s)
+✔ [3574/3599] Built ToMathlib.Control.Monad.RelWP (10s)
+✔ [3575/3599] Built ToMathlib.ProbabilityTheory.OptimalCoupling (41s)
+✔ [3576/3599] Built Loom.Tactic.Attr:c.o (606ms)
+✔ [3577/3599] Built Loom.Tactic.Attr:dynlib (71ms)
+✔ [3578/3599] Built VCVio.OracleComp.QueryTracking.RandomOracle.Simulation (47s)
+✔ [3579/3607] Built Loom.Triple.SpecLemmas (13s)
+✔ [3580/3614] Built VCVio.CryptoFoundations.FiatShamir.Sigma.Stateful.SimpAttr (23s)
+✔ [3581/3614] Built VCVio.ProgramLogic.Unary.Loom.Quantitative (49s)
+✔ [3582/3614] Built VCVio.OracleComp.QueryTracking.QueryCost (48s)
+✔ [3583/3622] Built ToMathlib.Data.ENNReal.SumSquares (38s)
+✔ [3584/3623] Built PolyFun.PFunctor.Lens.State (40s)
+✔ [3585/3623] Built VCVio.OracleComp.QueryTracking.SubSpec (46s)
+✔ [3586/3624] Built VCVio.ProgramLogic.Unary.HoareTriple (51s)
+✔ [3587/3626] Built VCVio.EvalDist.Inequalities (49s)
+✔ [3588/3626] Built VCVio.OracleComp.SimSemantics.StateT.StateSeparating (49s)
+✔ [3589/3626] Built VCVio.CryptoFoundations.FiatShamir.WithAbort (52s)
+✔ [3590/3626] Built VCVio.OracleComp.QueryTracking.CostModel (52s)
+✔ [3591/3627] Built VCVio.ProgramLogic.Relational.Quantitative (55s)
+✔ [3592/3627] Built VCVio.ProgramLogic.Unary.SimulateQ (52s)
+✔ [3593/3627] Built VCVio.ProgramLogic.NotationCore (52s)
+✔ [3594/3627] Built VCVio.StateSeparating.Advantage (50s)
+✔ [3595/3627] Built VCVio.CryptoFoundations.FiatShamir.Sigma.Stateful.Spec (50s)
+⚠ [3596/3627] Built VCVio.CryptoFoundations.FiatShamir.WithAbort.Security (51s)
+warning: VCVio/CryptoFoundations/FiatShamir/WithAbort/Security.lean:97:8: declaration uses `sorry`
+✔ [3597/3627] Built VCVio.CryptoFoundations.FiatShamir.WithAbort.Cost (52s)
+✔ [3598/3627] Built VCVio.OracleComp.Constructions.GenerateSeed (52s)
+⚠ [3599/3627] Built VCVio.CryptoFoundations.Fischlin (53s)
+warning: VCVio/CryptoFoundations/Fischlin.lean:868:8: declaration uses `sorry`
+warning: VCVio/CryptoFoundations/Fischlin.lean:984:8: declaration uses `sorry`
+✔ [3600/3627] Built VCVio.ProgramLogic.Relational.Loom.Quantitative (51s)
+✔ [3601/3628] Built VCVio.ProgramLogic.Tactics.Common.Core (52s)
+✔ [3602/3629] Built VCVio.StateSeparating.IdenticalUntilBad (49s)
+✔ [3603/3629] Built VCVio.CryptoFoundations.FiatShamir.WithAbort.ExpectedCost (53s)
+✔ [3604/3629] Built VCVio.OracleComp.QueryTracking.SeededOracle (53s)
+✔ [3605/3630] Built VCVio.ProgramLogic.Tactics.Common.WpStepRegistry (50s)
+✔ [3606/3634] Built VCVio.ProgramLogic.Tactics.Common.SpecIR (51s)
+✔ [3607/3634] Built VCVio.ProgramLogic.Tactics.Common.Naming (52s)
+✔ [3608/3634] Built VCVio.CryptoFoundations.FujisakiOkamoto.Defs (49s)
+✔ [3609/3635] Built VCVio.CryptoFoundations.KeyEncapMech (50s)
+✔ [3610/3635] Built VCVio.CryptoFoundations.SeededFork (54s)
+✔ [3611/3635] Built VCVio.ProgramLogic.Tactics.Common.WpStepDispatch (51s)
+✔ [3612/3635] Built VCVio.ProgramLogic.Tactics.Common.Registry (51s)
+✔ [3613/3635] Built VCVio.CryptoFoundations.PRF (48s)
+⚠ [3614/3639] Built VCVio.CryptoFoundations.FujisakiOkamoto.TTransform (50s)
+warning: VCVio/CryptoFoundations/FujisakiOkamoto/TTransform.lean:332:8: declaration uses `sorry`
+⚠ [3615/3639] Built VCVio.CryptoFoundations.GPVHashAndSign (51s)
+warning: VCVio/CryptoFoundations/GPVHashAndSign.lean:266:18: declaration uses `sorry`
+warning: VCVio/CryptoFoundations/GPVHashAndSign.lean:279:18: declaration uses `sorry`
+warning: VCVio/CryptoFoundations/GPVHashAndSign.lean:316:8: declaration uses `sorry`
+warning: VCVio/CryptoFoundations/GPVHashAndSign.lean:344:8: declaration uses `sorry`
+✔ [3616/3639] Built VCVio.CryptoFoundations.ReplayFork (59s)
+✔ [3617/3641] Built VCVio.ProgramLogic.Tactics.Common.Backward (53s)
+✔ [3618/3641] Built VCVio.OracleComp.QueryTracking.Collision (51s)
+⚠ [3619/3642] Built VCVio.CryptoFoundations.FujisakiOkamoto.UTransform (53s)
+warning: VCVio/CryptoFoundations/FujisakiOkamoto/UTransform.lean:538:8: declaration uses `sorry`
+✔ [3620/3642] Built ToMathlib.Combinatorics.FinPairs (37s)
+✔ [3621/3643] Built VCVio.CryptoFoundations.HardnessAssumptions.DiffieHellman (49s)
+✔ [3622/3643] Built VCVio.ProgramLogic.Tactics.Common (49s)
+✔ [3623/3643] Built VCVio.CryptoFoundations.HardnessAssumptions.EntropySmoothing (48s)
+⚠ [3624/3645] Built VCVio.CryptoFoundations.FujisakiOkamoto.Composed (50s)
+warning: VCVio/CryptoFoundations/FujisakiOkamoto/Composed.lean:126:8: declaration uses `sorry`
+✔ [3625/3645] Built VCVio.CryptoFoundations.HardnessAssumptions.OneWay (48s)
+✔ [3626/3645] Built VCVio.OracleComp.QueryTracking.Birthday (50s)
+✔ [3627/3646] Built VCVio.ProgramLogic.Tactics.Relational.Internals (55s)
+✔ [3628/3646] Built VCVio.CryptoFoundations.KEMDEM (52s)
+✔ [3629/3646] Built VCVio.CryptoFoundations.FujisakiOkamoto (50s)
+✔ [3630/3650] Built VCVio.CryptoFoundations.MacAlg (49s)
+✔ [3631/3650] Built VCVio.CryptoFoundations.HardnessAssumptions.CollisionResistance (50s)
+✔ [3632/3653] Built ToMathlib.Data.IndexedBinaryTree.Basic (41s)
+✔ [3633/3654] Built VCVio.ProgramLogic.Tactics.Unary.Internals (57s)
+✔ [3634/3654] Built VCVio.CryptoFoundations.MacFromPRF (50s)
+✔ [3635/3654] Built VCVio.CryptoFoundations.HashCommitment (48s)
+✔ [3636/3657] Built ToMathlib.Data.IndexedBinaryTree.Lemmas (41s)
+✔ [3637/3657] Built VCVio.CryptoFoundations.MerkleTree.Inductive.Defs (47s)
+✔ [3638/3657] Built VCVio.ProgramLogic.Tactics.Unary (52s)
+✔ [3639/3657] Built VCVio.CryptoFoundations.MerkleTree.Vector.Defs (49s)
+✔ [3640/3657] Built VCVio.CryptoFoundations.PRG (48s)
+✔ [3641/3659] Built VCVio.CryptoFoundations.MerkleTree.Inductive.QueryBound (49s)
+✔ [3642/3659] Built VCVio.CryptoFoundations.MerkleTree.Inductive.Completeness (48s)
+✔ [3643/3660] Built VCVio.CryptoFoundations.MerkleTree.Inductive.Binding (49s)
+✔ [3644/3663] Built VCVio.CryptoFoundations.FiatShamir.Sigma (52s)
+✔ [3645/3663] Built VCVio.CryptoFoundations.MerkleTree.Vector.Completeness (50s)
+✔ [3646/3664] Built VCVio.ProgramLogic.Unary.WriterTBridge (41s)
+✔ [3647/3664] Built VCVio.CryptoFoundations.MerkleTree.Inductive.Extractability (49s)
+✔ [3648/3664] Built VCVio.OracleComp.QueryTracking.CachingLoggingOracle (49s)
+✔ [3649/3665] Built VCVio.CryptoFoundations.MerkleTree.Inductive.Uniqueness (48s)
+✔ [3650/3665] Built VCVio.CryptoFoundations.FiatShamir.Sigma.Stateful.Games (50s)
+✔ [3651/3665] Built VCVio.CryptoFoundations.FiatShamir.Sigma.Fork (55s)
+✔ [3652/3666] Built VCVio.OracleComp.SimSemantics.WriterT.PreservesInv (48s)
+✔ [3653/3666] Built VCVio.ProgramLogic.Unary.StdDoBridge (49s)
+✔ [3654/3666] Built VCVio.CryptoFoundations.SymmEncAlg (49s)
+✔ [3655/3666] Built VCVio.EvalDist.BitVec (48s)
+✔ [3656/3669] Built VCVio.CryptoFoundations.FiatShamir.Sigma.Stateful.Bridge (52s)
+✔ [3657/3670] Built VCVio.CryptoFoundations.FiatShamir.Sigma.CmaToNma (52s)
+✔ [3658/3670] Built VCVio.EvalDist.Instances.ErrorT (48s)
+✔ [3660/3671] Built VCVio.ProgramLogic.Unary.HandlerSpecs (52s)
+✔ [3661/3671] Built VCVio.EvalDist.Instances.ReaderT (50s)
+✔ [3662/3671] Built VCVio.CryptoFoundations.FiatShamir.Sigma.Stateful.Hops (56s)
+✔ [3663/3671] Built VCVio.CryptoFoundations.FiatShamir.Sigma.Stateful.Compatibility (58s)
+✔ [3664/3674] Built ToMathlib.ProbabilityTheory.FinRatPMF (41s)
+✔ [3665/3674] Built VCVio.EvalDist.Monad.Disagreement (48s)
+✔ [3666/3674] Built VCVio.CryptoFoundations.ReplayForkStdDo (52s)
+✔ [3667/3676] Built VCVio.CryptoFoundations.FiatShamir.Sigma.Stateful.Chain (61s)
+✔ [3668/3676] Built VCVio.EvalDist.Instances.FinRatPMF (47s)
+✔ [3669/3677] Built PolyFun.PFunctor.Chart.Basic (38s)
+✔ [3670/3680] Built ToMathlib.Analysis.MeanInequalities (44s)
+✔ [3671/3680] Built PolyFun.Interaction.Basic.Node (45s)
+✔ [3672/3684] Built VCVio.CryptoFoundations.FiatShamir.Sigma.Reductions (50s)
+✔ [3673/3684] Built PolyFun.PFunctor.Trace (38s)
+⚠ [3674/3684] Built ToMathlib.Probability.ProbabilityMassFunction.RenyiDivergence (48s)
+warning: ToMathlib/Probability/ProbabilityMassFunction/RenyiDivergence.lean:736:8: declaration uses `sorry`
+✔ [3675/3692] Built PolyFun.Logic.HEq (11s)
+✔ [3676/3694] Built PolyFun.PFunctor.Free.Displayed (40s)
+✔ [3678/3696] Built VCVio.CryptoFoundations.FiatShamir.Sigma.Security (51s)
+✔ [3679/3696] Built PolyFun.Control.Coalgebra (22s)
+✔ [3680/3696] Built VCVio.EvalDist.RenyiDivergence (48s)
+✔ [3681/3707] Built PolyFun.PFunctor.Free.Displayed.Decoration (41s)
+✔ [3682/3718] Built PolyFun.PFunctor.Free.Path (43s)
+✔ [3683/3718] Built PolyFun.Interaction.UC.Interface (43s)
+✔ [3684/3719] Built PolyFun.Interaction.UC.EnvAction (20s)
+✔ [3685/3719] Built PolyFun.Control.Monad.Iter (18s)
+✔ [3686/3720] Built PolyFun.PFunctor.M (36s)
+✔ [3687/3720] Built PolyFun.Interaction.Basic.Spec (44s)
+✔ [3688/3720] Built VCVio.OracleComp.Constructions.BitVec (48s)
+✔ [3689/3720] Built PolyFun.Interaction.UC.OpenTheory (42s)
+✔ [3690/3721] Built VCVio.OracleComp.FinRatPMF (48s)
+✔ [3691/3721] Built PolyFun.ITree.Basic (38s)
+✔ [3692/3721] Built VCVio.OracleComp.OracleContext (48s)
+✔ [3693/3721] Built PolyFun.Interaction.Basic.SpecFintype (45s)
+✔ [3694/3722] Built PolyFun.Interaction.Multiparty.Observation (45s)
+✔ [3695/3722] Built PolyFun.Interaction.Basic.Syntax (44s)
+✔ [3696/3722] Built PolyFun.Interaction.Basic.Decoration (44s)
+✔ [3697/3722] Built PolyFun.Interaction.UC.OpenSyntax.Interp (41s)
+✔ [3698/3723] Built PolyFun.Interaction.UC.OpenSyntax.Raw (42s)
+✔ [3699/3723] Built PolyFun.Interaction.UC.Emulates (41s)
+✔ [3700/3723] Built VCVio.OracleComp.QueryTracking.Enforcement (47s)
+✔ [3701/3724] Built VCVio.OracleComp.Coinductive.Bridge (45s)
+✔ [3702/3724] Built VCVio.OracleComp.QueryTracking.HandlerSimp (51s)
+✔ [3703/3725] Built PolyFun.Interaction.Basic.Shape (46s)
+✔ [3704/3725] Built PolyFun.Interaction.UC.OpenSyntax.Expr (43s)
+✔ [3705/3725] Built PolyFun.Interaction.Basic.Sampler (45s)
+✔ [3706/3726] Built VCVio.OracleComp.QueryTracking.ObservationOracle (47s)
+✔ [3707/3726] Built VCVio.Interaction.UC.Computational (47s)
+✔ [3708/3726] Built PolyFun.Interaction.Basic.StrategyOver (46s)
+✔ [3709/3727] Built VCVio.OracleComp.QueryTracking.ProgrammingOracle (49s)
+✔ [3710/3727] Built VCVio.OracleComp.QueryTracking.RandomOracle.Eager (52s)
+✔ [3711/3730] Built PolyFun.Interaction.UC.Notation (43s)
+✔ [3712/3730] Built PolyFun.Interaction.Multiparty.Core (45s)
+✔ [3713/3731] Built VCVio.OracleComp.QueryTracking.RandomOracle.EagerTable (48s)
+✔ [3714/3731] Built VCVio.OracleComp.QueryTracking.ResourceProfile (42s)
+✔ [3715/3731] Built VCVio.OracleComp.QueryTracking.Unpredictability (48s)
+✔ [3716/3732] Built VCVio.Interaction.UC.Standard (46s)
+✔ [3717/3733] Built VCVio.OracleComp.QueryTracking.Iter (46s)
+✔ [3718/3733] Built PolyFun.Interaction.Concurrent.Process (44s)
+✔ [3719/3734] Built VCVio.OracleComp.RunIO (48s)
+✔ [3720/3735] Built VCVio.OracleComp.SimSemantics.OptionT.Basic (49s)
+✔ [3721/3735] Built VCVio.OracleComp.QueryTracking (51s)
+✔ [3722/3735] Built VCVio.OracleComp.SimSemantics.ReaderT.Basic (47s)
+✔ [3723/3735] Built PolyFun.Interaction.UC.OpenProcess (48s)
+✔ [3724/3738] Built PolyFun.Interaction.Concurrent.Execution (46s)
+✔ [3725/3738] Built VCVio.OracleComp.Traversal (48s)
+✔ [3726/3738] Built VCVio.ProgramLogic.Notation (50s)
+✔ [3727/3739] Built PolyFun.Interaction.UC.OpenProcessModel (49s)
+✔ [3728/3739] Built PolyFun.Interaction.UC.EnvOpenProcess (46s)
+✔ [3729/3740] Built VCVio.ProgramLogic.Tactics.Relational (52s)
+✔ [3730/3740] Built PolyFun.Interaction.Concurrent.Run (46s)
+✔ [3731/3740] Built VCVio.ProgramLogic.Relational.FromUnary (51s)
+✔ [3732/3740] Built VCVio.Interaction.UC.Runtime (49s)
+✔ [3733/3744] Built VCVio.ProgramLogic.Relational.Leakage (51s)
+✔ [3734/3744] Built VCVio.ProgramLogic.Relational.Examples (52s)
+✔ [3735/3744] Built PolyFun.Interaction.Concurrent.Fairness (47s)
+✔ [3736/3744] Built VCVio.ProgramLogic.Relational.HandlerFromUnary (52s)
+✔ [3737/3745] Built VCVio.Interaction.UC.AsyncRuntime (48s)
+✔ [3738/3746] Built VCVio.Interaction.UC.StdDoBridge (51s)
+✔ [3739/3746] Built VCVio.ProgramLogic.Unary.Loom.Probabilistic (52s)
+✔ [3740/3746] Built VCVio.ProgramLogic.Relational.Loom.Qualitative (50s)
+✔ [3741/3748] Built VCVio.ProgramLogic.Relational.ProgrammingOracle (50s)
+✔ [3742/3749] Built VCVio.Interaction.UC.AsyncSecurity (49s)
+✔ [3743/3752] Built VCVio.ProgramLogic.SeededFork (50s)
+✔ [3744/3752] Built VCVio.ProgramLogic.Relational.Loom.Probabilistic (56s)
+✔ [3745/3752] Built VCVio.ProgramLogic.Tactics.Handler (49s)
+✔ [3746/3752] Built VCVio.ProgramLogic.Unary.Examples (50s)
+✔ [3747/3754] Built VCVio.ProgramLogic.Unary.Loom.Qualitative (48s)
+✔ [3748/3755] Built ToMathlib.Data.Heap (24s)
+✔ [3749/3756] Built VCVio.ProgramLogic.Unary.StdDoExamples (51s)
+✔ [3750/3756] Built VCVio.ProgramLogic.Relational.Loom.Coherence (52s)
+✔ [3751/3767] Built VCVio.ProgramLogic.Tactics (52s)
+✔ [3752/3767] Built VCVio.ProgramLogic.Unary.Loom.Coherence (51s)
+✔ [3754/3779] Built VCVio.StateSeparating.DistEquiv (50s)
+✔ [3755/3779] Built VCVio.StateSeparating.CellRef (50s)
+✔ [3756/3779] Built ArkLib.ToVCVio.ToMathlib.Data.Vector.Basic (43s)
+✔ [3757/3779] Built VCVio.StateSeparating.Hybrid (25s)
+✔ [3758/3779] Built ArkLib.ToVCVio.OracleComp.EvalDist (25s)
+✔ [3759/3779] Built VCVio.StateSeparating.IndistAt (24s)
+✔ [3760/3779] Built VCVio (26s)
+⚠ [3761/3779] Built ArkLib.OracleReduction.OracleInterface (27s)
+warning: ArkLib/OracleReduction/OracleInterface.lean:73:0: Definition `OracleInterface.instDefault` of class type must be marked with `@[reducible]` or `@[implicit_reducible]`
+warning: ArkLib/OracleReduction/OracleInterface.lean:331:20: This simp argument is unused:
+  instPolynomialDegreeLT
+
+Hint: Omit it from the simp argument list.
+  simp [distanceLE, i̵n̵s̵t̵P̵o̵l̵y̵n̵o̵m̵i̵a̵l̵D̵e̵g̵r̵e̵e̵L̵T̵,̵ ̵mem_degreeLT]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/OracleReduction/OracleInterface.lean:331:2: `simp [distanceLE, instPolynomialDegreeLT, mem_degreeLT]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:332:2: `intro p hp p' hp' hNe` uses `⊢`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:335:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:335:4: Try this:
+  [apply] simp only [mem_roots', ne_eq, IsRoot.def, Polynomial.eval_sub]
+info: ArkLib/OracleReduction/OracleInterface.lean:336:20: `intro h` uses `⊢`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:335:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:335:4: Try this:
+  [apply] simp only [mem_roots', ne_eq, IsRoot.def, Polynomial.eval_sub]
+info: ArkLib/OracleReduction/OracleInterface.lean:336:20: `intro h` uses `⊢`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:335:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:335:4: Try this:
+  [apply] simp only [mem_roots', ne_eq, IsRoot.def, Polynomial.eval_sub]
+info: ArkLib/OracleReduction/OracleInterface.lean:338:8: `intro h'` uses `⊢`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:335:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:335:4: Try this:
+  [apply] simp only [mem_roots', ne_eq, IsRoot.def, Polynomial.eval_sub]
+info: ArkLib/OracleReduction/OracleInterface.lean:338:18: `contrapose! hNe` uses `⊢`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:335:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:335:4: Try this:
+  [apply] simp only [mem_roots', ne_eq, IsRoot.def, Polynomial.eval_sub]
+info: ArkLib/OracleReduction/OracleInterface.lean:338:35: `exact sub_eq_zero.mp h'` uses `⊢`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:335:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:335:4: Try this:
+  [apply] simp only [mem_roots', ne_eq, IsRoot.def, Polynomial.eval_sub]
+info: ArkLib/OracleReduction/OracleInterface.lean:340:6: `exact sub_eq_zero.mp h.2` uses `⊢`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:331:2: `simp [distanceLE, instPolynomialDegreeLT, mem_degreeLT]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:341:2: `conv =>
+  enter [1, 1]
+  apply Finset.filter_congr this` uses `⊢`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:350:4: `simp at this` is a flexible tactic modifying `this`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:350:4: Try this:
+  [apply] simp only [gt_iff_lt] at this
+info: ArkLib/OracleReduction/OracleInterface.lean:350:18: `exact this` uses `this`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:331:2: `simp [distanceLE, instPolynomialDegreeLT, mem_degreeLT]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:351:2: `refine Nat.le_sub_one_of_lt (lt_of_le_of_lt ?_ this)` uses `⊢`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:331:2: `simp [distanceLE, instPolynomialDegreeLT, mem_degreeLT]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:352:2: `apply Multiset.card_le_card` uses `⊢`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:331:2: `simp [distanceLE, instPolynomialDegreeLT, mem_degreeLT]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:353:2: `rw [Multiset.le_iff_subset]` uses `⊢`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:331:2: `simp [distanceLE, instPolynomialDegreeLT, mem_degreeLT]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:354:4: `intro x hx` uses `⊢`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:331:2: `simp [distanceLE, instPolynomialDegreeLT, mem_degreeLT]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:354:28: `exact hx` uses `⊢`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:354:16: `simp at hx` is a flexible tactic modifying `hx`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:354:16: Try this:
+  [apply] simp only [mem_roots', ne_eq, IsRoot.def, Polynomial.eval_sub] at hx
+info: ArkLib/OracleReduction/OracleInterface.lean:354:28: `exact hx` uses `hx`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:331:2: `simp [distanceLE, instPolynomialDegreeLT, mem_degreeLT]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/OracleInterface.lean:356:4: `intro a` uses `⊢`!
+warning: ArkLib/OracleReduction/OracleInterface.lean:367:8: declaration uses `sorry`
+⚠ [3762/3779] Built ArkLib.OracleReduction.ProtocolSpec.Basic (26s)
+warning: ArkLib/OracleReduction/ProtocolSpec/Basic.lean:274:27: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/Basic.lean:274:27: Try this:
+  [apply] simp only [mk.injEq]
+info: ArkLib/OracleReduction/ProtocolSpec/Basic.lean:274:49: `(funext i; exact Fin.elim0 i)` uses `⊢`!
+warning: ArkLib/OracleReduction/ProtocolSpec/Basic.lean:274:27: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/Basic.lean:274:27: Try this:
+  [apply] simp only [mk.injEq]
+info: ArkLib/OracleReduction/ProtocolSpec/Basic.lean:274:49: `(funext i; exact Fin.elim0 i)` uses `⊢`!
+warning: ArkLib/OracleReduction/ProtocolSpec/Basic.lean:658:0: Definition `ProtocolSpec.challengeOracleInterface'` of class type must be marked with `@[reducible]` or `@[implicit_reducible]`
+warning: ArkLib/OracleReduction/ProtocolSpec/Basic.lean:712:100: This line exceeds the 100 character limit, please shorten it!
+
+Note: This linter can be disabled with `set_option linter.style.longLine false`
+⚠ [3763/3779] Built ArkLib.OracleReduction.ProtocolSpec.Cast (24s)
+warning: ArkLib/OracleReduction/ProtocolSpec/Cast.lean:84:2: `simp [MessageIdx.cast] at h'` is a flexible tactic modifying `h'`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/Cast.lean:84:2: Try this:
+  [apply] simp only [MessageIdx] at h'
+info: ArkLib/OracleReduction/ProtocolSpec/Cast.lean:86:2: `exact h'` uses `h'`!
+warning: ArkLib/OracleReduction/ProtocolSpec/Cast.lean:92:85: missing space in the source
+
+This part of the code
+  'pSpec₁}:
+  '
+should be written as
+  'pSpec₁} :
+ '
+
+
+Note: This linter can be disabled with `set_option linter.style.whitespace false`
+warning: ArkLib/OracleReduction/ProtocolSpec/Cast.lean:128:2: `simp [ChallengeIdx.cast] at h'` is a flexible tactic modifying `h'`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/Cast.lean:128:2: Try this:
+  [apply] simp only [ChallengeIdx] at h'
+info: ArkLib/OracleReduction/ProtocolSpec/Cast.lean:130:2: `exact h'` uses `h'`!
+warning: ArkLib/OracleReduction/ProtocolSpec/Cast.lean:136:87: missing space in the source
+
+This part of the code
+  'pSpec₁}:
+  '
+should be written as
+  'pSpec₁} :
+ '
+
+
+Note: This linter can be disabled with `set_option linter.style.whitespace false`
+warning: ArkLib/OracleReduction/ProtocolSpec/Cast.lean:176:8: `simp [ProtocolSpec.cast_eq_dcast, dcast_eq_root_cast]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/Cast.lean:176:63: `exact h''` uses `⊢`!
+⚠ [3764/3779] Built ArkLib.OracleReduction.ProtocolSpec.SeqCompose (26s)
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:59:2: `simp at h` is a flexible tactic modifying `h`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:60:2: `obtain ⟨hDir, hType⟩ := h` uses `h`!
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:59:2: `simp at h` is a flexible tactic modifying `h`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:61:2: `ext i` uses `h`!
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:70:2: `simp at h` is a flexible tactic modifying `h`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:71:2: `obtain ⟨hDir, hType⟩ := h` uses `h`!
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:70:2: `simp at h` is a flexible tactic modifying `h`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:72:2: `ext i` uses `h`!
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:119:4: declaration uses `sorry`
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:129:4: declaration uses `sorry`
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:175:2: `simp [take, append, ProtocolSpec.append, Fin.castLE,
+    FullTranscript.cast, Transcript.cast]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:175:2: Try this:
+  [apply] simp only [Fin.take_apply]
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:178:2: `rw! (castMode := .all) [this, Fin.happend_left]` uses `⊢`!
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:182:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:186:2: `simp [rtake, Fin.rtake, append, Fin.cast, FullTranscript.cast, Transcript.cast]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:188:2: `rw! (castMode := .all) [this, Fin.happend_right]` uses `⊢`!
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:229:6: `simp [Fin.vappend_eq_append, Fin.append, Fin.addCases, hi] at h` is a flexible tactic modifying `h`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:229:6: Try this:
+  [apply] simp only [MessageIdx, ne_eq, reduceCtorEq, not_false_eq_true] at h
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:230:6: `exact Sum.inl ⟨⟨i, hi⟩, h⟩` uses `h`!
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:231:6: `simp [Fin.vappend_eq_append, Fin.append, Fin.addCases, hi] at h` is a flexible tactic modifying `h`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:231:6: Try this:
+  [apply] simp only [MessageIdx, ne_eq, reduceCtorEq, not_false_eq_true] at h
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:232:6: `exact Sum.inr ⟨⟨i - m, by omega⟩, h⟩` uses `h`!
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:253:6: `simp [Fin.vappend_eq_append, Fin.append, Fin.addCases, hi] at h` is a flexible tactic modifying `h`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:253:6: Try this:
+  [apply] simp only [ChallengeIdx, ne_eq, reduceCtorEq, not_false_eq_true] at h
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:254:6: `exact Sum.inl ⟨⟨i, hi⟩, h⟩` uses `h`!
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:255:6: `simp [Fin.vappend_eq_append, Fin.append, Fin.addCases, hi] at h` is a flexible tactic modifying `h`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:255:6: Try this:
+  [apply] simp only [ChallengeIdx, ne_eq, reduceCtorEq, not_false_eq_true] at h
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:256:6: `exact Sum.inr ⟨⟨i - m, by omega⟩, h⟩` uses `h`!
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:442:100: This line exceeds the 100 character limit, please shorten it!
+
+Note: This linter can be disabled with `set_option linter.style.longLine false`
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:445:100: This line exceeds the 100 character limit, please shorten it!
+
+Note: This linter can be disabled with `set_option linter.style.longLine false`
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:459:35: `simp at this` is a flexible tactic modifying `this`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:462:4: `exact this` uses `this`!
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:459:4: `simp [ij]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:462:4: `exact this` uses `⊢`!
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:466:4: declaration uses `sorry`
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:484:35: `simp at this` is a flexible tactic modifying `this`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:487:4: `exact this` uses `this`!
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:484:4: `simp [ij]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:487:4: `exact this` uses `⊢`!
+warning: ArkLib/OracleReduction/ProtocolSpec/SeqCompose.lean:491:4: declaration uses `sorry`
+⚠ [3765/3779] Built ArkLib.OracleReduction.Basic (27s)
+warning: ArkLib/OracleReduction/Basic.lean:343:4: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Basic.lean:383:100: This line exceeds the 100 character limit, please shorten it!
+
+Note: This linter can be disabled with `set_option linter.style.longLine false`
+warning: ArkLib/OracleReduction/Basic.lean:408:100: This line exceeds the 100 character limit, please shorten it!
+
+Note: This linter can be disabled with `set_option linter.style.longLine false`
+⚠ [3766/3779] Built ArkLib.OracleReduction.Execution (25s)
+warning: ArkLib/OracleReduction/Execution.lean:123:14: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Execution.lean:130:4: The `show` tactic should only be used to indicate intermediate goal states for readability.
+However, this tactic invocation changed the goal. Please use `change` instead for these purposes.
+
+Note: This linter can be disabled with `set_option linter.style.show false`
+warning: ArkLib/OracleReduction/Execution.lean:415:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Execution.lean:563:2: `simp [Prover.runToRound, Prover.processRound]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Execution.lean:563:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, Fin.isValue, Message, Fin.succ_zero_eq_one, liftComp_eq_liftM,
+    Nat.reduceAdd, Fin.coe_ofNat_eq_mod, Nat.reduceMod, take_Type, bind_pure_comp]
+info: ArkLib/OracleReduction/Execution.lean:565:12: `rename_i hDir` uses `⊢`!
+warning: ArkLib/OracleReduction/Execution.lean:563:2: `simp [Prover.runToRound, Prover.processRound]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Execution.lean:563:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, Fin.isValue, Message, Fin.succ_zero_eq_one, liftComp_eq_liftM,
+    Nat.reduceAdd, Fin.coe_ofNat_eq_mod, Nat.reduceMod, take_Type, bind_pure_comp]
+info: ArkLib/OracleReduction/Execution.lean:565:12: `rename_i hDir` uses `⊢`!
+warning: ArkLib/OracleReduction/Execution.lean:563:2: `simp [Prover.runToRound, Prover.processRound]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Execution.lean:563:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, Fin.isValue, Message, Fin.succ_zero_eq_one, liftComp_eq_liftM,
+    Nat.reduceAdd, Fin.coe_ofNat_eq_mod, Nat.reduceMod, take_Type, bind_pure_comp]
+info: ArkLib/OracleReduction/Execution.lean:567:4: `contradiction` uses `⊢`!
+warning: ArkLib/OracleReduction/Execution.lean:563:2: `simp [Prover.runToRound, Prover.processRound]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Execution.lean:563:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, Fin.isValue, Message, Fin.succ_zero_eq_one, liftComp_eq_liftM,
+    Nat.reduceAdd, Fin.coe_ofNat_eq_mod, Nat.reduceMod, take_Type, bind_pure_comp]
+info: ArkLib/OracleReduction/Execution.lean:568:11: `funext a` uses `⊢`!
+warning: ArkLib/OracleReduction/Execution.lean:563:2: `simp [Prover.runToRound, Prover.processRound]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Execution.lean:563:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, Fin.isValue, Message, Fin.succ_zero_eq_one, liftComp_eq_liftM,
+    Nat.reduceAdd, Fin.coe_ofNat_eq_mod, Nat.reduceMod, take_Type, bind_pure_comp]
+info: ArkLib/OracleReduction/Execution.lean:568:63: `funext i` uses `⊢`!
+warning: ArkLib/OracleReduction/Execution.lean:563:2: `simp [Prover.runToRound, Prover.processRound]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Execution.lean:563:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, Fin.isValue, Message, Fin.succ_zero_eq_one, liftComp_eq_liftM,
+    Nat.reduceAdd, Fin.coe_ofNat_eq_mod, Nat.reduceMod, take_Type, bind_pure_comp]
+info: ArkLib/OracleReduction/Execution.lean:570:4: `rw [this]` uses `⊢`!
+warning: ArkLib/OracleReduction/Execution.lean:580:2: `simp [Prover.runToRound, Prover.processRound]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Execution.lean:580:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, Fin.isValue, HasQuery.instOfMonadLift_query, liftComp_eq_liftM,
+    Fin.succ_zero_eq_one, Nat.reduceAdd, Fin.coe_ofNat_eq_mod, Nat.reduceMod, take_Type, bind_pure_comp]
+info: ArkLib/OracleReduction/Execution.lean:582:12: `rename_i hDir` uses `⊢`!
+warning: ArkLib/OracleReduction/Execution.lean:580:2: `simp [Prover.runToRound, Prover.processRound]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Execution.lean:580:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, Fin.isValue, HasQuery.instOfMonadLift_query, liftComp_eq_liftM,
+    Fin.succ_zero_eq_one, Nat.reduceAdd, Fin.coe_ofNat_eq_mod, Nat.reduceMod, take_Type, bind_pure_comp]
+info: ArkLib/OracleReduction/Execution.lean:582:12: `rename_i hDir` uses `⊢`!
+warning: ArkLib/OracleReduction/Execution.lean:580:2: `simp [Prover.runToRound, Prover.processRound]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Execution.lean:580:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, Fin.isValue, HasQuery.instOfMonadLift_query, liftComp_eq_liftM,
+    Fin.succ_zero_eq_one, Nat.reduceAdd, Fin.coe_ofNat_eq_mod, Nat.reduceMod, take_Type, bind_pure_comp]
+info: ArkLib/OracleReduction/Execution.lean:585:4: `funext challenge` uses `⊢`!
+warning: ArkLib/OracleReduction/Execution.lean:580:2: `simp [Prover.runToRound, Prover.processRound]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Execution.lean:580:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, Fin.isValue, HasQuery.instOfMonadLift_query, liftComp_eq_liftM,
+    Fin.succ_zero_eq_one, Nat.reduceAdd, Fin.coe_ofNat_eq_mod, Nat.reduceMod, take_Type, bind_pure_comp]
+info: ArkLib/OracleReduction/Execution.lean:587:4: `funext f` uses `⊢`!
+warning: ArkLib/OracleReduction/Execution.lean:580:2: `simp [Prover.runToRound, Prover.processRound]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Execution.lean:580:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, Fin.isValue, HasQuery.instOfMonadLift_query, liftComp_eq_liftM,
+    Fin.succ_zero_eq_one, Nat.reduceAdd, Fin.coe_ofNat_eq_mod, Nat.reduceMod, take_Type, bind_pure_comp]
+info: ArkLib/OracleReduction/Execution.lean:590:6: `funext ⟨i, hi⟩` uses `⊢`!
+warning: ArkLib/OracleReduction/Execution.lean:580:2: `simp [Prover.runToRound, Prover.processRound]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Execution.lean:580:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, Fin.isValue, HasQuery.instOfMonadLift_query, liftComp_eq_liftM,
+    Fin.succ_zero_eq_one, Nat.reduceAdd, Fin.coe_ofNat_eq_mod, Nat.reduceMod, take_Type, bind_pure_comp]
+info: ArkLib/OracleReduction/Execution.lean:594:6: `trivial` uses `⊢`!
+warning: ArkLib/OracleReduction/Execution.lean:580:2: `simp [Prover.runToRound, Prover.processRound]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Execution.lean:580:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, Fin.isValue, HasQuery.instOfMonadLift_query, liftComp_eq_liftM,
+    Fin.succ_zero_eq_one, Nat.reduceAdd, Fin.coe_ofNat_eq_mod, Nat.reduceMod, take_Type, bind_pure_comp]
+info: ArkLib/OracleReduction/Execution.lean:597:4: `contradiction` uses `⊢`!
+⚠ [3767/3779] Built ArkLib.OracleReduction.Security.Basic (26s)
+info: ArkLib/OracleReduction/Security/Basic.lean:126:2: Try these:
+  [apply] [grind
+    .] for pattern: [@completeness #18 #17 #16 #15 #14 #13 #12 #11 #10 #9 #8 #7 #6 #5 #4 #2, @LE.le `[ℝ≥0] `[NNReal.instPartialOrder.toLE] #3 #2]
+  [apply] [grind
+    →] for pattern: [@LE.le `[ℝ≥0] `[NNReal.instPartialOrder.toLE] #3 #2, @completeness #18 #17 #16 #15 #14 #13 #12 #11 #10 #9 #8 #7 #6 #5 #4 #3]
+  [apply] [grind
+    <=] for pattern: [@completeness #18 #17 #16 #15 #14 #13 #12 #11 #10 #9 #8 #7 #6 #5 #4 #2, @completeness _ _ _ _ _ _ #12 #11 _ _ #8 #7 #6 #5 #4 #3]
+info: ArkLib/OracleReduction/Security/Basic.lean:139:8: Try these:
+  [apply] [grind
+    .] for pattern: [@completeness #18 #17 #16 #15 #14 #13 #12 #11 #10 #9 #8 #7 #2 #5 #4 #3, @Subset _ _ #2 #6]
+  [apply] [grind
+    →] for pattern: [@Subset _ _ #2 #6, @completeness #18 #17 #16 #15 #14 #13 #12 #11 #10 #9 #8 #7 #6 #5 #4 #3]
+  [apply] [grind
+    <=] for pattern: [@completeness #18 #17 #16 #15 #14 #13 #12 #11 #10 #9 #8 #7 #2 #5 #4 #3, @completeness _ _ _ _ _ _ #12 #11 _ _ #8 #7 #6 #5 #4 #3]
+warning: ArkLib/OracleReduction/Security/Basic.lean:152:0: Please, write a comment here or remove this line, but do not place empty lines within commands!
+Context:
+     ↓
+  ⏎-/⏎⏎theorem completeness_relOut_mono {ε : ℝ≥0} {relOut' : Set (StmtOut × WitOut)}⏎
+
+Note: This linter can be disabled with `set_option linter.style.emptyLine false`
+info: ArkLib/OracleReduction/Security/Basic.lean:264:0: Reduction.runWithLog {ι : Type} {oSpec : OracleSpec ι} {StmtIn WitIn StmtOut WitOut : Type} {n : ℕ}
+  {pSpec : ProtocolSpec n} (stmt : StmtIn) (wit : WitIn)
+  (reduction : Reduction oSpec StmtIn WitIn StmtOut WitOut pSpec) :
+  OptionT (OracleComp (oSpec + [pSpec.Challenge]ₒ))
+    (((pSpec.FullTranscript × StmtOut × WitOut) × StmtOut) × (oSpec + [pSpec.Challenge]ₒ).QueryLog × oSpec.QueryLog)
+warning: ArkLib/OracleReduction/Security/Basic.lean:419:15: please avoid 'open (scoped) Classical' statements: this can hide theorem statements which would be better stated with explicit decidability statements.
+Instead, use `open Classical in` for definitions or instances, the `classical` tactic for proofs.
+For theorem statements, either add missing decidability assumptions or use `open Classical in`.
+
+Note: This linter can be disabled with `set_option linter.style.openClassical false`
+warning: ArkLib/OracleReduction/Security/Basic.lean:447:21: please avoid 'open (scoped) Classical' statements: this can hide theorem statements which would be better stated with explicit decidability statements.
+Instead, use `open Classical in` for definitions or instances, the `classical` tactic for proofs.
+For theorem statements, either add missing decidability assumptions or use `open Classical in`.
+
+Note: This linter can be disabled with `set_option linter.style.openClassical false`
+warning: ArkLib/OracleReduction/Security/Basic.lean:524:4: `simp [map_pure, support_pure] at hx` is a flexible tactic modifying `hx`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Security/Basic.lean:525:4: `cases hx` uses `hx`!
+warning: ArkLib/OracleReduction/Security/Basic.lean:524:4: `simp [map_pure, support_pure] at hx` is a flexible tactic modifying `hx`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Security/Basic.lean:526:4: `exact ⟨hIn, rfl⟩` uses `hx`!
+warning: ArkLib/OracleReduction/Security/Basic.lean:539:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Security/Basic.lean:553:8: declaration uses `sorry`
+⚠ [3768/3779] Built ArkLib.OracleReduction.LiftContext.Lens (28s)
+warning: ArkLib/OracleReduction/LiftContext/Lens.lean:431:4: `simp [Set.language] at hCompat ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:431:4: Try this:
+  [apply] simp only [Set.mem_image, Prod.exists, exists_and_right, exists_eq_right, not_exists] at hCompat ⊢
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:432:4: `intro innerWitIn hRelIn` uses `⊢`!
+warning: ArkLib/OracleReduction/LiftContext/Lens.lean:431:4: `simp [Set.language] at hCompat ⊢` is a flexible tactic modifying `hCompat`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:431:4: Try this:
+  [apply] simp only [Set.mem_image, Prod.exists, exists_and_right, exists_eq_right, not_exists] at hCompat ⊢
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:433:4: `contrapose! hCompat` uses `hCompat`!
+warning: ArkLib/OracleReduction/LiftContext/Lens.lean:431:4: `simp [Set.language] at hCompat ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:431:4: Try this:
+  [apply] simp only [Set.mem_image, Prod.exists, exists_and_right, exists_eq_right, not_exists] at hCompat ⊢
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:433:4: `contrapose! hCompat` uses `⊢`!
+warning: ArkLib/OracleReduction/LiftContext/Lens.lean:431:4: `simp [Set.language] at hCompat ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:431:4: Try this:
+  [apply] simp only [Set.mem_image, Prod.exists, exists_and_right, exists_eq_right, not_exists] at hCompat ⊢
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:434:4: `let outerWitIn := lens.wit.lift (outerStmtIn, default) innerWitIn` uses `⊢`!
+warning: ArkLib/OracleReduction/LiftContext/Lens.lean:431:4: `simp [Set.language] at hCompat ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:431:4: Try this:
+  [apply] simp only [Set.mem_image, Prod.exists, exists_and_right, exists_eq_right, not_exists] at hCompat ⊢
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:436:4: `exact ⟨outerWitIn, hOuterWitIn⟩` uses `⊢`!
+warning: ArkLib/OracleReduction/LiftContext/Lens.lean:438:4: `simp [Set.language] at hCompat hInnerRelOut ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:438:4: Try this:
+  [apply] simp only [Set.mem_image, Prod.exists, exists_and_right, exists_eq_right,
+    not_exists] at hCompat hInnerRelOut ⊢
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:439:4: `intro outerWitOut hOuterRelOut` uses `⊢`!
+warning: ArkLib/OracleReduction/LiftContext/Lens.lean:438:4: `simp [Set.language] at hCompat hInnerRelOut ⊢` is a flexible tactic modifying `hInnerRelOut`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:438:4: Try this:
+  [apply] simp only [Set.mem_image, Prod.exists, exists_and_right, exists_eq_right,
+    not_exists] at hCompat hInnerRelOut ⊢
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:440:4: `contrapose! hInnerRelOut` uses `hInnerRelOut`!
+warning: ArkLib/OracleReduction/LiftContext/Lens.lean:438:4: `simp [Set.language] at hCompat hInnerRelOut ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:438:4: Try this:
+  [apply] simp only [Set.mem_image, Prod.exists, exists_and_right, exists_eq_right,
+    not_exists] at hCompat hInnerRelOut ⊢
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:440:4: `contrapose! hInnerRelOut` uses `⊢`!
+warning: ArkLib/OracleReduction/LiftContext/Lens.lean:438:4: `simp [Set.language] at hCompat hInnerRelOut ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:438:4: Try this:
+  [apply] simp only [Set.mem_image, Prod.exists, exists_and_right, exists_eq_right,
+    not_exists] at hCompat hInnerRelOut ⊢
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:441:4: `let innerWitOut := lens.wit.proj (outerStmtIn, outerWitOut)` uses `⊢`!
+warning: ArkLib/OracleReduction/LiftContext/Lens.lean:438:4: `simp [Set.language] at hCompat hInnerRelOut ⊢` is a flexible tactic modifying `hCompat`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:438:4: Try this:
+  [apply] simp only [Set.mem_image, Prod.exists, exists_and_right, exists_eq_right,
+    not_exists] at hCompat hInnerRelOut ⊢
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:442:4: `have hInnerWitOut :=
+  instKS.proj_knowledgeSound outerStmtIn innerStmtOut outerWitOut hCompat hOuterRelOut` uses `hCompat`!
+warning: ArkLib/OracleReduction/LiftContext/Lens.lean:438:4: `simp [Set.language] at hCompat hInnerRelOut ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:438:4: Try this:
+  [apply] simp only [Set.mem_image, Prod.exists, exists_and_right, exists_eq_right,
+    not_exists] at hCompat hInnerRelOut ⊢
+info: ArkLib/OracleReduction/LiftContext/Lens.lean:444:4: `exact ⟨innerWitOut, hInnerWitOut⟩` uses `⊢`!
+⚠ [3769/3779] Built ArkLib.OracleReduction.Security.RoundByRound (32s)
+warning: ArkLib/OracleReduction/Security/RoundByRound.lean:216:4: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Security/RoundByRound.lean:394:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Security/RoundByRound.lean:406:2: `simp at h ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Security/RoundByRound.lean:406:2: Try this:
+  [apply] simp only [Challenge, ChallengeIdx, QueryImpl.addLift_def, QueryImpl.liftTarget_self,
+    HasQuery.instOfMonadLift_query, liftComp_eq_liftM, bind_pure_comp, simulateQ_bind, simulateQ_map, StateT.run'_eq,
+    StateT.run_bind, StateT.run_map, map_bind, Functor.map_map, ge_iff_le] at h ⊢
+info: ArkLib/OracleReduction/Security/RoundByRound.lean:407:2: `clear h` uses `⊢`!
+warning: ArkLib/OracleReduction/Security/RoundByRound.lean:406:2: `simp at h ⊢` is a flexible tactic modifying `h`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Security/RoundByRound.lean:406:2: Try this:
+  [apply] simp only [Challenge, ChallengeIdx, QueryImpl.addLift_def, QueryImpl.liftTarget_self,
+    HasQuery.instOfMonadLift_query, liftComp_eq_liftM, bind_pure_comp, simulateQ_bind, simulateQ_map, StateT.run'_eq,
+    StateT.run_bind, StateT.run_map, map_bind, Functor.map_map, ge_iff_le] at h ⊢
+info: ArkLib/OracleReduction/Security/RoundByRound.lean:407:2: `clear h` uses `h`!
+warning: ArkLib/OracleReduction/Security/RoundByRound.lean:406:2: `simp at h ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Security/RoundByRound.lean:406:2: Try this:
+  [apply] simp only [Challenge, ChallengeIdx, QueryImpl.addLift_def, QueryImpl.liftTarget_self,
+    HasQuery.instOfMonadLift_query, liftComp_eq_liftM, bind_pure_comp, simulateQ_bind, simulateQ_map, StateT.run'_eq,
+    StateT.run_bind, StateT.run_map, map_bind, Functor.map_map, ge_iff_le] at h ⊢
+info: ArkLib/OracleReduction/Security/RoundByRound.lean:408:2: `refine le_trans ?_ this` uses `⊢`!
+⚠ [3770/3779] Built ArkLib.ProofSystem.Component.CheckClaim (51s)
+warning: ArkLib/ProofSystem/Component/CheckClaim.lean:114:4: `simp [map_pure, support_pure] at hx` is a flexible tactic modifying `hx`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/ProofSystem/Component/CheckClaim.lean:114:4: Try this:
+  [apply] simp only [relOut, Set.mem_univ, true_and] at hx
+info: ArkLib/ProofSystem/Component/CheckClaim.lean:115:4: `cases hx` uses `hx`!
+warning: ArkLib/ProofSystem/Component/CheckClaim.lean:67:0: `reduction_completeness` does not use the following hypothesis in its type:
+  • [DecidableEq Statement] (#10)
+
+Consider removing this hypothesis and using `classical` in the proof instead. For terms, consider using `open scoped Classical in` at the term level (not the command level).
+
+Note: This linter can be disabled with `set_option linter.unusedDecidableInType false`
+warning: ArkLib/ProofSystem/Component/CheckClaim.lean:119:8: declaration uses `sorry`
+⚠ [3771/3779] Built ArkLib.ProofSystem.Component.ReduceClaim (56s)
+warning: ArkLib/ProofSystem/Component/ReduceClaim.lean:106:4: `simp [map_pure, support_pure] at hx` is a flexible tactic modifying `hx`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/ProofSystem/Component/ReduceClaim.lean:107:4: `cases hx` uses `hx`!
+warning: ArkLib/ProofSystem/Component/ReduceClaim.lean:106:4: `simp [map_pure, support_pure] at hx` is a flexible tactic modifying `hx`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/ProofSystem/Component/ReduceClaim.lean:108:4: `exact ⟨(hRel stmtIn witIn).mp hIn, rfl⟩` uses `hx`!
+warning: ArkLib/ProofSystem/Component/ReduceClaim.lean:134:4: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Component/ReduceClaim.lean:195:8: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Component/ReduceClaim.lean:224:4: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Component/ReduceClaim.lean:242:8: declaration uses `sorry`
+⚠ [3772/3779] Built ArkLib.OracleReduction.Composition.Sequential.Append (56s)
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:61:27: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:61:27: Try this:
+  [apply] simp only [Function.comp_apply, Fin.cast_zero, Fin.append_zero_of_succ_left]
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:61:33: `exact P₁.input ctxIn` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:73:6: `simp [hi, Fin.vappend_left_of_lt] at hDir ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:73:6: Try this:
+  [apply] simp only [Order.lt_add_one_iff, Order.add_one_le_iff, Nat.reduceSubDiff, eq_rec_constant] at hDir ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:75:6: `exact P₁.sendMessage ⟨⟨i, hi⟩, hDir⟩ state` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:74:6: `simp [this] at state` is a flexible tactic modifying `state`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:75:6: `exact P₁.sendMessage ⟨⟨i, hi⟩, hDir⟩ state` uses `state`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:73:6: `simp [hi, Fin.vappend_left_of_lt] at hDir ⊢` is a flexible tactic modifying `hDir`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:73:6: Try this:
+  [apply] simp only [Order.lt_add_one_iff, Order.add_one_le_iff, Nat.reduceSubDiff, eq_rec_constant] at hDir ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:75:6: `exact P₁.sendMessage ⟨⟨i, hi⟩, hDir⟩ state` uses `hDir`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:77:8: `simp [hi', Fin.vappend_right_of_not_lt] at hDir state ⊢` is a flexible tactic modifying `hDir`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:77:8: Try this:
+  [apply] simp only [Order.lt_add_one_iff, Order.add_one_le_iff, Nat.reduceSubDiff, eq_rec_constant] at hDir state ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:78:8: `exact
+  (do
+    let ctxIn₂ ← P₁.output state
+    letI state₂ := P₂.input ctxIn₂
+      P₂.sendMessage ⟨⟨0, by omega⟩, hDir⟩ state₂)` uses `hDir`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:77:8: `simp [hi', Fin.vappend_right_of_not_lt] at hDir state ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:77:8: Try this:
+  [apply] simp only [Order.lt_add_one_iff, Order.add_one_le_iff, Nat.reduceSubDiff, eq_rec_constant] at hDir state ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:78:8: `exact
+  (do
+    let ctxIn₂ ← P₁.output state
+    letI state₂ := P₂.input ctxIn₂
+      P₂.sendMessage ⟨⟨0, by omega⟩, hDir⟩ state₂)` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:77:8: `simp [hi', Fin.vappend_right_of_not_lt] at hDir state ⊢` is a flexible tactic modifying `state`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:77:8: Try this:
+  [apply] simp only [Order.lt_add_one_iff, Order.add_one_le_iff, Nat.reduceSubDiff, eq_rec_constant] at hDir state ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:78:8: `exact
+  (do
+    let ctxIn₂ ← P₁.output state
+    letI state₂ := P₂.input ctxIn₂
+      P₂.sendMessage ⟨⟨0, by omega⟩, hDir⟩ state₂)` uses `state`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:84:8: `simp [hi, Fin.vappend_right_of_not_lt] at hDir ⊢` is a flexible tactic modifying `hDir`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:84:8: Try this:
+  [apply] simp only [Order.lt_add_one_iff, Order.add_one_le_iff, Nat.reduceSubDiff, eq_rec_constant] at hDir ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:86:8: `exact P₂.sendMessage ⟨⟨i - m, by omega⟩, hDir⟩ (dcast (by simp [hi2]) state)` uses `hDir`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:84:8: `simp [hi, Fin.vappend_right_of_not_lt] at hDir ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:84:8: Try this:
+  [apply] simp only [Order.lt_add_one_iff, Order.add_one_le_iff, Nat.reduceSubDiff, eq_rec_constant] at hDir ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:86:8: `exact P₂.sendMessage ⟨⟨i - m, by omega⟩, hDir⟩ (dcast (by simp [hi2]) state)` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:85:8: `simp [hi1] at state` is a flexible tactic modifying `state`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:86:8: `exact P₂.sendMessage ⟨⟨i - m, by omega⟩, hDir⟩ (dcast (by simp [hi2]) state)` uses `state`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:95:6: `simp [hi, Fin.vappend_left_of_lt] at hDir ⊢` is a flexible tactic modifying `hDir`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:95:6: Try this:
+  [apply] simp only [Order.lt_add_one_iff, Order.add_one_le_iff, Nat.reduceSubDiff, eq_rec_constant] at hDir ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:97:6: `exact P₁.receiveChallenge ⟨⟨i, hi⟩, hDir⟩ state` uses `hDir`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:96:6: `simp [this] at state` is a flexible tactic modifying `state`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:97:6: `exact P₁.receiveChallenge ⟨⟨i, hi⟩, hDir⟩ state` uses `state`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:95:6: `simp [hi, Fin.vappend_left_of_lt] at hDir ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:95:6: Try this:
+  [apply] simp only [Order.lt_add_one_iff, Order.add_one_le_iff, Nat.reduceSubDiff, eq_rec_constant] at hDir ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:97:6: `exact P₁.receiveChallenge ⟨⟨i, hi⟩, hDir⟩ state` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:99:8: `simp [hi', Fin.vappend_right_of_not_lt] at hDir state ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:99:8: Try this:
+  [apply] simp only [Order.lt_add_one_iff, Order.add_one_le_iff, Nat.reduceSubDiff, eq_rec_constant] at hDir state ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:100:8: `exact
+  (do
+    let ctxIn₂ ← P₁.output state
+    letI state₂ := P₂.input ctxIn₂
+      P₂.receiveChallenge ⟨⟨0, by omega⟩, hDir⟩ state₂)` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:99:8: `simp [hi', Fin.vappend_right_of_not_lt] at hDir state ⊢` is a flexible tactic modifying `state`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:99:8: Try this:
+  [apply] simp only [Order.lt_add_one_iff, Order.add_one_le_iff, Nat.reduceSubDiff, eq_rec_constant] at hDir state ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:100:8: `exact
+  (do
+    let ctxIn₂ ← P₁.output state
+    letI state₂ := P₂.input ctxIn₂
+      P₂.receiveChallenge ⟨⟨0, by omega⟩, hDir⟩ state₂)` uses `state`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:99:8: `simp [hi', Fin.vappend_right_of_not_lt] at hDir state ⊢` is a flexible tactic modifying `hDir`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:99:8: Try this:
+  [apply] simp only [Order.lt_add_one_iff, Order.add_one_le_iff, Nat.reduceSubDiff, eq_rec_constant] at hDir state ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:100:8: `exact
+  (do
+    let ctxIn₂ ← P₁.output state
+    letI state₂ := P₂.input ctxIn₂
+      P₂.receiveChallenge ⟨⟨0, by omega⟩, hDir⟩ state₂)` uses `hDir`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:106:8: `simp [hi, Fin.vappend_right_of_not_lt] at hDir ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:106:8: Try this:
+  [apply] simp only [Order.lt_add_one_iff, Order.add_one_le_iff, Nat.reduceSubDiff, eq_rec_constant] at hDir ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:108:8: `exact P₂.receiveChallenge ⟨⟨i - m, by omega⟩, hDir⟩ (dcast (by simp [hi2]) state)` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:107:8: `simp [hi1] at state` is a flexible tactic modifying `state`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:108:8: `exact P₂.receiveChallenge ⟨⟨i - m, by omega⟩, hDir⟩ (dcast (by simp [hi2]) state)` uses `state`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:106:8: `simp [hi, Fin.vappend_right_of_not_lt] at hDir ⊢` is a flexible tactic modifying `hDir`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:106:8: Try this:
+  [apply] simp only [Order.lt_add_one_iff, Order.add_one_le_iff, Nat.reduceSubDiff, eq_rec_constant] at hDir ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:108:8: `exact P₂.receiveChallenge ⟨⟨i - m, by omega⟩, hDir⟩ (dcast (by simp [hi2]) state)` uses `hDir`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:117:6: `simp [hn] at state` is a flexible tactic modifying `state`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:118:6: `exact
+  (do
+    let ctxIn₂ ← P₁.output state
+    letI state₂ := P₂.input ctxIn₂
+      P₂.output (dcast (by simp [hn]) state₂))` uses `state`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:123:6: `simp [hn] at state` is a flexible tactic modifying `state`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:124:6: `exact P₂.output (dcast (by simp [this, Fin.last]) state)` uses `state`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:149:4: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:176:8: `simp [h, h'] at h1 h2 ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:176:8: Try this:
+  [apply] simp only [MessageIdx, trans_apply, coe_sumMap, coeFn_mk, Message] at h1 h2 ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:177:8: `exact h2.trans h1` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:176:8: `simp [h, h'] at h1 h2 ⊢` is a flexible tactic modifying `h1`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:176:8: Try this:
+  [apply] simp only [MessageIdx, trans_apply, coe_sumMap, coeFn_mk, Message] at h1 h2 ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:177:8: `exact h2.trans h1` uses `h1`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:180:8: `simp [h, h', MessageIdx.inl] at h1 h2 ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:180:8: Try this:
+  [apply] simp only [MessageIdx, trans_apply, coe_sumMap, coeFn_mk, Message] at h1 h2 ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:181:8: `exact h2.trans h1` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:180:8: `simp [h, h', MessageIdx.inl] at h1 h2 ⊢` is a flexible tactic modifying `h1`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:180:8: Try this:
+  [apply] simp only [MessageIdx, trans_apply, coe_sumMap, coeFn_mk, Message] at h1 h2 ⊢
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:181:8: `exact h2.trans h1` uses `h1`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:187:6: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:242:4: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:249:4: `simp [Fin.append, Fin.addCases, Fin.castLT]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:249:4: Try this:
+  [apply] simp only [Function.comp_apply, Fin.cast_zero, Fin.append_zero_of_succ_left]
+info: ArkLib/OracleReduction/Composition/Sequential/Append.lean:250:4: `exact E₁.eqIn` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:270:4: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:323:0: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:324:0: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:333:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:425:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:467:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:478:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:491:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Composition/Sequential/Append.lean:506:8: declaration uses `sorry`
+⚠ [3773/3779] Built ArkLib.OracleReduction.LiftContext.Reduction (62s)
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:116:4: declaration uses `sorry`
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:172:4: declaration uses `sorry`
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:227:35: This simp argument is unused:
+  Function.comp
+
+Hint: Omit it from the simp argument list.
+  simp [Functor.map_map, F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵,̵ ̵liftM_map, map_bind, bind_assoc, pure_bind, bind_map_left,
+  ̲  ̲ ̲ ̲bind_pure_comp]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:228:4: This simp argument is unused:
+  bind_assoc
+
+Hint: Omit it from the simp argument list.
+  simp [Functor.map_map, Function.comp, liftM_map, map_bind,
+  ̵  ̵ ̵ ̵b̵i̵n̵d̵_̵a̵s̵s̵o̵c̵,̵ ̵pure_bind, bind_map_left,
+  ̲  ̲ ̲ ̲bind_pure_comp]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:228:16: This simp argument is unused:
+  pure_bind
+
+Hint: Omit it from the simp argument list.
+  simp [Functor.map_map, Function.comp, liftM_map, map_bind, bind_assoc, p̵u̵r̵e̵_̵b̵i̵n̵d̵,̵ ̵bind_map_left,
+  ̲  ̲ ̲ ̲bind_pure_comp]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:228:27: This simp argument is unused:
+  bind_map_left
+
+Hint: Omit it from the simp argument list.
+  simp [Functor.map_map, Function.comp, liftM_map, map_bind, bind_assoc, pure_bind,
+  ̲  ̲ ̲ ̲b̵i̵n̵d̵_̵m̵a̵p̵_̵l̵e̵f̵t̵,̵ ̵bind_pure_comp]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:228:42: This simp argument is unused:
+  bind_pure_comp
+
+Hint: Omit it from the simp argument list.
+  simp [Functor.map_map, Function.comp, liftM_map, map_bind, bind_assoc, pure_bind,
+  ̲  ̲ ̲ ̲b̵i̵n̵d̵_̵m̵a̵p̵_̵l̵e̵f̵t̵,̵ ̵b̵i̵n̵d̵_̵p̵u̵r̵e̵_̵c̵o̵m̵p̵]̵b̲i̲n̲d̲_̲m̲a̲p̲_̲l̲e̲f̲t̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:313:8: This simp argument is unused:
+  Functor.map_map
+
+Hint: Omit it from the simp argument list.
+  simp [Functo̵r̵.̵m̵a̵p̵_̵m̵a̵p̵,̵ ̵F̵u̵n̵c̵t̵ion.comp]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:313:25: This simp argument is unused:
+  Function.comp
+
+Hint: Omit it from the simp argument list.
+  simp [Functor.map_map,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:311:2: `simp [liftContext, Prover.liftContext_run, Verifier.liftContext, Verifier.run, Function.uncurry]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:311:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, bind_pure_comp, Function.uncurry_apply_pair, map_bind, Functor.map_map]
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:312:11: `funext ⟨_, _⟩` uses `⊢`!
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:311:2: `simp [liftContext, Prover.liftContext_run, Verifier.liftContext, Verifier.run, Function.uncurry]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:311:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, bind_pure_comp, Function.uncurry_apply_pair, map_bind, Functor.map_map]
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:312:35: `funext a_1` uses `⊢`!
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:316:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:350:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:396:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:410:2: `simp at h ⊢` is a flexible tactic modifying `h`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:410:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, QueryImpl.addLift_def, QueryImpl.liftTarget_self, bind_pure_comp,
+    OptionT.run_bind, OptionT.run_monadLift, monadLift_self, OptionT.run_map, Option.elimM_map, Option.elim_some,
+    simulateQ_bind, simulateQ_option_elimM, simulateQ_pure, simulateQ_map, StateT.run'_eq, StateT.run_bind, map_bind,
+    OptionT.mk_bind] at h ⊢
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:423:2: `have hSound := h WitIn WitOut outerWitIn innerP (lens.proj outerStmtIn) this` uses `h`!
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:410:2: `simp at h ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:410:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, QueryImpl.addLift_def, QueryImpl.liftTarget_self, bind_pure_comp,
+    OptionT.run_bind, OptionT.run_monadLift, monadLift_self, OptionT.run_map, Option.elimM_map, Option.elim_some,
+    simulateQ_bind, simulateQ_option_elimM, simulateQ_pure, simulateQ_map, StateT.run'_eq, StateT.run_bind, map_bind,
+    OptionT.mk_bind] at h ⊢
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:424:2: `refine le_trans ?_ hSound` uses `⊢`!
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:440:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:456:2: `simp [Extractor.Straightline.liftContext]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:456:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, QueryImpl.addLift_def, QueryImpl.liftTarget_self, liftM_OptionT_eq,
+    bind_pure_comp, OptionT.run_bind, OptionT.run_map, simulateQ_option_elimM, simulateQ_pure, simulateQ_map,
+    StateT.run'_eq, OptionT.mk_bind, Prod.mk.eta]
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:457:2: `let innerP : Prover oSpec InnerStmtIn InnerWitIn InnerStmtOut InnerWitOut pSpec :=
+  { PrvState := outerP.PrvState
+    input := fun _ => outerP.input (outerStmtIn, outerWitIn)
+    sendMessage := outerP.sendMessage
+    receiveChallenge := outerP.receiveChallenge
+    output := fun state => do
+      let ⟨outerStmtOut, outerWitOut⟩ ← outerP.output state
+      return ⟨default, witLens.proj (outerStmtIn, outerWitOut)⟩ }` uses `⊢`!
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:469:2: `simp at h'` is a flexible tactic modifying `h'`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:469:2: Try this:
+  [apply] simp only [ge_iff_le] at h'
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:470:2: `have hR := h' (stmtLens.proj outerStmtIn) default innerP` uses `h'`!
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:456:2: `simp [Extractor.Straightline.liftContext]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:456:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, QueryImpl.addLift_def, QueryImpl.liftTarget_self, liftM_OptionT_eq,
+    bind_pure_comp, OptionT.run_bind, OptionT.run_map, simulateQ_option_elimM, simulateQ_pure, simulateQ_map,
+    StateT.run'_eq, OptionT.mk_bind, Prod.mk.eta]
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:479:2: `refine le_trans ?_ hR` uses `⊢`!
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:471:2: `simp at hR` is a flexible tactic modifying `hR`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:471:2: Try this:
+  [apply] simp only [ge_iff_le] at hR
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:479:2: `refine le_trans ?_ hR` uses `hR`!
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:489:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:502:2: `simp at h ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:502:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, QueryImpl.addLift_def, QueryImpl.liftTarget_self,
+    HasQuery.instOfMonadLift_query, liftComp_eq_liftM, bind_pure_comp, simulateQ_bind, simulateQ_map, StateT.run'_eq,
+    StateT.run_bind, StateT.run_map, map_bind, Functor.map_map, Subtype.forall, ne_eq, reduceCtorEq,
+    not_false_eq_true] at h ⊢
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:503:2: `refine ⟨stF.liftContext lens (lensSound := lensSound), ?_⟩` uses `⊢`!
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:502:2: `simp at h ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:502:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, QueryImpl.addLift_def, QueryImpl.liftTarget_self,
+    HasQuery.instOfMonadLift_query, liftComp_eq_liftM, bind_pure_comp, simulateQ_bind, simulateQ_map, StateT.run'_eq,
+    StateT.run_bind, StateT.run_map, map_bind, Functor.map_map, Subtype.forall, ne_eq, reduceCtorEq,
+    not_false_eq_true] at h ⊢
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:504:2: `intro outerStmtIn hOuterStmtIn WitIn WitOut witIn outerP roundIdx hDir` uses `⊢`!
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:502:2: `simp at h ⊢` is a flexible tactic modifying `h`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:502:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, QueryImpl.addLift_def, QueryImpl.liftTarget_self,
+    HasQuery.instOfMonadLift_query, liftComp_eq_liftM, bind_pure_comp, simulateQ_bind, simulateQ_map, StateT.run'_eq,
+    StateT.run_bind, StateT.run_map, map_bind, Functor.map_map, Subtype.forall, ne_eq, reduceCtorEq,
+    not_false_eq_true] at h ⊢
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:514:2: `have h' :=
+  h (lens.proj outerStmtIn) (lensSound.proj_sound _ hOuterStmtIn) WitIn WitOut witIn innerP roundIdx hDir` uses `h`!
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:502:2: `simp at h ⊢` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:502:2: Try this:
+  [apply] simp only [ChallengeIdx, Challenge, QueryImpl.addLift_def, QueryImpl.liftTarget_self,
+    HasQuery.instOfMonadLift_query, liftComp_eq_liftM, bind_pure_comp, simulateQ_bind, simulateQ_map, StateT.run'_eq,
+    StateT.run_bind, StateT.run_map, map_bind, Functor.map_map, Subtype.forall, ne_eq, reduceCtorEq,
+    not_false_eq_true] at h ⊢
+info: ArkLib/OracleReduction/LiftContext/Reduction.lean:516:2: `refine le_trans ?_ h'` uses `⊢`!
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:523:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/LiftContext/Reduction.lean:602:0: Definition `instTestLensKnowledgeSound` of class type must be marked with `@[reducible]` or `@[implicit_reducible]`
+⚠ [3774/3779] Built ArkLib.ProofSystem.Component.SendClaim (40s)
+warning: ArkLib/ProofSystem/Component/SendClaim.lean:85:16: `simp [ProtocolSpec.Message]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/ProofSystem/Component/SendClaim.lean:85:16: Try this:
+  [apply] simp only [Message, Fin.isValue, Fin.vcons_zero]
+info: ArkLib/ProofSystem/Component/SendClaim.lean:85:45: `exact congrArg OStatement (Unique.uniq _ j)` uses `⊢`!
+⚠ [3775/3779] Built ArkLib.OracleReduction.Composition.Sequential.General (37s)
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:233:12: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:233:12: Try this:
+  [apply] simp only [Fin.isValue, Fin.reduceLast, Fin.vsum_zero, seqCompose_zero, Nat.reduceAdd,
+    Verifier.seqCompose_zero]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:233:18: `exact OracleVerifier.id_toVerifier` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:307:12: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:307:12: Try this:
+  [apply] simp only [Fin.isValue, Fin.reduceLast, Fin.vsum_zero, seqCompose_zero, Nat.reduceAdd,
+    Reduction.seqCompose_zero]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:307:18: `exact OracleReduction.id_toReduction` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:360:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:360:4: Try this:
+  [apply] simp only [Fin.vsum_succ, seqCompose_succ, Fin.castSucc_zero, Fin.succ_zero_eq_one, Function.comp_apply,
+    Fin.succ_last, Nat.succ_eq_add_one]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:364:4: `rw [Fin.sum_univ_succ]` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:360:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:360:4: Try this:
+  [apply] simp only [Fin.vsum_succ, seqCompose_succ, Fin.castSucc_zero, Fin.succ_zero_eq_one, Function.comp_apply,
+    Fin.succ_last, Nat.succ_eq_add_one]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:365:4: `exact
+  append_completeness (R 0) (seqCompose (Stmt ∘ Fin.succ) (Wit ∘ Fin.succ) (fun i => R (Fin.succ i))) (h 0)
+    this` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:363:4: `simp at this` is a flexible tactic modifying `this`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:365:4: `exact
+  append_completeness (R 0) (seqCompose (Stmt ∘ Fin.succ) (Wit ∘ Fin.succ) (fun i => R (Fin.succ i))) (h 0)
+    this` uses `this`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:397:12: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:397:12: Try this:
+  [apply] simp only [Fin.isValue, Fin.reduceLast, Fin.vsum_zero, seqCompose_zero, Finset.univ_eq_empty,
+    Finset.sum_empty]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:397:18: `exact Verifier.id_soundness init impl` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:399:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:399:4: Try this:
+  [apply] simp only [Fin.vsum_succ, seqCompose_succ, Fin.castSucc_zero, Fin.succ_zero_eq_one, Function.comp_apply,
+    Fin.succ_last, Nat.succ_eq_add_one]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:403:4: `rw [Fin.sum_univ_succ]` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:402:4: `simp at this` is a flexible tactic modifying `this`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:404:4: `exact append_soundness (V 0) (seqCompose (Stmt ∘ Fin.succ) (fun i => V i.succ)) (h 0) this` uses `this`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:399:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:399:4: Try this:
+  [apply] simp only [Fin.vsum_succ, seqCompose_succ, Fin.castSucc_zero, Fin.succ_zero_eq_one, Function.comp_apply,
+    Fin.succ_last, Nat.succ_eq_add_one]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:404:4: `exact append_soundness (V 0) (seqCompose (Stmt ∘ Fin.succ) (fun i => V i.succ)) (h 0) this` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:418:12: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:418:12: Try this:
+  [apply] simp only [Fin.isValue, Fin.reduceLast, Fin.vsum_zero, seqCompose_zero, Finset.univ_eq_empty,
+    Finset.sum_empty]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:418:18: `exact Verifier.id_knowledgeSoundness init impl` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:420:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:420:4: Try this:
+  [apply] simp only [Fin.vsum_succ, seqCompose_succ, Fin.castSucc_zero, Fin.succ_zero_eq_one, Function.comp_apply,
+    Fin.succ_last, Nat.succ_eq_add_one]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:424:4: `rw [Fin.sum_univ_succ]` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:420:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:420:4: Try this:
+  [apply] simp only [Fin.vsum_succ, seqCompose_succ, Fin.castSucc_zero, Fin.succ_zero_eq_one, Function.comp_apply,
+    Fin.succ_last, Nat.succ_eq_add_one]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:425:4: `exact append_knowledgeSoundness (V 0) (seqCompose (Stmt ∘ Fin.succ) (fun i => V i.succ)) (h 0) this` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:423:4: `simp at this` is a flexible tactic modifying `this`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:425:4: `exact append_knowledgeSoundness (V 0) (seqCompose (Stmt ∘ Fin.succ) (fun i => V i.succ)) (h 0) this` uses `this`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:430:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:441:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:441:4: Try this:
+  [apply] simp only [Fin.isValue, Fin.reduceLast, Fin.vsum_zero, seqCompose_zero, ChallengeIdx]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:442:4: `convert Verifier.id_rbrSoundness init impl using 1` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:441:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:441:4: Try this:
+  [apply] simp only [Fin.isValue, Fin.reduceLast, Fin.vsum_zero, seqCompose_zero, ChallengeIdx]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:443:4: `funext ⟨i, _⟩` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:441:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:441:4: Try this:
+  [apply] simp only [Fin.isValue, Fin.reduceLast, Fin.vsum_zero, seqCompose_zero, ChallengeIdx]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:444:4: `exact Fin.elim0 i` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:446:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:446:4: Try this:
+  [apply] simp only [Fin.vsum_succ, seqCompose_succ, Fin.castSucc_zero, Fin.succ_zero_eq_one, Function.comp_apply,
+    Fin.succ_last, Nat.succ_eq_add_one, ChallengeIdx]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:450:4: `convert append_rbrSoundness (V 0) (seqCompose (Stmt ∘ Fin.succ) (fun i => V i.succ)) (h 0) this` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:449:4: `simp at this` is a flexible tactic modifying `this`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:450:4: `convert append_rbrSoundness (V 0) (seqCompose (Stmt ∘ Fin.succ) (fun i => V i.succ)) (h 0) this` uses `this`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:457:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:469:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:469:4: Try this:
+  [apply] simp only [Fin.isValue, Fin.reduceLast, Fin.vsum_zero, seqCompose_zero, ChallengeIdx]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:470:4: `convert Verifier.id_rbrKnowledgeSoundness init impl using 1` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:469:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:469:4: Try this:
+  [apply] simp only [Fin.isValue, Fin.reduceLast, Fin.vsum_zero, seqCompose_zero, ChallengeIdx]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:471:4: `funext ⟨i, _⟩` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:469:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:469:4: Try this:
+  [apply] simp only [Fin.isValue, Fin.reduceLast, Fin.vsum_zero, seqCompose_zero, ChallengeIdx]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:472:4: `exact Fin.elim0 i` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:474:4: `simp` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:474:4: Try this:
+  [apply] simp only [Fin.vsum_succ, seqCompose_succ, Fin.castSucc_zero, Fin.succ_zero_eq_one, Function.comp_apply,
+    Fin.succ_last, Nat.succ_eq_add_one, ChallengeIdx]
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:478:4: `convert append_rbrKnowledgeSoundness (V 0) (seqCompose (Stmt ∘ Fin.succ) (fun i => V i.succ)) (h 0) this` uses `⊢`!
+warning: ArkLib/OracleReduction/Composition/Sequential/General.lean:477:4: `simp at this` is a flexible tactic modifying `this`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/OracleReduction/Composition/Sequential/General.lean:478:4: `convert append_rbrKnowledgeSoundness (V 0) (seqCompose (Stmt ∘ Fin.succ) (fun i => V i.succ)) (h 0) this` uses `this`!
+⚠ [3776/3779] Built ArkLib.OracleReduction.LiftContext.OracleReduction (37s)
+warning: ArkLib/OracleReduction/LiftContext/OracleReduction.lean:48:4: declaration uses `sorry`
+warning: ArkLib/OracleReduction/LiftContext/OracleReduction.lean:77:8: declaration uses `sorry`
+warning: ArkLib/OracleReduction/LiftContext/OracleReduction.lean:86:8: declaration uses `sorry`
+⚠ [3777/3779] Built ArkLib.ProofSystem.Component.RandomQuery (24s)
+warning: ArkLib/ProofSystem/Component/RandomQuery.lean:191:4: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Component/RandomQuery.lean:203:100: This line exceeds the 100 character limit, please shorten it!
+
+Note: This linter can be disabled with `set_option linter.style.longLine false`
+warning: ArkLib/ProofSystem/Component/RandomQuery.lean:219:4: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Component/RandomQuery.lean:260:67: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Component/RandomQuery.lean:247:8: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Component/RandomQuery.lean:297:100: This line exceeds the 100 character limit, please shorten it!
+
+Note: This linter can be disabled with `set_option linter.style.longLine false`
+warning: ArkLib/ProofSystem/Component/RandomQuery.lean:318:100: This line exceeds the 100 character limit, please shorten it!
+
+Note: This linter can be disabled with `set_option linter.style.longLine false`
+⚠ [3778/3779] Built ArkLib.ProofSystem.Sumcheck.Spec.SingleRound (42s)
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:276:4: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:282:4: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:287:4: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:292:4: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:333:10: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:311:8: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:314:2: `simp [oracleReduction]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:314:2: Try this:
+  [apply] simp only [StmtIn, InductiveMerkleTree.domain_def]
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:315:2: `refine
+  OracleReduction.append_perfectCompleteness (rel₂ := relationAfterRandomQuery R deg)
+    ((((oracleReduction.sendClaim R deg oSpec).append (oracleReduction.checkClaim R deg oSpec)).append
+      (oracleReduction.randomQuery R deg oSpec)))
+    (oracleReduction.reduceClaim R deg oSpec) ?_ ?_` uses `⊢`!
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:314:2: `simp [oracleReduction]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:314:2: Try this:
+  [apply] simp only [StmtIn, InductiveMerkleTree.domain_def]
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:321:4: `refine
+  OracleReduction.append_perfectCompleteness (rel₂ := relationAfterCheckClaim R deg)
+    ((oracleReduction.sendClaim R deg oSpec).append (oracleReduction.checkClaim R deg oSpec))
+    (oracleReduction.randomQuery R deg oSpec) ?_ ?_` uses `⊢`!
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:314:2: `simp [oracleReduction]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:314:2: Try this:
+  [apply] simp only [StmtIn, InductiveMerkleTree.domain_def]
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:326:6: `refine
+  OracleReduction.append_perfectCompleteness (rel₂ := relationAfterSendClaim R deg D)
+    (oracleReduction.sendClaim R deg oSpec) (oracleReduction.checkClaim R deg oSpec) ?_ ?_` uses `⊢`!
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:314:2: `simp [oracleReduction]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:314:2: Try this:
+  [apply] simp only [StmtIn, InductiveMerkleTree.domain_def]
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:334:4: `refine ReduceClaim.oracleReduction_completeness _ _ ?_` uses `⊢`!
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:337:8: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:425:4: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:458:8: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:482:20: This simp argument is unused:
+  Functor.map_map
+
+Hint: Omit it from the simp argument list.
+  simp only [reduction, Reduction.run, Prover.run, Verifier.run, prover, verifier,
+      Prover.runToRound, Prover.processRound, Fin.induction_two, pSpec,
+  ̵  ̵ ̵ ̵bind_pure_comp, Functo̵r̵.̵m̵a̵p̵_̵m̵a̵p̵,̵ ̵F̵u̵n̵c̵t̵ion.comp]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:482:37: This simp argument is unused:
+  Function.comp
+
+Hint: Omit it from the simp argument list.
+  simp only [reduction, Reduction.run, Prover.run, Verifier.run, prover, verifier,
+      Prover.runToRound, Prover.processRound, Fin.induction_two, pSpec,
+  ̵  ̵ ̵ ̵bind_pure_comp,
+  ̲  ̲ ̲ ̲Functor.map_map,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:493:30: This simp argument is unused:
+  pure_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [MonadLift.monadLift, liftM, monadLift, MonadLiftT.monadLift, OracleComp.liftComp_pure,
+  ̲  ̲ ̲ ̲p̵u̵r̵e̵_̵b̵i̵n̵d̵,̵ ̵map_pure, Functor.map_map, Function.comp, bind_pure_comp, Transcript.concat, Fin.snoc_last,
+  ̲  ̲ ̲ ̲Fin.snoc_castSucc, guard, if_pos hValid]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:493:51: This simp argument is unused:
+  Functor.map_map
+
+Hint: Omit it from the simp argument list.
+  simp only [MonadLift.monadLift, liftM, monadLift, MonadLiftT.monadLift,
+  ̵  ̵ ̵ ̵OracleComp.liftComp_pure,
+  ̲  ̲ ̲ ̲pure_bind, map_pure, Functo̵r̵.̵m̵a̵p̵_̵m̵a̵p̵,̵ ̵F̵u̵n̵c̵t̵ion.comp,
+  ̵  ̵ ̵ ̵bind_pure_comp, Transcript.concat, Fin.snoc_last,
+  ̲  ̲ ̲ ̲Fin.snoc_castSucc,
+  ̵  ̵ ̵ ̵guard, if_pos hValid]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:493:68: This simp argument is unused:
+  Function.comp
+
+Hint: Omit it from the simp argument list.
+  simp only [MonadLift.monadLift, liftM, monadLift, MonadLiftT.monadLift,
+  ̵  ̵ ̵ ̵OracleComp.liftComp_pure,
+  ̲  ̲ ̲ ̲pure_bind, map_pure, Functor.map_map, F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵,̵
+  ̵ ̵ ̵ ̵ ̵bind_pure_comp, Transcript.concat, Fin.snoc_last,
+  ̲  ̲ ̲ ̲Fin.snoc_castSucc,
+  ̵  ̵ ̵ ̵guard, if_pos hValid]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:494:39: This simp argument is unused:
+  Fin.snoc_last
+
+Hint: Omit it from the simp argument list.
+  simp only [MonadLift.monadLift, liftM, monadLift, MonadLiftT.monadLift, OracleComp.liftComp_pure,
+  ̲  ̲ ̲ ̲pure_bind, map_pure, Functor.map_map, Function.comp, bind_pure_comp, Transcript.concat,
+  ̲  ̲ ̲ ̲F̵i̵n̵.̵s̵n̵o̵c̵_̵l̵a̵s̵t̵,̵ ̵Fin.snoc_castSucc, guard, if_pos hValid]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:494:54: This simp argument is unused:
+  Fin.snoc_castSucc
+
+Hint: Omit it from the simp argument list.
+  simp only [MonadLift.monadLift, liftM, monadLift, MonadLiftT.monadLift, OracleComp.liftComp_pure,
+  ̲  ̲ ̲ ̲pure_bind, map_pure, Functor.map_map, Function.comp, bind_pure_comp, Transcript.concat,
+  ̲  ̲ ̲ ̲Fin.snoc_last, F̵i̵n̵.̵s̵n̵o̵c̵_̵c̵a̵s̵t̵S̵u̵c̵c̵,̵guard, if_pos hValid]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:495:11: This simp argument is unused:
+  if_pos hValid
+
+Hint: Omit it from the simp argument list.
+  simp only [MonadLift.monadLift, liftM, monadLift, MonadLiftT.monadLift, OracleComp.liftComp_pure,
+  ̲  ̲ ̲ ̲pure_bind, map_pure, Functor.map_map, Function.comp, bind_pure_comp, Transcript.concat,
+  ̲  ̲ ̲ ̲Fin.snoc_last, Fin.snoc_castSucc, g̵u̵a̵r̵d̵,̵ ̵i̵f̵_̵p̵o̵s̵ ̵h̵V̵a̵l̵i̵d̵]̵g̲u̲a̲r̲d̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:563:48: This simp argument is unused:
+  QueryImpl.simulateQ_add_liftComp_left
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, Q̵u̵e̵r̵y̵I̵m̵p̵l̵.̵s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵a̵d̵d̵_̵l̵i̵f̵t̵C̵o̵m̵p̵_̵r̵i̵g̵h̵t̵,̵ ̵Q̵u̵e̵r̵y̵I̵m̵p̵l̵.̵s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵a̵d̵d̵_̵l̵i̵f̵t̵C̵o̵m̵p̵_̵l̵e̵f̵t̵]̵Q̲u̲e̲r̲y̲I̲m̲p̲l̲.̲s̲i̲m̲u̲l̲a̲t̲e̲Q̲_̲a̲d̲d̲_̲l̲i̲f̲t̲C̲o̲m̲p̲_̲r̲i̲g̲h̲t̲]̲ at hinner
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:573:40: This simp argument is unused:
+  QueryImpl.liftTarget_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.l̵i̵f̵t̵T̵ar̵g̵e̵t̵_̵a̵p̵p̵l̵y̵,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵Q̵u̵e̵r̵y̵I̵m̵p̵l̵.̵a̵dd_apply_inl, QueryImpl.add_apply_inr,
+          simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:574:8: This simp argument is unused:
+  QueryImpl.add_apply_inl
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl̵,̵ ̵Q̵u̵e̵ry̵I̵m̵p̵l̵.̵a̵d̵d̵_̵a̵p̵p̵l̵y̵_̵i̵n̵r̵,
+          simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:574:33: This simp argument is unused:
+  QueryImpl.add_apply_inr
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl̵l̲, ̵Q̵u̵e̵r̵y̵I̵m̵p̵l̵.̵a̵d̵d̵_̵a̵p̵p̵l̵y̵_̵i̵n̵r̵,̵
+          simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:575:8: This simp argument is unused:
+  simulateQ_query
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_q̵u̵e̵r̵y̵,̵ ̵s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:575:25: This simp argument is unused:
+  simulateQ_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_p̵u̵r̵e̵,̵ ̵s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:575:41: This simp argument is unused:
+  simulateQ_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_b̵i̵n̵d̵,̵ ̵s̵i̵mu̵l̵at̵e̵Q̵_̵m̵a̵p,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:575:57: This simp argument is unused:
+  simulateQ_map
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, ̵s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵m̵a̵p̵,̵
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:576:8: This simp argument is unused:
+  QueryImpl.simulateQ_add_liftComp_right
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply, QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr, simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          Q̵u̵e̵r̵y̵I̵m̵p̵l̵.̵s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵a̵d̵d̵_̵l̵i̵f̵t̵C̵o̵m̵p̵_̵r̵i̵g̵h̵t̵,̵ ̵QueryImpl.simulateQ_add_liftComp_left, OracleComp.liftComp_map, OracleComp.liftComp_pure,
+          pure_bind, map_pure, Functor.map_map, Function.comp, OracleQuery.cont,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲OracleQuery.input_query, StateT.run_bind, StateT.run_map, StateT.run_pure, support_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲support_pure, Set.mem_singleton_iff, Set.mem_image, Prod.mk.injEq, Option.some.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:576:48: This simp argument is unused:
+  QueryImpl.simulateQ_add_liftComp_left
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply, QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr, simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, Q̵u̵e̵r̵y̵I̵m̵p̵l̵.̵s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵a̵d̵d̵_̵l̵i̵f̵t̵C̵o̵m̵p̵_̵l̵e̵f̵t̵,̵OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲pure_bind, map_pure, Functor.map_map, Function.comp, OracleQuery.cont,
+          OracleQuery.input_query, StateT.run_bind, StateT.run_map, StateT.run_pure, support_map,
+          support_pure, Set.mem_singleton_iff, Set.mem_image, Prod.mk.injEq, Option.some.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:577:8: This simp argument is unused:
+  OracleComp.liftComp_map
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_m̵a̵p,̵ ̵O̵r̵a̵c̵l̵e̵C̵o̵m̵p̵.̵l̵i̵f̵t̵C̵o̵m̵p̵_̵p̵ure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map, Function.comp,
+          OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, StateT.run_pure,
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:577:33: This simp argument is unused:
+  OracleComp.liftComp_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, O̵r̵a̵c̵l̵e̵C̵o̵m̵p.̵l̵i̵f̵t̵C̵o̵m̵p̵_̵p̵ure,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵p̵u̵r̵e̵_bind, map_pure, Functor.map_map, Function.comp,
+          OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, StateT.run_pure,
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:578:8: This simp argument is unused:
+  pure_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵p̵u̵r̵e̵_̵b̵i̵n̵d̵,̵ ̵map_pure, Functor.map_map, Function.comp,
+          OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, StateT.run_pure,
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:578:19: This simp argument is unused:
+  map_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, F̲u̲n̲c̲t̲o̲r̲.̲map_̵p̵u̵r̵e̵_̲m̲a̲p̲,
+  ̲ F̵u̵n̵c̵t̵o̵r̵.̵m̵a̵p̵_̵m̵a̵p̵,̵  ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:578:29: This simp argument is unused:
+  Functor.map_map
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functo̵r̵.̵m̵a̵p̵_̵m̵a̵p̵,̵ ̵F̵u̵n̵c̵t̵ion.comp,
+          OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, StateT.run_pure,
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:578:46: This simp argument is unused:
+  Function.comp
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map, ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵,̵
+          OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, StateT.run_pure,
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:580:8: This simp argument is unused:
+  StateT.run_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_b̵i̵n̵d̵,̵ ̵S̵t̵a̵t̵e̵T̵.̵r̵u̵n̵_̵map, StateT.run_pure,
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:580:25: This simp argument is unused:
+  StateT.run_map
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_m̵a̵p,̵ ̵S̵t̵a̵t̵e̵T̵.̵r̵un̵_̵p̵u̵re,
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:580:41: This simp argument is unused:
+  StateT.run_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, ̵S̵t̵a̵t̵e̵T̵.̵r̵u̵n̵_̵p̵u̵r̵e̵,̵
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:581:8: This simp argument is unused:
+  support_map
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, ̵S̵t̵a̵t̵e̵T̵.̵r̵u̵n̵_̵p̵u̵r̵e̵,̵
+          s̵u̵p̵p̵o̵r̵S̲t_̵m̵at̲e̲T̲.̲r̲u̲n̲_̲pu̲r̲e̲, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:581:21: This simp argument is unused:
+  support_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, ̵S̵t̵a̵t̵e̵T̵.̵r̵u̵n̵_̵p̵u̵r̵e̵,̵
+          s̵u̵p̵p̵o̵r̵S̲t_̵m̵at̲e̲T̲.̲r̲u̲n̲_̲pu̲r̲e̲, support_m̲a̲pu̵r̵e̵, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:581:35: This simp argument is unused:
+  Set.mem_singleton_iff
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_s̵in̵g̵l̵e̵t̵o̵n̵_̵i̵f̵f̵,̵ ̵S̵e̵t̵.̵me̵m̵_̵i̵m̵age,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq, Option.some.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:581:58: This simp argument is unused:
+  Set.mem_image
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, S̵e̵t̵.̵m̵e̵m̵_̵i̵m̵a̵g̵e̵,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:582:8: This simp argument is unused:
+  Prod.mk.injEq
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          P̵r̵o̵d̵.̵m̵k̵.̵i̵n̵j̵E̵q̵,̵ ̵Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:582:23: This simp argument is unused:
+  Option.some.injEq
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵.̵i̵n̵j̵E̵q̵,̵ ̵Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:585:28: This simp argument is unused:
+  simulateQ_ite
+
+Hint: Omit it from the simp argument list.
+  simp only [apply_ite, s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵i̵t̵e̵,̵ ̵OptionT.run_pure] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:591:30: This simp argument is unused:
+  pure_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [Option.getM,̵ ̵p̵u̵r̵e̵_̵b̵i̵n̵d̵] at hs
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:629:30: This simp argument is unused:
+  pure_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [Option.getM,̵ ̵p̵u̵r̵e̵_̵b̵i̵n̵d̵] at hx_rest
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:634:30: This simp argument is unused:
+  pure_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [Option.getM,̵ ̵p̵u̵r̵e̵_̵b̵i̵n̵d̵] at hx_rest
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:660:48: This simp argument is unused:
+  QueryImpl.simulateQ_add_liftComp_left
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, Q̵u̵e̵r̵y̵I̵m̵p̵l̵.̵s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵a̵d̵d̵_̵l̵i̵f̵t̵C̵o̵m̵p̵_̵r̵i̵g̵h̵t̵,̵ ̵Q̵u̵e̵r̵y̵I̵m̵p̵l̵.̵s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵a̵d̵d̵_̵l̵i̵f̵t̵C̵o̵m̵p̵_̵l̵e̵f̵t̵]̵Q̲u̲e̲r̲y̲I̲m̲p̲l̲.̲s̲i̲m̲u̲l̲a̲t̲e̲Q̲_̲a̲d̲d̲_̲l̲i̲f̲t̲C̲o̲m̲p̲_̲r̲i̲g̲h̲t̲]̲ at hinner
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:670:40: This simp argument is unused:
+  QueryImpl.liftTarget_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.l̵i̵f̵t̵T̵ar̵g̵e̵t̵_̵a̵p̵p̵l̵y̵,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵Q̵u̵e̵r̵y̵I̵m̵p̵l̵.̵a̵dd_apply_inl, QueryImpl.add_apply_inr,
+          simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:671:8: This simp argument is unused:
+  QueryImpl.add_apply_inl
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl̵,̵ ̵Q̵u̵e̵ry̵I̵m̵p̵l̵.̵a̵d̵d̵_̵a̵p̵p̵l̵y̵_̵i̵n̵r̵,
+          simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:671:33: This simp argument is unused:
+  QueryImpl.add_apply_inr
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl̵l̲, ̵Q̵u̵e̵r̵y̵I̵m̵p̵l̵.̵a̵d̵d̵_̵a̵p̵p̵l̵y̵_̵i̵n̵r̵,̵
+          simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:672:8: This simp argument is unused:
+  simulateQ_query
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_q̵u̵e̵r̵y̵,̵ ̵s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:672:25: This simp argument is unused:
+  simulateQ_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_p̵u̵r̵e̵,̵ ̵s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:672:41: This simp argument is unused:
+  simulateQ_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_b̵i̵n̵d̵,̵ ̵s̵i̵mu̵l̵at̵e̵Q̵_̵m̵a̵p,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:672:57: This simp argument is unused:
+  simulateQ_map
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, ̵s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵m̵a̵p̵,̵
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:673:8: This simp argument is unused:
+  QueryImpl.simulateQ_add_liftComp_right
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply, QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr, simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          Q̵u̵e̵r̵y̵I̵m̵p̵l̵.̵s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵a̵d̵d̵_̵l̵i̵f̵t̵C̵o̵m̵p̵_̵r̵i̵g̵h̵t̵,̵ ̵QueryImpl.simulateQ_add_liftComp_left, OracleComp.liftComp_map, OracleComp.liftComp_pure,
+          pure_bind, map_pure, Functor.map_map, Function.comp, OracleQuery.cont,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲OracleQuery.input_query, StateT.run_bind, StateT.run_map, StateT.run_pure, support_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲support_pure, Set.mem_singleton_iff, Set.mem_image, Prod.mk.injEq, Option.some.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:673:48: This simp argument is unused:
+  QueryImpl.simulateQ_add_liftComp_left
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply, QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr, simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, Q̵u̵e̵r̵y̵I̵m̵p̵l̵.̵s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵a̵d̵d̵_̵l̵i̵f̵t̵C̵o̵m̵p̵_̵l̵e̵f̵t̵,̵OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲pure_bind, map_pure, Functor.map_map, Function.comp, OracleQuery.cont,
+          OracleQuery.input_query, StateT.run_bind, StateT.run_map, StateT.run_pure, support_map,
+          support_pure, Set.mem_singleton_iff, Set.mem_image, Prod.mk.injEq, Option.some.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:674:8: This simp argument is unused:
+  OracleComp.liftComp_map
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_m̵a̵p,̵ ̵O̵r̵a̵c̵l̵e̵C̵o̵m̵p̵.̵l̵i̵f̵t̵C̵o̵m̵p̵_̵p̵ure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map, Function.comp,
+          OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, StateT.run_pure,
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:674:33: This simp argument is unused:
+  OracleComp.liftComp_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, O̵r̵a̵c̵l̵e̵C̵o̵m̵p.̵l̵i̵f̵t̵C̵o̵m̵p̵_̵p̵ure,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵p̵u̵r̵e̵_bind, map_pure, Functor.map_map, Function.comp,
+          OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, StateT.run_pure,
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:675:8: This simp argument is unused:
+  pure_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵p̵u̵r̵e̵_̵b̵i̵n̵d̵,̵ ̵map_pure, Functor.map_map, Function.comp,
+          OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, StateT.run_pure,
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:675:19: This simp argument is unused:
+  map_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, F̲u̲n̲c̲t̲o̲r̲.̲map_̵p̵u̵r̵e̵_̲m̲a̲p̲,
+  ̲ F̵u̵n̵c̵t̵o̵r̵.̵m̵a̵p̵_̵m̵a̵p̵,̵  ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:675:29: This simp argument is unused:
+  Functor.map_map
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functo̵r̵.̵m̵a̵p̵_̵m̵a̵p̵,̵ ̵F̵u̵n̵c̵t̵ion.comp,
+          OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, StateT.run_pure,
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:675:46: This simp argument is unused:
+  Function.comp
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map, ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵,̵
+          OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, StateT.run_pure,
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:677:8: This simp argument is unused:
+  StateT.run_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_b̵i̵n̵d̵,̵ ̵S̵t̵a̵t̵e̵T̵.̵r̵u̵n̵_̵map, StateT.run_pure,
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:677:25: This simp argument is unused:
+  StateT.run_map
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_m̵a̵p,̵ ̵S̵t̵a̵t̵e̵T̵.̵r̵un̵_̵p̵u̵re,
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:677:41: This simp argument is unused:
+  StateT.run_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, ̵S̵t̵a̵t̵e̵T̵.̵r̵u̵n̵_̵p̵u̵r̵e̵,̵
+          support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:678:8: This simp argument is unused:
+  support_map
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, ̵S̵t̵a̵t̵e̵T̵.̵r̵u̵n̵_̵p̵u̵r̵e̵,̵
+          s̵u̵p̵p̵o̵r̵S̲t_̵m̵at̲e̲T̲.̲r̲u̲n̲_̲pu̲r̲e̲, support_pure, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:678:21: This simp argument is unused:
+  support_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map, ̵S̵t̵a̵t̵e̵T̵.̵r̵u̵n̵_̵p̵u̵r̵e̵,̵
+          s̵u̵p̵p̵o̵r̵S̲t_̵m̵at̲e̲T̲.̲r̲u̲n̲_̲pu̲r̲e̲, support_m̲a̲pu̵r̵e̵, Set.mem_singleton_iff, Set.mem_image,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:678:35: This simp argument is unused:
+  Set.mem_singleton_iff
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_s̵in̵g̵l̵e̵t̵o̵n̵_̵i̵f̵f̵,̵ ̵S̵e̵t̵.̵me̵m̵_̵i̵m̵age,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq, Option.some.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:678:58: This simp argument is unused:
+  Set.mem_image
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, S̵e̵t̵.̵m̵e̵m̵_̵i̵m̵a̵g̵e̵,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵Prod.mk.injEq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:679:8: This simp argument is unused:
+  Prod.mk.injEq
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          P̵r̵o̵d̵.̵m̵k̵.̵i̵n̵j̵E̵q̵,̵ ̵Option.some.injEq, Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:679:23: This simp argument is unused:
+  Option.some.injEq
+
+Hint: Omit it from the simp argument list.
+  simp only [QueryImpl.addLift_def, QueryImpl.liftTarget_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵QueryImpl.add_apply_inl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲QueryImpl.add_apply_inr,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵simulateQ_query, simulateQ_pure, simulateQ_bind, simulateQ_map,
+          QueryImpl.simulateQ_add_liftComp_right, QueryImpl.simulateQ_add_liftComp_left,
+          OracleComp.liftComp_map, OracleComp.liftComp_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵pure_bind, map_pure, Functor.map_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Function.comp,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵OracleQuery.cont, OracleQuery.input_query,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_bind, StateT.run_map,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲StateT.run_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵support_map, support_pure, Set.mem_singleton_iff, Set.mem_image,
+          Prod.mk.injEq, O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵.̵i̵n̵j̵E̵q̵,̵ ̵Fin.snoc] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:682:28: This simp argument is unused:
+  simulateQ_ite
+
+Hint: Omit it from the simp argument list.
+  simp only [apply_ite, s̵i̵m̵u̵l̵a̵t̵e̵Q̵_̵i̵t̵e̵,̵ ̵OptionT.run_pure] at hval2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:700:8: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:706:8: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:832:15: `Polynomial.eval_finset_sum` has been deprecated: Use `Polynomial.eval_finsetSum` instead
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:817:9: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:825:4: `simp [relationRound, Simple.inputRelation]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:825:4: Try this:
+  [apply] simp only [Simple.StmtIn, Simple.OStmtIn, InductiveMerkleTree.domain_def, Simple.OStmtOut, oCtxLens,
+    Prod.forall]
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:826:4: `unfold oStmtLens` uses `⊢`!
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:825:4: `simp [relationRound, Simple.inputRelation]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:825:4: Try this:
+  [apply] simp only [Simple.StmtIn, Simple.OStmtIn, InductiveMerkleTree.domain_def, Simple.OStmtOut, oCtxLens,
+    Prod.forall]
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:827:4: `induction n with
+| zero => exact Fin.elim0 i
+| succ n ih =>
+  intro stmt oStmt hRelIn
+  simp [← hRelIn]
+  simp_rw [Polynomial.eval_finset_sum]
+  simp_rw [← eval_eq_eval_mv_eval_finSuccEquivNth]
+    -- Remaining: ∑ a ∈ D, ∑ y ∈ D^(n-i), eval (insertNth i a (append c y ∘ cast)) p
+          --          = ∑ z ∈ D^(n+1-i), eval (append c z ∘ cast) p
+          -- Needs: (1) insertNth i a (append c y ∘ cast) = append c (cons a y) ∘ cast
+          --        (2) piFinset cons decomposition for D^(n+1-i) ↔ D × D^(n-i)
+    
+  sorry` uses `⊢`!
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:831:6: `simp [← hRelIn]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:831:6: Try this:
+  [apply] simp only [Fin.val_castSucc]
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:832:6: `simp_rw [Polynomial.eval_finset_sum]` uses `⊢`!
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:831:6: `simp [← hRelIn]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:831:6: Try this:
+  [apply] simp only [Fin.val_castSucc]
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:833:6: `simp_rw [← eval_eq_eval_mv_eval_finSuccEquivNth]` uses `⊢`!
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:840:4: `simp [relationRound]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:840:4: Try this:
+  [apply] simp only [InductiveMerkleTree.domain_def, Simple.OStmtOut, Simple.StmtIn, Simple.OStmtIn, oCtxLens,
+    Prod.forall]
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:841:4: `unfold compatContext oStmtLens` uses `⊢`!
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:849:9: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:861:4: `simp [relationRound, Simple.inputRelation, Statement.Lens.proj]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:861:4: Try this:
+  [apply] simp only [Simple.StmtIn, Simple.OStmtIn, InductiveMerkleTree.domain_def, Simple.OStmtOut, forall_const,
+    Subsingleton.forall₂_iff, Prod.forall]
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:862:4: `unfold oStmtLens` uses `⊢`!
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:861:4: `simp [relationRound, Simple.inputRelation, Statement.Lens.proj]` is a flexible tactic modifying `⊢`. Try `simp?` and use the suggested `simp only [...]`. Alternatively, use `suffices` to explicitly state the simplified form.
+
+Note: This linter can be disabled with `set_option linter.flexible false`
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:861:4: Try this:
+  [apply] simp only [Simple.StmtIn, Simple.OStmtIn, InductiveMerkleTree.domain_def, Simple.OStmtOut, forall_const,
+    Subsingleton.forall₂_iff, Prod.forall]
+info: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:863:4: `induction n with
+| zero => exact Fin.elim0 i
+| succ n ih =>
+  intro stmt oStmt hRelIn
+  simp at hRelIn
+      ⊢
+        -- Now it's a statement about polynomials
+        
+  sorry` uses `⊢`!
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:874:8: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:882:8: declaration uses `sorry`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:1030:100: This line exceeds the 100 character limit, please shorten it!
+
+Note: This linter can be disabled with `set_option linter.style.longLine false`
+warning: ArkLib/ProofSystem/Sumcheck/Spec/SingleRound.lean:1036:100: This line exceeds the 100 character limit, please shorten it!
+
+Note: This linter can be disabled with `set_option linter.style.longLine false`
+Build completed successfully (3779 jobs).

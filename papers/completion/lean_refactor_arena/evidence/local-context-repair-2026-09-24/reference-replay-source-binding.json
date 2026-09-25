@@ -1,0 +1,29 @@
+{
+  "before": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-context-repair-final-20260924-EZ4CQQ/snapshot",
+    "manifest_sha256": "538b40785a1e1b3b942678a7802c2756bdf823d18f0d1f67af141d4f41d442a0",
+    "content_root": "f9d9119173547b35d1191f63218bbae82ae565c1cc052a5a068327f53538a5a9",
+    "file_count": 229,
+    "bytes": 4762996,
+    "proof_verified": false
+  },
+  "after": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-context-repair-final-20260924-EZ4CQQ/snapshot",
+    "manifest_sha256": "538b40785a1e1b3b942678a7802c2756bdf823d18f0d1f67af141d4f41d442a0",
+    "content_root": "f9d9119173547b35d1191f63218bbae82ae565c1cc052a5a068327f53538a5a9",
+    "file_count": 229,
+    "bytes": 4762996,
+    "proof_verified": false
+  },
+  "native_processes": 1,
+  "reserved_processes": 1,
+  "whole_proof_processes": 0,
+  "wall_seconds": 49.4925,
+  "model_calls": 0,
+  "official_score": null,
+  "proof_admitted": false
+}

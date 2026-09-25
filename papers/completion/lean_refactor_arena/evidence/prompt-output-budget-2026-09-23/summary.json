@@ -1,0 +1,154 @@
+{
+  "schema": "jevops-output-budget-experiment-summary/v1",
+  "generation_plan_id": "d364e4d60ffce58002def6f5373f75d3931b47858369048c0cdc385d89748433",
+  "verification_plan_id": "8836b3d28ee7309103cfe6dceac180617901ad15f5d1d5725c71fd56f9f0073d",
+  "problem": "Core.InitsUpdatesComm",
+  "task_split": "exploratory-public-warmup-not-held-out",
+  "files_sha256": {
+    "plan.json": "0cbf95d6b0c5eb73621fe1224146ebb04d173418f5316b1a5d29d97a185b1704",
+    "server-profile.json": "97051d5435a18e9331b7e3fb35d634608b3fc0128dd0f670364deedaae75fec1",
+    "generation.json": "4e73af8efeb316889dca9e0b8739b60706a445167592267c513747dec3ade14c",
+    "draft-0.json": "859a53b4bd3bae46bc76d3b35f55cf019d80193aca6c610de2eb55558806e50b",
+    "draft-1.json": "dedcb54d1d003369ad3ae38814c2ec08eae82eef91b2b3090f419e2d74a54717",
+    "native-epoch/plan.json": "734e4abab5ef1cd03026ce3bf72d57311ce24183ff636870eeb1487ec0678656",
+    "native-epoch/generation-plan.json": "0cbf95d6b0c5eb73621fe1224146ebb04d173418f5316b1a5d29d97a185b1704",
+    "native-epoch/generation.json": "4e73af8efeb316889dca9e0b8739b60706a445167592267c513747dec3ade14c",
+    "native-epoch/draft-0.json": "859a53b4bd3bae46bc76d3b35f55cf019d80193aca6c610de2eb55558806e50b",
+    "native-epoch/draft-1.json": "dedcb54d1d003369ad3ae38814c2ec08eae82eef91b2b3090f419e2d74a54717",
+    "native-epoch/native-plan.json": "09424b0ebc607c1786ad02c2c7c6bd15cbd7aec112d5bb50688ac7c07a7d5dd4",
+    "native-epoch/native-triage.json": "132ef3860762b0d27b7d58da7ca5bea8d418e6486504a65c37d1ce62d7912212",
+    "native-epoch/post-verification-code-drift.json": "2fb3c0b7bb51fadae3592ece4017b8bae14893c436d2e4ab3f7f83f7010cc31c"
+  },
+  "generation": {
+    "requests_reserved": 8,
+    "max_output_tokens_total": 16384,
+    "outcomes": {
+      "parsed": 2,
+      "contract_mismatch": 4,
+      "intake_rejected": 1,
+      "output_truncated": 1
+    },
+    "usage_coverage": "all eight responses",
+    "usage": {
+      "prompt_tokens": 10316,
+      "completion_tokens": 6208,
+      "total_tokens": 16524
+    },
+    "summed_request_wall_seconds": 265.6065,
+    "by_arm": {
+      "placeholder-1024": {
+        "outcomes": {
+          "contract_mismatch": 2
+        },
+        "output_tokens_used": 1013
+      },
+      "placeholder-3072": {
+        "outcomes": {
+          "contract_mismatch": 1,
+          "intake_rejected": 1
+        },
+        "output_tokens_used": 662
+      },
+      "descriptive-1024": {
+        "outcomes": {
+          "parsed": 2
+        },
+        "output_tokens_used": 975
+      },
+      "descriptive-3072": {
+        "outcomes": {
+          "contract_mismatch": 1,
+          "output_truncated": 1
+        },
+        "output_tokens_used": 3558
+      }
+    },
+    "symptoms_not_causal_diagnoses": [
+      {
+        "slot": 0,
+        "features": []
+      },
+      {
+        "slot": 1,
+        "features": [
+          "invalid_json"
+        ]
+      },
+      {
+        "slot": 2,
+        "features": [
+          "chat_role_leakage",
+          "invalid_json"
+        ]
+      },
+      {
+        "slot": 3,
+        "features": [
+          "invalid_json"
+        ]
+      },
+      {
+        "slot": 4,
+        "features": [
+          "invalid_json"
+        ]
+      },
+      {
+        "slot": 5,
+        "features": []
+      },
+      {
+        "slot": 6,
+        "features": []
+      },
+      {
+        "slot": 7,
+        "features": [
+          "invalid_json",
+          "markdown_fence",
+          "output_truncated"
+        ]
+      }
+    ]
+  },
+  "native": {
+    "status": "CONTROL_FAILED",
+    "requests": 5,
+    "processes": 5,
+    "control_outcomes": {
+      "VERIFIED": 2,
+      "ERROR": 1
+    },
+    "candidate_outcomes": {
+      "REJECTED": 2,
+      "NOT_RUN_AFTER_NON_SUCCESS": 4
+    },
+    "complete_three_pin_control_check": false,
+    "same_code_phases": false,
+    "new_model_calls": 0,
+    "summed_request_wall_seconds": 63.7641,
+    "verified_refactoring_improvements": 0,
+    "performance_confirmation_executed": false,
+    "all_pin_verified_candidates": []
+  },
+  "tests": {
+    "passed": 442,
+    "skipped": 93,
+    "seconds": 24.09,
+    "native_docker_opt_in_disabled": true,
+    "full_repository_suite_run": false
+  },
+  "paid_api_cost": null,
+  "electricity_cost": null,
+  "official_score": null,
+  "promotion": false,
+  "historical_reports_modified": false,
+  "limitations": [
+    "one previously studied public task",
+    "two greedy repetitions per treatment",
+    "unequal output caps by design",
+    "no OS sandbox",
+    "code drift required new verification epoch and invalidated final control",
+    "no universal prompt/model ranking"
+  ]
+}

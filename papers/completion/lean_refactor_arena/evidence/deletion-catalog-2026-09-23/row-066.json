@@ -1,0 +1,24 @@
+{
+  "pin": {
+    "lean_tag": "v4.27.0",
+    "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+  },
+  "label": "control",
+  "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+  "status": "VERIFIED",
+  "context_id": "8a47e4b9f75c570544e3ae847b2da30beba843401dda6cd180e6f455e3f288e1",
+  "receipt": {
+    "request_id": "2a72e2f730e9ed4c6e748b00bd9e45af061fbdfe40a18c77492d25caef980621",
+    "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+    "target": "Core.InitsUpdatesComm",
+    "outcome": "VERIFIED",
+    "type_preserved": true,
+    "exit_code": 0,
+    "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+    "heartbeats": 4657,
+    "reason": "",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"6bf0b60cf25d5fdacdd4b2e3bdc0bcb72c9ac47ff0f01ca404f178eb494302e0\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657774,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657793,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15102.176}"
+  },
+  "native_processes": 1,
+  "wall_seconds": 27.0624
+}

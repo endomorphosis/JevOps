@@ -1,0 +1,212 @@
+{
+  "schema": "jevops-arena-missing-preparation-plan/v1",
+  "jobs": [
+    {
+      "name": "arklib-v4.30.0",
+      "binding": {
+        "repository": "https://github.com/Verified-zkEVM/ArkLib",
+        "lean_tag": "v4.30.0",
+        "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+        "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0",
+        "kind": "repo",
+        "resolve_lake_manifest": true
+      },
+      "command": [
+        "/usr/bin/env",
+        "PATH=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan/toolchains/leanprover--lean4---v4.30.0/bin:/usr/bin:/bin",
+        "/usr/bin/python3",
+        "-B",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_exact.py",
+        "--destination",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0",
+        "--tag",
+        "v4.30.0",
+        "--commit",
+        "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+        "--repository",
+        "https://github.com/Verified-zkEVM/ArkLib",
+        "--source",
+        "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib",
+        "--target",
+        "ArkLib.Data.CodingTheory.ProximityGap.DG25.MainResults",
+        "--target",
+        "ArkLib.ProofSystem.Binius.BinaryBasefold.Prelude",
+        "--cache",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0",
+        "--cache",
+        "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib"
+      ],
+      "minimum_free_bytes": 3000000000
+    },
+    {
+      "name": "arklib-v4.29.0",
+      "binding": {
+        "repository": "https://github.com/Verified-zkEVM/ArkLib",
+        "lean_tag": "v4.29.0",
+        "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+        "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.29.0",
+        "kind": "repo",
+        "resolve_lake_manifest": true
+      },
+      "command": [
+        "/usr/bin/env",
+        "PATH=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan/toolchains/leanprover--lean4---v4.29.0/bin:/usr/bin:/bin",
+        "/usr/bin/python3",
+        "-B",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_exact.py",
+        "--destination",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.29.0",
+        "--tag",
+        "v4.29.0",
+        "--commit",
+        "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+        "--repository",
+        "https://github.com/Verified-zkEVM/ArkLib",
+        "--source",
+        "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib",
+        "--target",
+        "ArkLib.Data.CodingTheory.ProximityGap.DG25.MainResults",
+        "--target",
+        "ArkLib.ProofSystem.Binius.BinaryBasefold.Prelude",
+        "--cache",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0",
+        "--cache",
+        "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib"
+      ],
+      "minimum_free_bytes": 3000000000
+    },
+    {
+      "name": "arklib-v4.28.0",
+      "binding": {
+        "repository": "https://github.com/Verified-zkEVM/ArkLib",
+        "lean_tag": "v4.28.0",
+        "git_commit": "673fa440714eb1949b8b50a28f2a4f52b1837e9b",
+        "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.28.0",
+        "kind": "repo",
+        "resolve_lake_manifest": true
+      },
+      "command": [
+        "/usr/bin/env",
+        "PATH=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan/toolchains/leanprover--lean4---v4.28.0/bin:/usr/bin:/bin",
+        "/usr/bin/python3",
+        "-B",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_exact.py",
+        "--destination",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.28.0",
+        "--tag",
+        "v4.28.0",
+        "--commit",
+        "673fa440714eb1949b8b50a28f2a4f52b1837e9b",
+        "--repository",
+        "https://github.com/Verified-zkEVM/ArkLib",
+        "--source",
+        "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib",
+        "--target",
+        "ArkLib.ProofSystem.Binius.BinaryBasefold.Prelude",
+        "--cache",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0",
+        "--cache",
+        "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib"
+      ],
+      "minimum_free_bytes": 3000000000
+    },
+    {
+      "name": "putnam-v4.25.0",
+      "binding": {
+        "repository": "",
+        "lean_tag": "v4.25.0",
+        "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+        "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0",
+        "kind": "putnam",
+        "resolve_lake_manifest": true
+      },
+      "command": [
+        "/usr/bin/env",
+        "PATH=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan/toolchains/leanprover--lean4---v4.25.0/bin:/usr/bin:/bin",
+        "/usr/bin/python3",
+        "-B",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_exact.py",
+        "--destination",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0",
+        "--tag",
+        "v4.25.0",
+        "--commit",
+        "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+        "--putnam",
+        "--cache",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0",
+        "--cache",
+        "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib"
+      ],
+      "minimum_free_bytes": 12000000000
+    },
+    {
+      "name": "putnam-v4.26.0",
+      "binding": {
+        "repository": "",
+        "lean_tag": "v4.26.0",
+        "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+        "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.26.0",
+        "kind": "putnam",
+        "resolve_lake_manifest": true
+      },
+      "command": [
+        "/usr/bin/env",
+        "PATH=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan/toolchains/leanprover--lean4---v4.26.0/bin:/usr/bin:/bin",
+        "/usr/bin/python3",
+        "-B",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_exact.py",
+        "--destination",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.26.0",
+        "--tag",
+        "v4.26.0",
+        "--commit",
+        "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+        "--putnam",
+        "--cache",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0",
+        "--cache",
+        "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib"
+      ],
+      "minimum_free_bytes": 12000000000
+    },
+    {
+      "name": "putnam-v4.27.0",
+      "binding": {
+        "repository": "",
+        "lean_tag": "v4.27.0",
+        "git_commit": "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+        "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.27.0",
+        "kind": "putnam",
+        "resolve_lake_manifest": true
+      },
+      "command": [
+        "/usr/bin/env",
+        "PATH=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan/toolchains/leanprover--lean4---v4.27.0/bin:/usr/bin:/bin",
+        "/usr/bin/python3",
+        "-B",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_exact.py",
+        "--destination",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.27.0",
+        "--tag",
+        "v4.27.0",
+        "--commit",
+        "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+        "--putnam",
+        "--cache",
+        "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0",
+        "--cache",
+        "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib"
+      ],
+      "minimum_free_bytes": 12000000000
+    }
+  ],
+  "allowance_bytes": 50000000000,
+  "concurrency": 1,
+  "stage_timeout_seconds": 1800,
+  "batch_timeout_seconds": 7200,
+  "minimum_free_bytes_before_stage": 3000000000,
+  "native_calls": 0,
+  "model_calls": 0,
+  "payload_sha256": "37c4a25aa915b4caa3fec78515ecae443e848e47f4c3e49fa78d2c8575fd6ce8"
+}

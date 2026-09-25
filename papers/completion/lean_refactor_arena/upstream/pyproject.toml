@@ -1,0 +1,148 @@
+[project]
+name = "lean-refactor"
+version = "1.2.6"
+description = "Lean Refactor System."
+keywords = ['python']
+requires-python = "==3.10.12"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: Apache Software License",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "easydict==1.13",
+    "jinja2>=3.1.6",
+    "langchain-core==1.2.6",
+    "langchain-google-genai==4.1.2",
+    "langchain-anthropic==1.3.1",
+    "langchain-openai==0.3.34",
+    "langgraph==0.6.8",
+    "leanclient==0.9.2",
+    "rich>=14.1.0",
+    "typer>=0.19.2",
+    "typing-extensions>=4.15.0",
+    "ms_swift==3.12.1",
+    "vllm==0.11.0",
+    "torch==2.8.0",
+    "faiss-cpu==1.13.0",
+]
+
+[project.scripts]
+lean-refactor = "lean_refactor.cli:app"
+
+[dependency-groups]
+dev = [
+    "pytest>=7.2.0",
+    "tox-uv>=1.11.3",
+    "deptry>=0.23.0",
+    "mypy>=0.991",
+    "pytest-cov>=4.0.0",
+    "ruff>=0.11.5",
+    "fastapi>=0.115.13",
+    "uvicorn>=0.34.3",
+    "psutil>=7.0.0",
+    "prisma>=0.15.0",
+    "google-cloud-logging>=3.12.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["lean_refactor"]
+artifacts = [
+    "lean_refactor/data/config.ini",
+    "lean_refactor/data/prompts/*.md",
+]
+
+[tool.mypy]
+files = ["lean_refactor"]
+python_version = "3.11"
+disallow_untyped_defs = true
+disallow_any_unimported = true
+no_implicit_optional = true
+check_untyped_defs = true
+warn_return_any = true
+warn_unused_ignores = true
+show_error_codes = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+fix = true
+
+[tool.ruff.lint]
+select = [
+    # flake8-2020
+    "YTT",
+    # flake8-bandit
+    "S",
+    # flake8-bugbear
+    "B",
+    # flake8-builtins
+    "A",
+    # flake8-comprehensions
+    "C4",
+    # flake8-debugger
+    "T10",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+    # mccabe
+    "C90",
+    # pycodestyle
+    "E", "W",
+    # pyflakes
+    "F",
+    # pygrep-hooks
+    "PGH",
+    # pyupgrade
+    "UP",
+    # ruff
+    "RUF",
+    # tryceratops
+    "TRY",
+]
+ignore = [
+    # LineTooLong
+    "E501",
+    # DoNotAssignLambda
+    "E731",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+"lean_refactor/cli.py" = ["B008"]
+
+[tool.ruff.format]
+preview = true
+
+[tool.coverage.report]
+skip_empty = true
+
+[tool.coverage.run]
+branch = true
+source = ["lean_refactor"]
+
+[tool.deptry]
+root = ["lean_refactor"]
+exclude = [
+    "\\.venv/.*",
+    "\\.lean_refactor/.*",
+    "test-venv/.*",
+    "dist/.*",
+    "site/.*",
+    "tests/.*",
+]

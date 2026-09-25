@@ -25,7 +25,10 @@ import sys
 import tempfile
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Callable, Mapping, Optional, Sequence
+from typing import TYPE_CHECKING, Any, Callable, Mapping, Optional, Sequence
+
+if TYPE_CHECKING:
+    from jevops.refactor_prompts import RefactorPrompts
 
 HERE = Path(__file__).resolve().parent
 PAPER_ROOT = HERE.parent
@@ -292,6 +295,7 @@ def maybe_generate(
             timeout=timeout,
             source=source,
             require_health=False,
+            health=health,
             generate=generate,
             get_trace=get_trace,
         ),
@@ -474,6 +478,7 @@ def run_problem(
     elan_home: Optional[Path] = None,
     network: str = "deny",
     skip_checkout: bool = True,
+    prompt_renderer: Optional[Callable[..., str]] = None,
 ) -> ProblemResult:
     """One warm-up problem through loop v1. Hammers and TypeSafe stay off."""
 
@@ -531,7 +536,7 @@ def run_problem(
         evaluate_fn=_eval,
         pin_fn=pin_reference_scores,
         composite_fn=composite_score,
-        prompt_fn=render_loop_prompt,
+        prompt_fn=prompt_renderer if prompt_renderer is not None else render_loop_prompt,
         generate_fn=lambda prompt: maybe_generate(
             prompt,
             health=probe,
@@ -638,6 +643,7 @@ def run_warmup(
     skip_checkout: bool = True,
     receipts_dir: Optional[Path] = None,
     plant_synthetic: bool = False,
+    prompt_builder: Optional[RefactorPrompts] = None,
 ) -> dict[str, Any]:
     pin_loop_env()
     raw, digest, records = lra_splice.load_warmup_records(jsonl)
@@ -647,6 +653,24 @@ def run_warmup(
         select_named(records, names, error_cls=LoopError, miss_fmt="unknown warm-up names: {missing}"),
         limit,
     )
+    # Validate every selected prompt before health HTTP, compilation or generation.
+    # History is explicit per-run input; old receipts never affect admission.
+    prompt_bundles = {}
+    prompt_renderer = None
+    if prompt_builder is not None:
+        from jevops.arena import content_hash
+
+        for record in selected:
+            retrieval = lra_retrieve.retrieve_record(record, records)
+            prompt_bundles[record["name"]] = prompt_builder.build(
+                record, available_lemmas=tuple(item.name for item in retrieval.src_lemmas))
+
+        def prompt_renderer(record, _retrieval):
+            bundle = prompt_bundles[record["name"]]
+            if bundle.manifest["record_sha256"] != content_hash(dict(record)):
+                raise LoopError("frozen problem changed after prompt preparation")
+            return bundle.text
+
     planted = None
     if plant_synthetic:
         planted = plant_loop_env(selected)
@@ -671,6 +695,7 @@ def run_warmup(
             elan_home=elan_home,
             network=network,
             skip_checkout=skip_checkout,
+            prompt_renderer=prompt_renderer,
         )
         results.append(result)
         if receipts_dir is not None:
@@ -678,7 +703,7 @@ def run_warmup(
             written.extend(paths.values())
     from jevops.lean import warmup_batch_payload
 
-    return warmup_batch_payload(
+    payload = warmup_batch_payload(
         digest=digest,
         results=results,
         health_ok=bool(live_health.ok),
@@ -695,6 +720,10 @@ def run_warmup(
         gates=GATES,
         phases=V1_PHASES,
     )
+    if prompt_builder is not None:
+        payload["refactor_prompts"] = [
+            {"name": name, **bundle.manifest} for name, bundle in prompt_bundles.items()]
+    return payload
 
 
 def plan_loop(jsonl: Optional[Path] = None) -> dict[str, Any]:
@@ -818,6 +847,7 @@ def self_check(
     *,
     receipts_dir: Optional[Path] = None,
     live: bool = True,
+    offline: bool = False,
 ) -> dict[str, Any]:
     pin_loop_env()
     from jevops.outer import env_str, head_chars, read_text
@@ -825,7 +855,9 @@ def self_check(
     source = read_text(__file__)
     audit = audit_source(source)
     raw, digest, records = lra_splice.load_warmup_records(path)
-    live_health = lra_d0.probe_docker0_health()
+    if offline:
+        live = False
+    live_health = _fake_health(False) if offline else lra_d0.probe_docker0_health()
     captured: list[dict[str, Any]] = []
 
     def fake_generate(prompt: str, **kwargs: Any) -> str:
@@ -957,6 +989,8 @@ def self_check(
     report = {
         "ok": False,
         "arena_score": None,
+        "offline_fixtures": offline,
+        "live_health_checked": not offline,
         "audit": audit,
         "autostart": env_str(AUTOSTART_ENV),
         "called_leanstral_when_health_ok": must_call,
@@ -1042,8 +1076,11 @@ def _print_json(payload: Mapping[str, Any]) -> None:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     _jevops_path.activate_lra_hooks()
+    from jevops.refactor_prompts import RefactorPrompts, TEMPLATES
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--self-check", action="store_true", help="loop v1 protocol + 15-problem synthetic run")
+    parser.add_argument("--offline-self-check", action="store_true", help="fixture-only self-check; no health HTTP or live model")
     parser.add_argument("--plan", action="store_true", help="print the v1 loop plan; no compile")
     parser.add_argument("--probe-health", action="store_true", help="GET docker0 /health only")
     parser.add_argument("--run", action="store_true", help="run loop v1 on warm-up records")
@@ -1057,6 +1094,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument("--synthetic-compile", action="store_true", help="plant tag-pinned fake lake/lean")
     parser.add_argument("--max-new-tokens", type=int, default=None)
     parser.add_argument("--generate-timeout", type=float, default=None)
+    parser.add_argument("--prompt-template", choices=("legacy", *TEMPLATES), default="legacy")
+    parser.add_argument("--prompt-history", type=Path, action="append", default=[],
+                        help="explicit trial/selection JSON or supported archive manifest (repeatable); historical hints only")
+    parser.add_argument("--prompt-max-chars", type=int, default=32000)
+    parser.add_argument("--prompt-max-examples", type=int, default=4)
+    parser.add_argument("--prompt-max-observations", type=int, default=8)
     parser.add_argument(
         "--compile-timeout",
         type=float,
@@ -1065,6 +1108,24 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument("--no-live", action="store_true", help="self-check without a live Leanstral completion")
     args = parser.parse_args(list(argv) if argv is not None else None)
 
+    prompt_builder = None
+    if args.prompt_template == "legacy":
+        if (args.prompt_history or args.prompt_max_chars != 32000 or args.prompt_max_examples != 4
+                or args.prompt_max_observations != 8):
+            parser.error("history/budgets require an explicit non-legacy --prompt-template")
+    else:
+        if (args.self_check or args.offline_self_check or args.plan or args.probe_health or
+                not (args.run or args.name or args.limit is not None)):
+            parser.error("--prompt-template requires a warm-up run; preview offline with python -m jevops.refactor_prompts")
+        try:
+            prompt_builder = RefactorPrompts(args.prompt_template, history_files=tuple(args.prompt_history),
+                max_chars=args.prompt_max_chars, max_examples=args.prompt_max_examples,
+                max_observations=args.prompt_max_observations)
+        except (ValueError, TypeError, KeyError, OSError) as exc:
+            parser.error(str(exc))
+
+    if args.offline_self_check and (args.run or args.probe_health or args.plan or args.name or args.limit is not None):
+        parser.error("--offline-self-check cannot select live/run/plan operations")
     if args.probe_health:
         pin_loop_env()
         probe = lra_d0.probe_docker0_health()
@@ -1081,11 +1142,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         _print_json(plan_loop(args.jsonl))
         return 0
 
-    if args.self_check or argv is None or argv == []:
+    if args.self_check or args.offline_self_check or argv is None or argv == []:
         report = self_check(
             args.jsonl,
             receipts_dir=args.receipts_dir,
             live=not args.no_live,
+            offline=args.offline_self_check,
         )
         from jevops.outer import print_ok
 
@@ -1106,8 +1168,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 skip_checkout=bool(args.synthetic_compile),
                 receipts_dir=args.receipts_dir,
                 plant_synthetic=bool(args.synthetic_compile),
+                prompt_builder=prompt_builder,
             )
-        except LoopError as exc:
+        except (LoopError, ValueError) as exc:
             from jevops.outer import closed_fail
 
             _print_json(closed_fail(str(exc), hardware_class=HARDWARE_CLASS))

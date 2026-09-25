@@ -1,0 +1,23 @@
+{
+  "pin": {
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+  },
+  "label": "control",
+  "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+  "status": "VERIFIED",
+  "receipt": {
+    "request_id": "65de5f0a5dcd296b98246a5df4912948689ad0c3dec255d10e2142897955a088",
+    "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+    "target": "Core.InitsUpdatesComm",
+    "outcome": "VERIFIED",
+    "type_preserved": true,
+    "exit_code": 0,
+    "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+    "heartbeats": 4689,
+    "reason": "",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"c21049c66609ac7e77f85411e7fc174f90da884c9b0be866978af32135472560\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689118,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689131,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":6690.507}"
+  },
+  "context_id": "6579f255a16f2ade8f2138cf975d572591005fe1ba473161436845ff437c7b08",
+  "wall_seconds": 9.1062
+}

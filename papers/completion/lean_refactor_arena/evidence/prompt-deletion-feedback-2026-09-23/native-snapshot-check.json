@@ -1,0 +1,10 @@
+{
+  "schema": "jevops-arena-source-snapshot/v1",
+  "status": "UNCHANGED",
+  "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/prompt-deletion-feedback-20260923-ZEU0J5/snapshot",
+  "manifest_sha256": "63a4d9ed09b8adff16b6ce7d66696483f9490f6f7cd6b378ef9dafd8ee6e6f88",
+  "content_root": "68e0d68160439474be97b58fa658c7b0a94fc6cacf3b2dad7ffb387b29199e11",
+  "file_count": 234,
+  "bytes": 4950934,
+  "proof_verified": false
+}

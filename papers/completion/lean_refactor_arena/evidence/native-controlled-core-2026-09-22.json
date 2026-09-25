@@ -1,0 +1,1817 @@
+{
+  "schema": "jevops-arena-controlled-trial/v1",
+  "record": {
+    "name": "Core.InitsUpdatesComm",
+    "source": "strata",
+    "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+    "src": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+    "proof_length": 224,
+    "num_lines": 55,
+    "header": "",
+    "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+    "url": "https://github.com/strata-org/Strata",
+    "start_line": 950,
+    "end_line": 1004,
+    "version_info": [
+      {
+        "v4.29.1": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      {
+        "v4.27.0": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      {
+        "v4.26.0": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      }
+    ]
+  },
+  "arms": [
+    {
+      "label": "control",
+      "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "provenance": "unchanged-reference"
+    },
+    {
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "provenance": "existing deterministic heuristic: proof_slice_unused_have"
+    },
+    {
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "provenance": "existing deterministic heuristic: proof_slice_unused_have"
+    }
+  ],
+  "repetitions": 2,
+  "seed": 17,
+  "orders": [
+    "reference-first",
+    "candidate-first"
+  ],
+  "plan_id": "4c785ca7b4d0415064be8fcfc9d659df16e47eed8faf43358accdc4cddd974d9",
+  "planned_requests": 36,
+  "schedule": [
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "4a01ab115ea09886a1ef8783d9b0e6c1574142e5049915e47fbe6887b905e9e6"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "eef9f89343c4476020638b75e48e9c3700dba18ceaff9ad1f26c26b11e494c8a"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "3f47aeaffbd1852d664c92fbc0505239d330166c8318d0140e3367d37749a144"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "ef480546a44d9e630800a302085812805db826d8e9875f051a497cb68a32daee"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "77e96c55b36f6032367fa5f8f28a41e6b5c27d66d572a0c849533aa08ba83abe"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "fd3ee6cf3fca4c6f741502e667fb37fe47e8f1029ce266a01693566687f0d971"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "ea57f43b542d3238344cda6e06808f0d35fff341730c7d16a6749c5378202bac"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "454c4433d5841d13b8c7ebe854b3cb1aa5740d774c0e5d6a41173e924099895a"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "236333d04ae17c204f6e745590e9eaaf1f26573cb2c7ac84b2502e19546f13a5"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "3df7f65a5b5673d4eb12316331d3903121068a4f9d3d8ca0d9eb8a43221fee57"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "c17f5264ad52ee76e2d1c7cc73c9d06378aa3e87f15fd5cee2dec9f47d6b89d8"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "0ecada7095afe62fd4a73834b221861316ade486c7b97949c03e04b5fc33a9ac"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "60f7ff35d42463391a5fdbdf81c2112812b53e936d94bd979f4e185cde962ff6"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "6c3773705f7e2e2f5f10e5aee7b3ebb14298f6824fa06ef55eada099d6f02eca"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "36e1497b46700385362bef2f581bdcc7a6c439125703e1a6b0bb8c2916e34e8e"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "44f34202f6f5157339ca87b4a3a70db6d253c885b0004606e82fa6a38409183a"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "b6af9bbaaf9cd13613e92246423047682446c03a233b29b0d3be7e9497351315"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "461fe4fd2c652e7928e07166a32d66e3e95c79192bbce5a5dd285840415344e1"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "f6c2097062844f59e1419d9b4aa1113331392757e544eef7cfcf7c9889bd44e8"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "be26de39894a6e5443040fb335393ec13318e9e5d201a21b26cbfca938b2438a"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "271b72cd844dc60c456cccf553ac5e39253c7631759a5912dddd382fa8693e1f"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "f5cff99fb8375cac225c24b9cbddcd1ade5e918fa8e2b6f057d611eb55333d87"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "1944b00b1ee1a18fc390da351393e1d205ebf843f6a2a0bdf0d2ff820e4c40ff"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "29f5edf55df730862afe4444d262d8e0980806ff56dbf4cf077007536eee0254"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "118bafce61ad6f3f0c456db8cd9a8007cb6ce2988506e7257a1ec44e5c70be89"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "d70fb248492774a000d9dde53ed2b3d899bd1a1d609b81993ef32351f391312a"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "99c141682f097fd98a79880290359f2fa6306cd031533caa1b22512ba944eccb"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "05ae2b5115b61555ed3d552062f99a53ae5c19677d8a5e438967067a3bd0310f"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "23eff3b201e27a09f33461714c77747acc706254613ad83b9c6da28d1c96873e"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "ee5839e13de8a43c713641540a0ed28e12ddd0247404499259c3b0ba6c0935f0"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "65ca8e20962780ef11ae94c8bba10b7ca61abfa373b67181ca77a7db7439723d"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "09213e2392392317a78347c14561d18ee5912653d5bddd84eafa150cd5da5800"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "18dc4737cf33dc23e0bfefa71c5fe1375043b67eb1af8925deac017d5e1a7c7b"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "3b76819d6ece3bac117a6c00ea6cea9e2ad3d78d54e17cc0242d34f4e52253ed"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "021c126eb1d5a38b2c31bc816f0a19b4738a644123b216ce01f6c1b5d3882c36"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "0c980543677da0638e990ce4831f5b259f8de224ff57567454736da780073643"
+    }
+  ],
+  "evidence_mode": "local_lean",
+  "max_calls": 36,
+  "requests_reserved": 36,
+  "verifier_invocations": 36,
+  "native_processes": 36,
+  "samples": [
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "4a01ab115ea09886a1ef8783d9b0e6c1574142e5049915e47fbe6887b905e9e6",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "317b97fe3810f1efd3957d9b89f8fb4e3447e1c0cc11f978a4f2b87fa0c968f3",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4227,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7acf5a81fd2070e8dd987cfc5aea0e479a7d42a18350533cc2c1b64c911050c5\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227568,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227600,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":18039.551}"
+      },
+      "context_id": "2bebff1cb3fcf5806c048bdba2802817a525a953da02729904c7ade9817fb0b9",
+      "raw_heartbeats": 4227568
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "eef9f89343c4476020638b75e48e9c3700dba18ceaff9ad1f26c26b11e494c8a",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "c8b3e85bf354ab9f3b49ff5e35cecac71b94d7307cbbb8bd7359dddaf4117e8c",
+        "candidate_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7acf5a81fd2070e8dd987cfc5aea0e479a7d42a18350533cc2c1b64c911050c5\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Function expected at\\n  ih Hinit ?m.285\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":13847.413}"
+      },
+      "context_id": "2bebff1cb3fcf5806c048bdba2802817a525a953da02729904c7ade9817fb0b9"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "3f47aeaffbd1852d664c92fbc0505239d330166c8318d0140e3367d37749a144",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "b617be18c9bd917817c9486800b501faa61b6187a3cda9a944fd1940fc8f2896",
+        "candidate_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7acf5a81fd2070e8dd987cfc5aea0e479a7d42a18350533cc2c1b64c911050c5\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"simp_all made no progress\",\"severity\":\"error\"},{\"message\":\"Function expected at\\n  ih Hinit ?m.281\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"},{\"message\":\"This simp argument is unused:\\n  isDefined\\n\\nHint: Omit it from the simp argument list.\\n  simp [isNotDefined,\u0335 \u0335i\u0335s\u0335D\u0335e\u0335f\u0335i\u0335n\u0335e\u0335d\u0335] at *\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":12972.087}"
+      },
+      "context_id": "2bebff1cb3fcf5806c048bdba2802817a525a953da02729904c7ade9817fb0b9"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "ef480546a44d9e630800a302085812805db826d8e9875f051a497cb68a32daee",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "89094106eec12057b95a9fe97df04284014c3e56d59279a30fba153baf61910c",
+        "candidate_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7acf5a81fd2070e8dd987cfc5aea0e479a7d42a18350533cc2c1b64c911050c5\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Function expected at\\n  ih Hinit ?m.285\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":12499.559}"
+      },
+      "context_id": "cdf5a62e89936067ba0a27e06f30cb4f0842cd8a77fe0bf122ade796d7c21127"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "77e96c55b36f6032367fa5f8f28a41e6b5c27d66d572a0c849533aa08ba83abe",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "3e80bcb6f42b1b4a28d2dfa62f15a3981a9e3bdd4a573cd8390b11a2f1f598b7",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4227,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7acf5a81fd2070e8dd987cfc5aea0e479a7d42a18350533cc2c1b64c911050c5\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227602,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227568,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":18233.943}"
+      },
+      "context_id": "cdf5a62e89936067ba0a27e06f30cb4f0842cd8a77fe0bf122ade796d7c21127",
+      "raw_heartbeats": 4227602
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "fd3ee6cf3fca4c6f741502e667fb37fe47e8f1029ce266a01693566687f0d971",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "525753c01b74d30e0201c533044f73e758efc61e6bef0a35e4934288cbc08cbe",
+        "candidate_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7acf5a81fd2070e8dd987cfc5aea0e479a7d42a18350533cc2c1b64c911050c5\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"simp_all made no progress\",\"severity\":\"error\"},{\"message\":\"Function expected at\\n  ih Hinit ?m.281\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"},{\"message\":\"This simp argument is unused:\\n  isDefined\\n\\nHint: Omit it from the simp argument list.\\n  simp [isNotDefined,\u0335 \u0335i\u0335s\u0335D\u0335e\u0335f\u0335i\u0335n\u0335e\u0335d\u0335] at *\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11630.011}"
+      },
+      "context_id": "cdf5a62e89936067ba0a27e06f30cb4f0842cd8a77fe0bf122ade796d7c21127"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "ea57f43b542d3238344cda6e06808f0d35fff341730c7d16a6749c5378202bac",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "ac8aa8636ecc9a9340b22e59f77bbfe66ad3d36a1af42ce9f92b59c85ad5011b",
+        "candidate_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"dae46c02e1d356edc6e1d2298bb4db2229d1476428de2e925ba770cc9b8f17dd\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"simp_all made no progress\",\"severity\":\"error\"},{\"message\":\"Function expected at\\n  ih Hinit ?m.281\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"},{\"message\":\"This simp argument is unused:\\n  isDefined\\n\\nHint: Omit it from the simp argument list.\\n  simp [isNotDefined,\u0335 \u0335i\u0335s\u0335D\u0335e\u0335f\u0335i\u0335n\u0335e\u0335d\u0335] at *\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":18661.016}"
+      },
+      "context_id": "bb388d9dacc4d2e93f9c618aa4232124de7bc376fcaac13c66b86544b960ab79"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "454c4433d5841d13b8c7ebe854b3cb1aa5740d774c0e5d6a41173e924099895a",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "382dbb681f65199db8b64901f3286896aba910c1065752c76e0f478c5f4288a6",
+        "candidate_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"dae46c02e1d356edc6e1d2298bb4db2229d1476428de2e925ba770cc9b8f17dd\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Function expected at\\n  ih Hinit ?m.285\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11837.872}"
+      },
+      "context_id": "bb388d9dacc4d2e93f9c618aa4232124de7bc376fcaac13c66b86544b960ab79"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "236333d04ae17c204f6e745590e9eaaf1f26573cb2c7ac84b2502e19546f13a5",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "ac4ff37bc7d660d49d5bff38441036fb4a271eaa982af44245e911d9b9663ede",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4657,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"dae46c02e1d356edc6e1d2298bb4db2229d1476428de2e925ba770cc9b8f17dd\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657774,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657791,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17958.674}"
+      },
+      "context_id": "bb388d9dacc4d2e93f9c618aa4232124de7bc376fcaac13c66b86544b960ab79",
+      "raw_heartbeats": 4657774
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "3df7f65a5b5673d4eb12316331d3903121068a4f9d3d8ca0d9eb8a43221fee57",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "d9287a1afc0d7152e74f8c45f06075b6d9378bb96d23f656336cf9307a8cc677",
+        "candidate_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"dae46c02e1d356edc6e1d2298bb4db2229d1476428de2e925ba770cc9b8f17dd\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Function expected at\\n  ih Hinit ?m.285\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":9875.455}"
+      },
+      "context_id": "f45ec7fd534dccb15aef33a69f9bfef717ebfd770ffcda0093b2d1fb7abb156d"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "c17f5264ad52ee76e2d1c7cc73c9d06378aa3e87f15fd5cee2dec9f47d6b89d8",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "ab52cdb01833094304b457b5feecd90da7b3f21ff507a9002cb93ebc43af9385",
+        "candidate_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"dae46c02e1d356edc6e1d2298bb4db2229d1476428de2e925ba770cc9b8f17dd\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"simp_all made no progress\",\"severity\":\"error\"},{\"message\":\"Function expected at\\n  ih Hinit ?m.281\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"},{\"message\":\"This simp argument is unused:\\n  isDefined\\n\\nHint: Omit it from the simp argument list.\\n  simp [isNotDefined,\u0335 \u0335i\u0335s\u0335D\u0335e\u0335f\u0335i\u0335n\u0335e\u0335d\u0335] at *\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":9162.249}"
+      },
+      "context_id": "f45ec7fd534dccb15aef33a69f9bfef717ebfd770ffcda0093b2d1fb7abb156d"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "0ecada7095afe62fd4a73834b221861316ade486c7b97949c03e04b5fc33a9ac",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "1f57fe813e3adbf00e47f56342a2a91a70b2e21e1575d3ffb91aaaa270557d0d",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4657,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"dae46c02e1d356edc6e1d2298bb4db2229d1476428de2e925ba770cc9b8f17dd\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657791,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657776,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":13790.089}"
+      },
+      "context_id": "f45ec7fd534dccb15aef33a69f9bfef717ebfd770ffcda0093b2d1fb7abb156d",
+      "raw_heartbeats": 4657791
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "60f7ff35d42463391a5fdbdf81c2112812b53e936d94bd979f4e185cde962ff6",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "ba0804997c7ac75bb0c1e4463552b1242ce92168d0928bbb4dca12afaf0a0f24",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4689,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"03d0ac4f47a44d4211d5a6eb33e13c1d6e2d3bcc4ce551162603b9982d6cc375\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689118,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689131,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":6111.281}"
+      },
+      "context_id": "016eff936809ce1b4d51434c41de10acc7676ba9cb6c9ffc5680f35cebdee0f2",
+      "raw_heartbeats": 4689118
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "6c3773705f7e2e2f5f10e5aee7b3ebb14298f6824fa06ef55eada099d6f02eca",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "2fb7b0c76d598bda02c722e59d75357aaf5bafe219fc05829f04e18551e0e71d",
+        "candidate_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"03d0ac4f47a44d4211d5a6eb33e13c1d6e2d3bcc4ce551162603b9982d6cc375\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Function expected at\\n  ih Hinit ?m.282\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":5113.635}"
+      },
+      "context_id": "016eff936809ce1b4d51434c41de10acc7676ba9cb6c9ffc5680f35cebdee0f2"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "36e1497b46700385362bef2f581bdcc7a6c439125703e1a6b0bb8c2916e34e8e",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "f723096a79761a1d603fa973678abc7344826c7445ac10142882b7a5497ce2a5",
+        "candidate_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"03d0ac4f47a44d4211d5a6eb33e13c1d6e2d3bcc4ce551162603b9982d6cc375\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"simp_all made no progress\",\"severity\":\"error\"},{\"message\":\"Function expected at\\n  ih Hinit ?m.278\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"},{\"message\":\"This simp argument is unused:\\n  isDefined\\n\\nHint: Omit it from the simp argument list.\\n  simp [isNotDefined,\u0335 \u0335i\u0335s\u0335D\u0335e\u0335f\u0335i\u0335n\u0335e\u0335d\u0335] at *\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6988.805}"
+      },
+      "context_id": "016eff936809ce1b4d51434c41de10acc7676ba9cb6c9ffc5680f35cebdee0f2"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "44f34202f6f5157339ca87b4a3a70db6d253c885b0004606e82fa6a38409183a",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "fb61e41d79546121b91aca0a0e20bf5f27d0559e6dcb2ae477a8a4f25e7f68b2",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4689,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"03d0ac4f47a44d4211d5a6eb33e13c1d6e2d3bcc4ce551162603b9982d6cc375\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689131,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689118,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":7430.376}"
+      },
+      "context_id": "31fc3484a520f3b64bf659dc050f1242abea9d871a60ea2692fc9d9b831c47be",
+      "raw_heartbeats": 4689131
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "b6af9bbaaf9cd13613e92246423047682446c03a233b29b0d3be7e9497351315",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "2cd1e013f3335bf1c2bd3ec770c379aa2047eb1d89fc767549ca42e3be6281d7",
+        "candidate_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"03d0ac4f47a44d4211d5a6eb33e13c1d6e2d3bcc4ce551162603b9982d6cc375\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"simp_all made no progress\",\"severity\":\"error\"},{\"message\":\"Function expected at\\n  ih Hinit ?m.278\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"},{\"message\":\"This simp argument is unused:\\n  isDefined\\n\\nHint: Omit it from the simp argument list.\\n  simp [isNotDefined,\u0335 \u0335i\u0335s\u0335D\u0335e\u0335f\u0335i\u0335n\u0335e\u0335d\u0335] at *\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6744.154}"
+      },
+      "context_id": "31fc3484a520f3b64bf659dc050f1242abea9d871a60ea2692fc9d9b831c47be"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "461fe4fd2c652e7928e07166a32d66e3e95c79192bbce5a5dd285840415344e1",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "8fb16d3b70c1e73774d087abfada80525605977456f7cee32528e260456a8329",
+        "candidate_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"03d0ac4f47a44d4211d5a6eb33e13c1d6e2d3bcc4ce551162603b9982d6cc375\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Function expected at\\n  ih Hinit ?m.282\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6553.351}"
+      },
+      "context_id": "31fc3484a520f3b64bf659dc050f1242abea9d871a60ea2692fc9d9b831c47be"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "f6c2097062844f59e1419d9b4aa1113331392757e544eef7cfcf7c9889bd44e8",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "525753c01b74d30e0201c533044f73e758efc61e6bef0a35e4934288cbc08cbe",
+        "candidate_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7acf5a81fd2070e8dd987cfc5aea0e479a7d42a18350533cc2c1b64c911050c5\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"simp_all made no progress\",\"severity\":\"error\"},{\"message\":\"Function expected at\\n  ih Hinit ?m.281\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"},{\"message\":\"This simp argument is unused:\\n  isDefined\\n\\nHint: Omit it from the simp argument list.\\n  simp [isNotDefined,\u0335 \u0335i\u0335s\u0335D\u0335e\u0335f\u0335i\u0335n\u0335e\u0335d\u0335] at *\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":12579.332}"
+      },
+      "context_id": "cdf5a62e89936067ba0a27e06f30cb4f0842cd8a77fe0bf122ade796d7c21127"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "be26de39894a6e5443040fb335393ec13318e9e5d201a21b26cbfca938b2438a",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "3e80bcb6f42b1b4a28d2dfa62f15a3981a9e3bdd4a573cd8390b11a2f1f598b7",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4227,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7acf5a81fd2070e8dd987cfc5aea0e479a7d42a18350533cc2c1b64c911050c5\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227604,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227570,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16348.921}"
+      },
+      "context_id": "cdf5a62e89936067ba0a27e06f30cb4f0842cd8a77fe0bf122ade796d7c21127",
+      "raw_heartbeats": 4227604
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "271b72cd844dc60c456cccf553ac5e39253c7631759a5912dddd382fa8693e1f",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "89094106eec12057b95a9fe97df04284014c3e56d59279a30fba153baf61910c",
+        "candidate_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7acf5a81fd2070e8dd987cfc5aea0e479a7d42a18350533cc2c1b64c911050c5\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Function expected at\\n  ih Hinit ?m.285\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":12505.444}"
+      },
+      "context_id": "cdf5a62e89936067ba0a27e06f30cb4f0842cd8a77fe0bf122ade796d7c21127"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "f5cff99fb8375cac225c24b9cbddcd1ade5e918fa8e2b6f057d611eb55333d87",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "b617be18c9bd917817c9486800b501faa61b6187a3cda9a944fd1940fc8f2896",
+        "candidate_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7acf5a81fd2070e8dd987cfc5aea0e479a7d42a18350533cc2c1b64c911050c5\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"simp_all made no progress\",\"severity\":\"error\"},{\"message\":\"Function expected at\\n  ih Hinit ?m.281\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"},{\"message\":\"This simp argument is unused:\\n  isDefined\\n\\nHint: Omit it from the simp argument list.\\n  simp [isNotDefined,\u0335 \u0335i\u0335s\u0335D\u0335e\u0335f\u0335i\u0335n\u0335e\u0335d\u0335] at *\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11699.206}"
+      },
+      "context_id": "2bebff1cb3fcf5806c048bdba2802817a525a953da02729904c7ade9817fb0b9"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "1944b00b1ee1a18fc390da351393e1d205ebf843f6a2a0bdf0d2ff820e4c40ff",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "c8b3e85bf354ab9f3b49ff5e35cecac71b94d7307cbbb8bd7359dddaf4117e8c",
+        "candidate_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7acf5a81fd2070e8dd987cfc5aea0e479a7d42a18350533cc2c1b64c911050c5\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Function expected at\\n  ih Hinit ?m.285\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":10564.648}"
+      },
+      "context_id": "2bebff1cb3fcf5806c048bdba2802817a525a953da02729904c7ade9817fb0b9"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "29f5edf55df730862afe4444d262d8e0980806ff56dbf4cf077007536eee0254",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "317b97fe3810f1efd3957d9b89f8fb4e3447e1c0cc11f978a4f2b87fa0c968f3",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4227,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7acf5a81fd2070e8dd987cfc5aea0e479a7d42a18350533cc2c1b64c911050c5\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227568,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227600,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":13554.558}"
+      },
+      "context_id": "2bebff1cb3fcf5806c048bdba2802817a525a953da02729904c7ade9817fb0b9",
+      "raw_heartbeats": 4227568
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "118bafce61ad6f3f0c456db8cd9a8007cb6ce2988506e7257a1ec44e5c70be89",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "ab52cdb01833094304b457b5feecd90da7b3f21ff507a9002cb93ebc43af9385",
+        "candidate_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"dae46c02e1d356edc6e1d2298bb4db2229d1476428de2e925ba770cc9b8f17dd\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"simp_all made no progress\",\"severity\":\"error\"},{\"message\":\"Function expected at\\n  ih Hinit ?m.281\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"},{\"message\":\"This simp argument is unused:\\n  isDefined\\n\\nHint: Omit it from the simp argument list.\\n  simp [isNotDefined,\u0335 \u0335i\u0335s\u0335D\u0335e\u0335f\u0335i\u0335n\u0335e\u0335d\u0335] at *\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":9430.206}"
+      },
+      "context_id": "f45ec7fd534dccb15aef33a69f9bfef717ebfd770ffcda0093b2d1fb7abb156d"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "d70fb248492774a000d9dde53ed2b3d899bd1a1d609b81993ef32351f391312a",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "1f57fe813e3adbf00e47f56342a2a91a70b2e21e1575d3ffb91aaaa270557d0d",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4657,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"dae46c02e1d356edc6e1d2298bb4db2229d1476428de2e925ba770cc9b8f17dd\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657793,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657774,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":14447.871}"
+      },
+      "context_id": "f45ec7fd534dccb15aef33a69f9bfef717ebfd770ffcda0093b2d1fb7abb156d",
+      "raw_heartbeats": 4657793
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "99c141682f097fd98a79880290359f2fa6306cd031533caa1b22512ba944eccb",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "d9287a1afc0d7152e74f8c45f06075b6d9378bb96d23f656336cf9307a8cc677",
+        "candidate_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"dae46c02e1d356edc6e1d2298bb4db2229d1476428de2e925ba770cc9b8f17dd\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Function expected at\\n  ih Hinit ?m.285\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":9576.279}"
+      },
+      "context_id": "f45ec7fd534dccb15aef33a69f9bfef717ebfd770ffcda0093b2d1fb7abb156d"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "05ae2b5115b61555ed3d552062f99a53ae5c19677d8a5e438967067a3bd0310f",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "382dbb681f65199db8b64901f3286896aba910c1065752c76e0f478c5f4288a6",
+        "candidate_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"dae46c02e1d356edc6e1d2298bb4db2229d1476428de2e925ba770cc9b8f17dd\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Function expected at\\n  ih Hinit ?m.285\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":16263.223}"
+      },
+      "context_id": "bb388d9dacc4d2e93f9c618aa4232124de7bc376fcaac13c66b86544b960ab79"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "23eff3b201e27a09f33461714c77747acc706254613ad83b9c6da28d1c96873e",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "ac4ff37bc7d660d49d5bff38441036fb4a271eaa982af44245e911d9b9663ede",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4657,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"dae46c02e1d356edc6e1d2298bb4db2229d1476428de2e925ba770cc9b8f17dd\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657778,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657791,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17543.364}"
+      },
+      "context_id": "bb388d9dacc4d2e93f9c618aa4232124de7bc376fcaac13c66b86544b960ab79",
+      "raw_heartbeats": 4657778
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "ee5839e13de8a43c713641540a0ed28e12ddd0247404499259c3b0ba6c0935f0",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "ac8aa8636ecc9a9340b22e59f77bbfe66ad3d36a1af42ce9f92b59c85ad5011b",
+        "candidate_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"dae46c02e1d356edc6e1d2298bb4db2229d1476428de2e925ba770cc9b8f17dd\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"simp_all made no progress\",\"severity\":\"error\"},{\"message\":\"Function expected at\\n  ih Hinit ?m.281\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"},{\"message\":\"This simp argument is unused:\\n  isDefined\\n\\nHint: Omit it from the simp argument list.\\n  simp [isNotDefined,\u0335 \u0335i\u0335s\u0335D\u0335e\u0335f\u0335i\u0335n\u0335e\u0335d\u0335] at *\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":14575.916}"
+      },
+      "context_id": "bb388d9dacc4d2e93f9c618aa4232124de7bc376fcaac13c66b86544b960ab79"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "65ca8e20962780ef11ae94c8bba10b7ca61abfa373b67181ca77a7db7439723d",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "fb61e41d79546121b91aca0a0e20bf5f27d0559e6dcb2ae477a8a4f25e7f68b2",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4689,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"03d0ac4f47a44d4211d5a6eb33e13c1d6e2d3bcc4ce551162603b9982d6cc375\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689132,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689118,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":6508.632}"
+      },
+      "context_id": "31fc3484a520f3b64bf659dc050f1242abea9d871a60ea2692fc9d9b831c47be",
+      "raw_heartbeats": 4689132
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "09213e2392392317a78347c14561d18ee5912653d5bddd84eafa150cd5da5800",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "8fb16d3b70c1e73774d087abfada80525605977456f7cee32528e260456a8329",
+        "candidate_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"03d0ac4f47a44d4211d5a6eb33e13c1d6e2d3bcc4ce551162603b9982d6cc375\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Function expected at\\n  ih Hinit ?m.282\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6640.941}"
+      },
+      "context_id": "31fc3484a520f3b64bf659dc050f1242abea9d871a60ea2692fc9d9b831c47be"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "18dc4737cf33dc23e0bfefa71c5fe1375043b67eb1af8925deac017d5e1a7c7b",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "2cd1e013f3335bf1c2bd3ec770c379aa2047eb1d89fc767549ca42e3be6281d7",
+        "candidate_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"03d0ac4f47a44d4211d5a6eb33e13c1d6e2d3bcc4ce551162603b9982d6cc375\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"simp_all made no progress\",\"severity\":\"error\"},{\"message\":\"Function expected at\\n  ih Hinit ?m.278\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"},{\"message\":\"This simp argument is unused:\\n  isDefined\\n\\nHint: Omit it from the simp argument list.\\n  simp [isNotDefined,\u0335 \u0335i\u0335s\u0335D\u0335e\u0335f\u0335i\u0335n\u0335e\u0335d\u0335] at *\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6881.663}"
+      },
+      "context_id": "31fc3484a520f3b64bf659dc050f1242abea9d871a60ea2692fc9d9b831c47be"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "sample_id": "3b76819d6ece3bac117a6c00ea6cea9e2ad3d78d54e17cc0242d34f4e52253ed",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "2fb7b0c76d598bda02c722e59d75357aaf5bafe219fc05829f04e18551e0e71d",
+        "candidate_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"03d0ac4f47a44d4211d5a6eb33e13c1d6e2d3bcc4ce551162603b9982d6cc375\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Function expected at\\n  ih Hinit ?m.282\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6995.911}"
+      },
+      "context_id": "016eff936809ce1b4d51434c41de10acc7676ba9cb6c9ffc5680f35cebdee0f2"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "sample_id": "021c126eb1d5a38b2c31bc816f0a19b4738a644123b216ce01f6c1b5d3882c36",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "f723096a79761a1d603fa973678abc7344826c7445ac10142882b7a5497ce2a5",
+        "candidate_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"03d0ac4f47a44d4211d5a6eb33e13c1d6e2d3bcc4ce551162603b9982d6cc375\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"simp_all made no progress\",\"severity\":\"error\"},{\"message\":\"Function expected at\\n  ih Hinit ?m.278\\nbut this term has type\\n  updatedStates \u03c3\u2080 ks' vs' = updatedStates \u03c3\u2080 ks' vs' \u2227\\n    InitStates \u03c3\u2080 ks' vs' (updatedStates \u03c3\u2080 ks' vs') \u2227 UpdateStates (updatedStates \u03c3\u2080 ks' vs') xs vs \u03c3''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"},{\"message\":\"This simp argument is unused:\\n  isDefined\\n\\nHint: Omit it from the simp argument list.\\n  simp [isNotDefined,\u0335 \u0335i\u0335s\u0335D\u0335e\u0335f\u0335i\u0335n\u0335e\u0335d\u0335] at *\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6713.807}"
+      },
+      "context_id": "016eff936809ce1b4d51434c41de10acc7676ba9cb6c9ffc5680f35cebdee0f2"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "0c980543677da0638e990ce4831f5b259f8de224ff57567454736da780073643",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "ba0804997c7ac75bb0c1e4463552b1242ce92168d0928bbb4dca12afaf0a0f24",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4689,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"03d0ac4f47a44d4211d5a6eb33e13c1d6e2d3bcc4ce551162603b9982d6cc375\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689118,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689131,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":8521.169}"
+      },
+      "context_id": "016eff936809ce1b4d51434c41de10acc7676ba9cb6c9ffc5680f35cebdee0f2",
+      "raw_heartbeats": 4689118
+    }
+  ],
+  "contexts": [
+    {
+      "problem": "Core.InitsUpdatesComm",
+      "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+      "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "reference_length": 224,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.29.1",
+          "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+        }
+      ],
+      "dependency_digests": [
+        "7acf5a81fd2070e8dd987cfc5aea0e479a7d42a18350533cc2c1b64c911050c5"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":120.0}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    },
+    {
+      "problem": "Core.InitsUpdatesComm",
+      "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+      "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "reference_length": 224,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.29.1",
+          "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+        }
+      ],
+      "dependency_digests": [
+        "7acf5a81fd2070e8dd987cfc5aea0e479a7d42a18350533cc2c1b64c911050c5"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"candidate-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":120.0}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    },
+    {
+      "problem": "Core.InitsUpdatesComm",
+      "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+      "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "reference_length": 224,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+        }
+      ],
+      "dependency_digests": [
+        "dae46c02e1d356edc6e1d2298bb4db2229d1476428de2e925ba770cc9b8f17dd"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":120.0}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    },
+    {
+      "problem": "Core.InitsUpdatesComm",
+      "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+      "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "reference_length": 224,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+        }
+      ],
+      "dependency_digests": [
+        "dae46c02e1d356edc6e1d2298bb4db2229d1476428de2e925ba770cc9b8f17dd"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"candidate-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":120.0}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    },
+    {
+      "problem": "Core.InitsUpdatesComm",
+      "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+      "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "reference_length": 224,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "dependency_digests": [
+        "03d0ac4f47a44d4211d5a6eb33e13c1d6e2d3bcc4ce551162603b9982d6cc375"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":120.0}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    },
+    {
+      "problem": "Core.InitsUpdatesComm",
+      "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+      "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "reference_length": 224,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "dependency_digests": [
+        "03d0ac4f47a44d4211d5a6eb33e13c1d6e2d3bcc4ce551162603b9982d6cc375"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"candidate-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":120.0}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "label": "heuristic-0-delete_sibling_chunk",
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "provenance": "existing deterministic heuristic: proof_slice_unused_have",
+      "status": "REJECTED",
+      "reference_tokens": 224,
+      "candidate_tokens": 213,
+      "length_reduction_pct": 4.91071428571429,
+      "verified_pins": [],
+      "required_pins": [
+        {
+          "lean_tag": "v4.29.1",
+          "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+        },
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "heartbeat_result": "INCOMPLETE",
+      "strata": [
+        {
+          "version": {
+            "lean_tag": "v4.29.1",
+            "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+          },
+          "branch_order": "reference-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.29.1",
+            "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+          },
+          "branch_order": "candidate-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.27.0",
+            "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+          },
+          "branch_order": "reference-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.27.0",
+            "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+          },
+          "branch_order": "candidate-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "status": "INCOMPLETE"
+        }
+      ],
+      "observed_pareto_improvement": null,
+      "statistical_significance_claimed": false,
+      "promoted": false,
+      "official_score": null
+    },
+    {
+      "label": "heuristic-1-delete_sibling_chunk",
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "provenance": "existing deterministic heuristic: proof_slice_unused_have",
+      "status": "REJECTED",
+      "reference_tokens": 224,
+      "candidate_tokens": 219,
+      "length_reduction_pct": 2.2321428571428603,
+      "verified_pins": [],
+      "required_pins": [
+        {
+          "lean_tag": "v4.29.1",
+          "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+        },
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "heartbeat_result": "INCOMPLETE",
+      "strata": [
+        {
+          "version": {
+            "lean_tag": "v4.29.1",
+            "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+          },
+          "branch_order": "reference-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.29.1",
+            "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+          },
+          "branch_order": "candidate-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.27.0",
+            "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+          },
+          "branch_order": "reference-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.27.0",
+            "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+          },
+          "branch_order": "candidate-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "status": "INCOMPLETE"
+        }
+      ],
+      "observed_pareto_improvement": null,
+      "statistical_significance_claimed": false,
+      "promoted": false,
+      "official_score": null
+    }
+  ],
+  "status": "COMPLETE",
+  "receipt_cache_enabled": false,
+  "live_model_calls": 0,
+  "training_enabled": false,
+  "production_memory_used": false,
+  "official_score": null,
+  "local_combined_pct": null,
+  "worker_metric_parity": "UNCONFIRMED",
+  "runner_sha256": "d56c4e9d432b74b94d91de72ee29bdae12343f40d0c19819df3706a97d64c521",
+  "readiness": {
+    "schema": "jevops-arena-native-readiness/v1",
+    "required_version_checks": 3,
+    "completed_version_checks": 0,
+    "official_score": null,
+    "rows": [
+      {
+        "name": "Core.InitsUpdatesComm",
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9",
+        "status": "UNMEASURED",
+        "capability_gaps": [],
+        "dependencies_verified": false,
+        "baseline_compiles": null
+      },
+      {
+        "name": "Core.InitsUpdatesComm",
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d",
+        "status": "UNMEASURED",
+        "capability_gaps": [],
+        "dependencies_verified": false,
+        "baseline_compiles": null
+      },
+      {
+        "name": "Core.InitsUpdatesComm",
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+        "status": "UNMEASURED",
+        "capability_gaps": [],
+        "dependencies_verified": false,
+        "baseline_compiles": null
+      }
+    ]
+  },
+  "fingerprint_file_reads": 103258,
+  "fingerprint_stat_hits": 965492
+}

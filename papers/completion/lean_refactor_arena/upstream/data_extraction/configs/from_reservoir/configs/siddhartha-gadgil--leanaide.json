@@ -1,0 +1,34 @@
+{
+    "repo": "https://github.com/siddhartha-gadgil/LeanAide",
+    "commit": "419c7eca3a2ce606d35995960e91c69528ee28aa",
+    "lean": "leanprover/lean4:v4.13.0-rc4",
+    "name": "leanaide",
+    "imports": [
+        "LeanAide",
+        "LeanCodePrompts"
+    ],
+    "metadata": {
+        "name": "leanaide",
+        "owner": "siddhartha-gadgil",
+        "fullName": "siddhartha-gadgil/leanaide",
+        "description": "Tools based on AI for helping with Lean 4",
+        "keywords": [],
+        "homepage": null,
+        "license": "Apache-2.0",
+        "createdAt": "2022-09-05T08:49:47Z",
+        "updatedAt": "2024-10-27T13:59:45Z",
+        "stars": 65,
+        "sources": [
+            {
+                "type": "git",
+                "host": "github",
+                "id": "R_kgDOH8ImEw",
+                "fullName": "siddhartha-gadgil/LeanAide",
+                "repoUrl": "https://github.com/siddhartha-gadgil/LeanAide",
+                "gitUrl": "https://github.com/siddhartha-gadgil/LeanAide",
+                "defaultBranch": "main"
+            }
+        ],
+        "schemaVersion": "1.2.0"
+    }
+}

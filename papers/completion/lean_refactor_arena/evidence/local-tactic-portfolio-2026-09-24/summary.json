@@ -1,0 +1,497 @@
+{
+  "schema": "jevops-local-portfolio-evidence-summary/v1",
+  "plan_id": "932ece465cd1788440f3e72daa1cfb7d12ff64cdf6179dd665cf3aa9151c32dd",
+  "run_directory": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-tactic-portfolio-20260924-fQILB1/run",
+  "scope": "exploratory-public-warmup-not-held-out",
+  "capture": {
+    "status": "OBSERVED",
+    "events": 37,
+    "event_statuses": {
+      "captured": 37
+    },
+    "trace_sha256": "5cc14936d2552856337ea2f3782a14f1faf890786fd44aa5e2c0cd862310d68d",
+    "environment_sha256": "c008a24bd00a580fd4c5de24205e059b242e89ca59beb2d15fd00804cc37c651"
+  },
+  "families": {
+    "local": {
+      "schema": "jevops-local-premise-batch/v1",
+      "request": {
+        "schema": "jevops-local-premise-request/v1",
+        "record_sha256": "8531dba47f5c2ccb5526c9596f06804c66f4cf6971d1533baf6c1ffb61311625",
+        "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "trace_sha256": "5cc14936d2552856337ea2f3782a14f1faf890786fd44aa5e2c0cd862310d68d",
+        "capture_environment": "8481466ec212a35ec93bc12f8599342d22f514871bfe047d357332e4a2e0b400",
+        "environment_sha256": "c008a24bd00a580fd4c5de24205e059b242e89ca59beb2d15fd00804cc37c651",
+        "origin_sha256": "e336b6b1986bba937ee43c57f0cedff7de4e81fef7c43f0828695f5ab1eecfb7",
+        "index_sha256": "cf96c9b1babf3ae6d2bcdc8babb417927ca9eb02ab9a6f7951a5fa35b8571c81",
+        "scope_sha256": "76ccd1d9883b955012cc844d8553d2f5511ea2284706d11c074c7816db6db5a8",
+        "effective_scope_sha256": "af02a2964f9fd2a0fe36d019526610e4fc99b1a31e39155aaca3b63f05b683d1",
+        "declaration": "Core.InitsUpdatesComm",
+        "target": "Core.InitsUpdatesComm",
+        "methods": [
+          "exact",
+          "apply"
+        ],
+        "cap": 2,
+        "top_k": 4,
+        "max_scan": 512,
+        "max_events": 64,
+        "max_query_nodes": 256,
+        "ranking_bytes": 1048576,
+        "feature_method": "goal-and-local-type-constants/v1",
+        "tokenizer_id": "lra-reference-lexical/v1",
+        "request_sha256": "8f71ada0b0d824db0a7ac3a36b8e70eccce7b2735822482316705c5e7fe4f145"
+      },
+      "policy": "deterministic-lexical-local-premises/v1",
+      "status": "DRAFTS_ONLY",
+      "truncated": true,
+      "base_tokens": 224,
+      "proposals": [
+        {
+          "event_id": 15,
+          "candidate": "exact _root_.Core.updatedStatesInit"
+        },
+        {
+          "event_id": 15,
+          "candidate": "exact _root_.Core.UpdateStateDefined'"
+        }
+      ],
+      "drafts": [
+        {
+          "name": "Core.InitsUpdatesComm",
+          "label": "local-premise-0",
+          "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [← updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          exact _root_.Core.updatedStatesInit\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+          "provenance": "unverified local premise; request 8f71ada0b0d824db0a7ac3a36b8e70eccce7b2735822482316705c5e7fe4f145; event 15"
+        },
+        {
+          "name": "Core.InitsUpdatesComm",
+          "label": "local-premise-1",
+          "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [← updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          exact _root_.Core.UpdateStateDefined'\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+          "provenance": "unverified local premise; request 8f71ada0b0d824db0a7ac3a36b8e70eccce7b2735822482316705c5e7fe4f145; event 15"
+        }
+      ],
+      "origins": [
+        {
+          "label": "local-premise-0",
+          "event_id": 15,
+          "event_sha256": "a7f687207f7e4f0198c94798914959f17fcdbdec1cb1448c1f82f34b495b5308",
+          "premise": {
+            "name": "Core.updatedStatesInit",
+            "type_text": "∀ {P : Imperative.PureExpr} {σ : Imperative.SemanticStore P} {hs : List P.Ident} {vs : List P.Expr},\n  hs.length = vs.length → Imperative.isNotDefined σ hs → hs.Nodup → Core.InitStates σ hs vs (Core.updatedStates σ hs vs)",
+            "origin": "Strata/target-free-prefix",
+            "split": "library",
+            "aliases": [],
+            "dependencies": []
+          },
+          "ranking_sha256": "5b332dfa126007d4b4c4490d1538b8cca8e4e39e2bf7fdc8e4582261e85d2b09"
+        },
+        {
+          "label": "local-premise-1",
+          "event_id": 15,
+          "event_sha256": "a7f687207f7e4f0198c94798914959f17fcdbdec1cb1448c1f82f34b495b5308",
+          "premise": {
+            "name": "Core.UpdateStateDefined'",
+            "type_text": "∀ {P : Imperative.PureExpr} {σ σ' : Imperative.SemanticStore P} {e : P.Expr} {v : P.Ident},\n  Imperative.UpdateState P σ v e σ' → Imperative.isDefined σ [v]",
+            "origin": "Strata/target-free-prefix",
+            "split": "library",
+            "aliases": [],
+            "dependencies": []
+          },
+          "ranking_sha256": "5b332dfa126007d4b4c4490d1538b8cca8e4e39e2bf7fdc8e4582261e85d2b09"
+        }
+      ],
+      "proof_verified": false,
+      "proof_admitted": false,
+      "whole_source_checked": false,
+      "fresh_verification_required": true,
+      "work": {
+        "event_records": 13,
+        "template_outcomes": 66,
+        "event_statuses": {
+          "UNSUPPORTED_SPAN": 4,
+          "RANKED": 9
+        },
+        "template_statuses": {
+          "NOT_SHORTER": 64,
+          "DRAFT": 2
+        },
+        "local_searches": 0,
+        "local_search_checks": 0
+      },
+      "emitted": [
+        {
+          "event_id": 15,
+          "candidate": "exact _root_.Core.updatedStatesInit",
+          "source_sha256": "22d02b7af5f90da91b46519a1737f08c36e9884cab9eb021adbaee1e563b9a9e",
+          "tokens": 221,
+          "status": "DRAFT",
+          "label": "local-premise-0"
+        },
+        {
+          "event_id": 15,
+          "candidate": "exact _root_.Core.UpdateStateDefined'",
+          "source_sha256": "5f85f4e004eb71e968aa190bf8b50edfff6678b91a883136d3d5a0b8f1107060",
+          "tokens": 221,
+          "status": "DRAFT",
+          "label": "local-premise-1"
+        }
+      ]
+    },
+    "portfolio": {
+      "schema": "jevops-local-premise-batch/v1",
+      "request": {
+        "schema": "jevops-local-premise-request/v1",
+        "record_sha256": "8531dba47f5c2ccb5526c9596f06804c66f4cf6971d1533baf6c1ffb61311625",
+        "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "trace_sha256": "5cc14936d2552856337ea2f3782a14f1faf890786fd44aa5e2c0cd862310d68d",
+        "capture_environment": "8481466ec212a35ec93bc12f8599342d22f514871bfe047d357332e4a2e0b400",
+        "environment_sha256": "c008a24bd00a580fd4c5de24205e059b242e89ca59beb2d15fd00804cc37c651",
+        "origin_sha256": "e336b6b1986bba937ee43c57f0cedff7de4e81fef7c43f0828695f5ab1eecfb7",
+        "index_sha256": "cf96c9b1babf3ae6d2bcdc8babb417927ca9eb02ab9a6f7951a5fa35b8571c81",
+        "scope_sha256": "76ccd1d9883b955012cc844d8553d2f5511ea2284706d11c074c7816db6db5a8",
+        "effective_scope_sha256": "af02a2964f9fd2a0fe36d019526610e4fc99b1a31e39155aaca3b63f05b683d1",
+        "declaration": "Core.InitsUpdatesComm",
+        "target": "Core.InitsUpdatesComm",
+        "methods": [
+          "exact",
+          "apply"
+        ],
+        "cap": 2,
+        "top_k": 4,
+        "max_scan": 512,
+        "max_events": 64,
+        "max_query_nodes": 256,
+        "ranking_bytes": 1048576,
+        "feature_method": "goal-and-local-type-constants/v1",
+        "tokenizer_id": "lra-reference-lexical/v1",
+        "strategy": "portfolio-v1",
+        "max_templates": 128,
+        "families": [
+          "apply_assumption",
+          "exact",
+          "local_term",
+          "close"
+        ],
+        "local_search": {
+          "max_applications": 2,
+          "max_terms": 64,
+          "max_checks": 2048
+        },
+        "closers": [
+          "assumption",
+          "rfl",
+          "trivial",
+          "solve | simp_all"
+        ],
+        "schedule": "diagonal-goal-family-round-robin/v1",
+        "request_sha256": "0de51ff74facec1bf0f331b28069f43306182c837d43f57c3e34c477b6fba0c5"
+      },
+      "policy": "deterministic-local-tactic-portfolio/v1",
+      "status": "DRAFTS_ONLY",
+      "truncated": true,
+      "base_tokens": 224,
+      "attempted_templates": 9,
+      "family_drafts": {
+        "apply_assumption": 0,
+        "exact": 1,
+        "local_term": 0,
+        "close": 1
+      },
+      "proposals": [
+        {
+          "event_id": 10,
+          "candidate": "exact _root_.Core.updatedStatesInit"
+        },
+        {
+          "event_id": 24,
+          "candidate": "assumption"
+        }
+      ],
+      "drafts": [
+        {
+          "name": "Core.InitsUpdatesComm",
+          "label": "local-premise-0",
+          "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact _root_.Core.updatedStatesInit\n    . apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [← updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+          "provenance": "unverified local exact; request 0de51ff74facec1bf0f331b28069f43306182c837d43f57c3e34c477b6fba0c5; event 10"
+        },
+        {
+          "name": "Core.InitsUpdatesComm",
+          "label": "local-premise-1",
+          "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [← updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          assumption\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+          "provenance": "unverified local close; request 0de51ff74facec1bf0f331b28069f43306182c837d43f57c3e34c477b6fba0c5; event 24"
+        }
+      ],
+      "origins": [
+        {
+          "label": "local-premise-0",
+          "event_id": 10,
+          "event_sha256": "f3a2e115d332457de6a85cc0e600634c41c76031589e8f812188d8a49ba063a7",
+          "family": "exact",
+          "premise": {
+            "name": "Core.updatedStatesInit",
+            "type_text": "∀ {P : Imperative.PureExpr} {σ : Imperative.SemanticStore P} {hs : List P.Ident} {vs : List P.Expr},\n  hs.length = vs.length → Imperative.isNotDefined σ hs → hs.Nodup → Core.InitStates σ hs vs (Core.updatedStates σ hs vs)",
+            "origin": "Strata/target-free-prefix",
+            "split": "library",
+            "aliases": [],
+            "dependencies": []
+          },
+          "ranking_sha256": "41a3fec73af4f1fc4b647b0b5b50565ad4ac73748843f4dc189d8096505895dc"
+        },
+        {
+          "label": "local-premise-1",
+          "event_id": 24,
+          "event_sha256": "430a7bfa8cd6895103d6d2cd744513df78c9104a2c03bf797afebc4704dc0bbe",
+          "family": "close",
+          "premise": null,
+          "ranking_sha256": "d89e5429f3ac60219b1330fb0495045f03db4d8117b27eb9f0a4ade77f72be3d"
+        }
+      ],
+      "proof_verified": false,
+      "proof_admitted": false,
+      "whole_source_checked": false,
+      "fresh_verification_required": true,
+      "work": {
+        "event_records": 37,
+        "template_outcomes": 9,
+        "event_statuses": {
+          "UNSUPPORTED_SPAN": 6,
+          "RANKED": 31
+        },
+        "template_statuses": {
+          "NOT_SHORTER": 7,
+          "DRAFT": 2
+        },
+        "local_searches": 3,
+        "local_search_checks": 0
+      },
+      "emitted": [
+        {
+          "event_id": 10,
+          "family": "exact",
+          "candidate": "exact _root_.Core.updatedStatesInit",
+          "source_sha256": "44637ab57567c4bf71af9e4e7ca23d96b34344e5013b04d675999375feb0bb19",
+          "tokens": 223,
+          "status": "DRAFT",
+          "label": "local-premise-0"
+        },
+        {
+          "event_id": 24,
+          "family": "close",
+          "candidate": "assumption",
+          "source_sha256": "e25d5266e94485d4603c35e0844aeae4ac6c57dca55557edfec258a8051b4ecf",
+          "tokens": 221,
+          "status": "DRAFT",
+          "label": "local-premise-1"
+        }
+      ]
+    }
+  },
+  "replays": {
+    "local-replay-0.json": {
+      "ok": true,
+      "closing_reproduced": false,
+      "proof_admitted": false,
+      "whole_source_checked": false,
+      "native_sha256": "a9c000a11c56c43a53f55f32f0e924ee8bd8e87e8d828aad62a831b1dd9037c1",
+      "native": {
+        "schema": "jevops-closed-tactic-replay/v1",
+        "environment": "6324b7c823f54df437fa95f931355ac85117174d001cc6dab2b1ac0caa5041b6",
+        "lean_version": "4.29.1",
+        "lean_githash": "f72c35b3f637c8c6571d353742168ab66cc22c00",
+        "candidate": "exact _root_.Core.updatedStatesInit",
+        "baseline": {
+          "axioms": [
+            "propext"
+          ],
+          "closed_goals_checked": "1",
+          "remaining_goals": "0",
+          "status": "closed_kernel_checked"
+        },
+        "proposed": {
+          "axioms": [],
+          "closed_goals_checked": "0",
+          "reason": "Type mismatch\n  Core.updatedStatesInit\nhas type\n  List.length ?m.210 = List.length ?m.211 →\n    Imperative.isNotDefined ?m.209 ?m.210 →\n      List.Nodup ?m.210 → Core.InitStates ?m.209 ?m.210 ?m.211 (Core.updatedStates ?m.209 ?m.210 ?m.211)\nbut is expected to have type\n  Imperative.UpdateState P (Core.updatedStates' σ (ks'.zip vs')) x v\n    (Core.updatedState (Core.updatedStates' σ (ks'.zip vs')) x v)",
+          "remaining_goals": null,
+          "status": "rejected"
+        }
+      },
+      "event_id": 15,
+      "original_span": "split at Hdef <;> simp_all"
+    },
+    "local-replay-1.json": {
+      "ok": true,
+      "closing_reproduced": false,
+      "proof_admitted": false,
+      "whole_source_checked": false,
+      "native_sha256": "e7850bb133858f874775f10366cbf3f5caa70d196ecc83fdda2eefe4568ca88f",
+      "native": {
+        "schema": "jevops-closed-tactic-replay/v1",
+        "environment": "3c395886d3be0aaeac5ef86b2debd2816594b93670f437853a3c5cb9906ff575",
+        "lean_version": "4.29.1",
+        "lean_githash": "f72c35b3f637c8c6571d353742168ab66cc22c00",
+        "candidate": "exact _root_.Core.UpdateStateDefined'",
+        "baseline": {
+          "axioms": [
+            "propext"
+          ],
+          "closed_goals_checked": "1",
+          "remaining_goals": "0",
+          "status": "closed_kernel_checked"
+        },
+        "proposed": {
+          "axioms": [],
+          "closed_goals_checked": "0",
+          "reason": "Type mismatch\n  Core.UpdateStateDefined'\nhas type\n  Imperative.UpdateState ?m.208 ?m.209 ?m.212 ?m.211 ?m.210 → Imperative.isDefined ?m.209 [?m.212]\nbut is expected to have type\n  Imperative.UpdateState P (Core.updatedStates' σ (ks'.zip vs')) x v\n    (Core.updatedState (Core.updatedStates' σ (ks'.zip vs')) x v)",
+          "remaining_goals": null,
+          "status": "rejected"
+        }
+      },
+      "event_id": 15,
+      "original_span": "split at Hdef <;> simp_all"
+    },
+    "portfolio-replay-0.json": {
+      "ok": true,
+      "closing_reproduced": false,
+      "proof_admitted": false,
+      "whole_source_checked": false,
+      "native_sha256": "903464b593db99238e44d22b8bb3eeb2434e5f69be9461c4909c964c612a1f7a",
+      "native": {
+        "schema": "jevops-closed-tactic-replay/v1",
+        "environment": "b48b93e4076d4e3d71ec56190abe19654ca63e6d3dc2d31f2ed8ba17c25b0057",
+        "lean_version": "4.29.1",
+        "lean_githash": "f72c35b3f637c8c6571d353742168ab66cc22c00",
+        "candidate": "exact _root_.Core.updatedStatesInit",
+        "baseline": {
+          "axioms": [
+            "propext",
+            "Quot.sound",
+            "Classical.choice"
+          ],
+          "closed_goals_checked": "1",
+          "remaining_goals": "0",
+          "status": "closed_kernel_checked"
+        },
+        "proposed": {
+          "axioms": [],
+          "closed_goals_checked": "0",
+          "reason": "Type mismatch\n  Core.updatedStatesInit\nhas type\n  List.length ?m.124 = List.length ?m.125 →\n    Imperative.isNotDefined ?m.123 ?m.124 →\n      List.Nodup ?m.124 → Core.InitStates ?m.123 ?m.124 ?m.125 (Core.updatedStates ?m.123 ?m.124 ?m.125)\nbut is expected to have type\n  ks'.Nodup",
+          "remaining_goals": null,
+          "status": "rejected"
+        }
+      },
+      "event_id": 10,
+      "original_span": "exact InitStatesNodup Hinit"
+    },
+    "portfolio-replay-1.json": {
+      "ok": true,
+      "closing_reproduced": false,
+      "proof_admitted": false,
+      "whole_source_checked": false,
+      "native_sha256": "26017a2cf9d4ea04afc251758a583938851756532a8f6bad67095cf964672c18",
+      "native": {
+        "schema": "jevops-closed-tactic-replay/v1",
+        "environment": "f9e50c9818c3237a4c3c9af207d2235f0110e2dfa865c82a04263052102da5c1",
+        "lean_version": "4.29.1",
+        "lean_githash": "f72c35b3f637c8c6571d353742168ab66cc22c00",
+        "candidate": "assumption",
+        "baseline": {
+          "axioms": [
+            "propext",
+            "Quot.sound",
+            "Classical.choice"
+          ],
+          "closed_goals_checked": "1",
+          "remaining_goals": "0",
+          "status": "closed_kernel_checked"
+        },
+        "proposed": {
+          "axioms": [],
+          "closed_goals_checked": "0",
+          "reason": "Tactic `assumption` failed\n\ncase a\nP : Imperative.PureExpr\nσ✝ σ' : Imperative.SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : Imperative.SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : Imperative.SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : Imperative.SemanticStore P\nHup : Imperative.UpdateState P σ x v σ₀\nHups : Core.UpdateStates σ₀ xs vs σ₁\nσ'' : Imperative.SemanticStore P\nx✝ : Option P.Expr\nval : P.Expr\nih :\n  ∀ {σ'' : Imperative.SemanticStore P},\n    Core.InitStates σ₁ ks' vs' σ'' →\n      Imperative.isDefined σ₁ xs → Core.InitStates σ₀ ks' vs' (Core.updatedStates σ₀ ks' vs')\nHinit : Core.InitStates σ₁ ks' vs' σ''\nHk : Imperative.isDefined σ₁ (x :: xs)\nHlen2 : xs.length = vs.length\nheq : σ x = some val\n⊢ ks'.Nodup",
+          "remaining_goals": null,
+          "status": "rejected"
+        }
+      },
+      "event_id": 24,
+      "original_span": ". exact InitStatesNodup Hinit"
+    }
+  },
+  "artifacts": {
+    "plan.json": {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-tactic-portfolio-20260924-fQILB1/run/plan.json",
+      "bytes": 5435,
+      "sha256": "7a267f8c35375a1b659438ed714454555217440b0acee2d42b82f1d3294a7c21"
+    },
+    "report.json": {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-tactic-portfolio-20260924-fQILB1/run/report.json",
+      "bytes": 20903,
+      "sha256": "2390de8b83a680411f9485f26aaecb1faa59d59428d5baf97c21cbc007b5b150"
+    },
+    "context.json": {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-tactic-portfolio-20260924-fQILB1/run/context.json",
+      "bytes": 3784,
+      "sha256": "3068a7a03d4286fa39b70bf151e1a081984c6591745f70436c4bc5f9c054e454"
+    },
+    "source-binding.json": {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-tactic-portfolio-20260924-fQILB1/run/source-binding.json",
+      "bytes": 946,
+      "sha256": "e7dc685cd4d9c16e7dbd60fcd1ac07d0958a024e8272fb733e2063c44fb90aa8"
+    },
+    "capture.json": {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-tactic-portfolio-20260924-fQILB1/run/capture.json",
+      "bytes": 7375657,
+      "sha256": "de497c9cdae0f68855d4314c664413fc3a79e9fcad4150ffa28de9fdc37b5f00"
+    },
+    "inventory.json": {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-tactic-portfolio-20260924-fQILB1/run/inventory.json",
+      "bytes": 174949,
+      "sha256": "3cdc250a0d868fa0b754903b70b7fcef927fe5fcc36a05df5b456d125f98187f"
+    },
+    "local-drafts.json": {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-tactic-portfolio-20260924-fQILB1/run/local-drafts.json",
+      "bytes": 46185,
+      "sha256": "31ec451cb91754bbf856459cae96c9304d4147c3ba9d1d716fd991af46d5346d"
+    },
+    "local-replay-0.json": {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-tactic-portfolio-20260924-fQILB1/run/local-replay-0.json",
+      "bytes": 173035,
+      "sha256": "60a06940e651470f441b688b6f410753186c05700abcaed93284671080a05885"
+    },
+    "local-replay-1.json": {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-tactic-portfolio-20260924-fQILB1/run/local-replay-1.json",
+      "bytes": 172843,
+      "sha256": "4e210d4194bafe523385f723b8eec5d3607e51a4b559156932885dd59894939a"
+    },
+    "portfolio-drafts.json": {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-tactic-portfolio-20260924-fQILB1/run/portfolio-drafts.json",
+      "bytes": 86172,
+      "sha256": "43dfca9d1b4853f7c3ff24a5a3c0cce8596e32954efdbbf9e83038f502f6140c"
+    },
+    "portfolio-replay-0.json": {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-tactic-portfolio-20260924-fQILB1/run/portfolio-replay-0.json",
+      "bytes": 156429,
+      "sha256": "4334acf9aab2ba85a89e8e895171dd054f4b96d71c696cc368d3aa9fcb012538"
+    },
+    "portfolio-replay-1.json": {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-tactic-portfolio-20260924-fQILB1/run/portfolio-replay-1.json",
+      "bytes": 215725,
+      "sha256": "1098a36dbbb64ae67ab84c172e29267808aa549adc0e49baf3643e54816ee186"
+    }
+  },
+  "official_score": null,
+  "promoted": false,
+  "model_calls": 0,
+  "inventory": {
+    "status": "INVENTORY_ONLY",
+    "names": [
+      "Core.InitStatesNodup",
+      "Core.InitStatesNotDefined",
+      "Core.InitStatesSomeMonotone",
+      "Core.UpdateStateDefined'",
+      "Core.UpdateStateNotDefMonotone'",
+      "Core.UpdateStatesNotDefMonotone'",
+      "Core.updatedStateUpdate",
+      "Core.updatedStatesInit"
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "repository": "https://github.com/Verified-zkEVM/ArkLib",
+    "lean_tag": "v4.30.0",
+    "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0",
+    "kind": "repo",
+    "resolve_lake_manifest": true
+  }
+]

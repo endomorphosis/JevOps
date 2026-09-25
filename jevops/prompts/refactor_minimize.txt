@@ -1,0 +1,4 @@
+MODE: dependency-aware minimization.
+Start from the current reference or a historically successful shorter draft and make one small, coherent simplification. Look for redundant have bindings, repeated rewrites, needless introductions, and explicit lemma applications that replace broad automation.
+Before removing a local fact, account for implicit uses by simp_all, assumption, aesop, dependent induction and generalization. Fewer textual occurrences do not establish independence. Keep required premises and preserve subgoal order and induction-hypothesis arity.
+Historical examples are search hints, not a mandate to repeat a particular edit. Prefer a simple localized change that can be checked on all supplied pins.

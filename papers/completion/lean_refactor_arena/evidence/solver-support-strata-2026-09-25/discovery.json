@@ -1,0 +1,350 @@
+{
+  "schema": "jevops-arena-solver-frontier/v1",
+  "plan": {
+    "schema": "jevops-arena-solver-frontier/v1",
+    "context_id": "5453a42486b522360a5baf5e5e8c13042c6c4c713567d63cf57c536192f5ad4e",
+    "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+    "pin": {
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+    },
+    "mode": "minimize-v1",
+    "limits": {
+      "max_calls": 16,
+      "max_states": 8,
+      "max_depth": 3,
+      "max_sites": 1,
+      "max_proposals": 128,
+      "max_source_bytes": 65536,
+      "max_frontier_bytes": 262144,
+      "max_drafts": 1
+    },
+    "implementation": {
+      "arena_solver.py": "d9ba080b2dabada6e05e541367fa0f61313a44f1efe04bdaee56f605877ebdd0",
+      "solver_feedback.py": "0b34d3eb2ff3d27f6a2377c1b28665973034e3e20256924474550c3e65e33774",
+      "arena.py": "e1ba89358f25828d3cabd7acca049cfcaa6ab2cee8901ca01add7bb4dc5789ca"
+    },
+    "evidence_mode": "local_lean",
+    "draft_policy": "shortest-v1",
+    "plan_id": "fd31a92c9e0f7e23d3d2e6ece8c78fd25cf79f40d42c9a9b868c59f8ac8cd262"
+  },
+  "status": "COMPLETE",
+  "evidence_mode": "local_lean",
+  "seed_checked": true,
+  "context_applicable": true,
+  "incumbent_source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars, List.Subset.empty, List.append_assoc] at *\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+  "nomination": null,
+  "incumbent_changed": false,
+  "frontier": [
+    {
+      "id": 0,
+      "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars, List.Subset.empty, List.append_assoc] at *\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+      "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+      "tokens": 190,
+      "raw_heartbeats": 2049152,
+      "depth": 0,
+      "parent": null,
+      "attempt": 0,
+      "solver_spans": {
+        "nodes_visited": 683,
+        "schema": "jevops-lean-solver-spans/v1",
+        "source_utf8_bytes": 1775,
+        "spans": [
+          {
+            "end_utf8": 339,
+            "start_utf8": 206,
+            "syntax_kind": "Lean.Parser.Tactic.simp",
+            "tactic": "simp"
+          },
+          {
+            "end_utf8": 788,
+            "start_utf8": 780,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 889,
+            "start_utf8": 881,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1102,
+            "start_utf8": 1094,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1188,
+            "start_utf8": 1180,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1342,
+            "start_utf8": 1334,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1454,
+            "start_utf8": 1446,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1540,
+            "start_utf8": 1532,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1689,
+            "start_utf8": 1681,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1775,
+            "start_utf8": 1767,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          }
+        ],
+        "status": "CAPTURED"
+      },
+      "reference_raw_heartbeats": 2607585
+    }
+  ],
+  "pareto_ids": [
+    0
+  ],
+  "drafts": [],
+  "attempts": [
+    {
+      "kind": "seed",
+      "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+      "receipt": {
+        "request_id": "4e72a0ff7027447cdc35ba437d1743ce02d74f83a8df907526fc487ed0844a82",
+        "candidate_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "target": "CallElimCorrect.extractedOldExprInVars",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 2049,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"1dfe9066101631fb9deac7012e9e74f6bbddca0fda5e2cb227911f4679e949d7\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2049,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2049152,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":683,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1775,\"spans\":[{\"end_utf8\":339,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":788,\"start_utf8\":780,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":889,\"start_utf8\":881,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1102,\"start_utf8\":1094,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1188,\"start_utf8\":1180,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1342,\"start_utf8\":1334,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1454,\"start_utf8\":1446,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1540,\"start_utf8\":1532,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1689,\"start_utf8\":1681,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1775,\"start_utf8\":1767,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":18125.013}"
+      }
+    },
+    {
+      "kind": "support-deletion",
+      "source_sha256": "1a6c2e82709d08484c6ede0823809f2884d7005d097cef855f0f72f54744143e",
+      "receipt": {
+        "request_id": "5bbebbdf08b53e057a88c538790af440c61524ea0ea43a5272cc93c7bde447db",
+        "candidate_sha256": "1a6c2e82709d08484c6ede0823809f2884d7005d097cef855f0f72f54744143e",
+        "target": "CallElimCorrect.extractedOldExprInVars",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"1dfe9066101631fb9deac7012e9e74f6bbddca0fda5e2cb227911f4679e949d7\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase h_3.app.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e e1\u271d e2\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d : CoreIdent\\nfn_ih : (extractOldExprVars fn).Subset (Imperative.HasVarsPure.getVars fn)\\ne_ih : (extractOldExprVars e).Subset (Imperative.HasVarsPure.getVars e)\\nx\u271d :\\n  \u2200 (m : ExpressionMetadata) (ty : Option Lambda.LMonoTy),\\n    \u00acfn = Lambda.LExpr.op m { name := \\\"old\\\", metadata := Visibility.unres } ty\\nH1 : NormalizedOldExpr fn\\nH2 : NormalizedOldExpr e\\nHn : IsOldPred fn \u2192 IsFvar e\\n\u22a2 a\u271d \u2208 Imperative.HasVarsPure.getVars fn \u2192 a\u271d \u2208 Imperative.HasVarsPure.getVars (Lambda.LExpr.app m\u271d fn e)\",\"pos\":{\"column\":6,\"line\":26},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase h_3.app.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e e1\u271d e2\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d : CoreIdent\\nfn_ih : (extractOldExprVars fn).Subset (Imperative.HasVarsPure.getVars fn)\\ne_ih : (extractOldExprVars e).Subset (Imperative.HasVarsPure.getVars e)\\nx\u271d :\\n  \u2200 (m : ExpressionMetadata) (ty : Option Lambda.LMonoTy),\\n    \u00acfn = Lambda.LExpr.op m { name := \\\"old\\\", metadata := Visibility.unres } ty\\nH1 : NormalizedOldExpr fn\\nH2 : NormalizedOldExpr e\\nHn : IsOldPred fn \u2192 IsFvar e\\n\u22a2 a\u271d \u2208 Imperative.HasVarsPure.getVars e \u2192 a\u271d \u2208 Imperative.HasVarsPure.getVars (Lambda.LExpr.app m\u271d fn e)\",\"pos\":{\"column\":6,\"line\":31},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b2 : CoreIdent\\ntrih : (extractOldExprVars trigger\u271d).Subset (Imperative.HasVarsPure.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Imperative.HasVarsPure.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars trigger\u271d \u2192\\n    a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars (Lambda.LExpr.quant m\u271d k\u271d ty\u271d trigger\u271d e\u271d)\",\"pos\":{\"column\":4,\"line\":42},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b2 : CoreIdent\\ntrih : (extractOldExprVars trigger\u271d).Subset (Imperative.HasVarsPure.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Imperative.HasVarsPure.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars e\u271d \u2192\\n    a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars (Lambda.LExpr.quant m\u271d k\u271d ty\u271d trigger\u271d e\u271d)\",\"pos\":{\"column\":4,\"line\":46},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Tactic `apply` failed: could not unify the conclusion of `cih`\\n  (extractOldExprVars c\u271d).Subset (Imperative.HasVarsPure.getVars c\u271d)\\nwith the goal\\n  (extractOldExprVars c\u271d ++ extractOldExprVars t\u271d).Subset ?ite.a.b\\n\\nNote: The full type of `cih` is\\n  NormalizedOldExpr c\u271d \u2192 (extractOldExprVars c\u271d).Subset (Imperative.HasVarsPure.getVars c\u271d)\\n\\ncase ite.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : NormalizedOldExpr c\u271d \u2192 (extractOldExprVars c\u271d).Subset (Imperative.HasVarsPure.getVars c\u271d)\\ntih : NormalizedOldExpr t\u271d \u2192 (extractOldExprVars t\u271d).Subset (Imperative.HasVarsPure.getVars t\u271d)\\neih : NormalizedOldExpr e\u271d \u2192 (extractOldExprVars e\u271d).Subset (Imperative.HasVarsPure.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (extractOldExprVars c\u271d ++ extractOldExprVars t\u271d).Subset ?ite.a.b\",\"pos\":{\"column\":6,\"line\":54},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Tactic `apply` failed: could not unify the conclusion of `@List.Subset.app`\\n  (?a ++ ?b).Subset ?c\\nwith the goal\\n  (extractOldExprVars e\u271d).Subset (Imperative.HasVarsPure.getVars (Lambda.LExpr.ite m\u271d c\u271d t\u271d e\u271d))\\n\\nNote: The full type of `@List.Subset.app` is\\n  \u2200 {\u03b1 : Type ?u.1359720} {a c b : List \u03b1}, a.Subset c \u2192 b.Subset c \u2192 (a ++ b).Subset c\\n\\ncase ite.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : NormalizedOldExpr c\u271d \u2192 (extractOldExprVars c\u271d).Subset (Imperative.HasVarsPure.getVars c\u271d)\\ntih : NormalizedOldExpr t\u271d \u2192 (extractOldExprVars t\u271d).Subset (Imperative.HasVarsPure.getVars t\u271d)\\neih : NormalizedOldExpr e\u271d \u2192 (extractOldExprVars e\u271d).Subset (Imperative.HasVarsPure.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (extractOldExprVars e\u271d).Subset (Imperative.HasVarsPure.getVars (Lambda.LExpr.ite m\u271d c\u271d t\u271d e\u271d))\",\"pos\":{\"column\":4,\"line\":57},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b2 : CoreIdent\\nih1 : (extractOldExprVars e1\u271d).Subset (Imperative.HasVarsPure.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Imperative.HasVarsPure.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars e1\u271d \u2192 a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars (Lambda.LExpr.eq m\u271d e1\u271d e2\u271d)\",\"pos\":{\"column\":4,\"line\":69},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b2 : CoreIdent\\nih1 : (extractOldExprVars e1\u271d).Subset (Imperative.HasVarsPure.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Imperative.HasVarsPure.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars e2\u271d \u2192 a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars (Lambda.LExpr.eq m\u271d e1\u271d e2\u271d)\",\"pos\":{\"column\":4,\"line\":73},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase const\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d : Lambda.LConst\\nHnorm : NormalizedOldExpr (Lambda.LExpr.const m\u271d c\u271d)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.const m\u271d c\u271d)).Subset (Imperative.HasVarsPure.getVars (Lambda.LExpr.const m\u271d c\u271d))\\n\\ncase op\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\no\u271d :\\n  Lambda.Identifier\\n    { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.IDMeta\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\nHnorm : NormalizedOldExpr (Lambda.LExpr.op m\u271d o\u271d ty\u271d)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.op m\u271d o\u271d ty\u271d)).Subset (Imperative.HasVarsPure.getVars (Lambda.LExpr.op m\u271d o\u271d ty\u271d))\\n\\ncase bvar\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ndeBruijnIndex\u271d : Nat\\nHnorm : NormalizedOldExpr (Lambda.LExpr.bvar m\u271d deBruijnIndex\u271d)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.bvar m\u271d deBruijnIndex\u271d)).Subset\\n    (Imperative.HasVarsPure.getVars (Lambda.LExpr.bvar m\u271d deBruijnIndex\u271d))\\n\\ncase fvar\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nname\u271d :\\n  Lambda.Identifier\\n    { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.IDMeta\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\nHnorm : NormalizedOldExpr (Lambda.LExpr.fvar m\u271d name\u271d ty\u271d)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.fvar m\u271d name\u271d ty\u271d)).Subset\\n    (Imperative.HasVarsPure.getVars (Lambda.LExpr.fvar m\u271d name\u271d ty\u271d))\",\"pos\":{\"column\":43,\"line\":5},\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":18192.862}"
+      }
+    },
+    {
+      "kind": "support-deletion",
+      "source_sha256": "0b33f5e1cd6e5022e2d6ed8feb70e46c53549c759f9552965b1c86b3f27798fe",
+      "receipt": {
+        "request_id": "459c9f9c8ee7ca2b5fd176144c94f5a666d28d3c2edd6000d0013cb5bdb1a4a6",
+        "candidate_sha256": "0b33f5e1cd6e5022e2d6ed8feb70e46c53549c759f9552965b1c86b3f27798fe",
+        "target": "CallElimCorrect.extractedOldExprInVars",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"1dfe9066101631fb9deac7012e9e74f6bbddca0fda5e2cb227911f4679e949d7\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Tactic `apply` failed: could not unify the conclusion of `cih`\\n  (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\nwith the goal\\n  (extractOldExprVars c\u271d ++ extractOldExprVars t\u271d).Subset ?ite.a.b\\n\\nNote: The full type of `cih` is\\n  NormalizedOldExpr c\u271d \u2192 (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\n\\ncase ite.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : NormalizedOldExpr c\u271d \u2192 (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : NormalizedOldExpr t\u271d \u2192 (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : NormalizedOldExpr e\u271d \u2192 (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (extractOldExprVars c\u271d ++ extractOldExprVars t\u271d).Subset ?ite.a.b\",\"pos\":{\"column\":6,\"line\":54},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Tactic `apply` failed: could not unify the conclusion of `@List.Subset.app`\\n  (?a ++ ?b).Subset ?c\\nwith the goal\\n  (extractOldExprVars e\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\\n\\nNote: The full type of `@List.Subset.app` is\\n  \u2200 {\u03b1 : Type ?u.1359827} {a c b : List \u03b1}, a.Subset c \u2192 b.Subset c \u2192 (a ++ b).Subset c\\n\\ncase ite.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : NormalizedOldExpr c\u271d \u2192 (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : NormalizedOldExpr t\u271d \u2192 (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : NormalizedOldExpr e\u271d \u2192 (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (extractOldExprVars e\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"pos\":{\"column\":4,\"line\":57},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase const\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d : Lambda.LConst\\nHnorm : NormalizedOldExpr (Lambda.LExpr.const m\u271d c\u271d)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.const m\u271d c\u271d)).Subset []\\n\\ncase op\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\no\u271d :\\n  Lambda.Identifier\\n    { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.IDMeta\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\nHnorm : NormalizedOldExpr (Lambda.LExpr.op m\u271d o\u271d ty\u271d)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.op m\u271d o\u271d ty\u271d)).Subset []\\n\\ncase bvar\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ndeBruijnIndex\u271d : Nat\\nHnorm : NormalizedOldExpr (Lambda.LExpr.bvar m\u271d deBruijnIndex\u271d)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.bvar m\u271d deBruijnIndex\u271d)).Subset []\\n\\ncase fvar\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nname\u271d :\\n  Lambda.Identifier\\n    { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.IDMeta\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\nHnorm : NormalizedOldExpr (Lambda.LExpr.fvar m\u271d name\u271d ty\u271d)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.fvar m\u271d name\u271d ty\u271d)).Subset [name\u271d]\",\"pos\":{\"column\":43,\"line\":5},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"This simp argument is unused:\\n  List.Subset.empty\\n\\nHint: Omit it from the simp argument list.\\n  simp only [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars, List.S\u0335u\u0335b\u0335s\u0335e\u0335t\u0335.\u0335e\u0335m\u0335p\u0335t\u0335y\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335append_assoc] at *\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"pos\":{\"column\":75,\"line\":8},\"severity\":\"warning\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":17282.785}"
+      }
+    },
+    {
+      "kind": "support-deletion",
+      "source_sha256": "a2dfaae289b902b4a382cc7d5aec7ed87cbbfae2dc230a7b0e3bbc5425b688f1",
+      "receipt": {
+        "request_id": "2f76c7283b68c02e47c732142bd717f317de2235e157c835027ccc4b77a6ef14",
+        "candidate_sha256": "a2dfaae289b902b4a382cc7d5aec7ed87cbbfae2dc230a7b0e3bbc5425b688f1",
+        "target": "CallElimCorrect.extractedOldExprInVars",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"1dfe9066101631fb9deac7012e9e74f6bbddca0fda5e2cb227911f4679e949d7\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase h_3.app.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e e1\u271d e2\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d : CoreIdent\\nfn_ih : (extractOldExprVars fn).Subset (Imperative.HasVarsPure.getVars fn)\\ne_ih : (extractOldExprVars e).Subset (Imperative.HasVarsPure.getVars e)\\nx\u271d :\\n  \u2200 (m : ExpressionMetadata) (ty : Option Lambda.LMonoTy),\\n    \u00acfn = Lambda.LExpr.op m { name := \\\"old\\\", metadata := Visibility.unres } ty\\nH1 : NormalizedOldExpr fn\\nH2 : NormalizedOldExpr e\\nHn : IsOldPred fn \u2192 IsFvar e\\n\u22a2 a\u271d \u2208 Imperative.HasVarsPure.getVars fn \u2192 a\u271d \u2208 Imperative.HasVarsPure.getVars (Lambda.LExpr.app m\u271d fn e)\",\"pos\":{\"column\":6,\"line\":26},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase h_3.app.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e e1\u271d e2\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d : CoreIdent\\nfn_ih : (extractOldExprVars fn).Subset (Imperative.HasVarsPure.getVars fn)\\ne_ih : (extractOldExprVars e).Subset (Imperative.HasVarsPure.getVars e)\\nx\u271d :\\n  \u2200 (m : ExpressionMetadata) (ty : Option Lambda.LMonoTy),\\n    \u00acfn = Lambda.LExpr.op m { name := \\\"old\\\", metadata := Visibility.unres } ty\\nH1 : NormalizedOldExpr fn\\nH2 : NormalizedOldExpr e\\nHn : IsOldPred fn \u2192 IsFvar e\\n\u22a2 a\u271d \u2208 Imperative.HasVarsPure.getVars e \u2192 a\u271d \u2208 Imperative.HasVarsPure.getVars (Lambda.LExpr.app m\u271d fn e)\",\"pos\":{\"column\":6,\"line\":31},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b2 : CoreIdent\\ntrih : (extractOldExprVars trigger\u271d).Subset (Imperative.HasVarsPure.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Imperative.HasVarsPure.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars trigger\u271d \u2192\\n    a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars (Lambda.LExpr.quant m\u271d k\u271d ty\u271d trigger\u271d e\u271d)\",\"pos\":{\"column\":4,\"line\":42},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b2 : CoreIdent\\ntrih : (extractOldExprVars trigger\u271d).Subset (Imperative.HasVarsPure.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Imperative.HasVarsPure.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars e\u271d \u2192\\n    a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars (Lambda.LExpr.quant m\u271d k\u271d ty\u271d trigger\u271d e\u271d)\",\"pos\":{\"column\":4,\"line\":46},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase ite.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b3 : CoreIdent\\ncih : (extractOldExprVars c\u271d).Subset (Imperative.HasVarsPure.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Imperative.HasVarsPure.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Imperative.HasVarsPure.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 a\u271d\u00b3 \u2208 Imperative.HasVarsPure.getVars c\u271d \u2192 a\u271d\u00b3 \u2208 Imperative.HasVarsPure.getVars (Lambda.LExpr.ite m\u271d c\u271d t\u271d e\u271d)\",\"pos\":{\"column\":4,\"line\":53},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b3 : CoreIdent\\ncih : (extractOldExprVars c\u271d).Subset (Imperative.HasVarsPure.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Imperative.HasVarsPure.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Imperative.HasVarsPure.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 a\u271d\u00b3 \u2208 Imperative.HasVarsPure.getVars t\u271d \u2192 a\u271d\u00b3 \u2208 Imperative.HasVarsPure.getVars (Lambda.LExpr.ite m\u271d c\u271d t\u271d e\u271d)\",\"pos\":{\"column\":4,\"line\":58},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b3 : CoreIdent\\ncih : (extractOldExprVars c\u271d).Subset (Imperative.HasVarsPure.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Imperative.HasVarsPure.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Imperative.HasVarsPure.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 a\u271d\u00b3 \u2208 Imperative.HasVarsPure.getVars e\u271d \u2192 a\u271d\u00b3 \u2208 Imperative.HasVarsPure.getVars (Lambda.LExpr.ite m\u271d c\u271d t\u271d e\u271d)\",\"pos\":{\"column\":4,\"line\":62},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b2 : CoreIdent\\nih1 : (extractOldExprVars e1\u271d).Subset (Imperative.HasVarsPure.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Imperative.HasVarsPure.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars e1\u271d \u2192 a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars (Lambda.LExpr.eq m\u271d e1\u271d e2\u271d)\",\"pos\":{\"column\":4,\"line\":69},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b2 : CoreIdent\\nih1 : (extractOldExprVars e1\u271d).Subset (Imperative.HasVarsPure.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Imperative.HasVarsPure.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars e2\u271d \u2192 a\u271d\u00b2 \u2208 Imperative.HasVarsPure.getVars (Lambda.LExpr.eq m\u271d e1\u271d e2\u271d)\",\"pos\":{\"column\":4,\"line\":73},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"This simp argument is unused:\\n  Lambda.LExpr.LExpr.getVars\\n\\nHint: Omit it from the simp argument list.\\n  simp only [extractOldExprVars, La\u0335m\u0335b\u0335d\u0335a\u0335.\u0335L\u0335E\u0335x\u0335p\u0335r\u0335.\u0335L\u0335E\u0335x\u0335p\u0335r\u0335.\u0335g\u0335e\u0335t\u0335V\u0335a\u0335r\u0335s\u0335,\u0335 \u0335L\u0335ist.Subset.empty, List.append_assoc] at *\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"pos\":{\"column\":35,\"line\":8},\"severity\":\"warning\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":17177.104}"
+      }
+    },
+    {
+      "kind": "support-deletion",
+      "source_sha256": "76fce15ad4bdac7039eb6556fccc0b0b32e71034f46d6aef421a1cf23d979a30",
+      "receipt": {
+        "request_id": "5e172aa510e9098a8cdd908be8ed4d38349cf83bb7d04f679c8450b14f2951e7",
+        "candidate_sha256": "76fce15ad4bdac7039eb6556fccc0b0b32e71034f46d6aef421a1cf23d979a30",
+        "target": "CallElimCorrect.extractedOldExprInVars",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"1dfe9066101631fb9deac7012e9e74f6bbddca0fda5e2cb227911f4679e949d7\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase h_3.app.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e e1\u271d e2\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d : CoreIdent\\nfn_ih : (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nx\u271d :\\n  \u2200 (m : ExpressionMetadata) (ty : Option Lambda.LMonoTy),\\n    \u00acfn = Lambda.LExpr.op m { name := \\\"old\\\", metadata := Visibility.unres } ty\\nH1 : NormalizedOldExpr fn\\nH2 : NormalizedOldExpr e\\nHn : IsOldPred fn \u2192 IsFvar e\\n\u22a2 a\u271d \u2208 Lambda.LExpr.LExpr.getVars fn \u2192 a\u271d \u2208 Lambda.LExpr.LExpr.getVars (Lambda.LExpr.app m\u271d fn e)\",\"pos\":{\"column\":6,\"line\":26},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase h_3.app.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e e1\u271d e2\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d : CoreIdent\\nfn_ih : (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nx\u271d :\\n  \u2200 (m : ExpressionMetadata) (ty : Option Lambda.LMonoTy),\\n    \u00acfn = Lambda.LExpr.op m { name := \\\"old\\\", metadata := Visibility.unres } ty\\nH1 : NormalizedOldExpr fn\\nH2 : NormalizedOldExpr e\\nHn : IsOldPred fn \u2192 IsFvar e\\n\u22a2 a\u271d \u2208 Lambda.LExpr.LExpr.getVars e \u2192 a\u271d \u2208 Lambda.LExpr.LExpr.getVars (Lambda.LExpr.app m\u271d fn e)\",\"pos\":{\"column\":6,\"line\":31},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b2 : CoreIdent\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 a\u271d\u00b2 \u2208 Lambda.LExpr.LExpr.getVars trigger\u271d \u2192\\n    a\u271d\u00b2 \u2208 Lambda.LExpr.LExpr.getVars (Lambda.LExpr.quant m\u271d k\u271d ty\u271d trigger\u271d e\u271d)\",\"pos\":{\"column\":4,\"line\":42},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b2 : CoreIdent\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 a\u271d\u00b2 \u2208 Lambda.LExpr.LExpr.getVars e\u271d \u2192 a\u271d\u00b2 \u2208 Lambda.LExpr.LExpr.getVars (Lambda.LExpr.quant m\u271d k\u271d ty\u271d trigger\u271d e\u271d)\",\"pos\":{\"column\":4,\"line\":46},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase ite.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b3 : CoreIdent\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 a\u271d\u00b3 \u2208 Lambda.LExpr.LExpr.getVars c\u271d \u2192 a\u271d\u00b3 \u2208 Lambda.LExpr.LExpr.getVars (Lambda.LExpr.ite m\u271d c\u271d t\u271d e\u271d)\",\"pos\":{\"column\":4,\"line\":53},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b3 : CoreIdent\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 a\u271d\u00b3 \u2208 Lambda.LExpr.LExpr.getVars t\u271d \u2192 a\u271d\u00b3 \u2208 Lambda.LExpr.LExpr.getVars (Lambda.LExpr.ite m\u271d c\u271d t\u271d e\u271d)\",\"pos\":{\"column\":4,\"line\":58},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b3 : CoreIdent\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 a\u271d\u00b3 \u2208 Lambda.LExpr.LExpr.getVars e\u271d \u2192 a\u271d\u00b3 \u2208 Lambda.LExpr.LExpr.getVars (Lambda.LExpr.ite m\u271d c\u271d t\u271d e\u271d)\",\"pos\":{\"column\":4,\"line\":62},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b2 : CoreIdent\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 a\u271d\u00b2 \u2208 Lambda.LExpr.LExpr.getVars e1\u271d \u2192 a\u271d\u00b2 \u2208 Lambda.LExpr.LExpr.getVars (Lambda.LExpr.eq m\u271d e1\u271d e2\u271d)\",\"pos\":{\"column\":4,\"line\":69},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\na\u271d\u00b2 : CoreIdent\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 a\u271d\u00b2 \u2208 Lambda.LExpr.LExpr.getVars e2\u271d \u2192 a\u271d\u00b2 \u2208 Lambda.LExpr.LExpr.getVars (Lambda.LExpr.eq m\u271d e1\u271d e2\u271d)\",\"pos\":{\"column\":4,\"line\":73},\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":17801.011}"
+      }
+    },
+    {
+      "kind": "support-deletion",
+      "source_sha256": "7e219aea8b9aed3f1b8e979de3ddfe9514c496e88b1e49c5f421093540cde789",
+      "receipt": {
+        "request_id": "5db9e06c75fa15102a30bc475809c2e6eb510610a8f9c021440389b60a7d58a9",
+        "candidate_sha256": "7e219aea8b9aed3f1b8e979de3ddfe9514c496e88b1e49c5f421093540cde789",
+        "target": "CallElimCorrect.extractedOldExprInVars",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"1dfe9066101631fb9deac7012e9e74f6bbddca0fda5e2cb227911f4679e949d7\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"unsolved goals\\ncase const\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d : Lambda.LConst\\nHnorm : NormalizedOldExpr (Lambda.LExpr.const m\u271d c\u271d)\\n\u22a2 [].Subset []\\n\\ncase op\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\no\u271d :\\n  Lambda.Identifier\\n    { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.IDMeta\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\nHnorm : NormalizedOldExpr (Lambda.LExpr.op m\u271d o\u271d ty\u271d)\\n\u22a2 [].Subset []\\n\\ncase bvar\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ndeBruijnIndex\u271d : Nat\\nHnorm : NormalizedOldExpr (Lambda.LExpr.bvar m\u271d deBruijnIndex\u271d)\\n\u22a2 [].Subset []\\n\\ncase fvar\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nname\u271d :\\n  Lambda.Identifier\\n    { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.IDMeta\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\nHnorm : NormalizedOldExpr (Lambda.LExpr.fvar m\u271d name\u271d ty\u271d)\\n\u22a2 [].Subset [name\u271d]\",\"pos\":{\"column\":43,\"line\":5},\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":17932.15}"
+      }
+    },
+    {
+      "kind": "support-deletion",
+      "source_sha256": "8dabcd74e6af4b14de7ef6c8b09666a8a6b00eb7825714e1cb30574ffee29b1b",
+      "receipt": {
+        "request_id": "304191b22988d13ea8cf36a2faf94539f72553aa07ac55595d57a445f5978384",
+        "candidate_sha256": "8dabcd74e6af4b14de7ef6c8b09666a8a6b00eb7825714e1cb30574ffee29b1b",
+        "target": "CallElimCorrect.extractedOldExprInVars",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"1dfe9066101631fb9deac7012e9e74f6bbddca0fda5e2cb227911f4679e949d7\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Tactic `apply` failed: could not unify the conclusion of `cih`\\n  (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\nwith the goal\\n  (extractOldExprVars c\u271d ++ extractOldExprVars t\u271d).Subset ?ite.a.b\\n\\nNote: The full type of `cih` is\\n  NormalizedOldExpr c\u271d \u2192 (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\n\\ncase ite.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : NormalizedOldExpr c\u271d \u2192 (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : NormalizedOldExpr t\u271d \u2192 (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : NormalizedOldExpr e\u271d \u2192 (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (extractOldExprVars c\u271d ++ extractOldExprVars t\u271d).Subset ?ite.a.b\",\"pos\":{\"column\":6,\"line\":54},\"severity\":\"error\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Tactic `apply` failed: could not unify the conclusion of `@List.Subset.app`\\n  (?a ++ ?b).Subset ?c\\nwith the goal\\n  (extractOldExprVars e\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\\n\\nNote: The full type of `@List.Subset.app` is\\n  \u2200 {\u03b1 : Type ?u.1360860} {a c b : List \u03b1}, a.Subset c \u2192 b.Subset c \u2192 (a ++ b).Subset c\\n\\ncase ite.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : NormalizedOldExpr c\u271d \u2192 (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : NormalizedOldExpr t\u271d \u2192 (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : NormalizedOldExpr e\u271d \u2192 (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (extractOldExprVars e\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"pos\":{\"column\":4,\"line\":57},\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":18403.779}"
+      }
+    },
+    {
+      "kind": "suggestion-probe",
+      "source_sha256": "f28e20568bd4c41d90b92a3d26c7170331b48c9f81427fdf4169e796ce30ee8e",
+      "receipt": {
+        "request_id": "1df5575a6167b2af863af978d5a9ba090da0edbe0ed6e9543d08c9ad1b8fccd2",
+        "candidate_sha256": "f28e20568bd4c41d90b92a3d26c7170331b48c9f81427fdf4169e796ce30ee8e",
+        "target": "CallElimCorrect.extractedOldExprInVars",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 2094,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"1dfe9066101631fb9deac7012e9e74f6bbddca0fda5e2cb227911f4679e949d7\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars,\\n    List.Subset.empty] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars,\\n    List.Subset.empty] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars,\\n    List.Subset.empty] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars,\\n    List.Subset.empty] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [Imperative.HasVarsPure.getVars, extractOldExprVars, Lambda.LExpr.LExpr.getVars] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [Imperative.HasVarsPure.getVars, extractOldExprVars, Lambda.LExpr.LExpr.getVars] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [Imperative.HasVarsPure.getVars, extractOldExprVars, List.append_assoc,\\n    Lambda.LExpr.LExpr.getVars] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [Imperative.HasVarsPure.getVars, extractOldExprVars, Lambda.LExpr.LExpr.getVars] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"}],\"heartbeats\":2094,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2094393,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":686,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1776,\"spans\":[{\"end_utf8\":789,\"start_utf8\":781,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":890,\"start_utf8\":882,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1103,\"start_utf8\":1095,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1189,\"start_utf8\":1181,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1343,\"start_utf8\":1335,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1455,\"start_utf8\":1447,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1541,\"start_utf8\":1533,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1690,\"start_utf8\":1682,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1776,\"start_utf8\":1768,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17747.922}"
+      }
+    }
+  ],
+  "edits": [
+    {
+      "parent": 0,
+      "edit": {
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "start": 200,
+        "end": 338,
+        "replacement": "    simp only [] at *\n",
+        "kind": "support-deletion"
+      },
+      "candidate_sha256": "1a6c2e82709d08484c6ede0823809f2884d7005d097cef855f0f72f54744143e",
+      "retained": false
+    },
+    {
+      "parent": 0,
+      "edit": {
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "start": 200,
+        "end": 338,
+        "replacement": "    simp only [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars, List.Subset.empty, List.append_assoc] at *\n",
+        "kind": "support-deletion"
+      },
+      "candidate_sha256": "0b33f5e1cd6e5022e2d6ed8feb70e46c53549c759f9552965b1c86b3f27798fe",
+      "retained": false
+    },
+    {
+      "parent": 0,
+      "edit": {
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "start": 200,
+        "end": 338,
+        "replacement": "    simp only [extractOldExprVars, Lambda.LExpr.LExpr.getVars, List.Subset.empty, List.append_assoc] at *\n",
+        "kind": "support-deletion"
+      },
+      "candidate_sha256": "a2dfaae289b902b4a382cc7d5aec7ed87cbbfae2dc230a7b0e3bbc5425b688f1",
+      "retained": false
+    },
+    {
+      "parent": 0,
+      "edit": {
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "start": 200,
+        "end": 338,
+        "replacement": "    simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, List.Subset.empty, List.append_assoc] at *\n",
+        "kind": "support-deletion"
+      },
+      "candidate_sha256": "76fce15ad4bdac7039eb6556fccc0b0b32e71034f46d6aef421a1cf23d979a30",
+      "retained": false
+    },
+    {
+      "parent": 0,
+      "edit": {
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "start": 200,
+        "end": 338,
+        "replacement": "    simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars, List.append_assoc] at *\n",
+        "kind": "support-deletion"
+      },
+      "candidate_sha256": "7e219aea8b9aed3f1b8e979de3ddfe9514c496e88b1e49c5f421093540cde789",
+      "retained": false
+    },
+    {
+      "parent": 0,
+      "edit": {
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "start": 200,
+        "end": 338,
+        "replacement": "    simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars, List.Subset.empty] at *\n",
+        "kind": "support-deletion"
+      },
+      "candidate_sha256": "8dabcd74e6af4b14de7ef6c8b09666a8a6b00eb7825714e1cb30574ffee29b1b",
+      "retained": false
+    }
+  ],
+  "omitted": {
+    "duplicate": 1,
+    "unsupported": 0,
+    "not_shorter": 0,
+    "state_limit": 0,
+    "byte_limit": 0,
+    "support_windows": 0,
+    "query_sites": 9,
+    "draft_limit": 0
+  },
+  "proposals": 7,
+  "retained_source_bytes": 1775,
+  "verifier_calls": 8,
+  "cache_hits": 0,
+  "wall_seconds": 185.43468381999992,
+  "truncated": true,
+  "cost_scope": "single-pin whole-command discovery; not fresh cost confirmation",
+  "proof_admitted": false,
+  "promoted": false,
+  "training_enabled": false,
+  "minimality_proven": false,
+  "official_score": null,
+  "measured_api_cost": null
+}

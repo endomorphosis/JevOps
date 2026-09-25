@@ -849,6 +849,36 @@ def record_mutation(memory: dict[str, Any], applied: Mapping[str, Any]) -> None:
     memory["nca"]["mutations"] = mutations[-32:]
 
 
+def drive_mutate(
+    memory: dict[str, Any],
+    *,
+    tactics: str,
+    problem: str,
+    op: str,
+    fold_skill_fn: Callable[..., Any],
+    propose_fn: Callable[..., Mapping[str, Any]],
+    expand_fn: Callable[..., Any],
+) -> dict[str, Any]:
+    """Energy reorder plus an injected keep-structure fold. Does not write Lean."""
+
+    from jevops.memory import first_fold
+    from jevops.outer import call_if, get_list
+
+    def _fold(body: str) -> Optional[dict[str, Any]]:
+        return first_fold(body, get_list(memory, "skills"), fold_fn=fold_skill_fn)
+
+    def _mint() -> dict[str, Any]:
+        prop = propose_fn(memory, problem)
+
+        def _keep() -> dict[str, Any]:
+            expand_fn(memory, name=problem, tactics=tactics)
+            return prop
+
+        return call_if(prop.get("keep_structure") and prop.get("mint"), _keep, default={})
+
+    return apply_mutate(memory, tactics=tactics, problem=problem, op=op, fold_fn=_fold, mint_fn=_mint)
+
+
 def apply_mutate(
     memory: dict[str, Any],
     *,
@@ -1173,6 +1203,14 @@ def resolve_unique_callees(
     return resolved
 
 
+def memo_build(slot: Any, *, refresh: bool, build_fn: Callable[[], Any]) -> Any:
+    """Return a cached mapping unless refresh. Cache hits never admit Lean."""
+
+    from jevops.outer import call_if, first_not_none
+
+    return first_not_none(call_if(not refresh and slot is not None, lambda: slot), factory=build_fn)
+
+
 def call_graph_from_paths(
     paths: Sequence[Any],
     *,
@@ -1495,6 +1533,372 @@ def pack_codepath_slice(
         }
     )
     return out
+
+
+def drive_sidecar_index(
+    *,
+    root: Any,
+    default_root: Any,
+    write: bool,
+    dest: Any,
+    cap_files: int = 80,
+    cap_symbols: int = 80,
+) -> dict[str, Any]:
+    """JSON AST sidecar. Never campaign DuckDB."""
+
+    from jevops.outer import call_if, if_none, set_if, text_or, write_json
+
+    base = if_none(root, default_root)
+    payload = pack_sidecar_index(sidecar_files(sorted(Path(base).glob("*.py")), cap_files=cap_files, cap_symbols=cap_symbols))
+    call_if(write, lambda: write_json(dest, payload))
+    return set_if(payload, write, "path", text_or(dest))
+
+
+def drive_allowed_pair(path: Any, *, here: Any, paper: Any, base: Any) -> Any:
+    """Allow a path under here or the paper root."""
+
+    return allowed_path(path, roots=(Path(here).resolve(), Path(paper).resolve()), base=base)
+
+
+def drive_here_inspect(
+    path: Any,
+    *,
+    here: Any,
+    paper: Any,
+    base: Any,
+    import_dir: Any,
+    test_dir: Any,
+) -> dict[str, Any]:
+    """Inspect one file under the harness and paper roots."""
+
+    roots = (Path(here).resolve(), Path(paper).resolve())
+    return inspect_python(
+        path,
+        roots=roots,
+        base=base,
+        import_dir=import_dir,
+        test_dir=test_dir,
+        relative_to=roots[1],
+    )
+
+
+def drive_here_walk(
+    root: Any,
+    *,
+    limit: int,
+    here: Any,
+    paper: Any,
+    import_dir: Any,
+    test_dir: Any,
+) -> dict[str, Any]:
+    """Walk Python files under the harness root. Bounded. No campaign DuckDB."""
+
+    roots = (Path(here).resolve(), Path(paper).resolve())
+    return walk_python(
+        root,
+        limit=limit,
+        roots=roots,
+        import_dir=import_dir,
+        test_dir=test_dir,
+        relative_to=roots[1],
+    )
+
+
+def drive_tick_kwargs(kwargs: Mapping[str, Any], *, tick_fn: Callable[..., Any]) -> Any:
+    """Tick from a subloop kwargs bag. Does not write Lean."""
+
+    from jevops.outer import as_dict, first_truthy, get_str, text_or
+
+    memory = as_dict(kwargs.get("memory"), {})
+    record = as_dict(kwargs.get("record"), {})
+    problem = text_or(first_truthy(kwargs.get("problem"), record.get("name"), default=""))
+    return tick_fn(memory, tactics=get_str(kwargs, "tactics"), problem=problem)
+
+
+def drive_fork_kwargs(kwargs: Mapping[str, Any], *, fork_fn: Callable[..., Any]) -> Any:
+    """Fork cells from kwargs, dropping the tool name and memory keys."""
+
+    from jevops.outer import as_dict, without_keys
+
+    return fork_fn(as_dict(kwargs.get("memory"), {}), **without_keys(kwargs, ("name", "memory")))
+
+
+def drive_sidecar_query(
+    query: str,
+    payload: Any,
+    *,
+    present_fn: Callable[[], bool],
+    load_fn: Callable[[], Any],
+    build_fn: Callable[[], Any],
+    limit: int = 24,
+) -> list[dict[str, Any]]:
+    """Sidecar symbols from a payload, a file, or a fresh index. Ids only."""
+
+    from jevops.outer import call_if, get_list, if_none, or_call
+
+    data = or_call(
+        if_none(payload, factory=lambda: call_if(present_fn(), load_fn)),
+        build_fn,
+    )
+    return query_sidecar_symbols(get_list(data, "files"), query, limit=limit)
+
+
+def drive_module_file(
+    name: str,
+    *,
+    stem_fn: Callable[[str], Any],
+    candidates_fn: Callable[[str], Sequence[Any]],
+    roots_fn: Callable[[], Sequence[Any]],
+    first_fn: Callable[..., Any],
+) -> Any:
+    """First existing file for a codepath module. None when the stem is empty."""
+
+    from jevops.outer import call_if
+
+    module = stem_fn(name)
+    return call_if(
+        module is not None,
+        lambda: first_fn(candidates_fn(module), roots=roots_fn()),
+    )
+
+
+def drive_ast_hits(
+    root: Any,
+    query: str,
+    *,
+    cap: int,
+    hit_fn: Callable[[Mapping[str, Any]], Any],
+) -> list[Any]:
+    """Top-level AST hits. Ids only. No source bodies."""
+
+    from jevops.outer import map_hits
+
+    return map_hits(matching_top_level(root, query, cap_hits=cap), hit_fn)
+
+
+def drive_query_symbols(
+    query: str,
+    *,
+    db_path: Any,
+    default_db: Any,
+    sql: str,
+    refuse_names: Sequence[str] = ("control.duckdb",),
+) -> list[Any]:
+    """Symbol rows from the sidecar. Ids only. Refuses campaign DuckDB."""
+
+    from jevops.outer import call_if, if_none, query_engine, text_or
+
+    needle = f"%{text_or(query).casefold()}%"
+    return query_engine(
+        Path(if_none(db_path, default_db)),
+        sql,
+        [needle],
+        refuse_names=tuple(refuse_names),
+        row_fn=lambda row: call_if(
+            row and row[0],
+            lambda: {
+                "symbol": text_or(row[0]),
+                "path": text_or(row[1]),
+                "kind": text_or(row[2]),
+                "source": "sidecar_duckdb",
+            },
+        ),
+    )
+
+
+def drive_sidecar_db(
+    path: Any,
+    *,
+    default_db: Any,
+    refresh: bool,
+    graph_fn: Callable[..., Mapping[str, Any]],
+    connect_fn: Callable[..., Any],
+    exec_fn: Callable[..., Any],
+    count_fn: Callable[..., Any],
+    try_import_fn: Callable[[], Any],
+    refuse_fn: Callable[..., bool],
+    refuse_names: Sequence[str] = ("control.duckdb",),
+) -> dict[str, Any]:
+    """Fill a symbols sidecar. Refuses campaign control.duckdb."""
+
+    from jevops.outer import if_none
+
+    dest = Path(if_none(path, default_db))
+    return fill_sidecar_duckdb(
+        dest,
+        graph_fn(refresh=refresh),
+        connect_fn=connect_fn,
+        exec_fn=exec_fn,
+        count_fn=count_fn,
+        try_import_fn=try_import_fn,
+        refuse_fn=refuse_fn,
+        refuse_names=tuple(refuse_names),
+    )
+
+
+def drive_seed_edges(
+    memory: dict[str, Any],
+    *,
+    db_path: Any,
+    default_db: Any,
+    limit: int,
+    sql: str,
+    graph_fn: Callable[[int], Any],
+    refuse_names: Sequence[str] = ("control.duckdb",),
+) -> dict[str, Any]:
+    """Caller/callee edges from DuckDB, else the injected graph. Not a lake admit."""
+
+    from jevops.outer import call_if, first_int, if_none, path_refused, query_engine, text_or
+
+    dest = Path(if_none(db_path, default_db))
+    cap = first_int(limit)
+    return seed_edges_from_query(
+        memory,
+        refused=path_refused(dest, names=tuple(refuse_names)),
+        query_fn=lambda: query_engine(
+            dest,
+            sql,
+            [cap],
+            refuse_names=tuple(refuse_names),
+            row_fn=lambda row: call_if(
+                row and row[0] and row[1],
+                lambda: (text_or(row[0]), text_or(row[1])),
+            ),
+        ),
+        graph_fn=lambda: graph_fn(cap),
+        limit=cap,
+    )
+
+
+def drive_query_calls(
+    symbol: str,
+    *,
+    db_path: Any,
+    default_db: Any,
+    direction: str,
+    sql: str,
+    refuse_names: Sequence[str] = ("control.duckdb",),
+) -> list[str]:
+    """Caller or callee names from the sidecar. Ids only."""
+
+    from jevops.outer import call_if, if_none, query_engine, text_or, without_prefix
+
+    name = without_prefix(text_or(symbol), "ptr://codepath/")
+    callers = direction == "callers"
+    column = "caller" if callers else "callee"
+    match_on = "callee" if callers else "caller"
+    return query_engine(
+        Path(if_none(db_path, default_db)),
+        sql.format(column=column, match_on=match_on),
+        [name, f"%:{name.rsplit(':', 1)[-1]}"],
+        refuse_names=tuple(refuse_names),
+        row_fn=lambda row: call_if(row and row[0], lambda: text_or(row[0])),
+    )
+
+
+def drive_feed_state(
+    memory: dict[str, Any],
+    *,
+    tactics: str = "",
+    problem: str = "",
+    residual_fn: Callable[[str], Any],
+    tree_fn: Callable[..., Any],
+    inverse_src: Any,
+) -> dict[str, Any]:
+    """Overlay residuals and a decision tree. Does not write Lean."""
+
+    from jevops.outer import call_if
+
+    counts = call_if(tactics, lambda: residual_fn(tactics))
+    tree = call_if(tactics, lambda: tree_fn(tactics, memory, problem))
+    return feed_with_overlays(
+        memory,
+        tactics=tactics,
+        problem=problem,
+        counts=counts,
+        inverse=call_if(counts, lambda: invert_multimap(inverse_src)),
+        tree=tree,
+    )
+
+
+def drive_nca_tool(
+    name: str,
+    *,
+    walk_fn: Callable[[], Any],
+    hook_fn: Callable[[str], Any],
+    mutate_fn: Callable[..., Any],
+    eval_fn: Callable[..., Any],
+    default_path: str = "portable_rewrites.py",
+    default_tests: Sequence[str] = ("test_skill_improve_loop",),
+    **kwargs: Any,
+) -> dict[str, Any]:
+    """Dispatch an NCA tool. Lake is not called here."""
+
+    from jevops.outer import as_dict, get_list, get_str
+
+    memory = as_dict(kwargs.get("memory"), {})
+    tactics = get_str(kwargs, "tactics")
+    problem = get_str(kwargs, "problem")
+    return dispatch_tool(
+        name,
+        extras={
+            "nca_walk": lambda **_k: walk_fn(),
+            "nca_hook": lambda **k: hook_fn(get_str(k, "path", default=default_path)),
+            "nca_mutate": lambda **k: mutate_fn(
+                memory,
+                tactics=tactics,
+                problem=problem,
+                op=get_str(k, "op", default="auto"),
+            ),
+            "nca_eval": lambda **k: eval_fn(*get_list(k, "tests", default=list(default_tests))),
+        },
+        **kwargs,
+    )
+
+
+def drive_codepath_slice(
+    name: str,
+    *,
+    resolve_fn: Callable[[str], Any],
+    inspect_fn: Callable[[str], bool],
+    read_fn: Callable[[Any], str],
+    max_defs: int = 40,
+    max_neighbors: int = 8,
+) -> dict[str, Any]:
+    """AST caller/callee slice. Missing paths and parse errors are not admits."""
+
+    from jevops.outer import either, exc_head, head_seq
+
+    path = resolve_fn(name)
+
+    def _missing() -> dict[str, Any]:
+        return pack_codepath_slice(
+            ok=False,
+            name=name,
+            reason="codepath_not_allowed",
+            inspect_only=bool(inspect_fn(name)),
+        )
+
+    def _present() -> dict[str, Any]:
+        try:
+            defs, calls_by = function_call_map(read_fn(path))
+        except (OSError, SyntaxError) as exc:
+            return pack_codepath_slice(ok=False, reason="parse_failed", error=exc_head(exc, 160))
+        focus = focus_symbol(name, defs, calls_by)
+        return pack_codepath_slice(
+            ok=True,
+            path=getattr(path, "name", str(path)),
+            symbol=focus,
+            definitions=head_seq(defs, max_defs),
+            callees=head_seq(calls_by.get(focus), max_neighbors),
+            callers=head_seq(
+                [fn for fn, kids in calls_by.items() if focus and focus in kids],
+                max_neighbors,
+            ),
+            inspect_only=bool(inspect_fn(name)),
+        )
+
+    return either(path is None, _missing, _present)
 
 
 def pack_sidecar_index(

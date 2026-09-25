@@ -1,0 +1,228 @@
+{
+  "artifact_directory": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-context-wttrqj49/pilot",
+  "cache_policy": "retain_all",
+  "calls_reserved": 24,
+  "confirmation_complete": true,
+  "confirmation_pairwise_against_baseline": {
+    "context-json": {
+      "other_only_success": 4,
+      "tie": 2
+    }
+  },
+  "elapsed_seconds": 86.957,
+  "extra_json_prompt_tokens_server_reported": {
+    "max": 342,
+    "median": 342.0,
+    "min": 342
+  },
+  "groups": [
+    {
+      "arm": "context-lean",
+      "attempts": 6,
+      "failures_or_outcomes": {
+        "contract_mismatch": 4,
+        "parsed": 2
+      },
+      "max_observed_prompt_tokens": 932,
+      "median_wall_ms": 2875.304118497297,
+      "normalized_successes": 2,
+      "split": "development",
+      "strict_contracts": 2,
+      "successes": 2,
+      "unmeasured": 0
+    },
+    {
+      "arm": "context-json",
+      "attempts": 6,
+      "failures_or_outcomes": {
+        "context_lookup_mismatch": 1,
+        "contract_mismatch": 1,
+        "parsed": 4
+      },
+      "max_observed_prompt_tokens": 1274,
+      "median_wall_ms": 3817.935727071017,
+      "normalized_successes": 4,
+      "split": "development",
+      "strict_contracts": 5,
+      "successes": 4,
+      "unmeasured": 0
+    },
+    {
+      "arm": "context-lean",
+      "attempts": 6,
+      "failures_or_outcomes": {
+        "contract_mismatch": 4,
+        "parsed": 2
+      },
+      "max_observed_prompt_tokens": 934,
+      "median_wall_ms": 3299.948529980611,
+      "normalized_successes": 2,
+      "split": "confirmation",
+      "strict_contracts": 2,
+      "successes": 2,
+      "unmeasured": 0
+    },
+    {
+      "arm": "context-json",
+      "attempts": 6,
+      "failures_or_outcomes": {
+        "parsed": 6
+      },
+      "max_observed_prompt_tokens": 1276,
+      "median_wall_ms": 4007.83333851723,
+      "normalized_successes": 6,
+      "split": "confirmation",
+      "strict_contracts": 6,
+      "successes": 6,
+      "unmeasured": 0
+    }
+  ],
+  "integrity_checks": {
+    "all_24_unique_slots": true,
+    "frozen_nomination_matches": true,
+    "native_requests_zero": true,
+    "plan_hash": true,
+    "raw_response_hashes_match": true,
+    "rendered_messages_match": true,
+    "sqlite_ledger_matches_report": true,
+    "strict_outcomes_recomputed": true
+  },
+  "interrupted_calls": 0,
+  "limitations": [
+    "Single distractor count (32), not a context-length sweep.",
+    "Three matched positions per split, each repeated twice; not six independent theorem families.",
+    "Inspecting tactic fields with invalid request IDs is post-hoc diagnostic only; those requests still fail the strict metric.",
+    "Local server metadata is self-reported, not a weight attestation. No native proofs or proof-compression gains established."
+  ],
+  "mode": "local_leanstral",
+  "native_requests": 0,
+  "nomination": {
+    "arm": "context-json",
+    "automatic_promotion": false,
+    "development_successes": {
+      "context-json": 4,
+      "context-lean": 2
+    },
+    "objective": "strict_context_accuracy",
+    "reason": "descriptive_nomination_only"
+  },
+  "official_score": null,
+  "plan_id": "b833f238e35e47c080fcf3aed44d25f3bf90d92bcbb5b8be0457c977c2b4d92c",
+  "posthoc_diagnostic_not_rescoring": [
+    {
+      "arm": "context-lean",
+      "attempts": 6,
+      "by_position": {
+        "head": {
+          "attempts": 2,
+          "correct_tactic_diagnostic_only": 2,
+          "strict_successes": 0
+        },
+        "middle": {
+          "attempts": 2,
+          "correct_tactic_diagnostic_only": 2,
+          "strict_successes": 1
+        },
+        "tail": {
+          "attempts": 2,
+          "correct_tactic_diagnostic_only": 2,
+          "strict_successes": 1
+        }
+      },
+      "correct_tactic_ignoring_envelope_diagnostic_only": 6,
+      "median_prompt_tokens_server_reported": 931.0,
+      "split": "development",
+      "strict_successes": 2,
+      "wrong_id_with_correct_tactic": 4,
+      "wrong_request_ids": 4
+    },
+    {
+      "arm": "context-json",
+      "attempts": 6,
+      "by_position": {
+        "head": {
+          "attempts": 2,
+          "correct_tactic_diagnostic_only": 2,
+          "strict_successes": 2
+        },
+        "middle": {
+          "attempts": 2,
+          "correct_tactic_diagnostic_only": 0,
+          "strict_successes": 0
+        },
+        "tail": {
+          "attempts": 2,
+          "correct_tactic_diagnostic_only": 2,
+          "strict_successes": 2
+        }
+      },
+      "correct_tactic_ignoring_envelope_diagnostic_only": 4,
+      "median_prompt_tokens_server_reported": 1273.0,
+      "split": "development",
+      "strict_successes": 4,
+      "wrong_id_with_correct_tactic": 0,
+      "wrong_request_ids": 1
+    },
+    {
+      "arm": "context-lean",
+      "attempts": 6,
+      "by_position": {
+        "head": {
+          "attempts": 2,
+          "correct_tactic_diagnostic_only": 2,
+          "strict_successes": 1
+        },
+        "middle": {
+          "attempts": 2,
+          "correct_tactic_diagnostic_only": 2,
+          "strict_successes": 1
+        },
+        "tail": {
+          "attempts": 2,
+          "correct_tactic_diagnostic_only": 2,
+          "strict_successes": 0
+        }
+      },
+      "correct_tactic_ignoring_envelope_diagnostic_only": 6,
+      "median_prompt_tokens_server_reported": 930.0,
+      "split": "confirmation",
+      "strict_successes": 2,
+      "wrong_id_with_correct_tactic": 4,
+      "wrong_request_ids": 4
+    },
+    {
+      "arm": "context-json",
+      "attempts": 6,
+      "by_position": {
+        "head": {
+          "attempts": 2,
+          "correct_tactic_diagnostic_only": 2,
+          "strict_successes": 2
+        },
+        "middle": {
+          "attempts": 2,
+          "correct_tactic_diagnostic_only": 2,
+          "strict_successes": 2
+        },
+        "tail": {
+          "attempts": 2,
+          "correct_tactic_diagnostic_only": 2,
+          "strict_successes": 2
+        }
+      },
+      "correct_tactic_ignoring_envelope_diagnostic_only": 6,
+      "median_prompt_tokens_server_reported": 1272.0,
+      "split": "confirmation",
+      "strict_successes": 6,
+      "wrong_id_with_correct_tactic": 0,
+      "wrong_request_ids": 0
+    }
+  ],
+  "promotion": false,
+  "report_sha256": "e3a53b3badbfa48e9cdd9d80d890099c04de07f7be5a2f65199230f5261d1158",
+  "schema": "jevops-leanstral-context-pilot-evidence/v1",
+  "server_identity_attested": false,
+  "server_metadata_stable_at_phase_checks": true,
+  "training_runs": 0,
+  "watcher_configuration_and_budget_unchanged": true
+}

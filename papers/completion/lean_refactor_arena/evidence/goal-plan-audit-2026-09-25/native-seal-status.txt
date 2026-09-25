@@ -1,0 +1,36 @@
+unsealed tests/test_arena_solver_native.py::test_native_solver_suggestions_and_support_minimization (explicit opt-out: native solver control; no downloads or model calls)
+unsealed tests/test_arena_solver_native.py::test_native_multiline_solver_spans_and_per_goal_hints[\n] (explicit opt-out: native parser/span control; installed toolchain only)
+unsealed tests/test_arena_solver_native.py::test_native_multiline_solver_spans_and_per_goal_hints[\r\n] (explicit opt-out: native parser/span control; installed toolchain only)
+unsealed tests/test_arena_solver_native.py::test_native_archived_strata_multiline_repair (explicit opt-out: explicit prepared Strata regression; three checks, no provisioning)
+sealed   tests/test_arena_replay.py::test_fixture_never_claims_native_proof_source_or_cost_admission
+sealed   tests/test_arena_replay.py::test_falsy_injected_runner_is_still_a_fixture_not_native_evidence
+sealed   tests/test_arena_replay.py::test_explicit_source_policy_is_opt_in_bound_and_not_native_admission
+unsealed tests/test_arena_replay.py::test_live_fresh_process_checks_exported_term (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_checker_rejects_untrusted_structural_terms[wrong_type] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_checker_rejects_untrusted_structural_terms[bad_proof] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_checker_rejects_untrusted_structural_terms[missing_constant] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_checker_rejects_untrusted_structural_terms[wrong_universes] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_checker_rejects_untrusted_structural_terms[changed_target] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_checker_rejects_untrusted_structural_terms[sorry_axiom] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_valid_substituted_export_does_not_establish_source_correspondence (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_universes_and_scopes[universe u\n-universe_replay-theorem universe_replay {\u03b1 : Sort u} (x : \u03b1) : x = x-by rfl] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_universes_and_scopes[namespace Demo\nsection\nvariable (h : True)\ninclude h\n-Demo.sample-theorem sample : True-by exact h] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_cold_measurement_counter_and_export_share_one_producer (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_process_warmth_only_gain_disappears_in_cold_measurements (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_explicit_source_structure_and_kernel_check[theorem linked (h : True) : True-@h-constants0-v4.26.0] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_explicit_source_structure_and_kernel_check[theorem linked (h : True) : True-@h-constants0-v4.34.0] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_explicit_source_structure_and_kernel_check[theorem linked (f : True -> True) (h : True) : True-(@f @h)-constants1-v4.26.0] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_explicit_source_structure_and_kernel_check[theorem linked (f : True -> True) (h : True) : True-(@f @h)-constants1-v4.34.0] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_explicit_source_structure_and_kernel_check[theorem linked (A : Prop) (B : Prop) (ha : A) (hb : B) : And A B-(@_root_.And.intro @A @B @ha @hb)-constants2-v4.26.0] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_explicit_source_structure_and_kernel_check[theorem linked (A : Prop) (B : Prop) (ha : A) (hb : B) : And A B-(@_root_.And.intro @A @B @ha @hb)-constants2-v4.34.0] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_explicit_source_structure_and_kernel_check[theorem linked : True-@_root_.True.intro-constants3-v4.26.0] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_explicit_source_structure_and_kernel_check[theorem linked : True-@_root_.True.intro-constants3-v4.34.0] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_explicit_source_blocks_proof_irrelevance_substitution (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_explicit_source_does_not_treat_goal_binder_as_visible_parameter (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_explicit_same_term_does_not_attest_which_source_executed (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_size_guard_rejects_larger_explicit_kernel_checked_proof[v4.26.0] (fresh execution required by fixture: live_profile)
+unsealed tests/test_arena_replay.py::test_live_size_guard_rejects_larger_explicit_kernel_checked_proof[v4.34.0] (fresh execution required by fixture: live_profile)
+
+test seals: 0 reused; 0 fresh passes sealed; 0 file reads, 4079 stat hits
+104 deselected in 0.22s
+EXPECTED_STATUS_EXIT=1; native_cases_unsealed=29; no_test_bodies_executed=true

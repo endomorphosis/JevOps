@@ -1,0 +1,2357 @@
+{
+  "schema": "jevops-arena-controlled-trial/v1",
+  "record": {
+    "name": "Core.InitsUpdatesComm",
+    "source": "strata",
+    "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+    "src": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+    "proof_length": 224,
+    "num_lines": 55,
+    "header": "",
+    "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+    "url": "https://github.com/strata-org/Strata",
+    "start_line": 950,
+    "end_line": 1004,
+    "version_info": [
+      {
+        "v4.29.1": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      {
+        "v4.27.0": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      {
+        "v4.26.0": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      }
+    ]
+  },
+  "arms": [
+    {
+      "label": "control",
+      "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "provenance": "unchanged-reference"
+    },
+    {
+      "label": "fenced-slot-2",
+      "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\nintros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3'' generalizing \u03c3 ks' vs'\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27df\u27e9\n    \u00b7 apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStateUpdated ?_ Hup\n      apply UpdateStatesNotDefMonototone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    \u00b7 apply (ih Hinit ?_ ?_).2.2\n      \u00b7 simp_all\n      \u00b7 simp [isDefined] at * <;> simp_all\n      \u00b7 simp_all",
+      "provenance": "secondary unchanged-harness fence normalization; slot 2 plan d662ae1476a92351df37ae9cfe0f3c6ccc65504608b45595aa77f47f535f8ef1"
+    },
+    {
+      "label": "fenced-slot-3",
+      "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\nintros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "provenance": "secondary unchanged-harness fence normalization; slot 3 plan d662ae1476a92351df37ae9cfe0f3c6ccc65504608b45595aa77f47f535f8ef1"
+    },
+    {
+      "label": "fenced-slot-6",
+      "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\nintros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3'' generalizing \u03c3\u2081\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27df\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStateUpdated ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "provenance": "secondary unchanged-harness fence normalization; slot 6 plan d662ae1476a92351df37ae9cfe0f3c6ccc65504608b45595aa77f47f535f8ef1"
+    }
+  ],
+  "repetitions": 2,
+  "seed": 43,
+  "orders": [
+    "reference-first",
+    "candidate-first"
+  ],
+  "plan_id": "e955d38c156f9c71e374ede19d80a35cc15fe6c07c34b33d7cac32698460cf77",
+  "planned_requests": 48,
+  "schedule": [
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "7307601d48686a894a3cbcca2f7e605bf919d09df0da187ceb428ae19531529c"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "9363106f8195851c05ec339a384c5facf0134af2c0eb926d8932d11b679d2b92"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "8a6d1e2bd16d75ab2534ecd4d72023967b0c2d4997fcbaf944ccaee06601c8cb"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "ff6242e91d81b3ee4d21f822d20eb0c307a50599f61c2522c34c2548b23602e6"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "964330158145a5c47e8986815a5308ac3ad84b35fe25f5224d9cb31c6a9b687d"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "6dfbac3c94e70e24c4a813d693d36ffd68493e979ec405de2650b8668468a0bf"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "f284bfb53e7bd7fcb4824bb8a038d9692675728eca34966289820a18173c8846"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "69b55f3432bb1633658f4293c0450247dab5d73da1b63199a89e73b53a02523d"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "35e282025423eb42c30a7e9899c27681e1f75d6ad6cb172be748ada7a4fdc18d"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "afe48c38f512686050b849f16ec20717ee77ad02912806e37ba876d5074eb3e7"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "d3307cc970c88d521742ad4abba5146c8b004be8d288a9bf63b7bd176f08fc4f"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "39a5b8c3f5c75c599f867ada5c6661d5e0dfc3d13a37d4324cca6f11ddcc6ff1"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "063d03fc38612320aa30b7ab556a0e47c96e5d31f41ac7379639a57597bf921a"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "0edd5751f8e98aea8ee0d8313644f07e87e8dc547312e8add65edb65615d8ae6"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "89e0c26ee02b5a885818949f559ee62961acf2ae6480a5a48a341dbee08d1971"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "09aabe4fe63d5640aee23f754f89d90d44c13291598ae5c28393e42b0ac9572e"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "aeb883d912ff32acb06b4a0c4eb7cdb3a00e7fb4a27c6c436fefdb0e0e23199a"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "f8f52688cd90a8a083cf2e0d519739c13a333bcbd5feb1491c8d23dd06254bf8"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "dbb0889ae267d4113501e040914456b7924ab95d4ffb0023edd12064f4af24ad"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "447d876acd3a4e9cbd80dae291cc09402edc46faf53436e518bf7d48c56dd367"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "ddd138308c3f2ba5d58b81db5ae6523c319484210eee3252fbedd8c7c93fa751"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "46f9abf3f0130ea469c1b674cf478d831072befae46d3f4d15c15e514802191d"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "988fb2e9f7a303695d68136305c1f65c8c6a013fd9874e9133051d0e2b1480aa"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "cbcce49fe5e7b6ade3b6b6bf90793e6b3db22e9bfb7320feea173e94f9866e92"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "134ab8721902618c7305f6dbd1b5a32ca51b9c39067c21109053c4de987e0ef1"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "07e4e49bd8ddff422d317fb23fb6f49e830611d9f474824fadc3707b04ad285d"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "fe7cb8bf71a904c1b77008c950381c033589da0bae820f8415b08e13459c5d21"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "663a55d7b9293e0a4255eec93e2bb51ba40b0eb51111980cdf0124abdb42aab8"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "968d962c3eabdd4fbaafa91f7cdc1c5aebf3b2e040a1c607b5a183f1fcd26883"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "37e6d5669ffc925739d2e3174b70fdbbcc84c5a37ccfe30cd3b40e77bef6400f"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "d46c205daec9896f913075d2e95028baa83fc76bba1f3b258506c6da5233e13c"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "09d8352f2fb5d13b28628e56f99bd8c04e5f9c8c3c59d908af7558675f7a8a02"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "c522d75f85f6732233acd8c4c317e998ae75306b5432bb5899b7951b5538745f"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "5a27d71058bff543f5725627affb78dcc0adaa8b0b3686a07360d07c5b1c2898"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "4e095ac22120927ff47e62327bb92cd94990d03e98525cba80f15c1c873c8060"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "50f7ab3950bfc4ec60d38b9397997b062733a591385c5b11e4d7c1854fbd8fe6"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "398f89bafac591354789ab224e142b358e4bd3c8b94d852bf7495c3676918fd4"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "f12aeeb4a332dd434fb3d4031bb73f92937120eb3e7ce45715d1397b9b09c323"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "cad6d4a5666fe505919005112604e8e12b6ebe717bdbc76948398fd1765feb13"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "1fef1f985b24ace31a4d8302ea345f319af7b775e4e585a984610059e9719368"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "8465ac1d725fca7cd237f8b8e6afdfca37d996189726222e63430a85467755ba"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "9f2be3eb2d3680156f30e95713dae697222f5f4cc9edb46e479f6f7638b4ab9a"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "1a3a247dc4775b5ea11861ee67fee1fc8bd92f07e0c12f9c3fff961926b3a928"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "f634086d7c889df61f6c49494698be11d459408ef0437aee4f361703ae9f2380"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "640a1f2b526cfeff10d1df85140d3092189c364d4c7f83e9e6871e69f026902e"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "c1f811663814f5409818afce99da1b0694585fe475e83a87c700c1dcdcdbd5a9"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "17ce0f5c2694670698567fc54246aec10e09e81a9f2c1f6e21212019644bd111"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "33b97f0f22b42d6f69f6568e7bc23ae338a71de79c09327430d22b9043659f12"
+    }
+  ],
+  "evidence_mode": "local_lean",
+  "max_calls": 48,
+  "requests_reserved": 48,
+  "verifier_invocations": 48,
+  "native_processes": 48,
+  "samples": [
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "7307601d48686a894a3cbcca2f7e605bf919d09df0da187ceb428ae19531529c",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "312e5202b7a38cb00530e32be2919d727f1a5d714292ee8efd535c0601b6cdf3",
+        "candidate_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":12613.753}"
+      },
+      "context_id": "e6354bc9b78a1a1149621e415e5d0b7884fd8f83adba3c0a6714a73dd1b21695"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "9363106f8195851c05ec339a384c5facf0134af2c0eb926d8932d11b679d2b92",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "9376f0265ac82a347ff0c8eee966a50a2ee2caca639bcb2a1c53628955c0d26e",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4227,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227600,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227570,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15112.124}"
+      },
+      "context_id": "e6354bc9b78a1a1149621e415e5d0b7884fd8f83adba3c0a6714a73dd1b21695",
+      "raw_heartbeats": 4227600
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "8a6d1e2bd16d75ab2534ecd4d72023967b0c2d4997fcbaf944ccaee06601c8cb",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "71a868ac3dda9dc17e531783099135af21f14e7f4b42e8173490b44c375e0c75",
+        "candidate_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11471.588}"
+      },
+      "context_id": "e6354bc9b78a1a1149621e415e5d0b7884fd8f83adba3c0a6714a73dd1b21695"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "ff6242e91d81b3ee4d21f822d20eb0c307a50599f61c2522c34c2548b23602e6",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "e7aaa0cefaca562ac6aa86bf70050f2c8c650686c824ce8e365f0375d3875a27",
+        "candidate_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11729.836}"
+      },
+      "context_id": "e6354bc9b78a1a1149621e415e5d0b7884fd8f83adba3c0a6714a73dd1b21695"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "964330158145a5c47e8986815a5308ac3ad84b35fe25f5224d9cb31c6a9b687d",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "dc11efc01ef35d2cb00271c8de45c1cf6c12e226bdd244541af7d0c8c496c20b",
+        "candidate_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":12349.767}"
+      },
+      "context_id": "08d0e83dd31634d3d91c4e1e9947f0ad2b09bdbb088114d2006c47c2f5ea36a1"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "6dfbac3c94e70e24c4a813d693d36ffd68493e979ec405de2650b8668468a0bf",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "27eb9bed8477b0e477fdf9a4a9e5b85b3f056a4854ee79243732b3e36e6d4a6e",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4227,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227568,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227600,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15392.987}"
+      },
+      "context_id": "08d0e83dd31634d3d91c4e1e9947f0ad2b09bdbb088114d2006c47c2f5ea36a1",
+      "raw_heartbeats": 4227568
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "f284bfb53e7bd7fcb4824bb8a038d9692675728eca34966289820a18173c8846",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "c502255dfff681a017d6445a478b0ac1dd6d23a705e8ad176cbbe104172058b4",
+        "candidate_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11682.934}"
+      },
+      "context_id": "08d0e83dd31634d3d91c4e1e9947f0ad2b09bdbb088114d2006c47c2f5ea36a1"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "69b55f3432bb1633658f4293c0450247dab5d73da1b63199a89e73b53a02523d",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "0ece8827a3b5cd71f2677d46d140ac918e4bcfc1c46bd873c14c46ab8b86d2ce",
+        "candidate_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":14872.205}"
+      },
+      "context_id": "08d0e83dd31634d3d91c4e1e9947f0ad2b09bdbb088114d2006c47c2f5ea36a1"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "35e282025423eb42c30a7e9899c27681e1f75d6ad6cb172be748ada7a4fdc18d",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "b3c860c8f8c4f782c44c845ba946bb606f59499207e8b7564115a2c20b2e9726",
+        "candidate_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":14476.666}"
+      },
+      "context_id": "7bb13039d1583fcb821b0b0f102d0709cd74073a9638b9d378418f4970fdc54d"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "afe48c38f512686050b849f16ec20717ee77ad02912806e37ba876d5074eb3e7",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "71940e153be8386546dccf5ab881da2a99b469411a9a20d7bda881669ddabdab",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4657,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657774,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657794,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16514.764}"
+      },
+      "context_id": "7bb13039d1583fcb821b0b0f102d0709cd74073a9638b9d378418f4970fdc54d",
+      "raw_heartbeats": 4657774
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "d3307cc970c88d521742ad4abba5146c8b004be8d288a9bf63b7bd176f08fc4f",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "dbb8c0243b7f96b30f560ad6ba5a6aebcf3ec20870e4ba6c08896e5aa8162e60",
+        "candidate_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":12248.053}"
+      },
+      "context_id": "7bb13039d1583fcb821b0b0f102d0709cd74073a9638b9d378418f4970fdc54d"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "39a5b8c3f5c75c599f867ada5c6661d5e0dfc3d13a37d4324cca6f11ddcc6ff1",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "087add816a2c8dd18ca15f7e6a0cea5815d3cf60bfbf1c88f3ec30b0b69c802c",
+        "candidate_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":12257.57}"
+      },
+      "context_id": "7bb13039d1583fcb821b0b0f102d0709cd74073a9638b9d378418f4970fdc54d"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "063d03fc38612320aa30b7ab556a0e47c96e5d31f41ac7379639a57597bf921a",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "5d3c1ecf1c31fb9cd0c90f1eea4c81e57b4ea51bb0134ed45def586f8fd8ec9f",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4657,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657791,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657774,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15283.743}"
+      },
+      "context_id": "85d129c5345a77b92c1d294305688f8a94de5efefe01934c3f524c4ec1782c97",
+      "raw_heartbeats": 4657791
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "0edd5751f8e98aea8ee0d8313644f07e87e8dc547312e8add65edb65615d8ae6",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "cb02115d9051df2b25cea7de9254b41471d1d6e5f8008117bdc334411ba05693",
+        "candidate_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11874.534}"
+      },
+      "context_id": "85d129c5345a77b92c1d294305688f8a94de5efefe01934c3f524c4ec1782c97"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "89e0c26ee02b5a885818949f559ee62961acf2ae6480a5a48a341dbee08d1971",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "d7beeb56c8105e6bc1f2071a1bdc4c8d93f9cfd7b07b7c11bde87ad62ff66add",
+        "candidate_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11248.614}"
+      },
+      "context_id": "85d129c5345a77b92c1d294305688f8a94de5efefe01934c3f524c4ec1782c97"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "09aabe4fe63d5640aee23f754f89d90d44c13291598ae5c28393e42b0ac9572e",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "672518ff9a9e25adaa577902d438ff046eaf2472efc2179e244750f651e00783",
+        "candidate_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":10050.631}"
+      },
+      "context_id": "85d129c5345a77b92c1d294305688f8a94de5efefe01934c3f524c4ec1782c97"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "aeb883d912ff32acb06b4a0c4eb7cdb3a00e7fb4a27c6c436fefdb0e0e23199a",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "63b5f9591b192115a65b16891915aeff9fccef1260ebd5c9ac7c7e9bb33db6b4",
+        "candidate_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":5087.205}"
+      },
+      "context_id": "d25b173fcf524019cc0d3f2a00713d6bc5f8b88fc7eecc586284c26eb70aaac8"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "f8f52688cd90a8a083cf2e0d519739c13a333bcbd5feb1491c8d23dd06254bf8",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "d14894edadee374b2ada0ee7485dc07adb338515f22dd7c7623a8c4bedbf13c0",
+        "candidate_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":5553.609}"
+      },
+      "context_id": "d25b173fcf524019cc0d3f2a00713d6bc5f8b88fc7eecc586284c26eb70aaac8"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "dbb0889ae267d4113501e040914456b7924ab95d4ffb0023edd12064f4af24ad",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "3bec9c9dd14cb3064f18beb8e50eb0f00d091de36e709adc78834a1e9c5ca7ee",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4689,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689120,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689131,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":7142.2}"
+      },
+      "context_id": "d25b173fcf524019cc0d3f2a00713d6bc5f8b88fc7eecc586284c26eb70aaac8",
+      "raw_heartbeats": 4689120
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "447d876acd3a4e9cbd80dae291cc09402edc46faf53436e518bf7d48c56dd367",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "00eb23d5b637d4d2afe43facd81c7cb2749472102c5b1324d6cc2a10e35c6e56",
+        "candidate_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6771.699}"
+      },
+      "context_id": "d25b173fcf524019cc0d3f2a00713d6bc5f8b88fc7eecc586284c26eb70aaac8"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "ddd138308c3f2ba5d58b81db5ae6523c319484210eee3252fbedd8c7c93fa751",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "3366884f3672c19193fc8c20eaf93d806d5381d65f0f45ecc643e8159cf14872",
+        "candidate_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":5724.25}"
+      },
+      "context_id": "ac49b3a0afcfb641ba53f069816e1b80fbdb6528ca99babe9bb67336b1aae5fc"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "46f9abf3f0130ea469c1b674cf478d831072befae46d3f4d15c15e514802191d",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "b9851241b74e9d3ef49a018b25096f0159bda77410f743462ac67130762a6bb4",
+        "candidate_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6602.135}"
+      },
+      "context_id": "ac49b3a0afcfb641ba53f069816e1b80fbdb6528ca99babe9bb67336b1aae5fc"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "988fb2e9f7a303695d68136305c1f65c8c6a013fd9874e9133051d0e2b1480aa",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "b7a3bfc624ece1af01723451bec6da94c92d6857568c1f18020138839a30c249",
+        "candidate_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6289.662}"
+      },
+      "context_id": "ac49b3a0afcfb641ba53f069816e1b80fbdb6528ca99babe9bb67336b1aae5fc"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "cbcce49fe5e7b6ade3b6b6bf90793e6b3db22e9bfb7320feea173e94f9866e92",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "52415e4da9d23668e5702301eb437d2fdb1282c51501bb1046f6c3b1b13a94f8",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4689,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689131,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689118,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":6333.418}"
+      },
+      "context_id": "ac49b3a0afcfb641ba53f069816e1b80fbdb6528ca99babe9bb67336b1aae5fc",
+      "raw_heartbeats": 4689131
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "134ab8721902618c7305f6dbd1b5a32ca51b9c39067c21109053c4de987e0ef1",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "e7aaa0cefaca562ac6aa86bf70050f2c8c650686c824ce8e365f0375d3875a27",
+        "candidate_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":9651.815}"
+      },
+      "context_id": "e6354bc9b78a1a1149621e415e5d0b7884fd8f83adba3c0a6714a73dd1b21695"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "07e4e49bd8ddff422d317fb23fb6f49e830611d9f474824fadc3707b04ad285d",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "312e5202b7a38cb00530e32be2919d727f1a5d714292ee8efd535c0601b6cdf3",
+        "candidate_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":12582.702}"
+      },
+      "context_id": "e6354bc9b78a1a1149621e415e5d0b7884fd8f83adba3c0a6714a73dd1b21695"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "fe7cb8bf71a904c1b77008c950381c033589da0bae820f8415b08e13459c5d21",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "71a868ac3dda9dc17e531783099135af21f14e7f4b42e8173490b44c375e0c75",
+        "candidate_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":12826.951}"
+      },
+      "context_id": "e6354bc9b78a1a1149621e415e5d0b7884fd8f83adba3c0a6714a73dd1b21695"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "663a55d7b9293e0a4255eec93e2bb51ba40b0eb51111980cdf0124abdb42aab8",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "9376f0265ac82a347ff0c8eee966a50a2ee2caca639bcb2a1c53628955c0d26e",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4227,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227600,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227568,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15634.714}"
+      },
+      "context_id": "e6354bc9b78a1a1149621e415e5d0b7884fd8f83adba3c0a6714a73dd1b21695",
+      "raw_heartbeats": 4227600
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "968d962c3eabdd4fbaafa91f7cdc1c5aebf3b2e040a1c607b5a183f1fcd26883",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "27eb9bed8477b0e477fdf9a4a9e5b85b3f056a4854ee79243732b3e36e6d4a6e",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4227,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227568,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227600,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16129.622}"
+      },
+      "context_id": "08d0e83dd31634d3d91c4e1e9947f0ad2b09bdbb088114d2006c47c2f5ea36a1",
+      "raw_heartbeats": 4227568
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "37e6d5669ffc925739d2e3174b70fdbbcc84c5a37ccfe30cd3b40e77bef6400f",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "dc11efc01ef35d2cb00271c8de45c1cf6c12e226bdd244541af7d0c8c496c20b",
+        "candidate_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11587.575}"
+      },
+      "context_id": "08d0e83dd31634d3d91c4e1e9947f0ad2b09bdbb088114d2006c47c2f5ea36a1"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "d46c205daec9896f913075d2e95028baa83fc76bba1f3b258506c6da5233e13c",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "0ece8827a3b5cd71f2677d46d140ac918e4bcfc1c46bd873c14c46ab8b86d2ce",
+        "candidate_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11074.349}"
+      },
+      "context_id": "08d0e83dd31634d3d91c4e1e9947f0ad2b09bdbb088114d2006c47c2f5ea36a1"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "09d8352f2fb5d13b28628e56f99bd8c04e5f9c8c3c59d908af7558675f7a8a02",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "c502255dfff681a017d6445a478b0ac1dd6d23a705e8ad176cbbe104172058b4",
+        "candidate_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":12136.191}"
+      },
+      "context_id": "08d0e83dd31634d3d91c4e1e9947f0ad2b09bdbb088114d2006c47c2f5ea36a1"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "c522d75f85f6732233acd8c4c317e998ae75306b5432bb5899b7951b5538745f",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "cb02115d9051df2b25cea7de9254b41471d1d6e5f8008117bdc334411ba05693",
+        "candidate_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":10709.698}"
+      },
+      "context_id": "85d129c5345a77b92c1d294305688f8a94de5efefe01934c3f524c4ec1782c97"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "5a27d71058bff543f5725627affb78dcc0adaa8b0b3686a07360d07c5b1c2898",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "d7beeb56c8105e6bc1f2071a1bdc4c8d93f9cfd7b07b7c11bde87ad62ff66add",
+        "candidate_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11817.568}"
+      },
+      "context_id": "85d129c5345a77b92c1d294305688f8a94de5efefe01934c3f524c4ec1782c97"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "4e095ac22120927ff47e62327bb92cd94990d03e98525cba80f15c1c873c8060",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "5d3c1ecf1c31fb9cd0c90f1eea4c81e57b4ea51bb0134ed45def586f8fd8ec9f",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4657,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657791,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657779,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15473.227}"
+      },
+      "context_id": "85d129c5345a77b92c1d294305688f8a94de5efefe01934c3f524c4ec1782c97",
+      "raw_heartbeats": 4657791
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "50f7ab3950bfc4ec60d38b9397997b062733a591385c5b11e4d7c1854fbd8fe6",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "672518ff9a9e25adaa577902d438ff046eaf2472efc2179e244750f651e00783",
+        "candidate_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11831.906}"
+      },
+      "context_id": "85d129c5345a77b92c1d294305688f8a94de5efefe01934c3f524c4ec1782c97"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "398f89bafac591354789ab224e142b358e4bd3c8b94d852bf7495c3676918fd4",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "b3c860c8f8c4f782c44c845ba946bb606f59499207e8b7564115a2c20b2e9726",
+        "candidate_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":12971.95}"
+      },
+      "context_id": "7bb13039d1583fcb821b0b0f102d0709cd74073a9638b9d378418f4970fdc54d"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "f12aeeb4a332dd434fb3d4031bb73f92937120eb3e7ce45715d1397b9b09c323",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "dbb8c0243b7f96b30f560ad6ba5a6aebcf3ec20870e4ba6c08896e5aa8162e60",
+        "candidate_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11715.933}"
+      },
+      "context_id": "7bb13039d1583fcb821b0b0f102d0709cd74073a9638b9d378418f4970fdc54d"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "cad6d4a5666fe505919005112604e8e12b6ebe717bdbc76948398fd1765feb13",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "087add816a2c8dd18ca15f7e6a0cea5815d3cf60bfbf1c88f3ec30b0b69c802c",
+        "candidate_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":10008.469}"
+      },
+      "context_id": "7bb13039d1583fcb821b0b0f102d0709cd74073a9638b9d378418f4970fdc54d"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "1fef1f985b24ace31a4d8302ea345f319af7b775e4e585a984610059e9719368",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "71940e153be8386546dccf5ab881da2a99b469411a9a20d7bda881669ddabdab",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4657,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657774,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657791,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17043.358}"
+      },
+      "context_id": "7bb13039d1583fcb821b0b0f102d0709cd74073a9638b9d378418f4970fdc54d",
+      "raw_heartbeats": 4657774
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "8465ac1d725fca7cd237f8b8e6afdfca37d996189726222e63430a85467755ba",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "b7a3bfc624ece1af01723451bec6da94c92d6857568c1f18020138839a30c249",
+        "candidate_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":5359.816}"
+      },
+      "context_id": "ac49b3a0afcfb641ba53f069816e1b80fbdb6528ca99babe9bb67336b1aae5fc"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "9f2be3eb2d3680156f30e95713dae697222f5f4cc9edb46e479f6f7638b4ab9a",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "52415e4da9d23668e5702301eb437d2fdb1282c51501bb1046f6c3b1b13a94f8",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4689,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689131,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689118,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":6614.821}"
+      },
+      "context_id": "ac49b3a0afcfb641ba53f069816e1b80fbdb6528ca99babe9bb67336b1aae5fc",
+      "raw_heartbeats": 4689131
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "1a3a247dc4775b5ea11861ee67fee1fc8bd92f07e0c12f9c3fff961926b3a928",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "b9851241b74e9d3ef49a018b25096f0159bda77410f743462ac67130762a6bb4",
+        "candidate_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":4782.041}"
+      },
+      "context_id": "ac49b3a0afcfb641ba53f069816e1b80fbdb6528ca99babe9bb67336b1aae5fc"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "f634086d7c889df61f6c49494698be11d459408ef0437aee4f361703ae9f2380",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "3366884f3672c19193fc8c20eaf93d806d5381d65f0f45ecc643e8159cf14872",
+        "candidate_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":5532.311}"
+      },
+      "context_id": "ac49b3a0afcfb641ba53f069816e1b80fbdb6528ca99babe9bb67336b1aae5fc"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "sample_id": "640a1f2b526cfeff10d1df85140d3092189c364d4c7f83e9e6871e69f026902e",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "63b5f9591b192115a65b16891915aeff9fccef1260ebd5c9ac7c7e9bb33db6b4",
+        "candidate_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6532.009}"
+      },
+      "context_id": "d25b173fcf524019cc0d3f2a00713d6bc5f8b88fc7eecc586284c26eb70aaac8"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "sample_id": "c1f811663814f5409818afce99da1b0694585fe475e83a87c700c1dcdcdbd5a9",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "00eb23d5b637d4d2afe43facd81c7cb2749472102c5b1324d6cc2a10e35c6e56",
+        "candidate_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":5917.857}"
+      },
+      "context_id": "d25b173fcf524019cc0d3f2a00713d6bc5f8b88fc7eecc586284c26eb70aaac8"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "sample_id": "17ce0f5c2694670698567fc54246aec10e09e81a9f2c1f6e21212019644bd111",
+      "status": "REJECTED",
+      "reason": "candidate_errors",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "d14894edadee374b2ada0ee7485dc07adb338515f22dd7c7623a8c4bedbf13c0",
+        "candidate_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\n\u03c3 \u03c3' \u03c3'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates \u03c3 ks vs \u03c3'\\nHinit : InitStates \u03c3' ks' vs' \u03c3''\\n\u22a2 \u2203 \u03c3\u2081, \u03c3\u2081 = updatedStates \u03c3 ks' vs' \u2227 InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227 UpdateStates \u03c3\u2081 ks vs \u03c3''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6297.031}"
+      },
+      "context_id": "d25b173fcf524019cc0d3f2a00713d6bc5f8b88fc7eecc586284c26eb70aaac8"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "sample_id": "33b97f0f22b42d6f69f6568e7bc23ae338a71de79c09327430d22b9043659f12",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "3bec9c9dd14cb3064f18beb8e50eb0f00d091de36e709adc78834a1e9c5ca7ee",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4689,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689120,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689131,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":6887.981}"
+      },
+      "context_id": "d25b173fcf524019cc0d3f2a00713d6bc5f8b88fc7eecc586284c26eb70aaac8",
+      "raw_heartbeats": 4689120
+    }
+  ],
+  "contexts": [
+    {
+      "problem": "Core.InitsUpdatesComm",
+      "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+      "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "reference_length": 224,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.29.1",
+          "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+        }
+      ],
+      "dependency_digests": [
+        "db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "959011df9685a509582c3ace8bf6c0fe1420cac53636bf721a73d1cce77dfeb0",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    },
+    {
+      "problem": "Core.InitsUpdatesComm",
+      "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+      "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "reference_length": 224,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.29.1",
+          "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+        }
+      ],
+      "dependency_digests": [
+        "db2f82c78d8f3373139c14ee544e6000bf0e3fc3acce0536666bb810dfa47920"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "959011df9685a509582c3ace8bf6c0fe1420cac53636bf721a73d1cce77dfeb0",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"candidate-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    },
+    {
+      "problem": "Core.InitsUpdatesComm",
+      "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+      "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "reference_length": 224,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+        }
+      ],
+      "dependency_digests": [
+        "d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "959011df9685a509582c3ace8bf6c0fe1420cac53636bf721a73d1cce77dfeb0",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    },
+    {
+      "problem": "Core.InitsUpdatesComm",
+      "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+      "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "reference_length": 224,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+        }
+      ],
+      "dependency_digests": [
+        "d0a72794ace3cd3e16a7a7289ad259651a076c9992a5975a1e79e4c65dfc4de4"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "959011df9685a509582c3ace8bf6c0fe1420cac53636bf721a73d1cce77dfeb0",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"candidate-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    },
+    {
+      "problem": "Core.InitsUpdatesComm",
+      "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+      "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "reference_length": 224,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "dependency_digests": [
+        "df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "959011df9685a509582c3ace8bf6c0fe1420cac53636bf721a73d1cce77dfeb0",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    },
+    {
+      "problem": "Core.InitsUpdatesComm",
+      "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+      "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "reference_length": 224,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "dependency_digests": [
+        "df2591da577238165d37d66973c240fb40e4436faf20399b362cad4893dfcc60"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "959011df9685a509582c3ace8bf6c0fe1420cac53636bf721a73d1cce77dfeb0",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"candidate-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "label": "fenced-slot-2",
+      "source_sha256": "d25eec448cd56193d9abcb0da8aeaa68cf582b5563ec8713f70f59cafa02030b",
+      "provenance": "secondary unchanged-harness fence normalization; slot 2 plan d662ae1476a92351df37ae9cfe0f3c6ccc65504608b45595aa77f47f535f8ef1",
+      "status": "REJECTED",
+      "reference_tokens": 224,
+      "candidate_tokens": 129,
+      "length_reduction_pct": 42.41071428571429,
+      "verified_pins": [],
+      "required_pins": [
+        {
+          "lean_tag": "v4.29.1",
+          "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+        },
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "heartbeat_result": "INCOMPLETE",
+      "strata": [
+        {
+          "version": {
+            "lean_tag": "v4.29.1",
+            "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+          },
+          "branch_order": "reference-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.29.1",
+            "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+          },
+          "branch_order": "candidate-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.27.0",
+            "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+          },
+          "branch_order": "reference-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.27.0",
+            "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+          },
+          "branch_order": "candidate-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "status": "INCOMPLETE"
+        }
+      ],
+      "observed_pareto_improvement": null,
+      "statistical_significance_claimed": false,
+      "promoted": false,
+      "official_score": null
+    },
+    {
+      "label": "fenced-slot-3",
+      "source_sha256": "773ef75f1d8db0d2e349a5f5c28781eaea0003f5aa478f8754879ae87fff6b5c",
+      "provenance": "secondary unchanged-harness fence normalization; slot 3 plan d662ae1476a92351df37ae9cfe0f3c6ccc65504608b45595aa77f47f535f8ef1",
+      "status": "REJECTED",
+      "reference_tokens": 224,
+      "candidate_tokens": 221,
+      "length_reduction_pct": 1.3392857142857095,
+      "verified_pins": [],
+      "required_pins": [
+        {
+          "lean_tag": "v4.29.1",
+          "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+        },
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "heartbeat_result": "INCOMPLETE",
+      "strata": [
+        {
+          "version": {
+            "lean_tag": "v4.29.1",
+            "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+          },
+          "branch_order": "reference-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.29.1",
+            "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+          },
+          "branch_order": "candidate-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.27.0",
+            "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+          },
+          "branch_order": "reference-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.27.0",
+            "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+          },
+          "branch_order": "candidate-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "status": "INCOMPLETE"
+        }
+      ],
+      "observed_pareto_improvement": null,
+      "statistical_significance_claimed": false,
+      "promoted": false,
+      "official_score": null
+    },
+    {
+      "label": "fenced-slot-6",
+      "source_sha256": "347e8b64447a9b9c9e742686852855a1b7491796dc75ec82a9f3e78b52395dc1",
+      "provenance": "secondary unchanged-harness fence normalization; slot 6 plan d662ae1476a92351df37ae9cfe0f3c6ccc65504608b45595aa77f47f535f8ef1",
+      "status": "REJECTED",
+      "reference_tokens": 224,
+      "candidate_tokens": 209,
+      "length_reduction_pct": 6.696428571428569,
+      "verified_pins": [],
+      "required_pins": [
+        {
+          "lean_tag": "v4.29.1",
+          "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+        },
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "heartbeat_result": "INCOMPLETE",
+      "strata": [
+        {
+          "version": {
+            "lean_tag": "v4.29.1",
+            "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+          },
+          "branch_order": "reference-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.29.1",
+            "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+          },
+          "branch_order": "candidate-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.27.0",
+            "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+          },
+          "branch_order": "reference-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.27.0",
+            "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+          },
+          "branch_order": "candidate-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "status": "INCOMPLETE"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "status": "INCOMPLETE"
+        }
+      ],
+      "observed_pareto_improvement": null,
+      "statistical_significance_claimed": false,
+      "promoted": false,
+      "official_score": null
+    }
+  ],
+  "status": "COMPLETE",
+  "receipt_cache_enabled": false,
+  "live_model_calls": 0,
+  "training_enabled": false,
+  "production_memory_used": false,
+  "official_score": null,
+  "local_combined_pct": null,
+  "worker_metric_parity": "UNCONFIRMED",
+  "runner_sha256": "24a413e6e893f8bb9c1be5277ea6e9486a7b152a7f8030be943c02528af7ccb6",
+  "readiness": {
+    "schema": "jevops-arena-native-readiness/v1",
+    "required_version_checks": 3,
+    "completed_version_checks": 0,
+    "official_score": null,
+    "rows": [
+      {
+        "name": "Core.InitsUpdatesComm",
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9",
+        "status": "UNMEASURED",
+        "capability_gaps": [],
+        "dependencies_verified": false,
+        "baseline_compiles": null
+      },
+      {
+        "name": "Core.InitsUpdatesComm",
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d",
+        "status": "UNMEASURED",
+        "capability_gaps": [],
+        "dependencies_verified": false,
+        "baseline_compiles": null
+      },
+      {
+        "name": "Core.InitsUpdatesComm",
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+        "status": "UNMEASURED",
+        "capability_gaps": [],
+        "dependencies_verified": false,
+        "baseline_compiles": null
+      }
+    ]
+  },
+  "fingerprint_file_reads": 127632,
+  "fingerprint_stat_hits": 1278918
+}

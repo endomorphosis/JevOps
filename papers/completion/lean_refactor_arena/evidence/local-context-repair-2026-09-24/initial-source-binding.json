@@ -1,0 +1,22 @@
+{
+  "before": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-context-repair-20260924-MvhckB/snapshot",
+    "manifest_sha256": "22b3b69858728f7a2a0d73b3ae6e65e395603d6a937fdb019d32ad195e09c1ed",
+    "content_root": "ae4d6a1e13a7743ed521554bec5567d672d17be46eeb092e38ae5049e4bfa15c",
+    "file_count": 229,
+    "bytes": 4762532,
+    "proof_verified": false
+  },
+  "after": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-context-repair-20260924-MvhckB/snapshot",
+    "manifest_sha256": "22b3b69858728f7a2a0d73b3ae6e65e395603d6a937fdb019d32ad195e09c1ed",
+    "content_root": "ae4d6a1e13a7743ed521554bec5567d672d17be46eeb092e38ae5049e4bfa15c",
+    "file_count": 229,
+    "bytes": 4762532,
+    "proof_verified": false
+  }
+}

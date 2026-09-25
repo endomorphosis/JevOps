@@ -1,0 +1,203 @@
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/mathlib
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/mathlib/.git/
+RUN git remote add origin https://github.com/leanprover-community/mathlib4
+RUN git fetch --depth 1 origin 1ccd71f89cbbd82ae7d097723ce1722ca7b01c33
+From https://github.com/leanprover-community/mathlib4
+ * branch            1ccd71f89cbbd82ae7d097723ce1722ca7b01c33 -> FETCH_HEAD
+RUN git checkout --detach 1ccd71f89cbbd82ae7d097723ce1722ca7b01c33
+HEAD is now at 1ccd71f chore: move ProofWidgets to v0.0.79 (#31720)
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/plausible
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/plausible/.git/
+RUN git remote add origin https://github.com/leanprover-community/plausible
+RUN git fetch --depth 1 origin 2503bfb5e2d4d8202165f5bd2cc39e44a3be31c3
+From https://github.com/leanprover-community/plausible
+ * branch            2503bfb5e2d4d8202165f5bd2cc39e44a3be31c3 -> FETCH_HEAD
+RUN git checkout --detach 2503bfb5e2d4d8202165f5bd2cc39e44a3be31c3
+HEAD is now at 2503bfb chore: bump toolchain to v4.25.0 (#49)
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/LeanSearchClient
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/LeanSearchClient/.git/
+RUN git remote add origin https://github.com/leanprover-community/LeanSearchClient
+RUN git fetch --depth 1 origin 2ed4ba69b6127de8f5c2af83cccacd3c988b06bf
+From https://github.com/leanprover-community/LeanSearchClient
+ * branch            2ed4ba69b6127de8f5c2af83cccacd3c988b06bf -> FETCH_HEAD
+RUN git checkout --detach 2ed4ba69b6127de8f5c2af83cccacd3c988b06bf
+HEAD is now at 2ed4ba6 chore: port to module system (#25)
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/importGraph
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/importGraph/.git/
+RUN git remote add origin https://github.com/leanprover-community/import-graph
+RUN git fetch --depth 1 origin 009064c21bad4d7f421f2901c5e817c8bf3468cb
+From https://github.com/leanprover-community/import-graph
+ * branch            009064c21bad4d7f421f2901c5e817c8bf3468cb -> FETCH_HEAD
+RUN git checkout --detach 009064c21bad4d7f421f2901c5e817c8bf3468cb
+HEAD is now at 009064c chore: bump toolchain to v4.25.0 (#88)
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/proofwidgets
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/proofwidgets/.git/
+RUN git remote add origin https://github.com/leanprover-community/ProofWidgets4
+RUN git fetch --depth 1 origin e8ef4bdd7a23c3a37170fbd3fa7ee07ef2a54c2d
+From https://github.com/leanprover-community/ProofWidgets4
+ * branch            e8ef4bdd7a23c3a37170fbd3fa7ee07ef2a54c2d -> FETCH_HEAD
+RUN git checkout --detach e8ef4bdd7a23c3a37170fbd3fa7ee07ef2a54c2d
+HEAD is now at e8ef4bd chore: bump toolchain to v4.25.0 (#143)
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/aesop
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/aesop/.git/
+RUN git remote add origin https://github.com/leanprover-community/aesop
+RUN git fetch --depth 1 origin 26e4c7c0e63eb3e6cce3cf7faba27b8526ea8349
+From https://github.com/leanprover-community/aesop
+ * branch            26e4c7c0e63eb3e6cce3cf7faba27b8526ea8349 -> FETCH_HEAD
+RUN git checkout --detach 26e4c7c0e63eb3e6cce3cf7faba27b8526ea8349
+HEAD is now at 26e4c7c chore: bump toolchain to v4.25.0 (#267)
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/Qq
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/Qq/.git/
+RUN git remote add origin https://github.com/leanprover-community/quote4
+RUN git fetch --depth 1 origin 2781d8ad404303b2fe03710ac7db946ddfe3539f
+From https://github.com/leanprover-community/quote4
+ * branch            2781d8ad404303b2fe03710ac7db946ddfe3539f -> FETCH_HEAD
+RUN git checkout --detach 2781d8ad404303b2fe03710ac7db946ddfe3539f
+HEAD is now at 2781d8a chore: bump toolchain to v4.25.0 (#115)
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/batteries
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/batteries/.git/
+RUN git remote add origin https://github.com/leanprover-community/batteries
+RUN git fetch --depth 1 origin 5c78955e8375f872c085514cb521216bac1bda17
+From https://github.com/leanprover-community/batteries
+ * branch            5c78955e8375f872c085514cb521216bac1bda17 -> FETCH_HEAD
+RUN git checkout --detach 5c78955e8375f872c085514cb521216bac1bda17
+HEAD is now at 5c78955 feat: add basic sum/prod lemmas for lists (#1486)
+RUN git init /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/Cli
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0/.lake/packages/Cli/.git/
+RUN git remote add origin https://github.com/leanprover/lean4-cli
+RUN git fetch --depth 1 origin 1dae8b12f8ba27576ffe5ddee78bebf6458157b0
+From https://github.com/leanprover/lean4-cli
+ * branch            1dae8b12f8ba27576ffe5ddee78bebf6458157b0 -> FETCH_HEAD
+RUN git checkout --detach 1dae8b12f8ba27576ffe5ddee78bebf6458157b0
+HEAD is now at 1dae8b1 chore: bump toolchain to v4.25.0 (#61)
+PREFETCH ["Mathlib", "Aesop"]
+RUN lake --no-cache exe cache get Mathlib Aesop
+✔ [3/19] Built Batteries.Data.String.Basic (3.7s)
+✔ [4/19] Built Batteries.Data.Array.Match (4.1s)
+✔ [5/19] Built Batteries.Data.Array.Match:c.o (407ms)
+✔ [6/19] Built Batteries.Data.String.Basic:c.o (837ms)
+✔ [7/19] Built Cache.Lean (5.3s)
+✔ [8/19] Built Cache.Lean:c.o (123ms)
+✔ [9/19] Built Batteries.Data.String.Matcher (2.6s)
+✔ [10/19] Built Batteries.Data.String.Matcher:c.o (148ms)
+✔ [11/19] Built Cache.IO (4.0s)
+✔ [12/19] Built Cache.IO:c.o (938ms)
+✔ [13/19] Built Cache.Hashing (5.2s)
+✔ [14/19] Built Cache.Hashing:c.o (316ms)
+✔ [15/19] Built Cache.Requests (5.5s)
+✔ [16/19] Built Cache.Requests:c.o (745ms)
+✔ [17/19] Built Cache.Main (4.9s)
+✔ [18/19] Built Cache.Main:c.o (330ms)
+✔ [19/19] Built cache:exe (4.3s)
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0 1077k    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 1077k  100 1077k    0     0  1826k      0 --:--:-- --:--:-- --:--:-- 7229k
+
+lake stdout:
+error: build failed
+lake stderr:
+error: build failed
+installing leantar 0.1.16
+Fetching ProofWidgets cloud release...
+uncaught exception: Failed to fetch ProofWidgets cloud release: lake failed with error code 1
+Traceback (most recent call last):
+  File "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_exact.py", line 141, in <module>
+    main()
+  File "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_exact.py", line 133, in main
+    run("lake", "--no-cache", "exe", "cache", "get", *cache_modules, cwd=root)
+  File "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_exact.py", line 17, in run
+    subprocess.run(list(map(str, args)), cwd=cwd, check=True)
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['lake', '--no-cache', 'exe', 'cache', 'get', 'Mathlib', 'Aesop']' returned non-zero exit status 1.

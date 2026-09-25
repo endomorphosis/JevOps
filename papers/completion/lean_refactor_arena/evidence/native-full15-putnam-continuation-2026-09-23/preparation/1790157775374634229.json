@@ -1,0 +1,23 @@
+{
+  "schema": "jevops-arena-preparation/v1",
+  "run_id": "1790157775374634229",
+  "command": [
+    "/usr/bin/env",
+    "PATH=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan/toolchains/leanprover--lean4---v4.25.0/bin:/usr/bin:/bin",
+    "lake",
+    "-v",
+    "build",
+    "proofwidgets:release"
+  ],
+  "exit_code": 1,
+  "timed_out": false,
+  "cleanup": "absent_or_daemon_unavailable",
+  "wall_seconds": 5.7849331459729,
+  "log": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790157775374634229.log",
+  "image_id": "sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517",
+  "network_allowed": true,
+  "build_concurrency": 1,
+  "official_score": null,
+  "volume_capacity_bytes": 49018310656,
+  "volume_used_bytes": 29521408000
+}

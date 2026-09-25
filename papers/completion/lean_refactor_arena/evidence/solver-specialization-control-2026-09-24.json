@@ -1,0 +1,56 @@
+{
+  "schema": "jevops-solver-specialization-control-summary/v1",
+  "date": "2026-09-24",
+  "scope": "stdlib integration control and separate offline search-barrier fixture; not Arena tasks",
+  "evidence_source": "observed pytest stdout and offline demo output; condensed summary, not an importable verification receipt archive",
+  "native_statement": "theorem solver_control (n : Nat) : 0 + n = n",
+  "native_seed_body": "by\n  simp only [Nat.zero_add, Nat.add_zero, Nat.mul_one]\n",
+  "native_measurement": "command-elaboration-internal-heartbeats-div-1000/v1",
+  "native_branch_order": "reference-first",
+  "native_repetitions_per_state_per_arm": 1,
+  "native_limits": {"max_calls": 16, "max_states": 8, "max_depth": 2, "max_sites": 1, "max_proposals": 128, "max_source_bytes": 65536, "max_frontier_bytes": 262144, "max_drafts": 4},
+  "implementation_content_hashes": {
+    "arena_solver.py": "5c7f6d569b81ac56fb7b094be21b3a020cb838e3a1d96593eec645d7602959f6",
+    "solver_feedback.py": "59bdc040eeec4329638cdffceb915acd0c5897982ef78d353177a3d025b61dbe",
+    "arena.py": "e1ba89358f25828d3cabd7acca049cfcaa6ab2cee8901ca01add7bb4dc5789ca",
+    "lean/ArenaCheck.lean": "56117cd126d117b32f24ae67557cb5ffa211099f82d7058e36506803624109dc"
+  },
+  "offline_fixture": {
+    "synthetic_costs_not_Lean_measurements": true,
+    "call_ceiling_each_arm": 12,
+    "arms": {
+      "suggestions-v1": {"calls": 2, "tokens": [7], "drafts": 0},
+      "minimize-v1": {"calls": 2, "tokens": [7], "drafts": 0},
+      "frontier-v1": {"calls": 8, "tokens": [7, 8, 5], "synthetic_costs": [10000, 7000, 4000], "drafts": 1}
+    }
+  },
+  "native_controls": [
+    {
+      "pin": "v4.26.0",
+      "test_result": "1 passed in 243.63s",
+      "arms": [
+        {"mode": "suggestions-v1", "status": "COMPLETE", "calls": 4, "drafts": 1, "tokens": [10, 6], "raw_heartbeats": [29953, 24727], "wall_seconds": 30.086967124021612, "truncated": false},
+        {"mode": "minimize-v1", "status": "COMPLETE", "calls": 12, "drafts": 3, "tokens": [10, 8, 8, 6], "raw_heartbeats": [29953, 26929, 26972, 24727], "wall_seconds": 93.65963064902462, "truncated": false},
+        {"mode": "frontier-v1", "status": "COMPLETE", "calls": 12, "drafts": 3, "tokens": [10, 8, 8, 6], "raw_heartbeats": [29953, 26929, 26972, 24727], "wall_seconds": 95.98169618204702, "truncated": false}
+      ]
+    },
+    {
+      "pin": "v4.29.0",
+      "test_result": "1 passed in 274.62s",
+      "arms": [
+        {"mode": "suggestions-v1", "status": "COMPLETE", "calls": 4, "drafts": 1, "tokens": [10, 6], "raw_heartbeats": [26710, 21408], "wall_seconds": 34.80439985706471, "truncated": false},
+        {"mode": "minimize-v1", "status": "COMPLETE", "calls": 12, "drafts": 3, "tokens": [10, 8, 8, 6], "raw_heartbeats": [26710, 23657, 23674, 21408], "wall_seconds": 102.69462639000267, "truncated": false},
+        {"mode": "frontier-v1", "status": "COMPLETE", "calls": 12, "drafts": 3, "tokens": [10, 8, 8, 6], "raw_heartbeats": [26710, 23657, 23674, 21408], "wall_seconds": 104.7466654269956, "truncated": false}
+      ]
+    }
+  ],
+  "native_processes": 56,
+  "offline_regression": {"passed": 440, "skipped": 5, "deselected": 89, "seconds": 2.34},
+  "interpretation": "The constructed fixture needs the longer intermediate. All three native arms reach the same best token/cost observation; broader modes use three times as many native calls on this simple control. No fresh two-order/all-pin selection was run on these native drafts.",
+  "promoted": false,
+  "fresh_native_cost_confirmation": false,
+  "models_called": 0,
+  "downloads_or_dependency_builds": 0,
+  "measured_api_cost": null,
+  "official_score": null
+}

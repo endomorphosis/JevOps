@@ -5,6 +5,10 @@ Research and measurements: 2026-09-22. This extends
 programmatic invariant analyzers. It does not implement every Lean transformation,
 prove a global minimum or establish arena leadership.
 
+Follow-up: [solver feedback and verified trajectory learning](SOLVER_TRAJECTORIES.md)
+implements bounded suggestion harvesting and adjacent-step supervision. Results
+below retain the earlier checkpoint's measurements for comparison.
+
 ## New coverage
 
 | Method | Implementation | Boundary |
@@ -83,8 +87,8 @@ invariants. With our incomplete certificate search, removal means unproved,
 not necessarily false.
 [ExplainHoudini](https://www.microsoft.com/en-us/research/publication/explainhoudini-making-houdini-inference-transparent/).
 
-`simp?` and `grind?` expose sufficient lemma sets. We now minimize existing
-explicit lists; compiler-suggestion harvesting remains future work. Shorter
+`simp?` and `grind?` expose sufficient lemma sets. This experiment minimized
+existing explicit lists; the linked follow-up adds suggestion harvesting. Shorter
 syntax or fewer lemmas alone does not prove faster kernel checking.
 [Lean tactic reference](https://lean-lang.org/doc/reference/latest/Tactic-Proofs/Tactic-Reference/),
 [minimizing grind calls](https://lean-lang.org/doc/reference/latest/The--grind--tactic/Minimizing--grind--calls/).
@@ -96,7 +100,7 @@ measured in this repository.
 [Weisfeiler–Lehman graph kernels](https://jmlr.org/papers/v12/shervashidze11a.html).
 
 Still unimplemented: general typed Lean-expression rewriting, binder-aware
-equality saturation, proof-DAG minimization, solver suggestion harvesting,
+equality saturation, proof-DAG minimization,
 nonlinear invariant synthesis and source-to-transition extraction. The Lean
 kernel is unchanged. Goal consequences are never inserted as assumptions.
 

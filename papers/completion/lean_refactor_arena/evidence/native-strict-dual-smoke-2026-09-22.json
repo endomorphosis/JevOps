@@ -1,0 +1,1460 @@
+{
+  "schema": "jevops-arena-pareto-selection/v1",
+  "plan": {
+    "schema": "jevops-arena-pareto-selection/v1",
+    "policy": "strict-token-reduction-and-separated-heartbeats/v1",
+    "selection_objective": "strict-dual-v1",
+    "heartbeat_noise_floor_raw": 0,
+    "tokenizer_id": "lra-reference-lexical/v1",
+    "measurement": "command-elaboration-internal-heartbeats-div-1000/v1",
+    "implementation": {
+      "arena_pareto.py": "b44181a6054e17a4dc8f4e5dd410f1cc27d343a3b0d48b7871942e3a179d6547",
+      "arena_trial.py": "b53d4a346febcee4a7f9567e17f475eca6cfdcfd0c3e229cd1e5ad595f6e6f2e"
+    },
+    "screen": {
+      "schema": "jevops-arena-controlled-trial/v1",
+      "record": {
+        "name": "pareto_smoke",
+        "statement": "theorem pareto_smoke (h : True) : True",
+        "src": "theorem pareto_smoke (h : True) : True := by\n  have one : True := h\n  have two : True := one\n  exact two",
+        "version_info": [
+          {
+            "v4.34.0": "local-stdlib-smoke"
+          }
+        ]
+      },
+      "arms": [
+        {
+          "label": "control",
+          "source": "theorem pareto_smoke (h : True) : True := by\n  have one : True := h\n  have two : True := one\n  exact two",
+          "provenance": "unchanged-reference"
+        },
+        {
+          "label": "exact-h",
+          "source": "theorem pareto_smoke (h : True) : True := by exact h",
+          "provenance": "fixed stdlib smoke control; not Arena"
+        }
+      ],
+      "repetitions": 2,
+      "seed": 17,
+      "orders": [
+        "reference-first",
+        "candidate-first"
+      ],
+      "plan_id": "0666bfcac6ef8e4d7fd9519e0c343f0c5d8db342898f3b69fd713645a1e1fad4",
+      "planned_requests": 8,
+      "schedule": [
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          },
+          "branch_order": "reference-first",
+          "label": "control",
+          "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+          "sample_id": "afec2c39456e469409b58092f2c05c828c1c9b82f05e59211ee0e9ca1d22ab6c"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          },
+          "branch_order": "reference-first",
+          "label": "exact-h",
+          "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+          "sample_id": "f9adf3b8ba3fb8f22f0ae3e6038a1f862c1cb52a471d9fd11bbf597a8613bfd6"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          },
+          "branch_order": "candidate-first",
+          "label": "control",
+          "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+          "sample_id": "f1d53ad63138733646d7c52cae5338b1b7d56b6111b2dfa22218142cff66d804"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          },
+          "branch_order": "candidate-first",
+          "label": "exact-h",
+          "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+          "sample_id": "e3d28345569e67b433bf278c8ab8dc3a360c36d201f6b7dd82f8c8d82f00225e"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          },
+          "branch_order": "reference-first",
+          "label": "exact-h",
+          "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+          "sample_id": "2273e7871020a58fce808f54bf75656ac02d6d533e1824ca65fd607cdf6b1390"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          },
+          "branch_order": "reference-first",
+          "label": "control",
+          "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+          "sample_id": "9f72fb6bad2f872beacea9cce97f7ce53489cc0ff035d41f18befb6b98dae088"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          },
+          "branch_order": "candidate-first",
+          "label": "control",
+          "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+          "sample_id": "131a2e8077a602dd696b9e5974dcc96adacd90a59944108bca7ab2f0a48892eb"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          },
+          "branch_order": "candidate-first",
+          "label": "exact-h",
+          "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+          "sample_id": "b5790cd7bb648d0f7896a5ca286ef70a10652e3601bc9788472bdbfdf9e8bf29"
+        }
+      ]
+    },
+    "incumbent_label": "control",
+    "candidate_labels": [
+      "exact-h"
+    ],
+    "confirmation_repetitions": 3,
+    "confirmation_seed": 18,
+    "confirmation_request_reserve": 12,
+    "required_request_budget": 20,
+    "selection_order": [
+      "tokens",
+      "worst_mean_heartbeat_ratio_to_incumbent",
+      "label"
+    ],
+    "unknown_comparison": "abstain",
+    "retries": 0,
+    "confirmation_alternatives": 0,
+    "plan_id": "2ac5482214657ad0c5ef2d4347ca23199632843edfce29079279a318dc53648a"
+  },
+  "evidence_mode": "local_lean",
+  "screen": {
+    "schema": "jevops-arena-controlled-trial/v1",
+    "record": {
+      "name": "pareto_smoke",
+      "statement": "theorem pareto_smoke (h : True) : True",
+      "src": "theorem pareto_smoke (h : True) : True := by\n  have one : True := h\n  have two : True := one\n  exact two",
+      "version_info": [
+        {
+          "v4.34.0": "local-stdlib-smoke"
+        }
+      ]
+    },
+    "arms": [
+      {
+        "label": "control",
+        "source": "theorem pareto_smoke (h : True) : True := by\n  have one : True := h\n  have two : True := one\n  exact two",
+        "provenance": "unchanged-reference"
+      },
+      {
+        "label": "exact-h",
+        "source": "theorem pareto_smoke (h : True) : True := by exact h",
+        "provenance": "fixed stdlib smoke control; not Arena"
+      }
+    ],
+    "repetitions": 2,
+    "seed": 17,
+    "orders": [
+      "reference-first",
+      "candidate-first"
+    ],
+    "plan_id": "0666bfcac6ef8e4d7fd9519e0c343f0c5d8db342898f3b69fd713645a1e1fad4",
+    "planned_requests": 8,
+    "schedule": [
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "afec2c39456e469409b58092f2c05c828c1c9b82f05e59211ee0e9ca1d22ab6c"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "f9adf3b8ba3fb8f22f0ae3e6038a1f862c1cb52a471d9fd11bbf597a8613bfd6"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "f1d53ad63138733646d7c52cae5338b1b7d56b6111b2dfa22218142cff66d804"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "e3d28345569e67b433bf278c8ab8dc3a360c36d201f6b7dd82f8c8d82f00225e"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "2273e7871020a58fce808f54bf75656ac02d6d533e1824ca65fd607cdf6b1390"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "9f72fb6bad2f872beacea9cce97f7ce53489cc0ff035d41f18befb6b98dae088"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "131a2e8077a602dd696b9e5974dcc96adacd90a59944108bca7ab2f0a48892eb"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "b5790cd7bb648d0f7896a5ca286ef70a10652e3601bc9788472bdbfdf9e8bf29"
+      }
+    ],
+    "evidence_mode": "local_lean",
+    "max_calls": 8,
+    "requests_reserved": 8,
+    "verifier_invocations": 8,
+    "native_processes": 8,
+    "samples": [
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "afec2c39456e469409b58092f2c05c828c1c9b82f05e59211ee0e9ca1d22ab6c",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "4c0e7ba3b8d90eb8d51cbf2e16a60c775fff0be30a6bfd75086697ef0d2d60a7",
+          "candidate_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 10,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":10,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":10424,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10484,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1498.534}"
+        },
+        "context_id": "9b32a4f713c36dc811a4a138ab48a681e98cc9e092ddc7fcb05197c32357c65f",
+        "raw_heartbeats": 10424
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "f9adf3b8ba3fb8f22f0ae3e6038a1f862c1cb52a471d9fd11bbf597a8613bfd6",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "26cc7f32c889843934764558328cb05d87d826db68ab54373e6b2e57edce5ee3",
+          "candidate_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 4,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":4,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4498,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10484,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1541.116}"
+        },
+        "context_id": "9b32a4f713c36dc811a4a138ab48a681e98cc9e092ddc7fcb05197c32357c65f",
+        "raw_heartbeats": 4498
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "f1d53ad63138733646d7c52cae5338b1b7d56b6111b2dfa22218142cff66d804",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "e14ba15b2b66610e34da96b3f3d5c14ee3c210f1d2b04c0ed4d6f50d108d676a",
+          "candidate_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 10,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":10,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":10484,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10424,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1480.15}"
+        },
+        "context_id": "0a894fce65787fab2844a01f813928845b564e7e834e1d3036c8467c03e6d3a4",
+        "raw_heartbeats": 10484
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "e3d28345569e67b433bf278c8ab8dc3a360c36d201f6b7dd82f8c8d82f00225e",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "ff9bc83409f1d309a5661c64c85e0cfd65e22f0e60a7d00b2388663494237cd5",
+          "candidate_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 4,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":4,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4535,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10447,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1655.329}"
+        },
+        "context_id": "0a894fce65787fab2844a01f813928845b564e7e834e1d3036c8467c03e6d3a4",
+        "raw_heartbeats": 4535
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "2273e7871020a58fce808f54bf75656ac02d6d533e1824ca65fd607cdf6b1390",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "26cc7f32c889843934764558328cb05d87d826db68ab54373e6b2e57edce5ee3",
+          "candidate_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 4,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":4,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4498,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10484,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1533.857}"
+        },
+        "context_id": "9b32a4f713c36dc811a4a138ab48a681e98cc9e092ddc7fcb05197c32357c65f",
+        "raw_heartbeats": 4498
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "9f72fb6bad2f872beacea9cce97f7ce53489cc0ff035d41f18befb6b98dae088",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "4c0e7ba3b8d90eb8d51cbf2e16a60c775fff0be30a6bfd75086697ef0d2d60a7",
+          "candidate_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 10,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":10,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":10424,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10484,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1568.595}"
+        },
+        "context_id": "9b32a4f713c36dc811a4a138ab48a681e98cc9e092ddc7fcb05197c32357c65f",
+        "raw_heartbeats": 10424
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "131a2e8077a602dd696b9e5974dcc96adacd90a59944108bca7ab2f0a48892eb",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "e14ba15b2b66610e34da96b3f3d5c14ee3c210f1d2b04c0ed4d6f50d108d676a",
+          "candidate_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 10,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":10,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":10484,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10424,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1578.454}"
+        },
+        "context_id": "0a894fce65787fab2844a01f813928845b564e7e834e1d3036c8467c03e6d3a4",
+        "raw_heartbeats": 10484
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "b5790cd7bb648d0f7896a5ca286ef70a10652e3601bc9788472bdbfdf9e8bf29",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "ff9bc83409f1d309a5661c64c85e0cfd65e22f0e60a7d00b2388663494237cd5",
+          "candidate_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 4,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":4,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4535,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10447,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1635.839}"
+        },
+        "context_id": "0a894fce65787fab2844a01f813928845b564e7e834e1d3036c8467c03e6d3a4",
+        "raw_heartbeats": 4535
+      }
+    ],
+    "contexts": [
+      {
+        "problem": "pareto_smoke",
+        "statement": "theorem pareto_smoke (h : True) : True",
+        "reference_source": "theorem pareto_smoke (h : True) : True := by\n  have one : True := h\n  have two : True := one\n  exact two",
+        "reference_length": 15,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          }
+        ],
+        "dependency_digests": [
+          "6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "",
+        "file_path": "",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      {
+        "problem": "pareto_smoke",
+        "statement": "theorem pareto_smoke (h : True) : True",
+        "reference_source": "theorem pareto_smoke (h : True) : True := by\n  have one : True := h\n  have two : True := one\n  exact two",
+        "reference_length": 15,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          }
+        ],
+        "dependency_digests": [
+          "6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "",
+        "file_path": "",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"candidate-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      }
+    ],
+    "observations": [
+      {
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "provenance": "fixed stdlib smoke control; not Arena",
+        "status": "MEASURED",
+        "reference_tokens": 15,
+        "candidate_tokens": 3,
+        "length_reduction_pct": 80.0,
+        "verified_pins": [
+          {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          }
+        ],
+        "required_pins": [
+          {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          }
+        ],
+        "heartbeat_result": "LOWER_IN_BOTH_ORDERS",
+        "strata": [
+          {
+            "version": {
+              "lean_tag": "v4.34.0",
+              "git_commit": "local-stdlib-smoke"
+            },
+            "branch_order": "reference-first",
+            "status": "MEASURED",
+            "control_raw": [
+              10424,
+              10424
+            ],
+            "candidate_raw": [
+              4498,
+              4498
+            ],
+            "control_median_raw": 10424.0,
+            "candidate_median_raw": 4498.0,
+            "paired_savings_raw": [
+              5926,
+              5926
+            ],
+            "observed_range_raw": 0,
+            "comparison": "LOWER"
+          },
+          {
+            "version": {
+              "lean_tag": "v4.34.0",
+              "git_commit": "local-stdlib-smoke"
+            },
+            "branch_order": "candidate-first",
+            "status": "MEASURED",
+            "control_raw": [
+              10484,
+              10484
+            ],
+            "candidate_raw": [
+              4535,
+              4535
+            ],
+            "control_median_raw": 10484.0,
+            "candidate_median_raw": 4535.0,
+            "paired_savings_raw": [
+              5949,
+              5949
+            ],
+            "observed_range_raw": 0,
+            "comparison": "LOWER"
+          }
+        ],
+        "observed_pareto_improvement": true,
+        "statistical_significance_claimed": false,
+        "promoted": false,
+        "official_score": null
+      }
+    ],
+    "status": "COMPLETE",
+    "receipt_cache_enabled": false,
+    "live_model_calls": 0,
+    "training_enabled": false,
+    "production_memory_used": false,
+    "official_score": null,
+    "local_combined_pct": null,
+    "worker_metric_parity": "UNCONFIRMED",
+    "runner_sha256": "b53d4a346febcee4a7f9567e17f475eca6cfdcfd0c3e229cd1e5ad595f6e6f2e"
+  },
+  "screen_analysis": {
+    "rows": {
+      "control": {
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "tokens": 15,
+        "admissible": true,
+        "reason": "",
+        "raw_heartbeats_by_stratum": [
+          [
+            10424,
+            10424
+          ],
+          [
+            10484,
+            10484
+          ]
+        ],
+        "axioms_by_version": {
+          "v4.34.0": []
+        }
+      },
+      "exact-h": {
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "tokens": 3,
+        "admissible": true,
+        "reason": "",
+        "raw_heartbeats_by_stratum": [
+          [
+            4498,
+            4498
+          ],
+          [
+            4535,
+            4535
+          ]
+        ],
+        "axioms_by_version": {
+          "v4.34.0": []
+        }
+      }
+    },
+    "frontier": [
+      "exact-h"
+    ],
+    "eligible": [
+      "exact-h"
+    ],
+    "selection_objective": "strict-dual-v1",
+    "heartbeat_noise_floor_raw": 0,
+    "selected": "exact-h"
+  },
+  "confirmation": {
+    "schema": "jevops-arena-controlled-trial/v1",
+    "record": {
+      "name": "pareto_smoke",
+      "statement": "theorem pareto_smoke (h : True) : True",
+      "src": "theorem pareto_smoke (h : True) : True := by\n  have one : True := h\n  have two : True := one\n  exact two",
+      "version_info": [
+        {
+          "v4.34.0": "local-stdlib-smoke"
+        }
+      ]
+    },
+    "arms": [
+      {
+        "label": "control",
+        "source": "theorem pareto_smoke (h : True) : True := by\n  have one : True := h\n  have two : True := one\n  exact two",
+        "provenance": "unchanged-reference"
+      },
+      {
+        "label": "exact-h",
+        "source": "theorem pareto_smoke (h : True) : True := by exact h",
+        "provenance": "fixed stdlib smoke control; not Arena"
+      }
+    ],
+    "repetitions": 3,
+    "seed": 18,
+    "orders": [
+      "reference-first",
+      "candidate-first"
+    ],
+    "plan_id": "ddc733db84fa698cd78ca46a5117a27313c6431737cb662b6df64b0636c63044",
+    "planned_requests": 12,
+    "schedule": [
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "f50adb7143f8811100b073b6626f6393ca9061f9477cba19650e235a6a2e400d"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "e0dd9ac278d5f222efa8c8a0c7601bda71ec929b35f51fc48710d686271a363b"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "6d0417608996af16e80e81ffee11d62e8e426f35406f52702bf080a871b827b2"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "940affc4928d1deade2cfe87bb31b06e5755b57b8a72ff9156bb6f454ce87dd5"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "9d04b82634bde62fdf37656293e401d4756526c480ec9d9cfa8a0f79a9cc1188"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "220a9698c38c358c34dfede2a0ca80dba441ee29e8addc0ae99e51f60915327c"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "bfc22733d13639f525161e900d989e87a549dc435b0682e2626168acb381dfdf"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "b07a1d320ea23ad236cddfed75947bdf48f7b4b4d7f250b068cea74c270f5755"
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "946ee1493cedb396145a89fad31b05cb9068ac4128ef31857561423cf7079ae8"
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "97d1a175c834206b51908842f64aea4f5ddff9d7b422c704a6d1482879a6a2f0"
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "5055863f2f4c1574cb5781a781ab7c23e2725b005515ae0330e5ad9821cf84a9"
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "f4c12c242861ff0601f0ea1fa232d75e30e901612c6e1f07055f816e05e3438c"
+      }
+    ],
+    "evidence_mode": "local_lean",
+    "max_calls": 12,
+    "requests_reserved": 12,
+    "verifier_invocations": 12,
+    "native_processes": 12,
+    "samples": [
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "f50adb7143f8811100b073b6626f6393ca9061f9477cba19650e235a6a2e400d",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "ff9bc83409f1d309a5661c64c85e0cfd65e22f0e60a7d00b2388663494237cd5",
+          "candidate_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 4,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":4,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4535,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10447,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1636.639}"
+        },
+        "context_id": "0a894fce65787fab2844a01f813928845b564e7e834e1d3036c8467c03e6d3a4",
+        "raw_heartbeats": 4535
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "e0dd9ac278d5f222efa8c8a0c7601bda71ec929b35f51fc48710d686271a363b",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "e14ba15b2b66610e34da96b3f3d5c14ee3c210f1d2b04c0ed4d6f50d108d676a",
+          "candidate_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 10,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":10,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":10484,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10424,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1613.936}"
+        },
+        "context_id": "0a894fce65787fab2844a01f813928845b564e7e834e1d3036c8467c03e6d3a4",
+        "raw_heartbeats": 10484
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "6d0417608996af16e80e81ffee11d62e8e426f35406f52702bf080a871b827b2",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "4c0e7ba3b8d90eb8d51cbf2e16a60c775fff0be30a6bfd75086697ef0d2d60a7",
+          "candidate_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 10,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":10,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":10424,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10484,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1529.47}"
+        },
+        "context_id": "9b32a4f713c36dc811a4a138ab48a681e98cc9e092ddc7fcb05197c32357c65f",
+        "raw_heartbeats": 10424
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "940affc4928d1deade2cfe87bb31b06e5755b57b8a72ff9156bb6f454ce87dd5",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "26cc7f32c889843934764558328cb05d87d826db68ab54373e6b2e57edce5ee3",
+          "candidate_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 4,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":4,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4498,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10484,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1525.478}"
+        },
+        "context_id": "9b32a4f713c36dc811a4a138ab48a681e98cc9e092ddc7fcb05197c32357c65f",
+        "raw_heartbeats": 4498
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "9d04b82634bde62fdf37656293e401d4756526c480ec9d9cfa8a0f79a9cc1188",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "26cc7f32c889843934764558328cb05d87d826db68ab54373e6b2e57edce5ee3",
+          "candidate_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 4,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":4,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4498,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10484,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1527.477}"
+        },
+        "context_id": "9b32a4f713c36dc811a4a138ab48a681e98cc9e092ddc7fcb05197c32357c65f",
+        "raw_heartbeats": 4498
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "220a9698c38c358c34dfede2a0ca80dba441ee29e8addc0ae99e51f60915327c",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "4c0e7ba3b8d90eb8d51cbf2e16a60c775fff0be30a6bfd75086697ef0d2d60a7",
+          "candidate_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 10,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":10,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":10424,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10484,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1522.142}"
+        },
+        "context_id": "9b32a4f713c36dc811a4a138ab48a681e98cc9e092ddc7fcb05197c32357c65f",
+        "raw_heartbeats": 10424
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "bfc22733d13639f525161e900d989e87a549dc435b0682e2626168acb381dfdf",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "ff9bc83409f1d309a5661c64c85e0cfd65e22f0e60a7d00b2388663494237cd5",
+          "candidate_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 4,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":4,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4535,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10447,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1485.606}"
+        },
+        "context_id": "0a894fce65787fab2844a01f813928845b564e7e834e1d3036c8467c03e6d3a4",
+        "raw_heartbeats": 4535
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "b07a1d320ea23ad236cddfed75947bdf48f7b4b4d7f250b068cea74c270f5755",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "e14ba15b2b66610e34da96b3f3d5c14ee3c210f1d2b04c0ed4d6f50d108d676a",
+          "candidate_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 10,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":10,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":10484,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10424,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1466.083}"
+        },
+        "context_id": "0a894fce65787fab2844a01f813928845b564e7e834e1d3036c8467c03e6d3a4",
+        "raw_heartbeats": 10484
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "946ee1493cedb396145a89fad31b05cb9068ac4128ef31857561423cf7079ae8",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "4c0e7ba3b8d90eb8d51cbf2e16a60c775fff0be30a6bfd75086697ef0d2d60a7",
+          "candidate_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 10,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":10,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":10424,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10484,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1469.323}"
+        },
+        "context_id": "9b32a4f713c36dc811a4a138ab48a681e98cc9e092ddc7fcb05197c32357c65f",
+        "raw_heartbeats": 10424
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "reference-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "97d1a175c834206b51908842f64aea4f5ddff9d7b422c704a6d1482879a6a2f0",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "26cc7f32c889843934764558328cb05d87d826db68ab54373e6b2e57edce5ee3",
+          "candidate_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 4,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":4,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4498,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10484,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1453.612}"
+        },
+        "context_id": "9b32a4f713c36dc811a4a138ab48a681e98cc9e092ddc7fcb05197c32357c65f",
+        "raw_heartbeats": 4498
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "sample_id": "5055863f2f4c1574cb5781a781ab7c23e2725b005515ae0330e5ad9821cf84a9",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "ff9bc83409f1d309a5661c64c85e0cfd65e22f0e60a7d00b2388663494237cd5",
+          "candidate_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 4,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":4,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4535,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10447,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1463.283}"
+        },
+        "context_id": "0a894fce65787fab2844a01f813928845b564e7e834e1d3036c8467c03e6d3a4",
+        "raw_heartbeats": 4535
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.34.0",
+          "git_commit": "local-stdlib-smoke"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "sample_id": "f4c12c242861ff0601f0ea1fa232d75e30e901612c6e1f07055f816e05e3438c",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "e14ba15b2b66610e34da96b3f3d5c14ee3c210f1d2b04c0ed4d6f50d108d676a",
+          "candidate_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+          "target": "pareto_smoke",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'pareto_smoke' depends on axioms: []",
+          "heartbeats": 10,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"293d5d0c0c3f3dded4688b3ccd6a33939ac5102b\",\"lean_version\":\"4.34.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":10,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":10484,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":10,\"reference_raw_heartbeats\":10424,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1568.464}"
+        },
+        "context_id": "0a894fce65787fab2844a01f813928845b564e7e834e1d3036c8467c03e6d3a4",
+        "raw_heartbeats": 10484
+      }
+    ],
+    "contexts": [
+      {
+        "problem": "pareto_smoke",
+        "statement": "theorem pareto_smoke (h : True) : True",
+        "reference_source": "theorem pareto_smoke (h : True) : True := by\n  have one : True := h\n  have two : True := one\n  exact two",
+        "reference_length": 15,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          }
+        ],
+        "dependency_digests": [
+          "6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "",
+        "file_path": "",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      {
+        "problem": "pareto_smoke",
+        "statement": "theorem pareto_smoke (h : True) : True",
+        "reference_source": "theorem pareto_smoke (h : True) : True := by\n  have one : True := h\n  have two : True := one\n  exact two",
+        "reference_length": 15,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          }
+        ],
+        "dependency_digests": [
+          "6b8a87424eb9583eee7aa14b3cbd449db751b929562a2c075e39b989f7da1362"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "3a4b6aacb7857f531163f6066e8d3689b81efb0da61bdae9cb8fe1da1b7f9141",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "",
+        "file_path": "",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"candidate-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      }
+    ],
+    "observations": [
+      {
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "provenance": "fixed stdlib smoke control; not Arena",
+        "status": "MEASURED",
+        "reference_tokens": 15,
+        "candidate_tokens": 3,
+        "length_reduction_pct": 80.0,
+        "verified_pins": [
+          {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          }
+        ],
+        "required_pins": [
+          {
+            "lean_tag": "v4.34.0",
+            "git_commit": "local-stdlib-smoke"
+          }
+        ],
+        "heartbeat_result": "LOWER_IN_BOTH_ORDERS",
+        "strata": [
+          {
+            "version": {
+              "lean_tag": "v4.34.0",
+              "git_commit": "local-stdlib-smoke"
+            },
+            "branch_order": "reference-first",
+            "status": "MEASURED",
+            "control_raw": [
+              10424,
+              10424,
+              10424
+            ],
+            "candidate_raw": [
+              4498,
+              4498,
+              4498
+            ],
+            "control_median_raw": 10424,
+            "candidate_median_raw": 4498,
+            "paired_savings_raw": [
+              5926,
+              5926,
+              5926
+            ],
+            "observed_range_raw": 0,
+            "comparison": "LOWER"
+          },
+          {
+            "version": {
+              "lean_tag": "v4.34.0",
+              "git_commit": "local-stdlib-smoke"
+            },
+            "branch_order": "candidate-first",
+            "status": "MEASURED",
+            "control_raw": [
+              10484,
+              10484,
+              10484
+            ],
+            "candidate_raw": [
+              4535,
+              4535,
+              4535
+            ],
+            "control_median_raw": 10484,
+            "candidate_median_raw": 4535,
+            "paired_savings_raw": [
+              5949,
+              5949,
+              5949
+            ],
+            "observed_range_raw": 0,
+            "comparison": "LOWER"
+          }
+        ],
+        "observed_pareto_improvement": true,
+        "statistical_significance_claimed": false,
+        "promoted": false,
+        "official_score": null
+      }
+    ],
+    "status": "COMPLETE",
+    "receipt_cache_enabled": false,
+    "live_model_calls": 0,
+    "training_enabled": false,
+    "production_memory_used": false,
+    "official_score": null,
+    "local_combined_pct": null,
+    "worker_metric_parity": "UNCONFIRMED",
+    "runner_sha256": "b53d4a346febcee4a7f9567e17f475eca6cfdcfd0c3e229cd1e5ad595f6e6f2e"
+  },
+  "confirmation_analysis": {
+    "rows": {
+      "control": {
+        "label": "control",
+        "source_sha256": "605f4e69f3f164ed3bdc91786b0411d051273199882a08f36f5da7f937360507",
+        "tokens": 15,
+        "admissible": true,
+        "reason": "",
+        "raw_heartbeats_by_stratum": [
+          [
+            10424,
+            10424,
+            10424
+          ],
+          [
+            10484,
+            10484,
+            10484
+          ]
+        ],
+        "axioms_by_version": {
+          "v4.34.0": []
+        }
+      },
+      "exact-h": {
+        "label": "exact-h",
+        "source_sha256": "1a11bbb01b2fad19e58781b98dbf535285d892de2ed805014c1eb3df4e9eb43a",
+        "tokens": 3,
+        "admissible": true,
+        "reason": "",
+        "raw_heartbeats_by_stratum": [
+          [
+            4498,
+            4498,
+            4498
+          ],
+          [
+            4535,
+            4535,
+            4535
+          ]
+        ],
+        "axioms_by_version": {
+          "v4.34.0": []
+        }
+      }
+    },
+    "frontier": [
+      "exact-h"
+    ],
+    "eligible": [
+      "exact-h"
+    ],
+    "selection_objective": "strict-dual-v1",
+    "heartbeat_noise_floor_raw": 0,
+    "selected": "exact-h"
+  },
+  "selection_commitment": "bffb533f953fb32c0e906c87febbd391d72244c63d35ce2737c8b1c5235faeec",
+  "selected_for_confirmation": "exact-h",
+  "recommended": {
+    "label": "exact-h",
+    "source": "theorem pareto_smoke (h : True) : True := by exact h",
+    "provenance": "fixed stdlib smoke control; not Arena"
+  },
+  "retained_incumbent": null,
+  "retained_incumbent_verified": false,
+  "status": "CONFIRMED_LOCAL_IMPROVEMENT",
+  "reason": "",
+  "promoted": false,
+  "training_enabled": false,
+  "live_model_calls": 0,
+  "official_score": null,
+  "worker_metric_parity": "UNCONFIRMED",
+  "statistical_significance_claimed": false,
+  "max_calls": 20,
+  "requests_reserved": 20,
+  "verifier_invocations": 20,
+  "native_processes": 20,
+  "implementation_unchanged": true,
+  "runner_sha256": "b44181a6054e17a4dc8f4e5dd410f1cc27d343a3b0d48b7871942e3a179d6547",
+  "readiness": {
+    "rows": [
+      {
+        "status": "UNMEASURED",
+        "lean_tag": "v4.34.0",
+        "git_commit": "local-stdlib-smoke"
+      }
+    ],
+    "kind": "non_arena_stdlib_smoke"
+  },
+  "input_kind": "non_arena_stdlib_smoke"
+}

@@ -230,9 +230,14 @@ def reduction_variants(body: str, *, strategy: str, goal: str = "", cap: int = 1
         # Small terminal patterns only. No substitution across dependent
         # binders, arbitrary terms, comments, or nested proof blocks.
         pattern = r"(?m)^([ ]*)(?:have|let) ([\w']+)(?:\s*:\s*[^\n:=]+)?\s*:=\s*([\w'.]+)\s*\n\1exact \2[ ]*$"
-        for match in re.finditer(pattern, body):
-            if match[3] not in {"by", "sorry", "admit"}:
-                push("terminal_alias", body[:match.start()] + match[1] + "exact " + match[3] + body[match.end():])
+        reduced = body
+        while True:
+            match = next((m for m in re.finditer(pattern, reduced)
+                          if m[3] not in {"by", "sorry", "admit"}), None)
+            if match is None:
+                break
+            reduced = reduced[:match.start()] + match[1] + "exact " + match[3] + reduced[match.end():]
+            push("terminal_alias", reduced)
         return rows
     if strategy == "symmetry_reduce":
         for match in re.finditer(r"(?m)^([ ]*)symm[ ]*\n\1symm[ ]*\n", body):

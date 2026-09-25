@@ -403,6 +403,99 @@ def resolve_mode(
     return mode
 
 
+def mode_enabled(mode: str, official: bool, allowed: Sequence[str] = ("distill", "inloop")) -> bool:
+    """True for an open distill/inloop mode. Official Track 2 stays off."""
+
+    return str(mode) in set(allowed) and not official
+
+
+def drive_router_fields(
+    *,
+    mode: Optional[str],
+    official_track2: bool,
+    env: Optional[Mapping[str, str]],
+    client_factory: Any,
+    model: str,
+    require_key: bool,
+    env_fn: Callable[..., Any],
+    track2_fn: Callable[..., bool],
+    mode_fn: Callable[..., str],
+) -> dict[str, Any]:
+    """Fields for a TypeSafe router. Does not generate Lean or start a server."""
+
+    source = env_fn(base=env)
+    official = track2_fn(flag=official_track2, env=source)
+    return {
+        "env": source,
+        "official_track2": official,
+        "mode": mode_fn(flag=mode, env=source, official_track2=official),
+        "client_factory": client_factory,
+        "model": model,
+        "require_key": require_key and client_factory is None,
+    }
+
+
+def drive_mapped_mode(
+    *,
+    flag: Optional[str],
+    env: Optional[Mapping[str, str]],
+    env_key: str,
+    default: str,
+    allowed: Sequence[str],
+    closed: str,
+    official: bool,
+    closed_fn: Callable[..., bool],
+    error_cls: Any,
+    message_fn: Callable[[str], str],
+) -> str:
+    """Resolve a mode and re-raise JevError as the consumer's error."""
+
+    from jevops.outer import env_mapping, if_none, reraise_mapped, text_or
+
+    source = env_mapping(env)
+
+    def _mapped(_exc: BaseException) -> BaseException:
+        raw = if_none(flag, source.get(env_key, default))
+        mode = text_or(raw, default).strip().lower()
+        return error_cls(message_fn(mode))
+
+    return reraise_mapped(
+        lambda: resolve_mode(
+            flag=flag,
+            env=source,
+            env_key=env_key,
+            default=default,
+            allowed=allowed,
+            closed=closed,
+            closed_if=closed_fn(flag=official, env=source),
+        ),
+        JevError,
+        _mapped,
+    )
+
+
+def drive_load_inference(
+    *,
+    setup: Sequence[Any],
+    path: Any,
+    root: Any,
+    fallback: bool = False,
+) -> dict[str, Any]:
+    """Load in-tree typesafe inference. Never imports typesafe-sdk."""
+
+    from pathlib import Path
+
+    from jevops.outer import relative_or_str
+
+    target = Path(path)
+    return load_typesafe_inference(
+        setup=setup,
+        path=relative_or_str(target, root),
+        exists=target.is_file(),
+        fallback=fallback,
+    )
+
+
 def resolve_opt_in_mode(
     *,
     flag: Optional[str] = None,
@@ -886,6 +979,230 @@ def tree_choice_questions(
     return questions
 
 
+def drive_classify_tree(
+    module: Any,
+    state: Mapping[str, Any],
+    tree: Mapping[str, Mapping[str, str]],
+    *,
+    ledger: Any,
+    make_client_fn: Callable[[Any], Any],
+    retry_fn: Callable[[Callable[[], Any]], Any],
+    record_fn: Callable[[Any, Any], Any],
+    family_instructions: str,
+    beam_k: int,
+    confident: float,
+    epsilon: float,
+) -> dict[str, Any]:
+    """One family Choice plus a leaf Choice per sibling set. Jev does not write Lean."""
+
+    from jevops.outer import overlay_map
+    from jevops.pick import classification_from_answers
+
+    questions = tree_choice_questions(
+        tree,
+        Choice=module.Choice,
+        family_instructions=family_instructions,
+    )
+    result = retry_fn(lambda: invoke_system_one(make_client_fn(module), state, questions)[0])
+    record_fn(ledger, result)
+    return classification_from_answers(
+        tree,
+        overlay_map(getattr(result, "choices", None)),
+        beam_k=beam_k,
+        confident=confident,
+        epsilon=epsilon,
+    )
+
+
+def drive_choice_catalog(
+    drafts: Sequence[Any],
+    *,
+    Choice: Any,
+    Noul: Any,
+    Score: Any,
+    criteria_fn: Callable[[Sequence[Any]], Mapping[str, Any]],
+    best_instructions: str,
+    nouls: Mapping[str, str],
+    scores: Mapping[str, tuple[str, Sequence[str]]],
+    extra: Optional[Mapping[str, Any]] = None,
+    cap: Optional[int] = None,
+) -> dict[str, Any]:
+    """Build Choice/Noul/Score questions. Optional cap. Does not call HTTP."""
+
+    if cap is not None:
+        require_choice_cap(len(list(drafts or ())), int(cap))
+    return choice_questions(
+        Choice=Choice,
+        Noul=Noul,
+        Score=Score,
+        criteria=criteria_fn(drafts),
+        best_instructions=best_instructions,
+        nouls=dict(nouls or {}),
+        scores=dict(scores or {}),
+        extra=dict(extra or {}),
+    )
+
+
+def drive_env_closed(
+    *,
+    flag: bool,
+    env: Optional[Mapping[str, str]],
+    truthy_keys: Sequence[str],
+    value_key: str,
+    values: Sequence[str],
+) -> bool:
+    """True when a flag or env value requests a closed mode."""
+
+    from jevops.outer import env_mapping
+
+    return env_flag(
+        flag=flag,
+        env=env_mapping(env),
+        truthy_keys=tuple(truthy_keys),
+        value_key=value_key,
+        values=tuple(values),
+    )
+
+
+def drive_loaded_questions(
+    typesafe: Optional[Mapping[str, Any]],
+    *,
+    factory: Callable[[], Mapping[str, Any]],
+    spec: Mapping[str, Any],
+    instantiate_fn: Callable[..., Mapping[str, Any]],
+    neighbor_names: Sequence[str] = (),
+) -> dict[str, Any]:
+    """Instantiate questions from a loaded or injected TypeSafe module."""
+
+    from jevops.outer import if_none
+
+    loaded = if_none(typesafe, factory=factory)
+    return instantiate_fn(
+        spec,
+        choice=loaded.get("Choice"),
+        noul=loaded.get("Noul"),
+        score=loaded.get("Score"),
+        neighbor_names=neighbor_names,
+    )
+
+
+def drive_resolve_opt_in(
+    *,
+    flag: Optional[str],
+    env: Optional[Mapping[str, str]],
+    official_track2: bool,
+    track2_fn: Callable[..., bool],
+    closed: str,
+    default: str,
+    allowed: Sequence[str],
+    truthy_env: str,
+    generator_env: str,
+    default_generator: str,
+    generator_aliases: Mapping[str, str],
+    mode_env: str,
+    aliases: Mapping[str, str],
+    error_cls: Any,
+    error_fmt: str,
+) -> str:
+    """Opt-in mode. Official Track 2 stays closed. Jev does not write Lean."""
+
+    from jevops.outer import env_mapping
+
+    source = env_mapping(env)
+    return resolve_opt_in_mode(
+        flag=flag,
+        env=source,
+        official=track2_fn(flag=official_track2, env=source),
+        closed=closed,
+        default=default,
+        allowed=allowed,
+        truthy_env=truthy_env,
+        generator_env=generator_env,
+        default_generator=default_generator,
+        generator_aliases=generator_aliases,
+        mode_env=mode_env,
+        aliases=aliases,
+        error_cls=error_cls,
+        error_fmt=error_fmt,
+    )
+
+
+def drive_distill_record(
+    state: Mapping[str, Any],
+    answers: Mapping[str, Any],
+    *,
+    lean_outcome: Any = None,
+    schema: str,
+    mode: str,
+    policy_path: str,
+) -> dict[str, Any]:
+    """Distill log. Does not generate Lean."""
+
+    from jevops.outer import as_mapping
+
+    return distill_row(
+        schema=schema,
+        mode=mode,
+        problem=as_mapping(state.get("problem"), {}),
+        answers=answers,
+        extra={
+            "lean_outcome": lean_outcome,
+            "official_track2": False,
+            "api_key_present_in_record": False,
+            "policy_path": policy_path,
+            "writes_policy_by_default": False,
+        },
+    )
+
+
+def drive_truncate_text(
+    src: str,
+    *,
+    head_lines: int,
+    tail_lines: int,
+    char_budget: int,
+    marker: str,
+    error_cls: Any,
+    type_msg: str = "reference_proof must be a string",
+) -> str:
+    """Keep head and tail. The marker is not Lean source."""
+
+    from jevops.outer import raise_if
+
+    raise_if(not isinstance(src, str), error_cls, type_msg)
+    return truncate_middle(
+        src,
+        head_lines=head_lines,
+        tail_lines=tail_lines,
+        char_budget=char_budget,
+        marker=marker,
+    )
+
+
+def drive_track1_plan(
+    *,
+    mode: Optional[str],
+    official_track2: bool,
+    env: Optional[Mapping[str, str]],
+    resolve_fn: Callable[..., str],
+    track2_fn: Callable[..., bool],
+    grok_fn: Callable[..., bool],
+    jev_fn: Callable[..., bool],
+    keys_fn: Callable[..., bool],
+    fields: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Resolve Track 1 mode, then pack the plan. Jev does not write Lean."""
+
+    return pack_plan_view(
+        resolved_mode=resolve_fn(flag=mode, env=env, official_track2=official_track2),
+        official_track2=track2_fn(flag=official_track2, env=env),
+        grok_key_configured=grok_fn(env),
+        jev_key_configured=jev_fn(env),
+        keys_configured=keys_fn(env),
+        **dict(fields),
+    )
+
+
 def require_choice_cap(
     n: int,
     cap: int,
@@ -918,6 +1235,40 @@ def draft_criteria(
     return out
 
 
+def drive_fanout_state(
+    record: Mapping[str, Any],
+    drafts: Sequence[Any],
+    *,
+    split_fn: Callable[[Mapping[str, Any]], Any],
+    tactic_fn: Callable[[str], str],
+    catalog_fn: Callable[[Sequence[Any]], Any],
+    statement_n: int,
+    ref_head_lines: int,
+) -> dict[str, Any]:
+    """Fan-out state from a prefix-bound reference. Jev does not write Lean."""
+
+    from jevops.outer import get_list, get_str
+
+    split = split_fn(record)
+    tactics = tactic_fn(split.body_suffix)
+    ref_lines = str(tactics or "").splitlines()
+    return fanout_problem_state(
+        record,
+        statement_n=statement_n,
+        problem={
+            "name": get_str(record, "name"),
+            "source": get_str(record, "source"),
+            "n_toolchains": len(get_list(record, "version_info")),
+            "proof_length": record.get("proof_length"),
+            "num_lines": record.get("num_lines"),
+        },
+        extra={
+            "reference_head": "\n".join(ref_lines[: int(ref_head_lines)]),
+            "drafts": catalog_fn(drafts),
+        },
+    )
+
+
 def fanout_problem_state(
     record: Mapping[str, Any],
     *,
@@ -938,6 +1289,75 @@ def fanout_problem_state(
     if extra:
         state.update(dict(extra))
     return state
+
+
+def drive_pca_fanout_state(
+    record: Mapping[str, Any],
+    *,
+    features: Mapping[str, float],
+    families: Sequence[Mapping[str, Any]],
+    drafts: Sequence[Any],
+    pca: Mapping[str, Any],
+    catalog_fn: Callable[[Sequence[Any]], Any],
+    compiler_families: Sequence[str],
+    statement_n: int = 480,
+) -> dict[str, Any]:
+    """PCA/MCA fan-out state. Jev does not write Lean."""
+
+    from jevops.outer import head_seq, overlay_map
+
+    return fanout_problem_state(
+        record,
+        statement_n=statement_n,
+        extra={
+            "ast_features": overlay_map(features),
+            "pca_principal": head_seq(pca["principal"], 2),
+            "mca_minor": pca["minor"],
+            "amenable": list(families),
+            "drafts": catalog_fn(drafts),
+            "compiler_families": list(compiler_families),
+        },
+    )
+
+
+def drive_verify_noul(
+    module: Any,
+    state: Mapping[str, Any],
+    *,
+    ledger: Any,
+    spec: Mapping[str, Sequence[Any]],
+    noul_ctor: Any,
+    client_fn: Callable[[Any], Any],
+    retry_fn: Callable[[Callable[[], Any]], Any],
+    record_fn: Callable[[Any, Any], Any],
+    attr: str = "noul",
+) -> dict[str, float]:
+    """One Noul round over a closed catalog. Jev does not write Lean."""
+
+    from jevops.outer import attr_map, overlay_map
+
+    questions = noul_questions(spec, noul_ctor)
+    result = retry_fn(lambda: invoke_system_one(client_fn(module), state, questions)[0])
+    record_fn(ledger, result)
+    return attr_map(overlay_map(getattr(result, "nouls", None)), spec, attr)
+
+
+def drive_project_route_answers(
+    response: Any,
+    *,
+    project_fn: Callable[[Any], Mapping[str, Any]],
+    deny_fn: Callable[[Mapping[str, Any]], Any],
+    error_cls: Any,
+) -> Any:
+    """Project System One answers, then drop Lean keys. Not a lake admit."""
+
+    from jevops.outer import text_or
+
+    try:
+        out = project_fn(response)
+    except Exception as exc:
+        raise error_cls(text_or(exc)) from exc
+    return deny_fn(out)
 
 
 def choice_questions(
@@ -1137,6 +1557,63 @@ def pack_best_draft(
     return packed
 
 
+def drive_named_route(
+    name: str,
+    *,
+    mode: Optional[str],
+    official_track2: bool,
+    fixture: bool,
+    path: Any,
+    lean_outcome: Optional[Mapping[str, Any]],
+    load_fn: Callable[..., tuple[Mapping[str, Any], Sequence[Mapping[str, Any]], str]],
+    neighbor_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    state_fn: Callable[..., Any],
+    fixture_client: Any,
+    answers_fn: Callable[[], Mapping[str, Any]],
+    router_cls: Callable[..., Any],
+    should_call_fn: Callable[..., Any],
+    distill_fn: Callable[..., Any],
+    route_keys: Sequence[str],
+    default_mode: str,
+) -> dict[str, Any]:
+    """Load one warmup name, route it, and overlay the payload. Does not POST unless the router does."""
+
+    from jevops.outer import assign_if, begin_named_route, call_if, fixture_factory, get_str, names_of
+
+    record, records, digest = load_fn(name, path)
+    neighbors, state, router = begin_named_route(
+        record,
+        records,
+        neighbor_fn=neighbor_fn,
+        state_fn=state_fn,
+        fixture=fixture,
+        factory_fn=lambda: fixture_factory(fixture_client, answers_fn),
+        router_cls=router_cls,
+        mode=mode,
+        official_track2=official_track2,
+    )
+    result = router.route(state, neighbor_names=names_of(neighbors))
+    extra: dict[str, Any] = {
+        "route_question_keys": list(route_keys),
+        "should_call_leanstral_v2": call_if(not result.skipped, lambda: should_call_fn(result.as_dict(), record)),
+        "default_mode": default_mode,
+    }
+    assign_if(
+        extra,
+        "distill",
+        router.mode == "distill" and not result.skipped,
+        lambda: distill_fn(state, result, lean_outcome=lean_outcome),
+    )
+    return overlay_route_payload(
+        result.as_dict(),
+        name=name,
+        source=get_str(record, "source"),
+        digest=digest,
+        n_neighbors=len(list(neighbors)),
+        extra=extra,
+    )
+
+
 def overlay_route_payload(
     result: Mapping[str, Any],
     *,
@@ -1223,6 +1700,125 @@ def rank_live_choice_row(
     live_row["wall_ms"] = wall_ms
     live_row["top"] = rank_fn(probabilities, drafts)
     return live_row
+
+
+def drive_hosted_named(
+    name: str,
+    *,
+    max_new_tokens: int,
+    timeout: float,
+    official_track2: bool,
+    fixture: bool,
+    path: Any,
+    pin_fn: Callable[[], Any],
+    track2_fn: Callable[[], bool],
+    mistral_key_fn: Callable[[], bool],
+    jev_key_fn: Callable[[], bool],
+    load_fn: Callable[..., tuple[Mapping[str, Any], Sequence[Mapping[str, Any]], str]],
+    neighbor_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    state_fn: Callable[..., Any],
+    fixture_client: Any,
+    answers_fn: Callable[[], Mapping[str, Any]],
+    router_cls: Callable[..., Any],
+    ledger_cls: Callable[..., Any],
+    model_id: str,
+    prompt_fn: Callable[[Mapping[str, Any]], str],
+    generate_fn: Callable[..., tuple[str, Any, Any]],
+    redact_fn: Callable[[Any], Any],
+    requested_provider: str,
+    requested_model: str,
+    hardware_class: str,
+    prototype_hardware: str,
+    protocol: str,
+    pr: str,
+    track: str,
+    labs_retire_date: str,
+) -> dict[str, Any]:
+    """Route one warmup name, then generate on the hosted model. Does not lake-compile."""
+
+    import time
+
+    from jevops.outer import (
+        begin_named_route,
+        closed_skip,
+        elapsed_ms,
+        env_copy,
+        first_call,
+        first_not_none,
+        first_truthy,
+        fixture_factory,
+        get_str,
+        names_of,
+        record_route_usage,
+    )
+
+    pin_fn()
+    early = first_call(
+        (
+            first_truthy(official_track2, track2_fn()),
+            lambda: closed_skip("official_track2_off", extra={"called_jev": False, "contaminates_track2": False}),
+        ),
+        (
+            not fixture and not (mistral_key_fn() and jev_key_fn()),
+            lambda: closed_skip(
+                "no_key",
+                extra={
+                    "name": name,
+                    "mistral_key_configured": mistral_key_fn(),
+                    "jev_key_configured": jev_key_fn(),
+                },
+            ),
+        ),
+    )
+
+    def _run() -> dict[str, Any]:
+        record, records, digest = load_fn(name, path)
+        ledger = ledger_cls(name=name, official_track2=False)
+        neighbors, state, router = begin_named_route(
+            record,
+            records,
+            neighbor_fn=neighbor_fn,
+            state_fn=state_fn,
+            fixture=fixture,
+            factory_fn=lambda: fixture_factory(fixture_client, answers_fn),
+            router_cls=router_cls,
+            mode="inloop",
+            official_track2=False,
+            env=env_copy({"LRA_TYPESAFE": "inloop"}),
+            require_key=not fixture,
+        )
+        started = time.perf_counter()
+        jev_result = router.route(state, neighbor_names=names_of(neighbors))
+        record_route_usage(ledger, jev_result, fixture=fixture, model=model_id)
+        text, identity, _line = generate_fn(
+            prompt_fn(record),
+            ledger,
+            max_new_tokens=max_new_tokens,
+            timeout=timeout,
+            fixture=fixture,
+        )
+        return redact_fn(
+            hosted_run_payload(
+                name=name,
+                source=get_str(record, "source"),
+                digest=digest,
+                identity=identity,
+                text=text,
+                jev_route=jev_result.as_dict(),
+                ledger=ledger.as_dict(),
+                wall_ms=elapsed_ms(started),
+                requested_provider=requested_provider,
+                requested_model=requested_model,
+                hardware_class=hardware_class,
+                prototype_hardware=prototype_hardware,
+                protocol=protocol,
+                pr=pr,
+                track=track,
+                labs_retire_date=labs_retire_date,
+            )
+        )
+
+    return first_not_none(early, factory=_run)
 
 
 def hosted_run_payload(
@@ -1509,6 +2105,136 @@ def typesafe_is_configured(*, setup: Sequence[Any] = (), fallback: bool = False)
     return bool(loaded.get("available") and callable(configured) and configured())
 
 
+def drive_fill_rank(
+    record: Mapping[str, Any],
+    drafts: Sequence[Mapping[str, Any]],
+    *,
+    ledger: Optional[Any],
+    setup: Sequence[Callable[[], Any]],
+    goal: str,
+    best_instructions: str,
+    cfg_instructions: str,
+    few_shot_instructions: str,
+    cfg_criteria: Sequence[str],
+    schedule_fn: Callable[..., Any],
+    model_id: str,
+    client_timeout: float = 45.0,
+) -> dict[str, Any]:
+    """Rank symbol fills. Jev does not write Lean."""
+
+    from jevops.outer import any_pred, first_call, first_not_none, first_truthy, head_chars, or_list, set_if
+
+    early = first_call((not drafts, lambda: skipped("no_drafts", arena_score=None)))
+
+    def _rank() -> dict[str, Any]:
+        loaded, no_key = typesafe_session(setup=tuple(setup), fallback=False, arena_score=None)
+        choice = None if loaded is None else loaded["Choice"]
+        noul = None if loaded is None else loaded["Noul"]
+        score = None if loaded is None else loaded["Score"]
+        client = None if loaded is None else loaded["TypeSafeClient"]
+
+        def _ask() -> dict[str, Any]:
+            criteria = fill_rank_criteria(drafts, head_fn=head_chars)
+            state = fill_rank_state(record, drafts, head_fn=head_chars, goal=goal)
+            questions: dict[str, Any] = {
+                "best_fill": choice(instructions=best_instructions, criteria=criteria),
+                "cfg_mask": score(instructions=cfg_instructions, criteria=or_list(cfg_criteria, [])),
+            }
+            set_if(
+                questions,
+                any_pred(lambda item: first_truthy(item.get("llm") == "on", item.get("few_shot"), default=False), drafts),
+                "prefer_few_shot",
+                noul(instructions=few_shot_instructions),
+            )
+            return invoke_then_project(
+                invoke_fn=lambda: invoke_system_one(client(timeout=client_timeout), state, questions),
+                project_fn=lambda result, wall_ms: charge_packed(
+                    pack_fill_rank(result, wall_ms, schedule_fn=schedule_fn),
+                    ledger,
+                    model=model_id,
+                ),
+            )
+
+        return first_not_none(no_key, factory=_ask)
+
+    return first_not_none(early, factory=_rank)
+
+
+def drive_cfg_score(
+    record: Mapping[str, Any],
+    tactics: str,
+    *,
+    ledger: Optional[Any],
+    one_hole: bool,
+    setup: Sequence[Callable[[], Any]],
+    one_schedules: Sequence[Mapping[str, Any]],
+    multi_schedules: Sequence[Mapping[str, Any]],
+    one_criteria: Sequence[str],
+    multi_criteria: Sequence[str],
+    spans: Sequence[Any],
+    windows_fn: Callable[[str], Sequence[Any]],
+    token_fn: Callable[[str], int],
+    one_goal: str,
+    multi_goal: str,
+    one_score: str,
+    multi_score: str,
+    one_choice: str,
+    multi_choice: str,
+    schedule_fn: Callable[..., Any],
+    model_id: str,
+    client_timeout: float = 45.0,
+) -> dict[str, Any]:
+    """Ask how many masks and how long they should be. Jev does not write Lean."""
+
+    from jevops.outer import either, first_not_none, head_chars, or_list, overlay_map
+    from jevops.search import eligible_span_counts
+
+    table = either(one_hole, lambda: one_schedules, lambda: multi_schedules)
+    rubric = either(one_hole, lambda: one_criteria, lambda: multi_criteria)
+    loaded, skip = typesafe_session(
+        setup=tuple(setup),
+        fallback=False,
+        cfg_schedule=overlay_map(table[0]),
+        one_hole=one_hole,
+    )
+    if skip is not None:
+        return skip
+    choice, score, client = loaded["Choice"], loaded["Score"], loaded["TypeSafeClient"]
+
+    def _ask() -> dict[str, Any]:
+        eligible = eligible_span_counts(tactics, spans, windows_fn)
+        criteria = cfg_score_criteria(table, eligible)
+        state = cfg_score_state(
+            record,
+            tactics,
+            token_fn=token_fn,
+            eligible=eligible,
+            one_hole=one_hole,
+            head_fn=head_chars,
+            goal=either(one_hole, lambda: one_goal, lambda: multi_goal),
+        )
+        questions = {
+            "cfg_mask": score(
+                instructions=either(one_hole, lambda: one_score, lambda: multi_score),
+                criteria=or_list(rubric, []),
+            ),
+            "best_schedule": choice(
+                instructions=either(one_hole, lambda: one_choice, lambda: multi_choice),
+                criteria=criteria,
+            ),
+        }
+        return invoke_then_project(
+            invoke_fn=lambda: invoke_system_one(client(timeout=client_timeout), state, questions),
+            project_fn=lambda result, wall_ms: charge_packed(
+                pack_cfg_score(result, wall_ms, table=table, schedule_fn=schedule_fn, one_hole=one_hole, eligible=eligible),
+                ledger,
+                model=model_id,
+            ),
+        )
+
+    return _ask()
+
+
 def typesafe_session(
     *,
     setup: Sequence[Any] = (),
@@ -1584,6 +2310,46 @@ def noul_questions(
     }
 
 
+def drive_plan_view(
+    *,
+    mode: Optional[str],
+    official_track2: bool,
+    env: Optional[Mapping[str, str]],
+    resolve_fn: Callable[..., str],
+    import_fn: Callable[[], Mapping[str, Any]],
+    spec: Mapping[str, Mapping[str, Any]],
+    instantiate_fn: Callable[[Mapping[str, Any]], Mapping[str, Any]],
+    track2_fn: Callable[..., bool],
+    key_fn: Callable[..., bool],
+    fields: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Build the TypeSafe plan view. Does not POST and does not write Lean."""
+
+    from jevops.outer import str_keys
+
+    resolved = resolve_fn(flag=mode, env=env, official_track2=official_track2)
+    loaded = import_fn()
+    catalog = instantiate_fn(spec)
+    score_levels = {name: list(row["criteria"]) for name, row in spec.items() if row.get("type") == "score"}
+    payload = dict(fields)
+    payload.update(
+        {
+            "resolved_mode": resolved,
+            "official_track2": track2_fn(flag=official_track2, env=env),
+            "likely_shorter_legend": str_keys(payload.get("likely_shorter_legend") or {}),
+            "score_levels": score_levels,
+            "typesafe_inference_available": loaded["available"],
+            "typesafe_inference_exists": loaded["exists"],
+            "typesafe_inference_error": loaded["error"],
+            "typesafe_inference_path": loaded["path"],
+            "key_configured": key_fn(env),
+            "catalog_kinds": catalog_kinds(catalog),
+            "n_catalog": len(catalog),
+        }
+    )
+    return pack_plan_view(**payload)
+
+
 def pack_plan_view(**fields: Any) -> dict[str, Any]:
     """TypeSafe plan overlay. Catalog strings stay in the consumer."""
 
@@ -1593,6 +2359,140 @@ def pack_plan_view(**fields: Any) -> dict[str, Any]:
     out["compiled"] = False
     out["llama_server_started"] = False
     return out
+
+
+def drive_rank_problem(
+    record: Mapping[str, Any],
+    records: Sequence[Mapping[str, Any]],
+    model: Mapping[str, Any],
+    *,
+    live: bool,
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    count_fn: Callable[[str], Mapping[str, Any]],
+    families_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    drafts_fn: Callable[..., Sequence[Any]],
+    state_fn: Callable[..., Mapping[str, Any]],
+    questions_fn: Callable[..., Mapping[str, Any]],
+    catalog_fn: Callable[[Sequence[Any]], Any],
+    rank_choice_fn: Callable[..., Any],
+    pin_fn: Callable[[], Any],
+    redact_fn: Callable[[Any], Any],
+    choice_map: Mapping[str, str],
+    noul_map: Mapping[str, str],
+    score_map: Mapping[str, str],
+    client_timeout: float = 60.0,
+) -> dict[str, Any]:
+    """Rank catalog drafts or a live TypeSafe choice. Does not write Lean."""
+
+    from jevops.outer import or_none, unless_flag
+
+    tactics = tactic_fn(record)
+    features = count_fn(tactics)
+    families = families_fn(features, model)
+    drafts = drafts_fn(tactics, families, features)
+    state = state_fn(record, features=features, families=families, drafts=drafts, pca=model)
+
+    def _project(result: Any, wall_ms: float) -> dict[str, Any]:
+        return rank_live_choice_row(
+            result,
+            wall_ms,
+            rank_fn=rank_choice_fn,
+            drafts=drafts,
+            choice_map=choice_map,
+            noul_map=noul_map,
+            score_map=score_map,
+        )
+
+    def _invoke() -> tuple[Any, float]:
+        loaded = load_typesafe_inference(setup=(pin_fn,), fallback=False)
+        return invoke_system_one(
+            loaded["TypeSafeClient"](timeout=client_timeout),
+            state,
+            questions_fn(drafts, Choice=loaded["Choice"], Noul=loaded["Noul"], Score=loaded["Score"]),
+        )
+
+    def _configured() -> bool:
+        return typesafe_is_configured(setup=(pin_fn,), fallback=False)
+
+    return rank_catalog_or_live(
+        record,
+        drafts=drafts,
+        families=families,
+        features=features,
+        live=live,
+        extra=or_none(unless_flag(live, {"catalog": catalog_fn(drafts)})),
+        catalog_fn=lambda: catalog_fn(drafts),
+        pin_fn=pin_fn,
+        configured_fn=_configured,
+        invoke_fn=_invoke,
+        project_fn=_project,
+        redact_fn=redact_fn,
+    )
+
+
+def drive_draft_rank(
+    record: Mapping[str, Any],
+    records: Sequence[Mapping[str, Any]],
+    *,
+    live: bool,
+    enumerate_fn: Callable[..., Sequence[Any]],
+    state_fn: Callable[..., Any],
+    spans_fn: Callable[[str], Sequence[Any]],
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    catalog_fn: Callable[[Sequence[Any]], Any],
+    pin_fn: Callable[[], Any],
+    questions_fn: Callable[..., Mapping[str, Any]],
+    rank_fn: Callable[..., Any],
+    timeout: float = 60.0,
+) -> dict[str, Any]:
+    """Catalog rank, or one live Choice over drafts. Jev does not write Lean."""
+
+    from jevops.outer import dumps_sorted, overlay_map, unless_flag
+
+    drafts = list(enumerate_fn(record, records) or ())
+    state = state_fn(record, drafts)
+    families = [{"family": fam} for fam in sorted({item.family for item in drafts})]
+
+    def _project(result: Any, wall_ms: float) -> dict[str, Any]:
+        return pack_fanout_live_row(
+            result,
+            wall_ms,
+            unpack_fn=unpack_response,
+            rank_fn=rank_fn,
+            drafts=drafts,
+        )
+
+    def _invoke() -> tuple[Any, float]:
+        loaded = load_typesafe_inference(setup=(pin_fn,), fallback=False)
+        questions = questions_fn(
+            drafts,
+            Choice=loaded["Choice"],
+            Noul=loaded["Noul"],
+            Score=loaded["Score"],
+        )
+        return invoke_system_one(loaded["TypeSafeClient"](timeout=timeout), state, questions)
+
+    return rank_catalog_or_live(
+        record,
+        drafts=drafts,
+        families=families,
+        features={},
+        live=live,
+        extra=overlay_map(
+            {
+                "n_case_spans": len(list(spans_fn(tactic_fn(record)) or ())),
+                "state_chars": len(dumps_sorted(state)),
+                "compile_attempted": False,
+            },
+            **unless_flag(live, {"catalog": catalog_fn(drafts)}),
+        ),
+        catalog_fn=lambda: catalog_fn(drafts),
+        pin_fn=pin_fn,
+        configured_fn=lambda: typesafe_is_configured(setup=(pin_fn,), fallback=False),
+        invoke_fn=_invoke,
+        project_fn=_project,
+        redact_fn=redact,
+    )
 
 
 def rank_catalog_or_live(
@@ -1640,6 +2540,151 @@ def rank_catalog_or_live(
     return redact_fn(payload) if redact_fn is not None else payload
 
 
+def drive_typesafe_intent(
+    record: Mapping[str, Any],
+    analysis: Mapping[str, Any],
+    *,
+    tactics: str,
+    ledger: Optional[Any],
+    memory: Optional[Mapping[str, Any]],
+    extra_residual_qs: bool,
+    allow_families: Optional[set[str]],
+    allow_skills: Optional[set[str]],
+    tree_node: str,
+    setup: Sequence[Callable[[], Any]],
+    families: set[str],
+    structured: Mapping[str, Any],
+    residual_fn: Callable[[str], Mapping[str, Any]],
+    prior_fn: Callable[..., Mapping[str, Any]],
+    propose_fn: Callable[..., Mapping[str, Any]],
+    skills_fn: Callable[..., Mapping[str, Any]],
+    tree_fn: Callable[..., Mapping[str, Any]],
+    blocked_fn: Callable[..., bool],
+    spec: Mapping[str, Any],
+    tool_criteria: Mapping[str, Any],
+    subloops: Mapping[str, Any],
+    nest_instructions: str,
+    tool_instructions: str,
+    residual_to_skill: Mapping[str, str],
+    fire_t_residual: float,
+    fire_t: float,
+    fire_t_leaf: float,
+    confident: float,
+    uncertain: float,
+    high_stakes: set[str],
+    model_id: str,
+    client_timeout: float = 45.0,
+) -> dict[str, Any]:
+    """Score+Noul intent routing. Jev does not write Lean."""
+
+    from jevops.memory import named_success_kinds, port_wins
+    from jevops.outer import call_if, either, get_list, get_str, head_chars, if_none, optional_fn, or_list, overlay_map, set_if
+    from jevops.pick import family_criteria, filter_catalog, intent_from_answers, present_families
+    from jevops.walk import COMPOSE_CRITERIA, intent_window, nest_criteria
+
+    loaded, skip = typesafe_session(setup=tuple(setup), fallback=False, families=families)
+    if skip is not None:
+        return skip
+    Choice, Noul, Score, TypeSafeClient = loaded["Choice"], loaded["Noul"], loaded["Score"], loaded["TypeSafeClient"]
+    mem = if_none(memory, default={})
+    name = get_str(record, "name")
+    present = present_families(analysis)
+    criteria = family_criteria(present, structured=structured, require_structured=True)
+    state = intent_state(
+        record,
+        analysis,
+        residuals=call_if(tactics, lambda: residual_fn(tactics), default={}),
+        memory_view={"success_kinds": named_success_kinds(mem, name)},
+        window=intent_window(memory),
+        extra={
+            "head": head_chars(get_list(analysis, "case_labels"), 200),
+            "tree_node": tree_node,
+            "allow_families": sorted(or_list(allow_families, [])),
+            "prior_research": prior_fn(mem, name),
+            "proposed_skill": propose_fn(mem, name),
+            "memory_wins": port_wins(memory),
+        },
+    )
+    skills = either(
+        tactics,
+        lambda: skills_fn(tactics, memory=overlay_map(mem), name=name),
+        lambda: {"keep": "No tactics"},
+    )
+    tree = call_if(tactics, lambda: tree_fn(tactics, memory=overlay_map(mem), name=name), default={})
+    skills, tree = filter_catalog(
+        skills,
+        tree,
+        allow_skills=allow_skills,
+        allow_families=allow_families,
+        is_blocked=optional_fn(memory is not None, lambda kind: blocked_fn(memory, name, kind)),
+    )
+    questions = instantiate_questions(
+        spec,
+        choice=Choice,
+        noul=Noul,
+        score=Score,
+        criteria_overlay={"intent": criteria, "compose": overlay_map(COMPOSE_CRITERIA), "skill": skills},
+    )
+    nested = nest_criteria(tree, tools=tool_criteria, subloops=subloops)
+    set_if(questions, extra_residual_qs and nested, "nest_child", Choice(instructions=nest_instructions, criteria=nested))
+    set_if(questions, extra_residual_qs, "tool_name", Choice(instructions=tool_instructions, criteria=tool_criteria))
+    residuals = overlay_map(state.get("residuals"))
+    questions = with_residual_questions(
+        questions,
+        extra=extra_residual_qs,
+        residuals=residuals,
+        skills=skills,
+        noul_ctor=Noul,
+        score_ctor=Score,
+        unsafe_instructions_fn=lambda kv: {
+            "question": (
+                f"Is cutting residual `{kv[0]}` (count={kv[1]}) lake-unsafe on this script?"
+            ),
+            "focus": "true = P(wrong to cut). AutoResearch presence feature.",
+        },
+        help_instructions_fn=lambda kv: f"How much would a *safe* cut of `{kv[0]}` help token count?",
+        fail_instructions_fn=lambda sk: {
+            "question": f"Will skill `{sk}` fail lake compile?",
+            "focus": "true = P(wrong). Do not invoke a fired skill.",
+        },
+        unsafe_criteria={
+            "true": "The residual is required (used binder, extra goals, motive cast, Join witness)",
+            "false": "A closed fold of this residual has laked on this or a similar proof",
+        },
+        help_criteria=["No safe cut", "A few tokens", "A clear local shortening"],
+        fail_criteria={
+            "true": "Type mismatch, unknown identifier, or unsolved goals",
+            "false": "A binder-safe fold that already laked on this or a similar proof",
+        },
+    )
+    return invoke_then_project(
+        invoke_fn=lambda: invoke_system_one(TypeSafeClient(timeout=client_timeout), state, questions),
+        record_fn=lambda usage, model: record_usage(ledger, usage, model=model),
+        unpack_fn=unpack_response,
+        model=model_id,
+        project_fn=lambda _result, wall_ms, choices, nouls, scores, _usage: intent_from_answers(
+            choices=choices,
+            scores=scores,
+            nouls=nouls,
+            skills=skills,
+            tree=tree,
+            residuals=residuals,
+            residual_to_skill=residual_to_skill,
+            fire_t_residual=fire_t_residual,
+            fire_t=fire_t,
+            fire_t_leaf=fire_t_leaf,
+            confident=confident,
+            uncertain=uncertain,
+            high_stakes=name in high_stakes,
+            tree_node=tree_node,
+            wall_ms=wall_ms,
+            memory=memory,
+            name=name,
+            criteria=criteria,
+        ),
+    )
+
+
 def invoke_then_project(
     *,
     invoke_fn: Callable[[], tuple[Any, float]],
@@ -1658,6 +2703,52 @@ def invoke_then_project(
         return project_fn(result, wall_ms)
     choices, nouls, scores, unpacked = unpack_fn(result)
     return project_fn(result, wall_ms, choices, nouls, scores, unpacked or usage)
+
+
+def drive_rank_fanout(
+    record: Mapping[str, Any],
+    drafts: Sequence[Mapping[str, Any]],
+    *,
+    ledger: Optional[Any],
+    setup: Sequence[Callable[[], Any]],
+    goal: str,
+    best_instructions: str,
+    model_id: str,
+    estimate_fn: Callable[[str], int],
+    redact_fn: Callable[[Any], Any],
+    client_timeout: float = 60.0,
+) -> dict[str, Any]:
+    """One Choice over tactician drafts. Jev does not write Lean."""
+
+    from jevops.outer import dumps_compact, exc_head, first_call, first_not_none
+
+    early = first_call((not drafts, lambda: skipped("no_drafts", arena_score=None)))
+
+    def _rank() -> dict[str, Any]:
+        loaded, skip = typesafe_session(setup=tuple(setup), fallback=False, arena_score=None)
+        if skip is not None:
+            return skip
+        choice = loaded["Choice"]
+        client = loaded["TypeSafeClient"]
+        packed = draft_rank_state(record, drafts, goal=goal)
+        questions = {"best_first_draft": choice(instructions=best_instructions, criteria=packed["criteria"])}
+
+        def _project(result: Any, wall_ms: float) -> dict[str, Any]:
+            return charge_packed(
+                pack_best_draft(result, wall_ms=wall_ms),
+                ledger,
+                model=model_id,
+                fallback_in=estimate_fn(dumps_compact(packed["state"])),
+                redact_fn=redact_fn,
+            )
+
+        return invoke_or_skip(
+            invoke_fn=lambda: invoke_system_one(client(timeout=client_timeout), packed["state"], questions),
+            project_fn=_project,
+            skip_fn=lambda exc: skipped(exc_head(exc, 400), arena_score=None),
+        )
+
+    return first_not_none(early, factory=_rank)
 
 
 def invoke_or_skip(
@@ -1704,6 +2795,63 @@ def charge_packed(
     return redact_fn(row) if redact_fn is not None else row
 
 
+def drive_router_route(
+    router: Any,
+    state: Mapping[str, Any],
+    *,
+    neighbor_names: Sequence[str],
+    import_fn: Callable[[], Mapping[str, Any]],
+    key_fn: Callable[[Mapping[str, str]], bool],
+    questions_fn: Callable[..., Mapping[str, Any]],
+    spec: Mapping[str, Any],
+    answers_fn: Callable[[Any], Mapping[str, Any]],
+    result_cls: Callable[..., Any],
+) -> Any:
+    """Route one state through an injected client. Does not write Lean."""
+
+    from jevops.outer import call_if, either, first_truthy
+
+    loaded = either(router.enabled, import_fn, lambda: {"available": False})
+    using_fixture = router.client_factory is not None
+
+    def _invoke() -> tuple[Any, float]:
+        questions = questions_fn(
+            spec,
+            choice=call_if(not using_fixture, lambda: loaded.get("Choice")),
+            noul=call_if(not using_fixture, lambda: loaded.get("Noul")),
+            score=call_if(not using_fixture, lambda: loaded.get("Score")),
+            neighbor_names=neighbor_names,
+        )
+        factory = first_truthy(router.client_factory, loaded["TypeSafeClient"])
+        return invoke_system_one(factory(model=router.model), state, questions)
+
+    return route_or_skip(
+        enabled=router.enabled,
+        official=router.official_track2,
+        key_ok=key_fn(router.env),
+        available=bool(loaded.get("available")),
+        using_fixture=using_fixture,
+        require_key=router.require_key,
+        skip_fn=lambda reason: result_cls(
+            skipped=True,
+            reason=reason,
+            mode=router.mode,
+            official_track2=router.official_track2,
+            model=router.model,
+        ),
+        invoke_fn=_invoke,
+        project_fn=lambda response, wall_ms: route_result_from_answers(
+            answers_fn(response),
+            mode=router.mode,
+            official_track2=router.official_track2,
+            wall_ms=wall_ms,
+            used_fixture=using_fixture,
+            model=router.model,
+            result_cls=result_cls,
+        ),
+    )
+
+
 def route_or_skip(
     *,
     enabled: bool,
@@ -1730,6 +2878,63 @@ def route_or_skip(
         return skip_fn(reason)
     result, wall_ms = invoke_fn()
     return project_fn(result, wall_ms)
+
+
+def drive_prune(
+    record: Mapping[str, Any],
+    prefix: str,
+    candidates: Sequence[str],
+    *,
+    ledger: Any,
+    keep: int,
+    context: Optional[Mapping[str, Any]],
+    setup: Sequence[Callable[[], Any]],
+    instructions: str,
+    empty: str,
+    cap: int,
+    estimate_fn: Callable[[str], int],
+    model_id: str,
+    client_timeout: float = 45.0,
+) -> dict[str, Any]:
+    """Ask which next line to keep. Jev does not write Lean."""
+
+    from jevops.outer import dumps_compact, exc_head, first_not_none, head_seq, overlay_map, usage_tokens
+    from jevops.pick import numbered_criteria
+    from jevops.search import unique_cap
+
+    unique = unique_cap(candidates, cap=cap, empty=empty)
+
+    def _skip(reason: str) -> dict[str, Any]:
+        return kept_skip(reason, unique, keep, head_fn=head_seq)
+
+    loaded, skipped_payload = typesafe_session(setup=tuple(setup), fallback=False)
+    early = first_not_none(skipped_payload, factory=lambda: None)
+
+    def _ask() -> dict[str, Any]:
+        choice = loaded["Choice"]
+        client = loaded["TypeSafeClient"]
+        pack = overlay_map(context)
+        criteria = numbered_criteria(unique, prefix="c")
+        state = prune_state(record, prefix, pack, criteria)
+        questions = {"next_line": choice(instructions=instructions, criteria=criteria)}
+
+        def _record(usage: Any) -> Any:
+            inn, out = usage_tokens(usage, fallback_in=estimate_fn(dumps_compact(state)))
+            return ledger.record("jev", input_tokens=inn, output_tokens=out, model=model_id)
+
+        return complete_prune(
+            invoke_fn=lambda: invoke_system_one(client(timeout=client_timeout), state, questions),
+            skip_fn=lambda exc: _skip(exc_head(exc)),
+            unpack_fn=unpack_response,
+            record_fn=_record,
+            rank_fn=rank_prune_kept,
+            pack_fn=pack_prune,
+            criteria=criteria,
+            unique=unique,
+            keep=keep,
+        )
+
+    return first_not_none(early, factory=_ask)
 
 
 def complete_prune(
@@ -1800,6 +3005,93 @@ def featurize_or_skip(
     }
 
 
+def drive_featurize_proposal(
+    record: Mapping[str, Any],
+    current: str,
+    proposal: Mapping[str, str],
+    *,
+    ledger: Any,
+    module: Any,
+    weights: Mapping[str, float],
+    token_fn: Callable[[str], int],
+    questions_fn: Callable[[Any], Mapping[str, Any]],
+    estimate_fn: Callable[[str], int],
+    model_id: str,
+    feature_names: Sequence[str],
+    signed_dot_fn: Callable[..., float],
+    penalty: float,
+    timeout: float = 45.0,
+) -> dict[str, Any]:
+    """Score one MCMC edit from injected Noul questions. Jev does not write Lean."""
+
+    from jevops.outer import dumps_compact, exc_head, tail_chars, usage_tokens
+
+    state = proposal_feature_state(record, current, proposal, token_fn=token_fn, tail_fn=tail_chars)
+
+    def _record(usage: Any) -> Any:
+        inn, out = usage_tokens(usage, fallback_in=estimate_fn(dumps_compact(state)))
+        return ledger.record("jev", input_tokens=inn, output_tokens=out, model=model_id)
+
+    return featurize_or_skip(
+        invoke_fn=lambda: invoke_system_one(
+            module.TypeSafeClient(timeout=timeout), state, questions_fn(module)
+        ),
+        skip_fn=lambda exc: skipped(exc_head(exc), score=0.0, features={}),
+        unpack_fn=unpack_response,
+        record_fn=_record,
+        feature_names=feature_names,
+        weights=weights,
+        signed_dot_fn=signed_dot_fn,
+        penalty=penalty,
+    )
+
+
+def drive_hole_round(
+    record: Mapping[str, Any],
+    holes: Sequence[Any],
+    history: Sequence[Mapping[str, Any]],
+    keep_tokens: int,
+    *,
+    setup: Sequence[Callable[[], Any]],
+    best_instructions: str,
+    shorter_criteria: Sequence[str],
+    redact_fn: Callable[[Any], Any],
+    client_timeout: float = 45.0,
+) -> dict[str, Any]:
+    """Ask which hole to drop next. Jev does not write Lean."""
+
+    loaded, skip = typesafe_session(setup=tuple(setup), fallback=False)
+    if skip is not None:
+        return skip
+    criteria = hole_criteria(holes)
+    state = hole_round_state(record, holes, history, keep_tokens)
+    questions = choice_questions(
+        Choice=loaded["Choice"],
+        Noul=loaded["Noul"],
+        Score=loaded["Score"],
+        criteria=criteria,
+        best_key="next_hole",
+        best_instructions=best_instructions,
+        nouls={"likely_compiles": "Will dropping that hole still compile?"},
+        scores={"likely_token_cut": ("How large a token cut if that hole is dropped?", list(shorter_criteria))},
+    )
+    return complete_choice_round(
+        configured=True,
+        criteria=criteria,
+        invoke_fn=lambda: invoke_system_one(loaded["TypeSafeClient"](timeout=client_timeout), state, questions),
+        pack_fn=lambda result, wall_ms, **_k: pack_choice_round(
+            result,
+            choice_key="next_hole",
+            noul_key="likely_compiles",
+            score_key="likely_token_cut",
+            wall_ms=wall_ms,
+        ),
+        redact_fn=redact_fn,
+        skip_fn=lambda reason, **extra: skipped(reason, **extra),
+        skip_extra={"choice": None, "probabilities": {}},
+    )
+
+
 def complete_choice_round(
     *,
     configured: bool,
@@ -1858,6 +3150,60 @@ def rank_proposals_or_skip(
             noul_key=noul_key,
             score_key=score_key,
         )
+    )
+
+
+def drive_mcmc_rank(
+    record: Mapping[str, Any],
+    current: str,
+    proposals: Sequence[Mapping[str, str]],
+    *,
+    ledger: Any,
+    load_fn: Callable[[], Any],
+    token_fn: Callable[[str], int],
+    shorter_criteria: Sequence[str],
+    estimate_fn: Callable[[str], int],
+    model_id: str,
+    timeout: float = 45.0,
+) -> dict[str, Any]:
+    """Rank closed MCMC proposals. The draw is not a lake admit."""
+
+    from jevops.outer import dumps_compact, reason_text, result_usage
+    from jevops.pick import numbered_criteria
+
+    def _invoke(module: Any) -> tuple[Any, float]:
+        criteria = numbered_criteria(
+            proposals,
+            prefix="p",
+            fmt=lambda _i, item: f"{item['kind']}: {item['note']}; {token_fn(item['tactics'])} tok",
+        )
+        state = proposal_rank_state(record, current, criteria, tokens=token_fn(current))
+        questions = choice_questions(
+            Choice=module.Choice,
+            Noul=module.Noul,
+            Score=module.Score,
+            criteria=criteria,
+            best_key="next_edit",
+            best_instructions=(
+                "Which proposal id should this Metropolis chain try? Prefer a deletion that "
+                "keeps every case header and the prefix haves Hk/Hlen1/Hlen2. Do not write Lean."
+            ),
+            nouls={"likely_compiles": "Will the chosen edit still lake-compile?"},
+            scores={"likely_shorter": ("How likely is a token cut if it compiles?", list(shorter_criteria))},
+        )
+        return invoke_system_one(module.TypeSafeClient(timeout=timeout), state, questions)
+
+    def _record(result: Any) -> Any:
+        inn, out = result_usage(result, fallback_in=estimate_fn(dumps_compact(record)))
+        return ledger.record("jev", input_tokens=inn, output_tokens=out, model=model_id)
+
+    return rank_proposals_or_skip(
+        proposals=proposals,
+        load_fn=load_fn,
+        skip_fn=lambda reason, **extra: skipped(reason_text(reason), **extra),
+        invoke_fn=_invoke,
+        pack_fn=pack_ranked_pick,
+        record_fn=_record,
     )
 
 

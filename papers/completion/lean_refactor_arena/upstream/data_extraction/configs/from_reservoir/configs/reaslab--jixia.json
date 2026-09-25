@@ -1,0 +1,33 @@
+{
+    "repo": "https://github.com/reaslab/jixia",
+    "commit": "917aa48ece36ad6a40952bf4958d59707cbf6822",
+    "lean": "leanprover/lean4:v4.13.0-rc4",
+    "name": "jixia",
+    "imports": [
+        "Analyzer"
+    ],
+    "metadata": {
+        "name": "jixia",
+        "owner": "reaslab",
+        "fullName": "reaslab/jixia",
+        "description": "A static analysis tool for Lean 4.",
+        "keywords": [],
+        "homepage": null,
+        "license": "Apache-2.0",
+        "createdAt": "2024-06-20T12:01:43Z",
+        "updatedAt": "2024-10-26T03:30:43Z",
+        "stars": 44,
+        "sources": [
+            {
+                "type": "git",
+                "host": "github",
+                "id": "R_kgDOML4soQ",
+                "fullName": "reaslab/jixia",
+                "repoUrl": "https://github.com/reaslab/jixia",
+                "gitUrl": "https://github.com/reaslab/jixia",
+                "defaultBranch": "main"
+            }
+        ],
+        "schemaVersion": "1.2.0"
+    }
+}

@@ -1,0 +1,145 @@
+{
+  "schema": "jevops-local-premise-pilot/v1",
+  "plan_id": "97293e8565e7a17c9130ee6e61d00410d78aa0f96c05ea6a3ece9c3b6b13aca5",
+  "status": "COMPLETE",
+  "controls": [
+    {
+      "request_id": "a65c4dcbf0f1586ba75bebb5f631e5e7c09bd0a129d9b16debbb2ac0d368357d",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4227,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"b7159823022c2d348f03409385fe4fb86af7980831f02ed1ca826f97fec074e6\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227568,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227602,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":14265.093}"
+    },
+    {
+      "request_id": "5b939a4a2372ff3cd2c1ecc1f140f5cc0eef29386b11fe30c4882ecf415653bc",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4657,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"f3aadb6175e9b7e9a4106447be0c780db94bd17692215df04a5b2df39d24bad2\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657778,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657793,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":14378.612}"
+    },
+    {
+      "request_id": "ff5b59909999c6cc5f0c413009376c0013437ad245f4995090b24bf9482e79ab",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4689,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"da518c4b97e9b7aa6fe50d3aa01e927aa5a9ea544d84b77b693cc826afa382f5\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689118,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689135,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":6866.873}"
+    }
+  ],
+  "screen": [],
+  "families": {
+    "baseline": {
+      "drafts": 0,
+      "cap": 1,
+      "verified": 0,
+      "status": "ABSTAINED",
+      "application_attempts": 172,
+      "roundtrip_attempts": 0,
+      "wall_seconds": 103.4025,
+      "truncated": true,
+      "search_steps_reserved": 384,
+      "search_steps_observed": 304,
+      "unknown_search_processes": 0,
+      "retrievals_reserved": 128,
+      "retrievals_observed": 48
+    },
+    "observe_all": {
+      "drafts": 0,
+      "cap": 1,
+      "verified": 0,
+      "status": "ABSTAINED",
+      "application_attempts": 151,
+      "roundtrip_attempts": 0,
+      "wall_seconds": 100.2626,
+      "truncated": true,
+      "search_steps_reserved": 384,
+      "search_steps_observed": 374,
+      "unknown_search_processes": 0,
+      "retrievals_reserved": 128,
+      "retrievals_observed": 42,
+      "discharge_checks_reserved": 1024,
+      "discharge_checks_observed": 156,
+      "discharge_skips": 0
+    },
+    "propositions": {
+      "drafts": 0,
+      "cap": 1,
+      "verified": 0,
+      "status": "ABSTAINED",
+      "application_attempts": 126,
+      "roundtrip_attempts": 0,
+      "wall_seconds": 99.8729,
+      "truncated": true,
+      "search_steps_reserved": 384,
+      "search_steps_observed": 349,
+      "unknown_search_processes": 0,
+      "retrievals_reserved": 128,
+      "retrievals_observed": 47,
+      "discharge_checks_reserved": 1024,
+      "discharge_checks_observed": 310,
+      "discharge_skips": 135
+    }
+  },
+  "all_pin_verified": [],
+  "measurement": null,
+  "evidence_mode": "trusted_local_native",
+  "os_sandbox": false,
+  "training": false,
+  "promoted": false,
+  "official_score": null,
+  "model_calls": 0,
+  "api_cost": null,
+  "electricity_cost": null,
+  "reason": "screened_fixed_candidates_no_promotion",
+  "reserved_processes": 19,
+  "native_processes": 19,
+  "charges": [
+    {
+      "label": "control-v4.29.1",
+      "units": 1
+    },
+    {
+      "label": "control-v4.27.0",
+      "units": 1
+    },
+    {
+      "label": "control-v4.26.0",
+      "units": 1
+    },
+    {
+      "label": "all-pin-inventory",
+      "units": 3
+    },
+    {
+      "label": "project-capture",
+      "units": 1
+    },
+    {
+      "label": "baseline-application-discovery",
+      "units": 4
+    },
+    {
+      "label": "observe_all-application-discovery",
+      "units": 4
+    },
+    {
+      "label": "propositions-application-discovery",
+      "units": 4
+    }
+  ],
+  "wall_seconds": 518.3151
+}

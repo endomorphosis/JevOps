@@ -1,0 +1,127 @@
+{
+  "schema": "jevops-local-premise-pilot/v1",
+  "plan_id": "c6172c9bab4954f1476284a9895fb6437ccede457d8f78ebf1bec08ca5b2d891",
+  "status": "COMPLETE",
+  "controls": [
+    {
+      "request_id": "2946ef134097045fa99e1c45c8592dad02e5835b942976eb74f87aa8bc51ca3f",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4227,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"cad8d7daead9d954c4f5c9101e60659ba356d3d7f365b908ce25281009ab9409\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227568,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227600,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15698.015}"
+    },
+    {
+      "request_id": "f91863b43e320960bbb5dba7d3605ad6ff4a21c601194f94a1191212d00a1315",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4657,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"de30c22202f4714443ec329bdc9fe32caca4c79982d154e0866d981ad3b29217\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657774,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657791,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":14388.907}"
+    },
+    {
+      "request_id": "2194e9f6fc0f7399cf4c28efbd9d3227a0cdedde8039804df5bb1a65d531054f",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4689,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"3a1e7ff199c169ef2beffdf0845eb8ab6d480aa37ca260cb83b9183132d78cab\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689130,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689131,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":6120.15}"
+    }
+  ],
+  "screen": [],
+  "families": {
+    "headroom": {
+      "drafts": 0,
+      "cap": 1,
+      "verified": 0,
+      "status": "ABSTAINED",
+      "application_attempts": 4,
+      "roundtrip_attempts": 0,
+      "wall_seconds": 112.1929,
+      "truncated": true
+    },
+    "matching": {
+      "drafts": 0,
+      "cap": 1,
+      "verified": 0,
+      "status": "ABSTAINED",
+      "application_attempts": 4,
+      "roundtrip_attempts": 0,
+      "wall_seconds": 115.8572,
+      "truncated": true
+    },
+    "backward": {
+      "drafts": 0,
+      "cap": 1,
+      "verified": 0,
+      "status": "ABSTAINED",
+      "application_attempts": 92,
+      "roundtrip_attempts": 0,
+      "wall_seconds": 111.2013,
+      "truncated": true,
+      "search_steps_reserved": 384,
+      "search_steps_observed": 159,
+      "unknown_search_processes": 0
+    }
+  },
+  "all_pin_verified": [],
+  "measurement": null,
+  "evidence_mode": "trusted_local_native",
+  "os_sandbox": false,
+  "training": false,
+  "promoted": false,
+  "official_score": null,
+  "model_calls": 0,
+  "api_cost": null,
+  "electricity_cost": null,
+  "reason": "screened_fixed_candidates_no_promotion",
+  "reserved_processes": 19,
+  "native_processes": 19,
+  "charges": [
+    {
+      "label": "control-v4.29.1",
+      "units": 1
+    },
+    {
+      "label": "control-v4.27.0",
+      "units": 1
+    },
+    {
+      "label": "control-v4.26.0",
+      "units": 1
+    },
+    {
+      "label": "all-pin-inventory",
+      "units": 3
+    },
+    {
+      "label": "project-capture",
+      "units": 1
+    },
+    {
+      "label": "headroom-application-discovery",
+      "units": 4
+    },
+    {
+      "label": "matching-application-discovery",
+      "units": 4
+    },
+    {
+      "label": "backward-application-discovery",
+      "units": 4
+    }
+  ],
+  "wall_seconds": 573.7201
+}

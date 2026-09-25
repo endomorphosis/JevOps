@@ -1,0 +1,39 @@
+{
+  "schema": "jevops-arena-local/v1",
+  "status": "OBSERVED",
+  "ok": true,
+  "closing_reproduced": false,
+  "proof_admitted": false,
+  "whole_source_checked": false,
+  "binding": {
+    "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+    "trace_sha256": "3cb7e9b3ec9a2a689477bd36f3e64d20039088cf49dce19fa055b52e95b09b38",
+    "dependency_environment_sha256": "0b0e07dc9f2ccbaabb3efd0f34195da841d5a4ded953de944eec51a8de04944f",
+    "exporter_sha256": "8ea31efe96a2aa60b1bca3286123eeff84a846c5dc709e6a9c278807625de542",
+    "event_id": 2,
+    "candidate_sha256": "31bf82b2adf535a40e1fd727439a6a967dbee8e19301f989a0a611f58b155a85",
+    "node_budget": 4096,
+    "event_budget": 256
+  },
+  "environment": "1b198ca7e692b5754b8cfc97b4694fa62e5e960e4fb73e2e89f2625e45a7e232",
+  "native_sha256": "2067e4b890002fda6b3b1e53229f3613a355af40ed8798b55c6e21f23a4adf31",
+  "baseline": {
+    "axioms": [],
+    "closed_goals_checked": "0",
+    "reason": "replay uses forbidden axioms",
+    "remaining_goals": null,
+    "status": "rejected"
+  },
+  "proposed": {
+    "axioms": [],
+    "closed_goals_checked": "0",
+    "reason": "Type mismatch\n  Core.InitStatesNodup\nhas type\n  Core.InitStates ?m.11 ?m.12 ?m.13 ?m.14 → List.Nodup ?m.12\nbut is expected to have type\n  Core.UpdateStates σ ks vs σ' →\n    Core.InitStates σ' ks' vs' σ'' →\n      ∃ σ₁, σ₁ = Core.updatedStates σ ks' vs' ∧ Core.InitStates σ ks' vs' σ₁ ∧ Core.UpdateStates σ₁ ks vs σ''",
+    "remaining_goals": null,
+    "status": "rejected"
+  },
+  "candidate": "exact _root_.Core.InitStatesNodup",
+  "event_id": "2",
+  "raw_path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-premise-pilot-20260924-vbLY69/run/local-replay-1.json",
+  "raw_sha256": "cab85d304e0d4f33ce5dc1cdd5aeb316fccab54b00429ae2d83b37565dc92d26",
+  "summary_only": true
+}

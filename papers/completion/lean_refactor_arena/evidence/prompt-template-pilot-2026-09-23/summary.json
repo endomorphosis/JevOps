@@ -1,0 +1,56 @@
+{
+  "schema": "jevops-refactor-template-pilot-summary/v1",
+  "plan_id": "d662ae1476a92351df37ae9cfe0f3c6ccc65504608b45595aa77f47f535f8ef1",
+  "problem": "Core.InitsUpdatesComm",
+  "held_out": false,
+  "model_calls_reserved": 8,
+  "strict_admitted_drafts": 0,
+  "verified_improvements": 0,
+  "native_processes": 56,
+  "controls": {
+    "VERIFIED": 14
+  },
+  "candidate_checks": {
+    "REJECTED": 42
+  },
+  "arms": {
+    "legacy": {
+      "contract_mismatch": 1,
+      "generation_error": 1
+    },
+    "repair-no-history": {
+      "contract_mismatch": 2
+    },
+    "repair-failures": {
+      "intake_rejected": 1,
+      "generation_error": 1
+    },
+    "contrastive-history": {
+      "generation_error": 2
+    }
+  },
+  "generation_request_wall_seconds": 103.2127,
+  "usage_coverage_responses": 4,
+  "reported_input_tokens_partial": 9611,
+  "reported_output_tokens_partial": 1869,
+  "billed_cost": null,
+  "electricity_cost": null,
+  "official_score": null,
+  "promoted": false,
+  "normalization_bug": {
+    "status": "reproduced_not_fixed_in_legacy_harness",
+    "symptom": "first-line indentation stripped while later lines retain indentation",
+    "native_error": "unexpected token 'exists'; expected command",
+    "followup": "all three whitespace-preserved drafts also rejected on v4.26.0; two orders, one repetition",
+    "interpretation": "initial rejections include a harness formatting confound; the followup separates genuine candidate errors"
+  },
+  "evidence": {
+    "generation.json": "f0a0e1b0c7deb661b24679bd95d9ea51fec9a042fa1073036eb5c3020f4fff42",
+    "native-screen.json": "cfc75d2425058fea5c0a25af370b6b43ad718325fcd64f384b67421e0634cf23",
+    "plan.json": "fe133db58e5c0fcb6a5cda6e9dbcb86c0416f450161d6fff9778211bf3b82058",
+    "secondary-normalization.json": "7573572b13becb9883944855e54b1c41b7d1fb7adf48f13856323ffe2d91bbcd",
+    "server-profile.json": "97051d5435a18e9331b7e3fb35d634608b3fc0128dd0f670364deedaae75fec1",
+    "whitespace-diagnostic-plan.json": "69eaf58b4353547d907c5c100b506b44ef0ddd014be7a19e83a8e208327a06bd",
+    "whitespace-diagnostic.json": "957bc84942f1b74ce2c14e94ac479a5cadb93377c7c42322415defdb674c7353"
+  }
+}

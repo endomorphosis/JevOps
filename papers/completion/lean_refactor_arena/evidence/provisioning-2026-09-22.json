@@ -1,0 +1,178 @@
+{
+  "schema": "jevops-arena-provisioning-evidence/v1",
+  "observed_at": "2026-09-22T22:09:29.854184+00:00",
+  "workspace": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM",
+  "allowance_bytes": 50000000000,
+  "fixed_image_bytes": 49799999488,
+  "setup_reservation_bytes": 200000000,
+  "volume_used_bytes": 17277251584,
+  "build_concurrency": 1,
+  "required_checks": 36,
+  "readiness": {
+    "UNMEASURED": 17,
+    "UNAVAILABLE": 19
+  },
+  "missing_toolchain_gaps": 0,
+  "isolated_elan_home": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan",
+  "projects_manifest": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects-prepared.json",
+  "projects_manifest_sha256": "5966c3c1bad7af80da878d7c8bc03358a93024f6c39d181d0b620868d34f8a14",
+  "readiness_report": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/readiness-all-toolchains.json",
+  "readiness_sha256": "59729899878f865fd91d82f037c0e9cd19524b303e9a7ec22c90d7c426346db4",
+  "baseline_status": "RUNNING",
+  "baseline_output": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/baseline-prepared-audited.json",
+  "baseline_pid_at_observation": 2688333,
+  "new_verified_corpus_count": null,
+  "official_score": null,
+  "live_model_calls": 0,
+  "runs": [
+    {
+      "schema": "jevops-arena-preparation/v1",
+      "run_id": "1790112207194413597",
+      "command": [
+        "/bin/bash",
+        "-euc",
+        "git clone --no-hardlinks --no-checkout /home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/strata-org/Strata projects/strata-v4.27.0; git -C projects/strata-v4.27.0 remote set-url origin https://github.com/strata-org/Strata; git -C projects/strata-v4.27.0 checkout --detach 4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d; cd projects/strata-v4.27.0; env PATH=/home/barberb/.elan/toolchains/leanprover--lean4---v4.27.0/bin:/usr/bin:/bin /home/barberb/.elan/toolchains/leanprover--lean4---v4.27.0/bin/lake --no-cache build +Strata.Languages.Core.StatementSemanticsProps:deps"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 118.12530650303233,
+      "log": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790112207194413597.log",
+      "image_id": "sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517",
+      "network_allowed": true,
+      "build_concurrency": 1,
+      "official_score": null,
+      "volume_capacity_bytes": 49018310656,
+      "volume_used_bytes": 270630912,
+      "report_sha256": "55cb709618f82b2c2d3d807afb5e678fe640009eda88e8ddbb6e9eba881d7aa4",
+      "log_sha256": "5d3c02776687b0b40404c9e8b89ceb47b1b65c659193ff63933829d73f052a08"
+    },
+    {
+      "schema": "jevops-arena-preparation/v1",
+      "run_id": "1790112361351191376",
+      "command": [
+        "/bin/bash",
+        "-euc",
+        "git clone --no-hardlinks --no-checkout /home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/strata-org/Strata projects/strata-v4.29.1; git -C projects/strata-v4.29.1 remote set-url origin https://github.com/strata-org/Strata; git -C projects/strata-v4.29.1 checkout --detach 384e22374e0872095ad9c6f74c5998c09cfd93a9; cd projects/strata-v4.29.1; env PATH=/home/barberb/.elan/toolchains/leanprover--lean4---v4.29.1/bin:/usr/bin:/bin /home/barberb/.elan/toolchains/leanprover--lean4---v4.29.1/bin/lake --no-cache build +Strata.Languages.Core.StatementSemanticsProps:deps"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 75.32727351190988,
+      "log": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790112361351191376.log",
+      "image_id": "sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517",
+      "network_allowed": true,
+      "build_concurrency": 1,
+      "official_score": null,
+      "volume_capacity_bytes": 49018310656,
+      "volume_used_bytes": 465424384,
+      "report_sha256": "8b2e2bac12c903b53b494894a2bc623232cfe574e8328ebc7a7f7c6a28257bb5",
+      "log_sha256": "1926e88599deed425de7652eb86f135456fbd645bbe84430a8a0ba56cc5e9a6e"
+    },
+    {
+      "schema": "jevops-arena-preparation/v1",
+      "run_id": "1790112476905064504",
+      "command": [
+        "/bin/bash",
+        "-euc",
+        "git clone --no-hardlinks --no-checkout /home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/leanprover/cslib projects/cslib-v4.32.0; git -C projects/cslib-v4.32.0 remote set-url origin https://github.com/leanprover/cslib; git -C projects/cslib-v4.32.0 checkout --detach 197a7be621263b84c67ca4f803f69205b36d06df; mkdir -p projects/cslib-v4.32.0/.lake/packages; for package in mathlib plausible LeanSearchClient importGraph proofwidgets aesop Qq batteries Cli; do cp -a --reflink=auto /home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/leanprover-community/physlib/.lake/packages/\"$package\" projects/cslib-v4.32.0/.lake/packages/; done"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 265.6973707959987,
+      "log": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790112476905064504.log",
+      "image_id": "sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517",
+      "network_allowed": false,
+      "build_concurrency": 1,
+      "official_score": null,
+      "volume_capacity_bytes": 49018310656,
+      "volume_used_bytes": 8739602432,
+      "report_sha256": "3b3b4f742df66429034f97a23c1700de02f7c7a9694576d71dd5e79ed351f6e3",
+      "log_sha256": "28e573d23227a33a4f4f294f83293cdabbf5ca3ab79cd31a564c1df92027304c"
+    },
+    {
+      "schema": "jevops-arena-preparation/v1",
+      "run_id": "1790112766300260532",
+      "command": [
+        "/usr/bin/env",
+        "PATH=/home/barberb/.elan/toolchains/leanprover--lean4---v4.32.0/bin:/usr/bin:/bin",
+        "/home/barberb/.elan/toolchains/leanprover--lean4---v4.32.0/bin/lake",
+        "--no-cache",
+        "build",
+        "+Cslib.Languages.LambdaCalculus.LocallyNameless.Fsub.Safety:deps",
+        "+Cslib.Languages.CombinatoryLogic.Confluence:deps",
+        "+Cslib.Languages.CCS.BehaviouralTheory:deps"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 142.49374420102686,
+      "log": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790112766300260532.log",
+      "image_id": "sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517",
+      "network_allowed": false,
+      "build_concurrency": 1,
+      "official_score": null,
+      "volume_capacity_bytes": 49018310656,
+      "volume_used_bytes": 8781066240,
+      "report_sha256": "89e2e2b5dfe56db6c8da95f04ea3b8102c956f77266790d629ccf045fc50713f",
+      "log_sha256": "89eb2de0923f4dc3b37a4929ae8bae2fbd7d3116fbffcd312d85c2284c912153"
+    },
+    {
+      "schema": "jevops-arena-preparation/v1",
+      "run_id": "1790113611810125696",
+      "command": [
+        "/bin/bash",
+        "-euc",
+        "for tag in v4.25.0 v4.28.0 v4.33.0-rc2; do /home/barberb/.elan/bin/elan toolchain install leanprover/lean4:\"$tag\"; done"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 727.1885532359593,
+      "log": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790113611810125696.log",
+      "image_id": "sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517",
+      "network_allowed": true,
+      "build_concurrency": 1,
+      "official_score": null,
+      "volume_capacity_bytes": 49018310656,
+      "volume_used_bytes": 17277218816,
+      "report_sha256": "2abcab24566b2663871cd2ca44bb9a0d58483802dfcd4c8fb3c2318c1e4a0413",
+      "log_sha256": "7dd2ed709a759ce80f31d7c1c011bea7ddf4539b3b6994f7a55d3277ec8d11a6"
+    },
+    {
+      "schema": "jevops-arena-preparation/v1",
+      "run_id": "1790114364688604301",
+      "command": [
+        "/bin/bash",
+        "-euc",
+        "for tag in v4.26.0 v4.27.0 v4.29.0 v4.29.1 v4.30.0 v4.31.0 v4.32.0; do ln -s /home/barberb/.elan/toolchains/leanprover--lean4---\"$tag\" elan/toolchains/leanprover--lean4---\"$tag\"; done; for tag in v4.25.0 v4.28.0 v4.33.0-rc2; do elan/toolchains/leanprover--lean4---\"$tag\"/bin/lean --version; done"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "cleanup": "absent_or_daemon_unavailable",
+      "wall_seconds": 3.229727855999954,
+      "log": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790114364688604301.log",
+      "image_id": "sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517",
+      "network_allowed": false,
+      "build_concurrency": 1,
+      "official_score": null,
+      "volume_capacity_bytes": 49018310656,
+      "volume_used_bytes": 17277227008,
+      "report_sha256": "8ff20f05555b3d6addba950a1ae134dea5a775538ef55605e413937ef03c1ea8",
+      "log_sha256": "80dead747985645b05b09fcd49b1ee8daad22fb90d7b1a7dd0371de7c0b874f4"
+    }
+  ],
+  "tests": [
+    {
+      "command": "python -m pytest -q --test-seal=off tests/test_arena.py tests/test_arena_lean.py tests/test_arena_prepare.py tests/test_arena_projects.py tests/test_arena_trial.py tests/test_arena_module_audit.py tests/test_router_tuning.py tests/test_proof_slicing.py tests/test_lean_refactor_corpus.py tests/test_kernel_boundary.py",
+      "passed": 266,
+      "skipped": 45,
+      "seconds": 76.44
+    },
+    {
+      "command": "python -m pytest -q --test-seal=off tests/test_seals.py",
+      "passed": 40,
+      "seconds": 35.39
+    },
+    {
+      "command": "TMPDIR=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp JEVOPS_ARENA_NATIVE_TESTS=1 python -m pytest -q --test-seal=off tests/test_arena_lean.py tests/test_arena_module_audit.py --tb=short",
+      "passed": 86,
+      "seconds": 107.36
+    }
+  ]
+}

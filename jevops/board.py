@@ -13,6 +13,192 @@ def ptr(kind: str, ident: str) -> str:
     return f"ptr://{kind}/{ident}"
 
 
+def drive_seed_board(
+    memory: dict[str, Any],
+    *,
+    board: Optional[Mapping[str, Any]],
+    force: bool,
+    load_fn: Callable[[], Mapping[str, Any]],
+    root: str,
+    path_ptr: Callable[[str], str],
+    sidecar_fn: Callable[[dict[str, Any], dict[str, Any]], None],
+) -> dict[str, Any]:
+    """Seed goal/subgoal/task cells, then an injected sidecar. No campaign write."""
+
+    from jevops.outer import or_load
+
+    data = or_load(board, load_fn)
+    data.setdefault("root", root)
+    return seed_then_sidecar(
+        memory,
+        data,
+        force=force,
+        path_ptr=path_ptr,
+        sidecar_fn=sidecar_fn,
+    )
+
+
+def drive_overlay_live(
+    memory: dict[str, Any],
+    *,
+    lane: Any,
+    default_lane: Any,
+    fetch_fn: Optional[Callable[[], Any]],
+    ready_page_fn: Callable[[], Any],
+    seed_fn: Callable[..., Any],
+    fetch_builder: Callable[[Any], Any],
+    prefix: str = "LRA-",
+) -> dict[str, Any]:
+    """Read-only fetch overlay. Never writes a campaign DB."""
+
+    from pathlib import Path
+
+    from jevops.outer import call_if, either, first_not_none, if_none
+
+    root = if_none(lane, default_lane)
+    ready = Path(root) / "quack-owner" / "paper-owner.ready.json"
+
+    def _default() -> Any:
+        return fetch_builder(root)
+
+    injected = fetch_fn is not None
+    live_fn = first_not_none(fetch_fn, factory=lambda: call_if(ready.is_file(), lambda: _default))
+    return overlay_fetch(
+        memory,
+        seed_fn=seed_fn,
+        fetch_fn=live_fn,
+        prefix=prefix,
+        cache=fetch_fn is None,
+        ready_fn=ready_page_fn,
+        empty_reason="no_ready_owner",
+        injected_reason=either(injected, lambda: "injected", lambda: "fetch_board"),
+        inject_fail=either(injected, lambda: "closed", lambda: "cache"),
+    )
+
+
+def drive_seed_keep(
+    memory: dict[str, Any],
+    tokens: Mapping[str, int],
+    *,
+    warmup: Optional[Mapping[str, int]],
+    load_fn: Callable[[], Mapping[str, int]],
+    link_fn: Callable[[dict[str, Any], str], Any],
+) -> dict[str, Any]:
+    """Seed theorem cells from token counts. Does not compile."""
+
+    from jevops.outer import or_load
+
+    return seed_token_cells(memory, tokens, warmup=or_load(warmup, load_fn), link_fn=link_fn)
+
+
+def drive_ready_overlay(
+    memory: dict[str, Any],
+    *,
+    ready_fn: Optional[Any],
+    replica_fn: Callable[[], Any],
+    prefix: str,
+    env_key: str,
+) -> dict[str, Any]:
+    """Mark ready tasks. No replica when a ready function is injected."""
+
+    from jevops.outer import optional_fn
+
+    return overlay_ready(
+        memory,
+        ready_fn=ready_fn,
+        replica_fn=optional_fn(ready_fn is None, replica_fn),
+        prefix=prefix,
+        env_key=env_key,
+    )
+
+
+def drive_replica_page(
+    lane: Any,
+    *,
+    default_lane: Any,
+    page_fn: Callable[[str], Any],
+    prefix: str = "LRA-",
+) -> dict[str, Any]:
+    """Read-only ready page. Never CAS and never install_schema."""
+
+    from pathlib import Path
+
+    from jevops.outer import if_none
+
+    ready = Path(if_none(lane, default_lane)) / "quack-owner" / "paper-owner.ready.json"
+    return replica_from_ready(ready, page_fn=page_fn, prefix=prefix)
+
+
+def drive_load_board(
+    path: Any,
+    *,
+    read_fn: Callable[[Any], Mapping[str, Any]],
+    root: str,
+    blocked: Sequence[str] = (),
+    deliverable_suffix: str = ".py",
+) -> dict[str, Any]:
+    """Normalize a tasks payload. Suggested paths and Python deliverables only."""
+
+    from jevops.outer import get_list, project_map, text_or
+
+    data = read_fn(path)
+
+    def _paths(row: Mapping[str, Any]) -> list[str]:
+        paths = project_map([item for item in get_list(row, "suggested_code_paths") if item], text_or)
+        paths.extend(
+            project_map(
+                [item for item in get_list(row, "deliverables") if text_or(item).endswith(deliverable_suffix)],
+                text_or,
+            )
+        )
+        return paths
+
+    return board_from_payload(data, root=root, blocked=blocked, code_paths_fn=_paths)
+
+
+def drive_link_theorem(
+    memory: dict[str, Any],
+    theorem: str,
+    *,
+    tasks: Mapping[str, str],
+    ptr_fn: Callable[[str, str], str],
+    energy: float = 0.55,
+) -> dict[str, Any]:
+    """Edge a theorem cell to its task. Does not write a campaign DB."""
+
+    from jevops.outer import call_if, first_truthy, text_or
+
+    name = text_or(first_truthy(theorem, default=""))
+    task_id = dict(tasks).get(name)
+    parent = call_if(task_id, lambda: ptr_fn("task", str(task_id)), default="")
+    out = link_entity(memory, ident=name, kind="theorem", parent_ptr=parent, energy=energy)
+    return {"ok": out.get("ok"), "theorem": out.get("id"), "task": parent, "reason": out.get("reason")}
+
+
+def drive_warmup_token_map(
+    *,
+    load_fn: Callable[[], Any],
+    token_fn: Callable[[str], int],
+    split_fn: Callable[[Mapping[str, Any]], Any],
+) -> dict[str, int]:
+    """Frozen warmup body token counts. Load failure is an empty map, not a rewrite."""
+
+    from jevops.outer import get_str, text_or, token_map
+
+    try:
+        _raw, _digest, records = load_fn()
+    except Exception:
+        return {}
+
+    def _body(rec: Mapping[str, Any]) -> str:
+        try:
+            return text_or(getattr(split_fn(rec), "body_suffix", ""))
+        except Exception:
+            return get_str(rec, "src")
+
+    return token_map(records, token_fn=token_fn, body_fn=_body)
+
+
 def board_from_payload(
     data: Mapping[str, Any],
     *,
@@ -416,6 +602,23 @@ def codepath_ptr(path: str, *, strip_prefix: str = "") -> str:
     return ptr("codepath", text.replace("/", ".").replace(".py", ""))
 
 
+def drive_loaded_payload(
+    ident: str,
+    board: Optional[Mapping[str, Any]],
+    *,
+    load_fn: Callable[[], Mapping[str, Any]],
+    root: str,
+    path_ptr: Callable[..., str],
+) -> dict[str, Any]:
+    """Load the board when missing, pin root, then project one id."""
+
+    from jevops.outer import or_load
+
+    data = or_load(board, load_fn)
+    data.setdefault("root", root)
+    return board_payload(ident, data, path_ptr=path_ptr)
+
+
 def board_payload(
     ident: str,
     board: Mapping[str, Any],
@@ -767,6 +970,191 @@ def load_campaign_fetch(
     ensure_sys_path(scripts_root)
     campaign = importlib.import_module(str(module))
     return campaign.fetch_board
+
+
+def render_objective_heap(
+    paper: str,
+    goal: str,
+    subgoals: Sequence[tuple[str, str, str]],
+    tasks: Sequence[Mapping[str, Any]],
+) -> str:
+    """Markdown objective heap. Does not write a campaign DB or Lean."""
+
+    lines = [
+        "# Lean Refactor Arena — objective heap",
+        "",
+        f"Reviewed scope: `papers/completion/{paper}/review.md`. Executable board: `papers/completion/{paper}/paper.todo.md`.",
+        "",
+        "A completed LRA board means Leanstral + in-repo `run_warmup.py` ran on this machine under Lean-as-oracle,",
+        "with fail-closed receipts and no invented Arena scores. It does not mean official Track 2, OpenReview upload,",
+        "or treating Spark NVFP4 wall-clock as 4×A100.",
+        "",
+        "## LRA-G000 Complete the Leanstral local harness and honest competition report",
+        "",
+        "- Status: active",
+        "- Parent:",
+        "- Depends on:",
+        "- Fib priority: 1",
+        "- Priority: P0",
+        "- Track: lean_refactor_arena",
+        "- Bundle: lean_refactor_arena/LRA-G000",
+        f"- Goal: {goal}",
+        f"- Outputs: {', '.join(dict.fromkeys(p for t in tasks for p in t['deliverables']))}",
+        f"- Gap task: {', '.join(t['id'] for t in tasks)}",
+        "- Acceptance: Linked task criteria have current artifact and validation evidence; numerical claims trace to real runs; unrun official rows stay unrun.",
+        "- Validation: python3 scripts/paper_supervisors.py verify-goal --paper lean_refactor_arena --goal LRA-G000",
+        "",
+    ]
+    for index, (gid, title, desc) in enumerate(subgoals, start=2):
+        owned = [task for task in tasks if task["subgoal"] == gid]
+        outputs = list(dict.fromkeys(path for task in owned for path in task["deliverables"]))
+        priority = "- Priority: P0" if any(task["priority"] == "P0" for task in owned) else "- Priority: P1"
+        lines.extend(
+            [
+                f"## {gid} {title}",
+                "",
+                "- Status: active",
+                "- Parent: LRA-G000",
+                "- Depends on:",
+                f"- Fib priority: {index}",
+                priority,
+                "- Track: lean_refactor_arena",
+                f"- Bundle: lean_refactor_arena/{gid}",
+                f"- Goal: {desc}",
+                f"- Outputs: {', '.join(outputs)}",
+                f"- Gap task: {', '.join(task['id'] for task in owned)}",
+                "- Acceptance: Linked task criteria have current artifact and validation evidence; numerical claims trace to real runs; unrun official rows stay unrun.",
+                f"- Validation: python3 scripts/paper_supervisors.py verify-goal --paper lean_refactor_arena --goal {gid}",
+                "",
+            ]
+        )
+    return "\n".join(lines)
+
+
+def render_taskboard(
+    paper: str,
+    tasks: Sequence[Mapping[str, Any]],
+    *,
+    heap: str,
+    namespace: str,
+    verify: str,
+    sha256: str,
+) -> str:
+    """Markdown taskboard. Does not write Lean."""
+
+    lines = [
+        "# Lean Refactor Arena — implementation taskboard",
+        "",
+        f"Read `papers/completion/{paper}/review.md` and `papers/completion/{paper}/design_win_plan.md` before work.",
+        f"Objective heap: `{heap}`. Board namespace: `{namespace}`.",
+        "",
+        "Primary path: Leanstral on live docker0 (`172.17.0.1:8080`) + in-repo `harness/run_warmup.py`.",
+        "Never invent Arena scores. Spark NVFP4 is not official Track 2. Jev does not generate Lean.",
+        "Implement in native ephemeral worktrees. GPU tasks are exclusive clients of docker0; do not LOCK_EX.",
+        "Each task writes its receipt using the contract in the runbook.",
+        "",
+    ]
+    for task in tasks:
+        receipt = f"papers/completion/{paper}/receipts/{task['id']}.json"
+        snapshots = f"papers/completion/{paper}/receipts/snapshots/{task['id']}/"
+        outputs = list(task["deliverables"]) + [receipt]
+        predicted = outputs + [snapshots]
+        allowed = [
+            f"papers/completion/{paper}/harness/",
+            f"papers/completion/{paper}/tools/",
+            f"papers/completion/{paper}/evidence/",
+            f"papers/completion/{paper}/manuscript/",
+            f"papers/completion/{paper}/receipts/",
+        ]
+        if task["id"] in {"LRA-012", "LRA-021"}:
+            allowed.append("external/ipfs_datasets/ipfs_datasets_py/logic/hammers/")
+        if task["id"] in {"LRA-010", "LRA-016", "LRA-019"}:
+            allowed.append("external/ipfs_accelerate/ipfs_accelerate_py/")
+        lines.extend(
+            [
+                f"## {task['id']} {task['title']}",
+                "",
+                f"- Status: {task['status']}",
+                f"- Completion: {task['completion']}",
+                f"- Is schedulable: {'false' if task['completion'] == 'manual' else 'true'}",
+                "- Review only: false",
+                f"- Priority: {task['priority']}",
+                "- Track: lean_refactor_arena",
+                f"- Depends on: {', '.join(task['depends'])}",
+                f"- Goal id: {task['subgoal']}",
+                "- Parent goal: LRA-G000",
+                f"- Objective heap: {heap}",
+                f"- Board namespace: {namespace}",
+                f"- Bundle: lean_refactor_arena/{task['subgoal']}",
+                f"- Parallel lane: {task['lane']}",
+                f"- Outputs: {', '.join(outputs)}",
+                f"- Predicted files: {', '.join(predicted)}",
+                f"- Allowed paths: {', '.join(allowed)}",
+                f"- Resource class: {task['resource']}",
+                "- Resource stage: execution",
+                f"- Implementation timeout seconds: {task['timeout']}",
+                f"- Validation: {verify.format(id=task['id'])}",
+                f"- Acceptance: {'; '.join(task['acceptance'])}",
+                f"- Paper evidence: design_win_plan.md; protocol.md LRA/v1; frozen warmup SHA-256 {sha256}",
+                "- Reuse candidates: papers/completion/lean_refactor_arena/design_win_plan.md, scripts/run_leanstral_ephemeral.py",
+                f"- Receipt: {receipt}",
+                "",
+                task["description"],
+                "",
+                "Acceptance criteria:",
+                "",
+            ]
+        )
+        for index, item in enumerate(task["acceptance"], 1):
+            lines.append(f"{index}. {item}")
+        lines.extend(
+            [
+                "",
+                "Record dependencies, exact code/data/model/tool versions, actual command logs, failures and claim limitations in the receipt.",
+                "",
+            ]
+        )
+    return "\n".join(lines)
+
+
+def render_tasks_json(
+    paper: str,
+    goal: str,
+    subgoals: Sequence[tuple[str, str, str]],
+    tasks: Sequence[Mapping[str, Any]],
+    *,
+    sha256: str,
+) -> dict[str, Any]:
+    return {
+        "paper_id": paper,
+        "title": "Warm-up Characterization and an Open-Weight Harness for Lean Refactor Arena",
+        "pdf": f"papers/completion/{paper}/manuscript/main.pdf",
+        "goal": goal,
+        "subgoals": [{"id": gid, "title": title, "description": desc} for gid, title, desc in subgoals],
+        "tasks": [
+            {
+                "id": task["id"],
+                "subgoal_id": task["subgoal"],
+                "title": task["title"],
+                "priority": task["priority"],
+                "depends_on": task["depends"],
+                "paper_evidence": [
+                    "design_win_plan.md",
+                    "protocol.md LRA/v1",
+                    f"frozen warmup SHA-256 {sha256}",
+                ],
+                "description": task["description"],
+                "acceptance_criteria": task["acceptance"],
+                "deliverables": task["deliverables"],
+                "suggested_code_paths": [
+                    "papers/completion/lean_refactor_arena/design_win_plan.md",
+                    "scripts/run_leanstral_ephemeral.py",
+                ],
+                "implementation_paths": [],
+            }
+            for task in tasks
+        ],
+    }
 
 
 def load_database_task_source(*, setup: Sequence[Any] = ()) -> Any:

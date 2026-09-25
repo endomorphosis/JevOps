@@ -1,0 +1,6 @@
+{
+  "name": "CallElimCorrect.extractedOldExprInVars",
+  "label": "provider-1",
+  "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := _root_.CallElimCorrect.List.Subset.app",
+  "provenance": "unverified premise-baseline; request 1d59be5de9ce6be9731e2aadeab173937350ad2b078c141010d3edb5e8ddfa8f"
+}

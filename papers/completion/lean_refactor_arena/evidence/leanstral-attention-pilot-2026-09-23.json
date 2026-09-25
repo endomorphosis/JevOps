@@ -1,0 +1,112 @@
+{
+  "artifact_directory": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-attention-rfkd8zs1/pilot",
+  "cache_policy": "retain_all",
+  "calls_reserved": 48,
+  "checks": {
+    "development_nomination_recomputed": true,
+    "exact_outcomes_recomputed": true,
+    "frozen_prompts_raw_hashes_client_bindings": true,
+    "prior_report_unchanged": true,
+    "server_metadata_stable_at_phase_checks": true,
+    "sqlite_matches": true,
+    "watcher_config_unchanged": true,
+    "watcher_selected_status_fields_unchanged": true
+  },
+  "elapsed_seconds": 136.23,
+  "groups": [
+    {
+      "arm": "identifier-control",
+      "attempts": 12,
+      "diagnostics": {
+        "exact_oracle": 9,
+        "unknown_identifier": 1,
+        "wrong_hypothesis_type": 2
+      },
+      "envelope_compliant": 12,
+      "median_server_completion_tokens": 31.0,
+      "median_server_prompt_tokens": 1669.5,
+      "split": "development",
+      "strict_successes": 9,
+      "unmeasured": 0
+    },
+    {
+      "arm": "identifier-check",
+      "attempts": 12,
+      "diagnostics": {
+        "exact_oracle": 8,
+        "unknown_identifier": 1,
+        "wrong_hypothesis_type": 3
+      },
+      "envelope_compliant": 12,
+      "median_server_completion_tokens": 29.5,
+      "median_server_prompt_tokens": 1743.5,
+      "split": "development",
+      "strict_successes": 8,
+      "unmeasured": 0
+    },
+    {
+      "arm": "identifier-control",
+      "attempts": 12,
+      "diagnostics": {
+        "exact_oracle": 8,
+        "wrong_hypothesis_type": 4
+      },
+      "envelope_compliant": 12,
+      "median_server_completion_tokens": 29.5,
+      "median_server_prompt_tokens": 1672.0,
+      "split": "confirmation",
+      "strict_successes": 8,
+      "unmeasured": 0
+    },
+    {
+      "arm": "identifier-check",
+      "attempts": 12,
+      "diagnostics": {
+        "exact_oracle": 6,
+        "unknown_identifier": 3,
+        "unknown_identifier_one_edit_from_target": 2,
+        "wrong_hypothesis_type": 1
+      },
+      "envelope_compliant": 12,
+      "median_server_completion_tokens": 28.5,
+      "median_server_prompt_tokens": 1746.0,
+      "split": "confirmation",
+      "strict_successes": 6,
+      "unmeasured": 0
+    }
+  ],
+  "limitations": "Small synthetic retrieval ablation, not proof verification, independent theorems or an optimal prompt. Repeated responses within a case are dependent. One-edit matches remain failures. Token costs are server-reported generation costs, not Lean proof tokens or heartbeats.",
+  "native_requests": 0,
+  "official_score": null,
+  "paired_confirmation": {
+    "control_only_success": 4,
+    "tie": 6,
+    "treatment_only_success": 2
+  },
+  "parent_report_sha256": "7bf7ab4f56138a3289ce3aca68856a130b44a74602a07f7cd8eb3af4d861913b",
+  "plan_id": "e84d1d391121bb7c1d033c3f49083b627c69749d6d0444f67a98179770b559f7",
+  "promotion": false,
+  "report_sha256": "d2679af440c692ca178872a51ea36b26366b032125d7ee069b244c585e148193",
+  "same_output_contract": true,
+  "schema": "jevops-attention-pilot-audit/v1",
+  "tests": {
+    "passed": 450,
+    "skipped": 3,
+    "test_seals": "off"
+  },
+  "training_runs": 0,
+  "watcher_after": {
+    "native_requests_reserved": 164,
+    "official_score": null,
+    "promotions": 0,
+    "router_calls_reserved": 12,
+    "state": "ENVIRONMENT_FAILED"
+  },
+  "watcher_before": {
+    "native_requests_reserved": 164,
+    "official_score": null,
+    "promotions": 0,
+    "router_calls_reserved": 12,
+    "state": "ENVIRONMENT_FAILED"
+  }
+}

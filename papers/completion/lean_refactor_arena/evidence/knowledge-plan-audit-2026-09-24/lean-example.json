@@ -1,0 +1,141 @@
+{
+  "schema": "jevops-knowledge-plan-example-audit/v1",
+  "plan_path": "/home/barberb/lift_coding/JevOps/KNOWLEDGE_GRAPH_PROOF_PLAN.md",
+  "status": "PASS",
+  "checks": [
+    {
+      "version": "4.26.0",
+      "variant": "positive",
+      "source": "theorem contrast (P Q R : Prop)\n    (hPQ : P \u2192 Q) (hQR : Q \u2192 R) (hRP : R \u2192 P) : P \u2194 R :=\n  \u27e8fun hp => hQR (hPQ hp), hRP\u27e9",
+      "source_sha256": "96cb5ecf5a6b5ab1477c86358519f327012672937b6a69316a4d2e5ce8951895",
+      "command": [
+        "/home/barberb/.elan/toolchains/leanprover--lean4---v4.26.0/bin/lean",
+        "--stdin",
+        "-t0",
+        "-M512",
+        "-T2000000",
+        "-DautoImplicit=false",
+        "-DElab.async=false",
+        "-Ddebug.skipKernelTC=false",
+        "-Ddebug.byAsSorry=false",
+        "-Ddebug.proofAsSorry=false"
+      ],
+      "exit_code": 0,
+      "stdout": "'contrast' does not depend on any axioms\n",
+      "stderr": "",
+      "expected": "accept_without_axioms"
+    },
+    {
+      "version": "4.26.0",
+      "variant": "wrong_reverse",
+      "source": "theorem contrast (P Q R : Prop)\n    (hPQ : P \u2192 Q) (hQR : Q \u2192 R) (hRP : P \u2192 R) : P \u2194 R :=\n  \u27e8fun hp => hQR (hPQ hp), hRP\u27e9",
+      "source_sha256": "45b0ad08992695bda20bd2f1309fc0855070acee583b723f8172d63f39bb15ce",
+      "command": [
+        "/home/barberb/.elan/toolchains/leanprover--lean4---v4.26.0/bin/lean",
+        "--stdin",
+        "-t0",
+        "-M512",
+        "-T2000000",
+        "-DautoImplicit=false",
+        "-DElab.async=false",
+        "-Ddebug.skipKernelTC=false",
+        "-Ddebug.byAsSorry=false",
+        "-Ddebug.proofAsSorry=false"
+      ],
+      "exit_code": 1,
+      "stdout": "<stdin>:3:27: error: Application type mismatch: The argument\n  hRP\nhas type\n  P \u2192 R\nbut is expected to have type\n  R \u2192 P\nin the application\n  { mp := fun hp => hQR (hPQ hp), mpr := hRP }\n'contrast' depends on axioms: [sorryAx]\n",
+      "stderr": "",
+      "expected": "reject"
+    },
+    {
+      "version": "4.26.0",
+      "variant": "wrong_intermediate",
+      "source": "theorem contrast (P Q R : Prop)\n    (hPQ : P \u2192 Q) (hQR : P \u2192 R) (hRP : R \u2192 P) : P \u2194 R :=\n  \u27e8fun hp => hQR (hPQ hp), hRP\u27e9",
+      "source_sha256": "3392d805158a2c8c74068f50c59ec1f51c2482bd1c8819a554e830aa0a47a818",
+      "command": [
+        "/home/barberb/.elan/toolchains/leanprover--lean4---v4.26.0/bin/lean",
+        "--stdin",
+        "-t0",
+        "-M512",
+        "-T2000000",
+        "-DautoImplicit=false",
+        "-DElab.async=false",
+        "-Ddebug.skipKernelTC=false",
+        "-Ddebug.byAsSorry=false",
+        "-Ddebug.proofAsSorry=false"
+      ],
+      "exit_code": 1,
+      "stdout": "<stdin>:3:17: error: Application type mismatch: The argument\n  hPQ hp\nhas type\n  Q\nbut is expected to have type\n  P\nin the application\n  hQR (hPQ hp)\n'contrast' depends on axioms: [sorryAx]\n",
+      "stderr": "",
+      "expected": "reject"
+    },
+    {
+      "version": "4.29.1",
+      "variant": "positive",
+      "source": "theorem contrast (P Q R : Prop)\n    (hPQ : P \u2192 Q) (hQR : Q \u2192 R) (hRP : R \u2192 P) : P \u2194 R :=\n  \u27e8fun hp => hQR (hPQ hp), hRP\u27e9",
+      "source_sha256": "96cb5ecf5a6b5ab1477c86358519f327012672937b6a69316a4d2e5ce8951895",
+      "command": [
+        "/home/barberb/.elan/toolchains/leanprover--lean4---v4.29.1/bin/lean",
+        "--stdin",
+        "-t0",
+        "-M512",
+        "-T2000000",
+        "-DautoImplicit=false",
+        "-DElab.async=false",
+        "-Ddebug.skipKernelTC=false",
+        "-Ddebug.byAsSorry=false",
+        "-Ddebug.proofAsSorry=false"
+      ],
+      "exit_code": 0,
+      "stdout": "'contrast' does not depend on any axioms\n",
+      "stderr": "",
+      "expected": "accept_without_axioms"
+    },
+    {
+      "version": "4.29.1",
+      "variant": "wrong_reverse",
+      "source": "theorem contrast (P Q R : Prop)\n    (hPQ : P \u2192 Q) (hQR : Q \u2192 R) (hRP : P \u2192 R) : P \u2194 R :=\n  \u27e8fun hp => hQR (hPQ hp), hRP\u27e9",
+      "source_sha256": "45b0ad08992695bda20bd2f1309fc0855070acee583b723f8172d63f39bb15ce",
+      "command": [
+        "/home/barberb/.elan/toolchains/leanprover--lean4---v4.29.1/bin/lean",
+        "--stdin",
+        "-t0",
+        "-M512",
+        "-T2000000",
+        "-DautoImplicit=false",
+        "-DElab.async=false",
+        "-Ddebug.skipKernelTC=false",
+        "-Ddebug.byAsSorry=false",
+        "-Ddebug.proofAsSorry=false"
+      ],
+      "exit_code": 1,
+      "stdout": "<stdin>:3:27: error: Application type mismatch: The argument\n  hRP\nhas type\n  P \u2192 R\nbut is expected to have type\n  R \u2192 P\nin the application\n  { mp := fun hp => hQR (hPQ hp), mpr := hRP }\n'contrast' depends on axioms: [sorryAx]\n",
+      "stderr": "",
+      "expected": "reject"
+    },
+    {
+      "version": "4.29.1",
+      "variant": "wrong_intermediate",
+      "source": "theorem contrast (P Q R : Prop)\n    (hPQ : P \u2192 Q) (hQR : P \u2192 R) (hRP : R \u2192 P) : P \u2194 R :=\n  \u27e8fun hp => hQR (hPQ hp), hRP\u27e9",
+      "source_sha256": "3392d805158a2c8c74068f50c59ec1f51c2482bd1c8819a554e830aa0a47a818",
+      "command": [
+        "/home/barberb/.elan/toolchains/leanprover--lean4---v4.29.1/bin/lean",
+        "--stdin",
+        "-t0",
+        "-M512",
+        "-T2000000",
+        "-DautoImplicit=false",
+        "-DElab.async=false",
+        "-Ddebug.skipKernelTC=false",
+        "-Ddebug.byAsSorry=false",
+        "-Ddebug.proofAsSorry=false"
+      ],
+      "exit_code": 1,
+      "stdout": "<stdin>:3:17: error: Application type mismatch: The argument\n  hPQ hp\nhas type\n  Q\nbut is expected to have type\n  P\nin the application\n  hQR (hPQ hp)\n'contrast' depends on axioms: [sorryAx]\n",
+      "stderr": "",
+      "expected": "reject"
+    }
+  ],
+  "model_calls": 0,
+  "benchmark_claimed": false
+}

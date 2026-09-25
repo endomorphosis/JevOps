@@ -1,0 +1,1540 @@
+{
+  "schema": "jevops-arena-pareto-selection/v1",
+  "plan": {
+    "schema": "jevops-arena-pareto-selection/v1",
+    "policy": "strict-token-reduction-and-separated-heartbeats/v1",
+    "selection_objective": "strict-dual-v1",
+    "heartbeat_noise_floor_raw": 0,
+    "tokenizer_id": "lra-reference-lexical/v1",
+    "measurement": "command-elaboration-internal-heartbeats-div-1000/v1",
+    "implementation": {
+      "arena_pareto.py": "b6b242e8ce6b68e32714a37cb9ee816132d2857ab8cc76922f57153b0deff36c",
+      "arena_trial.py": "24a413e6e893f8bb9c1be5277ea6e9486a7b152a7f8030be943c02528af7ccb6"
+    },
+    "screen": {
+      "schema": "jevops-arena-controlled-trial/v1",
+      "record": {
+        "name": "CallElimCorrect.extractedOldExprInVars",
+        "source": "strata",
+        "statement": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post)",
+        "src": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+        "proof_length": 222,
+        "num_lines": 82,
+        "header": "",
+        "file_path": "Strata/Transform/CallElimCorrect.lean",
+        "url": "https://github.com/strata-org/Strata",
+        "start_line": 2733,
+        "end_line": 2814,
+        "version_info": [
+          {
+            "v4.26.0": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ]
+      },
+      "arms": [
+        {
+          "label": "control",
+          "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+          "provenance": "unchanged-reference"
+        },
+        {
+          "label": "historical-260",
+          "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+          "provenance": "historical git 680c83db61c747d409f066750e3d753099008a52; filename uses legacy counter; new native verification required"
+        },
+        {
+          "label": "composition-0",
+          "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+          "provenance": "unverified deterministic composition: port_drop_unfold_before_split"
+        },
+        {
+          "label": "composition-1",
+          "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      simp_all",
+          "provenance": "unverified deterministic composition: port_drop_intro_before_simp_all"
+        },
+        {
+          "label": "composition-2",
+          "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      simp_all",
+          "provenance": "unverified deterministic composition: port_drop_unfold_before_split -> port_drop_intro_before_simp_all"
+        }
+      ],
+      "repetitions": 2,
+      "seed": 68103,
+      "orders": [
+        "reference-first",
+        "candidate-first"
+      ],
+      "plan_id": "369ac4c19af296b8d617a8cb83691be47fc53b690d3bf64c5e000d73a76cc0cf",
+      "planned_requests": 20,
+      "schedule": [
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "sample_id": "9e5dac4793f0cc61b73af9bba2d20488e2d93e2ab8973d8bcf6db58282f84f37"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "composition-2",
+          "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+          "sample_id": "c4a7e4fbcc4edbf2ed981ab2ec523d9345a34f336e37d46cd2d35a743d98da44"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "composition-1",
+          "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+          "sample_id": "c7f7aecaa01682fbfee43e2a20d482a961b82636277351ebd8b73e390b7ce464"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "historical-260",
+          "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "sample_id": "9f9c7b049b68468c2ee2e087255c10dbd88918b03c2b9bb56af41b762f5b080e"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "composition-0",
+          "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+          "sample_id": "c2a0e88717fced85f798f8ca95dc417b8ed984ddc6592b5a90bcc5e585097416"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "composition-0",
+          "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+          "sample_id": "29dcf40e303d442818aae217c2338965a3d1ee76345fd847c50caf412a88dbd9"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "composition-1",
+          "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+          "sample_id": "174f25479309f1c0bd3aac35952494c2800809bfc56bb5f461f2570f019bf4d8"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "composition-2",
+          "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+          "sample_id": "2b16b1dfba86b518ab71f94f1ab46e726c22b1055a500d834ea01768312ac3c3"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "sample_id": "85459b2562d0c516b9d5f9dae10571ccf555c6bba95f00838b88f058c28c6cd5"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "historical-260",
+          "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "sample_id": "ebdb2dbe19c64254bc478981edb0dfb9ddac54facc89ea5f09d33058baf52e38"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "composition-0",
+          "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+          "sample_id": "b24789a08ce13cbbde33c51c5dd500644ae99e6c077a128ff540c1ef213e5862"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "composition-2",
+          "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+          "sample_id": "84c7acb7dca36f72fef702be0917fe456ad620c4c1235163e8e0401cfead7f4f"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "composition-1",
+          "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+          "sample_id": "f560c7a034ba23e252d0d18c4f333d1302ee8e2c1b64626ab972ed12da796931"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "historical-260",
+          "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "sample_id": "3054ca295dc2685c2e0f8e059277a12e121381fa9aab48459634afa61e140fa9"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "sample_id": "327fbbf0c6305ccf3b1ede4c37fdf3623ad3261a76d787fad12546cf27c43f54"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "composition-1",
+          "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+          "sample_id": "5060e9a20962ca0cb340a114dd19c2170fe9526e1c5b01df1256529a8872d9f2"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "sample_id": "fc339fef8c20e323452f235167e8e4e38624dbf66abcd9bac3d406d5567d979b"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "composition-2",
+          "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+          "sample_id": "222de1195bc7a08372dda4a738c6aaa9464f3b728f0ac74ca3b13e3412e0bb7c"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "historical-260",
+          "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "sample_id": "64bedf6fb75075c61c8c2714f69ee4a83e5c51e771a22c55f2234349f519c567"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "composition-0",
+          "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+          "sample_id": "88ab0831101e7751aa86bdb4732f596d446c7d0b61c394abd257b2dca83da837"
+        }
+      ]
+    },
+    "incumbent_label": "historical-260",
+    "candidate_labels": [
+      "composition-0",
+      "composition-1",
+      "composition-2"
+    ],
+    "confirmation_repetitions": 2,
+    "confirmation_seed": 68104,
+    "confirmation_request_reserve": 12,
+    "required_request_budget": 32,
+    "selection_order": [
+      "tokens",
+      "worst_mean_heartbeat_ratio_to_incumbent",
+      "label"
+    ],
+    "unknown_comparison": "abstain",
+    "retries": 0,
+    "confirmation_alternatives": 0,
+    "plan_id": "6a6cdbe8b43c24363701fd0493111a00163397a2bcbf8324293247b103ec2d41"
+  },
+  "evidence_mode": "local_lean",
+  "screen": {
+    "schema": "jevops-arena-controlled-trial/v1",
+    "record": {
+      "name": "CallElimCorrect.extractedOldExprInVars",
+      "source": "strata",
+      "statement": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post)",
+      "src": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+      "proof_length": 222,
+      "num_lines": 82,
+      "header": "",
+      "file_path": "Strata/Transform/CallElimCorrect.lean",
+      "url": "https://github.com/strata-org/Strata",
+      "start_line": 2733,
+      "end_line": 2814,
+      "version_info": [
+        {
+          "v4.26.0": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ]
+    },
+    "arms": [
+      {
+        "label": "control",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+        "provenance": "unchanged-reference"
+      },
+      {
+        "label": "historical-260",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+        "provenance": "historical git 680c83db61c747d409f066750e3d753099008a52; filename uses legacy counter; new native verification required"
+      },
+      {
+        "label": "composition-0",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+        "provenance": "unverified deterministic composition: port_drop_unfold_before_split"
+      },
+      {
+        "label": "composition-1",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      simp_all",
+        "provenance": "unverified deterministic composition: port_drop_intro_before_simp_all"
+      },
+      {
+        "label": "composition-2",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      simp_all",
+        "provenance": "unverified deterministic composition: port_drop_unfold_before_split -> port_drop_intro_before_simp_all"
+      }
+    ],
+    "repetitions": 2,
+    "seed": 68103,
+    "orders": [
+      "reference-first",
+      "candidate-first"
+    ],
+    "plan_id": "369ac4c19af296b8d617a8cb83691be47fc53b690d3bf64c5e000d73a76cc0cf",
+    "planned_requests": 20,
+    "schedule": [
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "9e5dac4793f0cc61b73af9bba2d20488e2d93e2ab8973d8bcf6db58282f84f37"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-2",
+        "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+        "sample_id": "c4a7e4fbcc4edbf2ed981ab2ec523d9345a34f336e37d46cd2d35a743d98da44"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-1",
+        "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+        "sample_id": "c7f7aecaa01682fbfee43e2a20d482a961b82636277351ebd8b73e390b7ce464"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "9f9c7b049b68468c2ee2e087255c10dbd88918b03c2b9bb56af41b762f5b080e"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-0",
+        "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+        "sample_id": "c2a0e88717fced85f798f8ca95dc417b8ed984ddc6592b5a90bcc5e585097416"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-0",
+        "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+        "sample_id": "29dcf40e303d442818aae217c2338965a3d1ee76345fd847c50caf412a88dbd9"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-1",
+        "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+        "sample_id": "174f25479309f1c0bd3aac35952494c2800809bfc56bb5f461f2570f019bf4d8"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-2",
+        "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+        "sample_id": "2b16b1dfba86b518ab71f94f1ab46e726c22b1055a500d834ea01768312ac3c3"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "85459b2562d0c516b9d5f9dae10571ccf555c6bba95f00838b88f058c28c6cd5"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "ebdb2dbe19c64254bc478981edb0dfb9ddac54facc89ea5f09d33058baf52e38"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-0",
+        "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+        "sample_id": "b24789a08ce13cbbde33c51c5dd500644ae99e6c077a128ff540c1ef213e5862"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-2",
+        "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+        "sample_id": "84c7acb7dca36f72fef702be0917fe456ad620c4c1235163e8e0401cfead7f4f"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-1",
+        "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+        "sample_id": "f560c7a034ba23e252d0d18c4f333d1302ee8e2c1b64626ab972ed12da796931"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "3054ca295dc2685c2e0f8e059277a12e121381fa9aab48459634afa61e140fa9"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "327fbbf0c6305ccf3b1ede4c37fdf3623ad3261a76d787fad12546cf27c43f54"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-1",
+        "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+        "sample_id": "5060e9a20962ca0cb340a114dd19c2170fe9526e1c5b01df1256529a8872d9f2"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "fc339fef8c20e323452f235167e8e4e38624dbf66abcd9bac3d406d5567d979b"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-2",
+        "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+        "sample_id": "222de1195bc7a08372dda4a738c6aaa9464f3b728f0ac74ca3b13e3412e0bb7c"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "64bedf6fb75075c61c8c2714f69ee4a83e5c51e771a22c55f2234349f519c567"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-0",
+        "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+        "sample_id": "88ab0831101e7751aa86bdb4732f596d446c7d0b61c394abd257b2dca83da837"
+      }
+    ],
+    "evidence_mode": "local_lean",
+    "max_calls": 20,
+    "requests_reserved": 20,
+    "verifier_invocations": 20,
+    "native_processes": 20,
+    "samples": [
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "9e5dac4793f0cc61b73af9bba2d20488e2d93e2ab8973d8bcf6db58282f84f37",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "91553a7b0c288617e8c0f47a3a5e1e28b26efcebd9dcf552c7e3247167c262de",
+          "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2607,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607595,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607578,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":18257.652}"
+        },
+        "context_id": "c20d22f1059d0af1a433ab9e6a8a11b6b234bdcb309a5bb5146d75d9ae08216b",
+        "raw_heartbeats": 2607595
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-2",
+        "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+        "sample_id": "c4a7e4fbcc4edbf2ed981ab2ec523d9345a34f336e37d46cd2d35a743d98da44",
+        "status": "REJECTED",
+        "reason": "candidate_errors",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "45f172ba57839982550506ce5987fde9acbcacfa666daf2068fa5809bfd94f77",
+          "candidate_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Tactic `split` failed: Could not split an `if` or `match` expression in the goal\\n\\nHint: Use `set_option trace.split.failure true` to display additional diagnostic information\\n\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : NormalizedOldExpr fn \u2192 (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : NormalizedOldExpr e \u2192 (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nHnorm : NormalizedOldExpr (Lambda.LExpr.app m\u271d fn e)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.app m\u271d fn e)).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars c\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars t\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":16161.752}"
+        },
+        "context_id": "c20d22f1059d0af1a433ab9e6a8a11b6b234bdcb309a5bb5146d75d9ae08216b"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-1",
+        "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+        "sample_id": "c7f7aecaa01682fbfee43e2a20d482a961b82636277351ebd8b73e390b7ce464",
+        "status": "REJECTED",
+        "reason": "candidate_errors",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "621f49bba51b31288d02c53a10c36a40a2e9f058e06dd87a9265e9bd25cdc00d",
+          "candidate_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\ncase h_3.app.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e e1\u271d e2\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nx\u271d :\\n  \u2200 (m : ExpressionMetadata) (ty : Option Lambda.LMonoTy),\\n    \u00acfn = Lambda.LExpr.op m { name := \\\"old\\\", metadata := Visibility.unres } ty\\nH1 : NormalizedOldExpr fn\\nH2 : NormalizedOldExpr e\\nHn : IsOldPred fn \u2192 IsFvar e\\n\u22a2 (Lambda.LExpr.LExpr.getVars fn).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase h_3.app.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e e1\u271d e2\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nx\u271d :\\n  \u2200 (m : ExpressionMetadata) (ty : Option Lambda.LMonoTy),\\n    \u00acfn = Lambda.LExpr.op m { name := \\\"old\\\", metadata := Visibility.unres } ty\\nH1 : NormalizedOldExpr fn\\nH2 : NormalizedOldExpr e\\nHn : IsOldPred fn \u2192 IsFvar e\\n\u22a2 (Lambda.LExpr.LExpr.getVars e).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars c\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars t\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":17784.395}"
+        },
+        "context_id": "c20d22f1059d0af1a433ab9e6a8a11b6b234bdcb309a5bb5146d75d9ae08216b"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "9f9c7b049b68468c2ee2e087255c10dbd88918b03c2b9bb56af41b762f5b080e",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "e461172109c7838ddfb493c01715a1849e96ead9c997aef12526dcd341de2d92",
+          "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2324,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324411,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607572,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16403.685}"
+        },
+        "context_id": "c20d22f1059d0af1a433ab9e6a8a11b6b234bdcb309a5bb5146d75d9ae08216b",
+        "raw_heartbeats": 2324411
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-0",
+        "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+        "sample_id": "c2a0e88717fced85f798f8ca95dc417b8ed984ddc6592b5a90bcc5e585097416",
+        "status": "REJECTED",
+        "reason": "candidate_errors",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "eaaffc73eb3fd0d2c573f874a2afd81ce3174aa685d18a3b6c93602113708469",
+          "candidate_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Tactic `split` failed: Could not split an `if` or `match` expression in the goal\\n\\nHint: Use `set_option trace.split.failure true` to display additional diagnostic information\\n\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : NormalizedOldExpr fn \u2192 (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : NormalizedOldExpr e \u2192 (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nHnorm : NormalizedOldExpr (Lambda.LExpr.app m\u271d fn e)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.app m\u271d fn e)).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":16478.365}"
+        },
+        "context_id": "c20d22f1059d0af1a433ab9e6a8a11b6b234bdcb309a5bb5146d75d9ae08216b"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-0",
+        "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+        "sample_id": "29dcf40e303d442818aae217c2338965a3d1ee76345fd847c50caf412a88dbd9",
+        "status": "REJECTED",
+        "reason": "candidate_errors",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "bff97f77bfa9552e6007b54a44950545f6137e2764542a7310bc8342c7d73f53",
+          "candidate_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Tactic `split` failed: Could not split an `if` or `match` expression in the goal\\n\\nHint: Use `set_option trace.split.failure true` to display additional diagnostic information\\n\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : NormalizedOldExpr fn \u2192 (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : NormalizedOldExpr e \u2192 (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nHnorm : NormalizedOldExpr (Lambda.LExpr.app m\u271d fn e)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.app m\u271d fn e)).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":17709.63}"
+        },
+        "context_id": "5fb664d767fd968115a4a26efa1889fc5eabbe304341b093cad0bdda2e80e46a"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-1",
+        "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+        "sample_id": "174f25479309f1c0bd3aac35952494c2800809bfc56bb5f461f2570f019bf4d8",
+        "status": "REJECTED",
+        "reason": "candidate_errors",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "aeb03fefc7d9ea39abd5861250ec5fd49b3acb007934234da899f3a00c0189e8",
+          "candidate_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\ncase h_3.app.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e e1\u271d e2\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nx\u271d :\\n  \u2200 (m : ExpressionMetadata) (ty : Option Lambda.LMonoTy),\\n    \u00acfn = Lambda.LExpr.op m { name := \\\"old\\\", metadata := Visibility.unres } ty\\nH1 : NormalizedOldExpr fn\\nH2 : NormalizedOldExpr e\\nHn : IsOldPred fn \u2192 IsFvar e\\n\u22a2 (Lambda.LExpr.LExpr.getVars fn).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase h_3.app.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e e1\u271d e2\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nx\u271d :\\n  \u2200 (m : ExpressionMetadata) (ty : Option Lambda.LMonoTy),\\n    \u00acfn = Lambda.LExpr.op m { name := \\\"old\\\", metadata := Visibility.unres } ty\\nH1 : NormalizedOldExpr fn\\nH2 : NormalizedOldExpr e\\nHn : IsOldPred fn \u2192 IsFvar e\\n\u22a2 (Lambda.LExpr.LExpr.getVars e).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars c\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars t\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":16135.506}"
+        },
+        "context_id": "5fb664d767fd968115a4a26efa1889fc5eabbe304341b093cad0bdda2e80e46a"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-2",
+        "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+        "sample_id": "2b16b1dfba86b518ab71f94f1ab46e726c22b1055a500d834ea01768312ac3c3",
+        "status": "REJECTED",
+        "reason": "candidate_errors",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "b1b264235747566fc22eb59578242e52cf4805d3720af4c11ed06b97aefe4f51",
+          "candidate_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Tactic `split` failed: Could not split an `if` or `match` expression in the goal\\n\\nHint: Use `set_option trace.split.failure true` to display additional diagnostic information\\n\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : NormalizedOldExpr fn \u2192 (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : NormalizedOldExpr e \u2192 (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nHnorm : NormalizedOldExpr (Lambda.LExpr.app m\u271d fn e)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.app m\u271d fn e)).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars c\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars t\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":15679.928}"
+        },
+        "context_id": "5fb664d767fd968115a4a26efa1889fc5eabbe304341b093cad0bdda2e80e46a"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "85459b2562d0c516b9d5f9dae10571ccf555c6bba95f00838b88f058c28c6cd5",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "622881b7b7510894d2c2c699f6125488451962a2a3c7fd52b4631190b01e989c",
+          "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2607,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607572,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17175.014}"
+        },
+        "context_id": "5fb664d767fd968115a4a26efa1889fc5eabbe304341b093cad0bdda2e80e46a",
+        "raw_heartbeats": 2607572
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "ebdb2dbe19c64254bc478981edb0dfb9ddac54facc89ea5f09d33058baf52e38",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "6bf6798adfe5d3814dc7e9eeafdc33fec3f652134af1a07795570962538702e5",
+          "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2324,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324397,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607586,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17357.272}"
+        },
+        "context_id": "5fb664d767fd968115a4a26efa1889fc5eabbe304341b093cad0bdda2e80e46a",
+        "raw_heartbeats": 2324397
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-0",
+        "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+        "sample_id": "b24789a08ce13cbbde33c51c5dd500644ae99e6c077a128ff540c1ef213e5862",
+        "status": "REJECTED",
+        "reason": "candidate_errors",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "bff97f77bfa9552e6007b54a44950545f6137e2764542a7310bc8342c7d73f53",
+          "candidate_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Tactic `split` failed: Could not split an `if` or `match` expression in the goal\\n\\nHint: Use `set_option trace.split.failure true` to display additional diagnostic information\\n\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : NormalizedOldExpr fn \u2192 (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : NormalizedOldExpr e \u2192 (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nHnorm : NormalizedOldExpr (Lambda.LExpr.app m\u271d fn e)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.app m\u271d fn e)).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":15369.714}"
+        },
+        "context_id": "5fb664d767fd968115a4a26efa1889fc5eabbe304341b093cad0bdda2e80e46a"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-2",
+        "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+        "sample_id": "84c7acb7dca36f72fef702be0917fe456ad620c4c1235163e8e0401cfead7f4f",
+        "status": "REJECTED",
+        "reason": "candidate_errors",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "b1b264235747566fc22eb59578242e52cf4805d3720af4c11ed06b97aefe4f51",
+          "candidate_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Tactic `split` failed: Could not split an `if` or `match` expression in the goal\\n\\nHint: Use `set_option trace.split.failure true` to display additional diagnostic information\\n\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : NormalizedOldExpr fn \u2192 (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : NormalizedOldExpr e \u2192 (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nHnorm : NormalizedOldExpr (Lambda.LExpr.app m\u271d fn e)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.app m\u271d fn e)).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars c\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars t\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":16691.584}"
+        },
+        "context_id": "5fb664d767fd968115a4a26efa1889fc5eabbe304341b093cad0bdda2e80e46a"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "composition-1",
+        "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+        "sample_id": "f560c7a034ba23e252d0d18c4f333d1302ee8e2c1b64626ab972ed12da796931",
+        "status": "REJECTED",
+        "reason": "candidate_errors",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "aeb03fefc7d9ea39abd5861250ec5fd49b3acb007934234da899f3a00c0189e8",
+          "candidate_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\ncase h_3.app.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e e1\u271d e2\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nx\u271d :\\n  \u2200 (m : ExpressionMetadata) (ty : Option Lambda.LMonoTy),\\n    \u00acfn = Lambda.LExpr.op m { name := \\\"old\\\", metadata := Visibility.unres } ty\\nH1 : NormalizedOldExpr fn\\nH2 : NormalizedOldExpr e\\nHn : IsOldPred fn \u2192 IsFvar e\\n\u22a2 (Lambda.LExpr.LExpr.getVars fn).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase h_3.app.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e e1\u271d e2\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nx\u271d :\\n  \u2200 (m : ExpressionMetadata) (ty : Option Lambda.LMonoTy),\\n    \u00acfn = Lambda.LExpr.op m { name := \\\"old\\\", metadata := Visibility.unres } ty\\nH1 : NormalizedOldExpr fn\\nH2 : NormalizedOldExpr e\\nHn : IsOldPred fn \u2192 IsFvar e\\n\u22a2 (Lambda.LExpr.LExpr.getVars e).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars c\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars t\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":17851.633}"
+        },
+        "context_id": "5fb664d767fd968115a4a26efa1889fc5eabbe304341b093cad0bdda2e80e46a"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "3054ca295dc2685c2e0f8e059277a12e121381fa9aab48459634afa61e140fa9",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "6bf6798adfe5d3814dc7e9eeafdc33fec3f652134af1a07795570962538702e5",
+          "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2324,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324397,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15898.42}"
+        },
+        "context_id": "5fb664d767fd968115a4a26efa1889fc5eabbe304341b093cad0bdda2e80e46a",
+        "raw_heartbeats": 2324397
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "327fbbf0c6305ccf3b1ede4c37fdf3623ad3261a76d787fad12546cf27c43f54",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "622881b7b7510894d2c2c699f6125488451962a2a3c7fd52b4631190b01e989c",
+          "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2607,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607576,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607589,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16783.524}"
+        },
+        "context_id": "5fb664d767fd968115a4a26efa1889fc5eabbe304341b093cad0bdda2e80e46a",
+        "raw_heartbeats": 2607576
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-1",
+        "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+        "sample_id": "5060e9a20962ca0cb340a114dd19c2170fe9526e1c5b01df1256529a8872d9f2",
+        "status": "REJECTED",
+        "reason": "candidate_errors",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "621f49bba51b31288d02c53a10c36a40a2e9f058e06dd87a9265e9bd25cdc00d",
+          "candidate_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\ncase h_3.app.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e e1\u271d e2\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nx\u271d :\\n  \u2200 (m : ExpressionMetadata) (ty : Option Lambda.LMonoTy),\\n    \u00acfn = Lambda.LExpr.op m { name := \\\"old\\\", metadata := Visibility.unres } ty\\nH1 : NormalizedOldExpr fn\\nH2 : NormalizedOldExpr e\\nHn : IsOldPred fn \u2192 IsFvar e\\n\u22a2 (Lambda.LExpr.LExpr.getVars fn).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase h_3.app.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e e1\u271d e2\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nx\u271d :\\n  \u2200 (m : ExpressionMetadata) (ty : Option Lambda.LMonoTy),\\n    \u00acfn = Lambda.LExpr.op m { name := \\\"old\\\", metadata := Visibility.unres } ty\\nH1 : NormalizedOldExpr fn\\nH2 : NormalizedOldExpr e\\nHn : IsOldPred fn \u2192 IsFvar e\\n\u22a2 (Lambda.LExpr.LExpr.getVars e).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars c\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars t\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":17962.611}"
+        },
+        "context_id": "c20d22f1059d0af1a433ab9e6a8a11b6b234bdcb309a5bb5146d75d9ae08216b"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "fc339fef8c20e323452f235167e8e4e38624dbf66abcd9bac3d406d5567d979b",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "91553a7b0c288617e8c0f47a3a5e1e28b26efcebd9dcf552c7e3247167c262de",
+          "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2607,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607585,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607572,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16987.113}"
+        },
+        "context_id": "c20d22f1059d0af1a433ab9e6a8a11b6b234bdcb309a5bb5146d75d9ae08216b",
+        "raw_heartbeats": 2607585
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-2",
+        "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+        "sample_id": "222de1195bc7a08372dda4a738c6aaa9464f3b728f0ac74ca3b13e3412e0bb7c",
+        "status": "REJECTED",
+        "reason": "candidate_errors",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "45f172ba57839982550506ce5987fde9acbcacfa666daf2068fa5809bfd94f77",
+          "candidate_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Tactic `split` failed: Could not split an `if` or `match` expression in the goal\\n\\nHint: Use `set_option trace.split.failure true` to display additional diagnostic information\\n\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : NormalizedOldExpr fn \u2192 (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : NormalizedOldExpr e \u2192 (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nHnorm : NormalizedOldExpr (Lambda.LExpr.app m\u271d fn e)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.app m\u271d fn e)).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase quant.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nk\u271d : Lambda.QuantifierKind\\nty\u271d : Option { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.TypeType\\ntrigger\u271d e\u271d :\\n  Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ntrih : (extractOldExprVars trigger\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b9 : NormalizedOldExpr trigger\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars trigger\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars c\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars t\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase ite.a.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nc\u271d t\u271d e\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\ncih : (extractOldExprVars c\u271d).Subset (Lambda.LExpr.LExpr.getVars c\u271d)\\ntih : (extractOldExprVars t\u271d).Subset (Lambda.LExpr.LExpr.getVars t\u271d)\\neih : (extractOldExprVars e\u271d).Subset (Lambda.LExpr.LExpr.getVars e\u271d)\\na\u271d\u00b2 : NormalizedOldExpr c\u271d\\na\u271d\u00b9 : NormalizedOldExpr t\u271d\\na\u271d : NormalizedOldExpr e\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e\u271d).Subset\\n    (Lambda.LExpr.LExpr.getVars c\u271d ++ (Lambda.LExpr.LExpr.getVars t\u271d ++ Lambda.LExpr.LExpr.getVars e\u271d))\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase eq.a.a\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\ne1\u271d e2\u271d : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nih1 : (extractOldExprVars e1\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d)\\nih2 : (extractOldExprVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e2\u271d)\\na\u271d\u00b9 : NormalizedOldExpr e1\u271d\\na\u271d : NormalizedOldExpr e2\u271d\\n\u22a2 (Lambda.LExpr.LExpr.getVars e2\u271d).Subset (Lambda.LExpr.LExpr.getVars e1\u271d ++ Lambda.LExpr.LExpr.getVars e2\u271d)\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":16431.029}"
+        },
+        "context_id": "c20d22f1059d0af1a433ab9e6a8a11b6b234bdcb309a5bb5146d75d9ae08216b"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "64bedf6fb75075c61c8c2714f69ee4a83e5c51e771a22c55f2234349f519c567",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "e461172109c7838ddfb493c01715a1849e96ead9c997aef12526dcd341de2d92",
+          "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2324,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324410,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607572,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":18647.416}"
+        },
+        "context_id": "c20d22f1059d0af1a433ab9e6a8a11b6b234bdcb309a5bb5146d75d9ae08216b",
+        "raw_heartbeats": 2324410
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "composition-0",
+        "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+        "sample_id": "88ab0831101e7751aa86bdb4732f596d446c7d0b61c394abd257b2dca83da837",
+        "status": "REJECTED",
+        "reason": "candidate_errors",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "eaaffc73eb3fd0d2c573f874a2afd81ce3174aa685d18a3b6c93602113708469",
+          "candidate_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Tactic `split` failed: Could not split an `if` or `match` expression in the goal\\n\\nHint: Use `set_option trace.split.failure true` to display additional diagnostic information\\n\\nm\u271d : { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }.base.Metadata\\nfn e : Lambda.LExpr { base := { Metadata := ExpressionMetadata, IDMeta := Visibility }, TypeType := Lambda.LMonoTy }\\nfn_ih : NormalizedOldExpr fn \u2192 (extractOldExprVars fn).Subset (Lambda.LExpr.LExpr.getVars fn)\\ne_ih : NormalizedOldExpr e \u2192 (extractOldExprVars e).Subset (Lambda.LExpr.LExpr.getVars e)\\nHnorm : NormalizedOldExpr (Lambda.LExpr.app m\u271d fn e)\\n\u22a2 (extractOldExprVars (Lambda.LExpr.app m\u271d fn e)).Subset (Lambda.LExpr.LExpr.getVars fn ++ Lambda.LExpr.LExpr.getVars e)\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":18280.137}"
+        },
+        "context_id": "c20d22f1059d0af1a433ab9e6a8a11b6b234bdcb309a5bb5146d75d9ae08216b"
+      }
+    ],
+    "contexts": [
+      {
+        "problem": "CallElimCorrect.extractedOldExprInVars",
+        "statement": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post)",
+        "reference_source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+        "reference_length": 222,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "dependency_digests": [
+          "71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "a1048c6f5d05fe24f92c00fc531d32e7aa7ded1d27a91f0a6551ba957d436c62",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/strata-org/Strata",
+        "file_path": "Strata/Transform/CallElimCorrect.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":120.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      {
+        "problem": "CallElimCorrect.extractedOldExprInVars",
+        "statement": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post)",
+        "reference_source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+        "reference_length": 222,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "dependency_digests": [
+          "71148ad0d225cde033ed4840c63e2b5e3179a97f6184d4049a69eadc788cc0f7"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "a1048c6f5d05fe24f92c00fc531d32e7aa7ded1d27a91f0a6551ba957d436c62",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/strata-org/Strata",
+        "file_path": "Strata/Transform/CallElimCorrect.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"candidate-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":120.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      }
+    ],
+    "observations": [
+      {
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "provenance": "historical git 680c83db61c747d409f066750e3d753099008a52; filename uses legacy counter; new native verification required",
+        "status": "MEASURED",
+        "reference_tokens": 222,
+        "candidate_tokens": 185,
+        "length_reduction_pct": 16.666666666666664,
+        "verified_pins": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "required_pins": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "heartbeat_result": "LOWER_IN_BOTH_ORDERS",
+        "strata": [
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "reference-first",
+            "status": "MEASURED",
+            "control_raw": [
+              2607572,
+              2607576
+            ],
+            "candidate_raw": [
+              2324397,
+              2324397
+            ],
+            "control_median_raw": 2607574.0,
+            "candidate_median_raw": 2324397.0,
+            "paired_savings_raw": [
+              283175,
+              283179
+            ],
+            "observed_range_raw": 4,
+            "comparison": "LOWER"
+          },
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "candidate-first",
+            "status": "MEASURED",
+            "control_raw": [
+              2607595,
+              2607585
+            ],
+            "candidate_raw": [
+              2324411,
+              2324410
+            ],
+            "control_median_raw": 2607590.0,
+            "candidate_median_raw": 2324410.5,
+            "paired_savings_raw": [
+              283184,
+              283175
+            ],
+            "observed_range_raw": 10,
+            "comparison": "LOWER"
+          }
+        ],
+        "observed_pareto_improvement": true,
+        "statistical_significance_claimed": false,
+        "promoted": false,
+        "official_score": null
+      },
+      {
+        "label": "composition-0",
+        "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+        "provenance": "unverified deterministic composition: port_drop_unfold_before_split",
+        "status": "REJECTED",
+        "reference_tokens": 222,
+        "candidate_tokens": 183,
+        "length_reduction_pct": 17.567567567567565,
+        "verified_pins": [],
+        "required_pins": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "heartbeat_result": "INCOMPLETE",
+        "strata": [
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "reference-first",
+            "status": "INCOMPLETE"
+          },
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "candidate-first",
+            "status": "INCOMPLETE"
+          }
+        ],
+        "observed_pareto_improvement": null,
+        "statistical_significance_claimed": false,
+        "promoted": false,
+        "official_score": null
+      },
+      {
+        "label": "composition-1",
+        "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+        "provenance": "unverified deterministic composition: port_drop_intro_before_simp_all",
+        "status": "REJECTED",
+        "reference_tokens": 222,
+        "candidate_tokens": 176,
+        "length_reduction_pct": 20.72072072072072,
+        "verified_pins": [],
+        "required_pins": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "heartbeat_result": "INCOMPLETE",
+        "strata": [
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "reference-first",
+            "status": "INCOMPLETE"
+          },
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "candidate-first",
+            "status": "INCOMPLETE"
+          }
+        ],
+        "observed_pareto_improvement": null,
+        "statistical_significance_claimed": false,
+        "promoted": false,
+        "official_score": null
+      },
+      {
+        "label": "composition-2",
+        "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+        "provenance": "unverified deterministic composition: port_drop_unfold_before_split -> port_drop_intro_before_simp_all",
+        "status": "REJECTED",
+        "reference_tokens": 222,
+        "candidate_tokens": 174,
+        "length_reduction_pct": 21.62162162162162,
+        "verified_pins": [],
+        "required_pins": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "heartbeat_result": "INCOMPLETE",
+        "strata": [
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "reference-first",
+            "status": "INCOMPLETE"
+          },
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "candidate-first",
+            "status": "INCOMPLETE"
+          }
+        ],
+        "observed_pareto_improvement": null,
+        "statistical_significance_claimed": false,
+        "promoted": false,
+        "official_score": null
+      }
+    ],
+    "status": "COMPLETE",
+    "receipt_cache_enabled": false,
+    "live_model_calls": 0,
+    "training_enabled": false,
+    "production_memory_used": false,
+    "official_score": null,
+    "local_combined_pct": null,
+    "worker_metric_parity": "UNCONFIRMED",
+    "runner_sha256": "24a413e6e893f8bb9c1be5277ea6e9486a7b152a7f8030be943c02528af7ccb6"
+  },
+  "screen_analysis": {
+    "rows": {
+      "control": {
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "tokens": 222,
+        "admissible": true,
+        "reason": "",
+        "raw_heartbeats_by_stratum": [
+          [
+            2607572,
+            2607576
+          ],
+          [
+            2607595,
+            2607585
+          ]
+        ],
+        "axioms_by_version": {
+          "v4.26.0": [
+            "Quot.sound",
+            "propext"
+          ]
+        }
+      },
+      "historical-260": {
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "tokens": 185,
+        "admissible": true,
+        "reason": "",
+        "raw_heartbeats_by_stratum": [
+          [
+            2324397,
+            2324397
+          ],
+          [
+            2324411,
+            2324410
+          ]
+        ],
+        "axioms_by_version": {
+          "v4.26.0": [
+            "Quot.sound",
+            "propext"
+          ]
+        }
+      },
+      "composition-0": {
+        "label": "composition-0",
+        "source_sha256": "caa0f5960d50505f51d667e78c352ffc01377f97f3be8732bdfdc0fe30f1b81c",
+        "tokens": 183,
+        "admissible": false,
+        "reason": "incomplete_cost_coverage",
+        "raw_heartbeats_by_stratum": [
+          [],
+          []
+        ],
+        "axioms_by_version": {}
+      },
+      "composition-1": {
+        "label": "composition-1",
+        "source_sha256": "57448b948d1e2a7953953dd3dbfdfa44b5554708209e88ffc1dc02b92c9bf222",
+        "tokens": 176,
+        "admissible": false,
+        "reason": "incomplete_cost_coverage",
+        "raw_heartbeats_by_stratum": [
+          [],
+          []
+        ],
+        "axioms_by_version": {}
+      },
+      "composition-2": {
+        "label": "composition-2",
+        "source_sha256": "167d097cf38bcad00287d4cc6d9485af608c7653ccae509d0144b4843370da57",
+        "tokens": 174,
+        "admissible": false,
+        "reason": "incomplete_cost_coverage",
+        "raw_heartbeats_by_stratum": [
+          [],
+          []
+        ],
+        "axioms_by_version": {}
+      }
+    },
+    "frontier": [
+      "historical-260"
+    ],
+    "eligible": [],
+    "selection_objective": "strict-dual-v1",
+    "heartbeat_noise_floor_raw": 0,
+    "selected": null
+  },
+  "confirmation": null,
+  "confirmation_analysis": null,
+  "selection_commitment": null,
+  "selected_for_confirmation": null,
+  "recommended": null,
+  "retained_incumbent": "historical-260",
+  "retained_incumbent_verified": true,
+  "status": "NO_IMPROVEMENT",
+  "reason": "",
+  "promoted": false,
+  "training_enabled": false,
+  "live_model_calls": 0,
+  "official_score": null,
+  "worker_metric_parity": "UNCONFIRMED",
+  "statistical_significance_claimed": false,
+  "max_calls": 32,
+  "requests_reserved": 20,
+  "verifier_invocations": 20,
+  "native_processes": 20,
+  "implementation_unchanged": true,
+  "runner_sha256": "b6b242e8ce6b68e32714a37cb9ee816132d2857ab8cc76922f57153b0deff36c",
+  "readiness": {
+    "schema": "jevops-arena-native-readiness/v1",
+    "required_version_checks": 1,
+    "completed_version_checks": 0,
+    "official_score": null,
+    "rows": [
+      {
+        "name": "CallElimCorrect.extractedOldExprInVars",
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+        "status": "UNMEASURED",
+        "capability_gaps": [],
+        "dependencies_verified": false,
+        "baseline_compiles": null
+      }
+    ]
+  },
+  "input_kind": "caller_supplied_corpus"
+}

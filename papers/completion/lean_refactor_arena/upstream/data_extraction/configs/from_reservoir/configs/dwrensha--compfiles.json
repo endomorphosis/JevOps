@@ -1,0 +1,34 @@
+{
+    "repo": "https://github.com/dwrensha/compfiles",
+    "commit": "95198f02b68c32044b4480f546b532a423d57252",
+    "lean": "leanprover/lean4:v4.13.0-rc4",
+    "name": "compfiles",
+    "imports": [
+        "ProblemExtraction",
+        "Compfiles"
+    ],
+    "metadata": {
+        "name": "compfiles",
+        "owner": "dwrensha",
+        "fullName": "dwrensha/compfiles",
+        "description": "Catalog Of Math Problems Formalized In Lean",
+        "keywords": [],
+        "homepage": "https://dwrensha.github.io/compfiles/",
+        "license": "Apache-2.0",
+        "createdAt": "2022-12-06T21:22:06Z",
+        "updatedAt": "2024-10-27T12:43:36Z",
+        "stars": 105,
+        "sources": [
+            {
+                "type": "git",
+                "host": "github",
+                "id": "R_kgDOIkgDNA",
+                "fullName": "dwrensha/compfiles",
+                "repoUrl": "https://github.com/dwrensha/compfiles",
+                "gitUrl": "https://github.com/dwrensha/compfiles",
+                "defaultBranch": "main"
+            }
+        ],
+        "schemaVersion": "1.2.0"
+    }
+}

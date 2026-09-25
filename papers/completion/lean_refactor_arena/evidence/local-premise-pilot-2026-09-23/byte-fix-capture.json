@@ -1,0 +1,14 @@
+{
+  "schema": "jevops-arena-local/v1",
+  "status": "ERROR",
+  "mode": "capture",
+  "ok": false,
+  "evidence_mode": "local_lean",
+  "proof_admitted": false,
+  "whole_source_checked": false,
+  "os_sandbox": false,
+  "reserved_processes": 1,
+  "attempted_processes": 1,
+  "request_sha256": "e55144482cc955ab3b8789942557519171a4d1e6372a73bd795f5f756c6b63bb",
+  "reason": "ValueError: local driver failed: uncaught exception: event budget\n"
+}

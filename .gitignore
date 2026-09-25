@@ -4,3 +4,7 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+
+# Local experiment runtime state (not published).
+/.improve-watch/
+/refactor-memory.json

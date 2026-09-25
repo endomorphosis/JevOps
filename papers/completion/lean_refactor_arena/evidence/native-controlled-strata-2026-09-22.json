@@ -1,0 +1,766 @@
+{
+  "schema": "jevops-arena-controlled-trial/v1",
+  "record": {
+    "name": "CallElimCorrect.substOldPostSubset",
+    "source": "strata",
+    "statement": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1])",
+    "src": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1]) := by\n  induction post <;> simp [substOld]\n  case fvar =>\n    intros x Hin\n    rename_i m name ty2\n    simp at m\n    simp at name\n    simp at ty2\n\n    simp_all\n  case op =>\n    intros x Hin\n    rename_i m name ty2\n    simp at m\n    simp at name\n    simp at ty2\n    simp_all\n  case const =>\n    intros x Hin\n    rename_i m name\n    simp at m\n    simp_all\n  case bvar =>\n    intros x Hin\n    rename_i m d\n    simp at m\n    simp_all\n  case abs ih =>\n    exact ih\n  case ite cih tih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case app ih1 ih2 =>\n    split\n    . split\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n    . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply ih1 <;> assumption\n        intros x Hin\n        simp_all\n        cases Hin <;> simp_all\n      . apply List.Subset.trans\n        apply ih2 <;> assumption\n        intros x Hin\n        simp_all\n  case quant trih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      rename_i m1 k1 ty1 trigger1 e1\n      have assoc := List.append_assoc (Lambda.LExpr.LExpr.getVars trigger1) (Lambda.LExpr.LExpr.getVars e1) [h1]\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+    "proof_length": 313,
+    "num_lines": 97,
+    "header": "",
+    "file_path": "Strata/Transform/CallElimCorrect.lean",
+    "url": "https://github.com/strata-org/Strata",
+    "start_line": 2964,
+    "end_line": 3060,
+    "version_info": [
+      {
+        "v4.26.0": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      }
+    ]
+  },
+  "arms": [
+    {
+      "label": "control",
+      "source": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1]) := by\n  induction post <;> simp [substOld]\n  case fvar =>\n    intros x Hin\n    rename_i m name ty2\n    simp at m\n    simp at name\n    simp at ty2\n\n    simp_all\n  case op =>\n    intros x Hin\n    rename_i m name ty2\n    simp at m\n    simp at name\n    simp at ty2\n    simp_all\n  case const =>\n    intros x Hin\n    rename_i m name\n    simp at m\n    simp_all\n  case bvar =>\n    intros x Hin\n    rename_i m d\n    simp at m\n    simp_all\n  case abs ih =>\n    exact ih\n  case ite cih tih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case app ih1 ih2 =>\n    split\n    . split\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n    . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply ih1 <;> assumption\n        intros x Hin\n        simp_all\n        cases Hin <;> simp_all\n      . apply List.Subset.trans\n        apply ih2 <;> assumption\n        intros x Hin\n        simp_all\n  case quant trih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      rename_i m1 k1 ty1 trigger1 e1\n      have assoc := List.append_assoc (Lambda.LExpr.LExpr.getVars trigger1) (Lambda.LExpr.LExpr.getVars e1) [h1]\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+      "provenance": "unchanged-reference"
+    },
+    {
+      "label": "seed-0",
+      "source": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1]) := by\n  induction post <;> simp [substOld]\n  case fvar =>\n    intro\n\n\n\n    simp_all\n  case op =>\n    intro\n\n    simp_all\n  case const =>\n    intro\n    simp_all\n  case bvar =>\n    intro\n    simp_all\n  case abs ih =>\n    assumption\n  case ite cih tih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intro\n      simp_all\n  case app ih1 ih2 =>\n    split\n    . split\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n    . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply ih1 <;> assumption\n        intros x Hin\n        simp_all\n        cases Hin <;> simp_all\n      . apply List.Subset.trans\n        apply ih2 <;> assumption\n        intro\n        simp_all\n  case quant trih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intro\n      simp_all\n",
+      "provenance": "historical regression seed; artifact SHA-256 bbd7daf2e53b0079da7ba911942d9e18761aab51731081937fe57b8d932e1839"
+    },
+    {
+      "label": "heuristic-0-drop_redundant_simp_at",
+      "source": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1]) := by\n  induction post <;> simp [substOld]\n  case fvar =>\n    intros x Hin\n    rename_i m name ty2\n\n    simp_all\n  case op =>\n    intros x Hin\n    rename_i m name ty2\n    simp_all\n  case const =>\n    intros x Hin\n    rename_i m name\n    simp_all\n  case bvar =>\n    intros x Hin\n    rename_i m d\n    simp_all\n  case abs ih =>\n    exact ih\n  case ite cih tih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case app ih1 ih2 =>\n    split\n    . split\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n    . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply ih1 <;> assumption\n        intros x Hin\n        simp_all\n        cases Hin <;> simp_all\n      . apply List.Subset.trans\n        apply ih2 <;> assumption\n        intros x Hin\n        simp_all\n  case quant trih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      rename_i m1 k1 ty1 trigger1 e1\n      have assoc := List.append_assoc (Lambda.LExpr.LExpr.getVars trigger1) (Lambda.LExpr.LExpr.getVars e1) [h1]\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+      "provenance": "existing deterministic heuristic: drop_redundant_simp_at"
+    }
+  ],
+  "repetitions": 2,
+  "seed": 17,
+  "orders": [
+    "reference-first",
+    "candidate-first"
+  ],
+  "plan_id": "cad6fb8128e2c787d5fb47e3849a2138d63752390e9c11ca8256d56bd6cd983d",
+  "planned_requests": 12,
+  "schedule": [
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "dbdbf6e6ea4e52714e1c16cef7626602865b5f0b737c5397d71c0f6fbfc59fc4",
+      "sample_id": "c83cad8e5be7054d2b663d8e2e678ed3a3df8281b0446e26f574941ca5b844ae"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-drop_redundant_simp_at",
+      "source_sha256": "c850f0f84a7f6667595445fe99f877b319801f8c9c5c0962effff656685b36f9",
+      "sample_id": "5e6040f0bcdc71b90c08ce60736969511eb0b0f6d43eada496311b3d9e55a537"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "seed-0",
+      "source_sha256": "27a825564250da11ed157185323a2a65e8ad098fdb9ff72009d83551d8dacb33",
+      "sample_id": "b3ec51f24ca9569d7461f221236119ae395821d8a8c0ec21c9db16ac09a476d6"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-drop_redundant_simp_at",
+      "source_sha256": "c850f0f84a7f6667595445fe99f877b319801f8c9c5c0962effff656685b36f9",
+      "sample_id": "7bb4b6fc229960439521ab7a89d1699586721a05e90b5f8bd7b09ddfe743bbf0"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "dbdbf6e6ea4e52714e1c16cef7626602865b5f0b737c5397d71c0f6fbfc59fc4",
+      "sample_id": "702915e8e9f29c9e057dac4a0b6d1e55e4539f856b4db08cd23f7f08b190a60a"
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "seed-0",
+      "source_sha256": "27a825564250da11ed157185323a2a65e8ad098fdb9ff72009d83551d8dacb33",
+      "sample_id": "09283de88b37f76717c9c215cda627aeb5f633efccb59f3e37d304e589c2f380"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "seed-0",
+      "source_sha256": "27a825564250da11ed157185323a2a65e8ad098fdb9ff72009d83551d8dacb33",
+      "sample_id": "f40b0fc62a1336ccb84ad33acf32d3071f290555bf04b09cc70888b592b734b2"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-drop_redundant_simp_at",
+      "source_sha256": "c850f0f84a7f6667595445fe99f877b319801f8c9c5c0962effff656685b36f9",
+      "sample_id": "a2ab949d724261facb5688880cd84b6dd699995c0b606d122b87cd611b4289a4"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "dbdbf6e6ea4e52714e1c16cef7626602865b5f0b737c5397d71c0f6fbfc59fc4",
+      "sample_id": "36f191edcf52ff02a37ddb9746c42795bb4ee3ab3a6ee2063c8a4cb3992d7c10"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-drop_redundant_simp_at",
+      "source_sha256": "c850f0f84a7f6667595445fe99f877b319801f8c9c5c0962effff656685b36f9",
+      "sample_id": "b36aa1eba27264cbd66eca04c2d30d59ada77834cee3935969b032b679e45f8e"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "seed-0",
+      "source_sha256": "27a825564250da11ed157185323a2a65e8ad098fdb9ff72009d83551d8dacb33",
+      "sample_id": "5e6758a72088fea019edc01c6ba6f6ae40c5f4c89d554de11ff7ef427ecba69b"
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "dbdbf6e6ea4e52714e1c16cef7626602865b5f0b737c5397d71c0f6fbfc59fc4",
+      "sample_id": "fb86226d05a559a20a71fe70cb2c246ed6d457dd1bb557a933b1983685d3bd02"
+    }
+  ],
+  "evidence_mode": "local_lean",
+  "max_calls": 12,
+  "requests_reserved": 12,
+  "verifier_invocations": 12,
+  "native_processes": 12,
+  "samples": [
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "dbdbf6e6ea4e52714e1c16cef7626602865b5f0b737c5397d71c0f6fbfc59fc4",
+      "sample_id": "c83cad8e5be7054d2b663d8e2e678ed3a3df8281b0446e26f574941ca5b844ae",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "9e96205d6aaf287cc35731f91a92e370d707c6998b140f1f4f598ae54697de21",
+        "candidate_sha256": "dbdbf6e6ea4e52714e1c16cef7626602865b5f0b737c5397d71c0f6fbfc59fc4",
+        "target": "CallElimCorrect.substOldPostSubset",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.substOldPostSubset' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 5205,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d8d2dcf06e399ea373490228173ec0c7c8bccdb23a309555156223afdf01d3c3\",\"driver_sha256\":\"aad7da98389e3f58632dc5c7a045759f571bbe5f3330a19e9ea2e7eaa58857cd\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":5205,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":5205992,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":5206,\"reference_raw_heartbeats\":5206007,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15109.067}"
+      },
+      "context_id": "0fc1e8c39442a75f6763b1cb10dd06fa0a7422aaa66662f519868401491e8022",
+      "raw_heartbeats": 5205992
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-drop_redundant_simp_at",
+      "source_sha256": "c850f0f84a7f6667595445fe99f877b319801f8c9c5c0962effff656685b36f9",
+      "sample_id": "5e6040f0bcdc71b90c08ce60736969511eb0b0f6d43eada496311b3d9e55a537",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "e479cd19eacd4a4c704d0e18d7a4b814e6871f89c99327abce416935016872e4",
+        "candidate_sha256": "c850f0f84a7f6667595445fe99f877b319801f8c9c5c0962effff656685b36f9",
+        "target": "CallElimCorrect.substOldPostSubset",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.substOldPostSubset' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 5195,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d8d2dcf06e399ea373490228173ec0c7c8bccdb23a309555156223afdf01d3c3\",\"driver_sha256\":\"aad7da98389e3f58632dc5c7a045759f571bbe5f3330a19e9ea2e7eaa58857cd\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":5195,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":5195731,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":5206,\"reference_raw_heartbeats\":5206018,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15559.225}"
+      },
+      "context_id": "0fc1e8c39442a75f6763b1cb10dd06fa0a7422aaa66662f519868401491e8022",
+      "raw_heartbeats": 5195731
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "seed-0",
+      "source_sha256": "27a825564250da11ed157185323a2a65e8ad098fdb9ff72009d83551d8dacb33",
+      "sample_id": "b3ec51f24ca9569d7461f221236119ae395821d8a8c0ec21c9db16ac09a476d6",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "c80185896f8a194a8010bcd14d5cee25eb56e8ee1f673228ed39f02a46c422d9",
+        "candidate_sha256": "27a825564250da11ed157185323a2a65e8ad098fdb9ff72009d83551d8dacb33",
+        "target": "CallElimCorrect.substOldPostSubset",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.substOldPostSubset' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 5118,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d8d2dcf06e399ea373490228173ec0c7c8bccdb23a309555156223afdf01d3c3\",\"driver_sha256\":\"aad7da98389e3f58632dc5c7a045759f571bbe5f3330a19e9ea2e7eaa58857cd\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":5118,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":5118456,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":5206,\"reference_raw_heartbeats\":5206012,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15331.527}"
+      },
+      "context_id": "0fc1e8c39442a75f6763b1cb10dd06fa0a7422aaa66662f519868401491e8022",
+      "raw_heartbeats": 5118456
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-drop_redundant_simp_at",
+      "source_sha256": "c850f0f84a7f6667595445fe99f877b319801f8c9c5c0962effff656685b36f9",
+      "sample_id": "7bb4b6fc229960439521ab7a89d1699586721a05e90b5f8bd7b09ddfe743bbf0",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "fbb06ac2bd7c9a34d44f4d894668e9237813fea8e85f789d97ebdc7484e698c5",
+        "candidate_sha256": "c850f0f84a7f6667595445fe99f877b319801f8c9c5c0962effff656685b36f9",
+        "target": "CallElimCorrect.substOldPostSubset",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.substOldPostSubset' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 5195,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"d8d2dcf06e399ea373490228173ec0c7c8bccdb23a309555156223afdf01d3c3\",\"driver_sha256\":\"aad7da98389e3f58632dc5c7a045759f571bbe5f3330a19e9ea2e7eaa58857cd\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":5195,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":5195740,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":5205,\"reference_raw_heartbeats\":5205996,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15521.41}"
+      },
+      "context_id": "83d7a2062e385564b68eefca0808dc9b45c3e0e6821f13bb761910d1025d5a22",
+      "raw_heartbeats": 5195740
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "dbdbf6e6ea4e52714e1c16cef7626602865b5f0b737c5397d71c0f6fbfc59fc4",
+      "sample_id": "702915e8e9f29c9e057dac4a0b6d1e55e4539f856b4db08cd23f7f08b190a60a",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "c7abc35d1b99c4f4926933e788126857e4bdba522051f282cc1f3d53c42d2ee2",
+        "candidate_sha256": "dbdbf6e6ea4e52714e1c16cef7626602865b5f0b737c5397d71c0f6fbfc59fc4",
+        "target": "CallElimCorrect.substOldPostSubset",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.substOldPostSubset' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 5206,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"d8d2dcf06e399ea373490228173ec0c7c8bccdb23a309555156223afdf01d3c3\",\"driver_sha256\":\"aad7da98389e3f58632dc5c7a045759f571bbe5f3330a19e9ea2e7eaa58857cd\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":5206,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":5206005,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":5206,\"reference_raw_heartbeats\":5206015,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15422.717}"
+      },
+      "context_id": "83d7a2062e385564b68eefca0808dc9b45c3e0e6821f13bb761910d1025d5a22",
+      "raw_heartbeats": 5206005
+    },
+    {
+      "repetition": 0,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "seed-0",
+      "source_sha256": "27a825564250da11ed157185323a2a65e8ad098fdb9ff72009d83551d8dacb33",
+      "sample_id": "09283de88b37f76717c9c215cda627aeb5f633efccb59f3e37d304e589c2f380",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "e1b5773e262e19190089a961cb7d36e2d2249d01553028ca786ff48ee7e66060",
+        "candidate_sha256": "27a825564250da11ed157185323a2a65e8ad098fdb9ff72009d83551d8dacb33",
+        "target": "CallElimCorrect.substOldPostSubset",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.substOldPostSubset' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 5118,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"d8d2dcf06e399ea373490228173ec0c7c8bccdb23a309555156223afdf01d3c3\",\"driver_sha256\":\"aad7da98389e3f58632dc5c7a045759f571bbe5f3330a19e9ea2e7eaa58857cd\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":5118,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":5118485,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":5206,\"reference_raw_heartbeats\":5206008,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15542.201}"
+      },
+      "context_id": "83d7a2062e385564b68eefca0808dc9b45c3e0e6821f13bb761910d1025d5a22",
+      "raw_heartbeats": 5118485
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "seed-0",
+      "source_sha256": "27a825564250da11ed157185323a2a65e8ad098fdb9ff72009d83551d8dacb33",
+      "sample_id": "f40b0fc62a1336ccb84ad33acf32d3071f290555bf04b09cc70888b592b734b2",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "c80185896f8a194a8010bcd14d5cee25eb56e8ee1f673228ed39f02a46c422d9",
+        "candidate_sha256": "27a825564250da11ed157185323a2a65e8ad098fdb9ff72009d83551d8dacb33",
+        "target": "CallElimCorrect.substOldPostSubset",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.substOldPostSubset' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 5118,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d8d2dcf06e399ea373490228173ec0c7c8bccdb23a309555156223afdf01d3c3\",\"driver_sha256\":\"aad7da98389e3f58632dc5c7a045759f571bbe5f3330a19e9ea2e7eaa58857cd\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":5118,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":5118456,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":5206,\"reference_raw_heartbeats\":5206005,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15778.33}"
+      },
+      "context_id": "0fc1e8c39442a75f6763b1cb10dd06fa0a7422aaa66662f519868401491e8022",
+      "raw_heartbeats": 5118456
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "heuristic-0-drop_redundant_simp_at",
+      "source_sha256": "c850f0f84a7f6667595445fe99f877b319801f8c9c5c0962effff656685b36f9",
+      "sample_id": "a2ab949d724261facb5688880cd84b6dd699995c0b606d122b87cd611b4289a4",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "e479cd19eacd4a4c704d0e18d7a4b814e6871f89c99327abce416935016872e4",
+        "candidate_sha256": "c850f0f84a7f6667595445fe99f877b319801f8c9c5c0962effff656685b36f9",
+        "target": "CallElimCorrect.substOldPostSubset",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.substOldPostSubset' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 5195,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d8d2dcf06e399ea373490228173ec0c7c8bccdb23a309555156223afdf01d3c3\",\"driver_sha256\":\"aad7da98389e3f58632dc5c7a045759f571bbe5f3330a19e9ea2e7eaa58857cd\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":5195,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":5195727,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":5206,\"reference_raw_heartbeats\":5206005,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16050.643}"
+      },
+      "context_id": "0fc1e8c39442a75f6763b1cb10dd06fa0a7422aaa66662f519868401491e8022",
+      "raw_heartbeats": 5195727
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "reference-first",
+      "label": "control",
+      "source_sha256": "dbdbf6e6ea4e52714e1c16cef7626602865b5f0b737c5397d71c0f6fbfc59fc4",
+      "sample_id": "36f191edcf52ff02a37ddb9746c42795bb4ee3ab3a6ee2063c8a4cb3992d7c10",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "9e96205d6aaf287cc35731f91a92e370d707c6998b140f1f4f598ae54697de21",
+        "candidate_sha256": "dbdbf6e6ea4e52714e1c16cef7626602865b5f0b737c5397d71c0f6fbfc59fc4",
+        "target": "CallElimCorrect.substOldPostSubset",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.substOldPostSubset' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 5206,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"d8d2dcf06e399ea373490228173ec0c7c8bccdb23a309555156223afdf01d3c3\",\"driver_sha256\":\"aad7da98389e3f58632dc5c7a045759f571bbe5f3330a19e9ea2e7eaa58857cd\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":5206,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":5206008,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":5206,\"reference_raw_heartbeats\":5206019,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":14468.184}"
+      },
+      "context_id": "0fc1e8c39442a75f6763b1cb10dd06fa0a7422aaa66662f519868401491e8022",
+      "raw_heartbeats": 5206008
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "heuristic-0-drop_redundant_simp_at",
+      "source_sha256": "c850f0f84a7f6667595445fe99f877b319801f8c9c5c0962effff656685b36f9",
+      "sample_id": "b36aa1eba27264cbd66eca04c2d30d59ada77834cee3935969b032b679e45f8e",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "fbb06ac2bd7c9a34d44f4d894668e9237813fea8e85f789d97ebdc7484e698c5",
+        "candidate_sha256": "c850f0f84a7f6667595445fe99f877b319801f8c9c5c0962effff656685b36f9",
+        "target": "CallElimCorrect.substOldPostSubset",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.substOldPostSubset' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 5195,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"d8d2dcf06e399ea373490228173ec0c7c8bccdb23a309555156223afdf01d3c3\",\"driver_sha256\":\"aad7da98389e3f58632dc5c7a045759f571bbe5f3330a19e9ea2e7eaa58857cd\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":5195,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":5195750,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":5205,\"reference_raw_heartbeats\":5205996,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":14354.241}"
+      },
+      "context_id": "83d7a2062e385564b68eefca0808dc9b45c3e0e6821f13bb761910d1025d5a22",
+      "raw_heartbeats": 5195750
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "seed-0",
+      "source_sha256": "27a825564250da11ed157185323a2a65e8ad098fdb9ff72009d83551d8dacb33",
+      "sample_id": "5e6758a72088fea019edc01c6ba6f6ae40c5f4c89d554de11ff7ef427ecba69b",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "e1b5773e262e19190089a961cb7d36e2d2249d01553028ca786ff48ee7e66060",
+        "candidate_sha256": "27a825564250da11ed157185323a2a65e8ad098fdb9ff72009d83551d8dacb33",
+        "target": "CallElimCorrect.substOldPostSubset",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.substOldPostSubset' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 5118,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"d8d2dcf06e399ea373490228173ec0c7c8bccdb23a309555156223afdf01d3c3\",\"driver_sha256\":\"aad7da98389e3f58632dc5c7a045759f571bbe5f3330a19e9ea2e7eaa58857cd\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":5118,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":5118468,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":5205,\"reference_raw_heartbeats\":5205994,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15646.523}"
+      },
+      "context_id": "83d7a2062e385564b68eefca0808dc9b45c3e0e6821f13bb761910d1025d5a22",
+      "raw_heartbeats": 5118468
+    },
+    {
+      "repetition": 1,
+      "version": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "branch_order": "candidate-first",
+      "label": "control",
+      "source_sha256": "dbdbf6e6ea4e52714e1c16cef7626602865b5f0b737c5397d71c0f6fbfc59fc4",
+      "sample_id": "fb86226d05a559a20a71fe70cb2c246ed6d457dd1bb557a933b1983685d3bd02",
+      "status": "VERIFIED",
+      "reason": "",
+      "verifier_invocations": 1,
+      "receipt": {
+        "request_id": "c7abc35d1b99c4f4926933e788126857e4bdba522051f282cc1f3d53c42d2ee2",
+        "candidate_sha256": "dbdbf6e6ea4e52714e1c16cef7626602865b5f0b737c5397d71c0f6fbfc59fc4",
+        "target": "CallElimCorrect.substOldPostSubset",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.substOldPostSubset' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 5206,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"d8d2dcf06e399ea373490228173ec0c7c8bccdb23a309555156223afdf01d3c3\",\"driver_sha256\":\"aad7da98389e3f58632dc5c7a045759f571bbe5f3330a19e9ea2e7eaa58857cd\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":5206,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":5206007,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":5205,\"reference_raw_heartbeats\":5205993,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15145.827}"
+      },
+      "context_id": "83d7a2062e385564b68eefca0808dc9b45c3e0e6821f13bb761910d1025d5a22",
+      "raw_heartbeats": 5206007
+    }
+  ],
+  "contexts": [
+    {
+      "problem": "CallElimCorrect.substOldPostSubset",
+      "statement": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1])",
+      "reference_source": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1]) := by\n  induction post <;> simp [substOld]\n  case fvar =>\n    intros x Hin\n    rename_i m name ty2\n    simp at m\n    simp at name\n    simp at ty2\n\n    simp_all\n  case op =>\n    intros x Hin\n    rename_i m name ty2\n    simp at m\n    simp at name\n    simp at ty2\n    simp_all\n  case const =>\n    intros x Hin\n    rename_i m name\n    simp at m\n    simp_all\n  case bvar =>\n    intros x Hin\n    rename_i m d\n    simp at m\n    simp_all\n  case abs ih =>\n    exact ih\n  case ite cih tih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case app ih1 ih2 =>\n    split\n    . split\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n    . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply ih1 <;> assumption\n        intros x Hin\n        simp_all\n        cases Hin <;> simp_all\n      . apply List.Subset.trans\n        apply ih2 <;> assumption\n        intros x Hin\n        simp_all\n  case quant trih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      rename_i m1 k1 ty1 trigger1 e1\n      have assoc := List.append_assoc (Lambda.LExpr.LExpr.getVars trigger1) (Lambda.LExpr.LExpr.getVars e1) [h1]\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+      "reference_length": 313,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "dependency_digests": [
+        "d8d2dcf06e399ea373490228173ec0c7c8bccdb23a309555156223afdf01d3c3"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "2f694510f14b853403665ef9b8c6fcf453e5f661a68327afa2c3fd8fce066bce",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Transform/CallElimCorrect.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    },
+    {
+      "problem": "CallElimCorrect.substOldPostSubset",
+      "statement": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1])",
+      "reference_source": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1]) := by\n  induction post <;> simp [substOld]\n  case fvar =>\n    intros x Hin\n    rename_i m name ty2\n    simp at m\n    simp at name\n    simp at ty2\n\n    simp_all\n  case op =>\n    intros x Hin\n    rename_i m name ty2\n    simp at m\n    simp at name\n    simp at ty2\n    simp_all\n  case const =>\n    intros x Hin\n    rename_i m name\n    simp at m\n    simp_all\n  case bvar =>\n    intros x Hin\n    rename_i m d\n    simp at m\n    simp_all\n  case abs ih =>\n    exact ih\n  case ite cih tih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case app ih1 ih2 =>\n    split\n    . split\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n    . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply ih1 <;> assumption\n        intros x Hin\n        simp_all\n        cases Hin <;> simp_all\n      . apply List.Subset.trans\n        apply ih2 <;> assumption\n        intros x Hin\n        simp_all\n  case quant trih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      rename_i m1 k1 ty1 trigger1 e1\n      have assoc := List.append_assoc (Lambda.LExpr.LExpr.getVars trigger1) (Lambda.LExpr.LExpr.getVars e1) [h1]\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+      "reference_length": 313,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "dependency_digests": [
+        "d8d2dcf06e399ea373490228173ec0c7c8bccdb23a309555156223afdf01d3c3"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "2f694510f14b853403665ef9b8c6fcf453e5f661a68327afa2c3fd8fce066bce",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Transform/CallElimCorrect.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"candidate-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "label": "seed-0",
+      "source_sha256": "27a825564250da11ed157185323a2a65e8ad098fdb9ff72009d83551d8dacb33",
+      "provenance": "historical regression seed; artifact SHA-256 bbd7daf2e53b0079da7ba911942d9e18761aab51731081937fe57b8d932e1839",
+      "status": "MEASURED",
+      "reference_tokens": 313,
+      "candidate_tokens": 237,
+      "length_reduction_pct": 24.281150159744413,
+      "verified_pins": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "required_pins": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "heartbeat_result": "LOWER_IN_BOTH_ORDERS",
+      "strata": [
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "status": "MEASURED",
+          "control_raw": [
+            5205992,
+            5206008
+          ],
+          "candidate_raw": [
+            5118456,
+            5118456
+          ],
+          "control_median_raw": 5206000.0,
+          "candidate_median_raw": 5118456.0,
+          "paired_savings_raw": [
+            87536,
+            87552
+          ],
+          "observed_range_raw": 16,
+          "comparison": "LOWER"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "status": "MEASURED",
+          "control_raw": [
+            5206005,
+            5206007
+          ],
+          "candidate_raw": [
+            5118485,
+            5118468
+          ],
+          "control_median_raw": 5206006.0,
+          "candidate_median_raw": 5118476.5,
+          "paired_savings_raw": [
+            87520,
+            87539
+          ],
+          "observed_range_raw": 17,
+          "comparison": "LOWER"
+        }
+      ],
+      "observed_pareto_improvement": true,
+      "statistical_significance_claimed": false,
+      "promoted": false,
+      "official_score": null
+    },
+    {
+      "label": "heuristic-0-drop_redundant_simp_at",
+      "source_sha256": "c850f0f84a7f6667595445fe99f877b319801f8c9c5c0962effff656685b36f9",
+      "provenance": "existing deterministic heuristic: drop_redundant_simp_at",
+      "status": "MEASURED",
+      "reference_tokens": 313,
+      "candidate_tokens": 289,
+      "length_reduction_pct": 7.667731629392971,
+      "verified_pins": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "required_pins": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "heartbeat_result": "LOWER_IN_BOTH_ORDERS",
+      "strata": [
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "status": "MEASURED",
+          "control_raw": [
+            5205992,
+            5206008
+          ],
+          "candidate_raw": [
+            5195731,
+            5195727
+          ],
+          "control_median_raw": 5206000.0,
+          "candidate_median_raw": 5195729.0,
+          "paired_savings_raw": [
+            10261,
+            10281
+          ],
+          "observed_range_raw": 16,
+          "comparison": "LOWER"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "status": "MEASURED",
+          "control_raw": [
+            5206005,
+            5206007
+          ],
+          "candidate_raw": [
+            5195740,
+            5195750
+          ],
+          "control_median_raw": 5206006.0,
+          "candidate_median_raw": 5195745.0,
+          "paired_savings_raw": [
+            10265,
+            10257
+          ],
+          "observed_range_raw": 10,
+          "comparison": "LOWER"
+        }
+      ],
+      "observed_pareto_improvement": true,
+      "statistical_significance_claimed": false,
+      "promoted": false,
+      "official_score": null
+    }
+  ],
+  "status": "COMPLETE",
+  "receipt_cache_enabled": false,
+  "live_model_calls": 0,
+  "training_enabled": false,
+  "production_memory_used": false,
+  "official_score": null,
+  "local_combined_pct": null,
+  "worker_metric_parity": "UNCONFIRMED",
+  "runner_sha256": "82c13dd7e72db3ab314db912e1dffb65ad372492960b8db815c572610508911f",
+  "readiness": {
+    "schema": "jevops-arena-native-readiness/v1",
+    "required_version_checks": 1,
+    "completed_version_checks": 0,
+    "official_score": null,
+    "rows": [
+      {
+        "name": "CallElimCorrect.substOldPostSubset",
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+        "status": "UNMEASURED",
+        "capability_gaps": [],
+        "dependencies_verified": false,
+        "baseline_compiles": null
+      }
+    ]
+  },
+  "fingerprint_file_reads": 8884,
+  "fingerprint_stat_hits": 328708,
+  "source_report_sha256": "4f0cba9fc50a0990e765b3a799b10a37b9b2d93448e5a655851f3f7b3849a29b",
+  "recorded_on": "2026-09-22",
+  "evidence_scope": "One warm-up theorem; historical seed and existing deterministic heuristic; two repeats per order, not unseen-task evaluation or an official score."
+}

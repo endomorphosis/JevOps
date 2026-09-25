@@ -1,0 +1,8 @@
+{
+  "slot": 1,
+  "arm": "whole-body",
+  "repetition": 0,
+  "plan_id": "a773eeefbaa972cfc56a75de4024248ad52926aaa68b19d88a5f112e1e0eea66",
+  "attempt_reserved": true,
+  "max_output_tokens_reserved": 1024
+}

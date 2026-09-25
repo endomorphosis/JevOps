@@ -1,0 +1,538 @@
+{
+  "schema": "jevops-native-arena-baseline-summary/v1",
+  "evidence_mode": "local_lean",
+  "purpose": "unchanged-reference baseline; not an optimization result or portable proof certificate",
+  "full_report_sha256": "548f291560671f7bb7616efb1687cc41e306adf8038a4b31978880d47b94f2f5",
+  "full_report_local_path": "/tmp/jevops-arena-pinned-baseline-EUp5Yk/final-baseline.json",
+  "command": "python -m jevops.arena_lean --baseline --state-root /home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake --max-processes 12 --timeout 90",
+  "native_invocation_budget": 12,
+  "corpus_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+  "required_version_checks": 36,
+  "completed_version_checks": 12,
+  "processes": 12,
+  "live_model_calls": 0,
+  "official_score": null,
+  "measurement": "command-elaboration-internal-heartbeats-div-1000/v1",
+  "local_combined_pct": null,
+  "worker_metric_parity": "UNCONFIRMED",
+  "fingerprint_file_reads": 165398,
+  "fingerprint_stat_hits": 1410673,
+  "rows": [
+    {
+      "name": "CallElimCorrect.substOldPostSubset",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "baseline_compiles": true,
+      "context_id": "8f0e0b4df11fcf830a47cf519e8569c0a32b2855fc050ee238ecff95592015bc",
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "63f1bd5b1bf2d3ad710d5ad592aa96956cdbe96202d02e5f29911be7069114fc",
+      "receipt": {
+        "request_id": "e9590b9f02bccd1f433cb2782ed0b131f63a28435ad29b9f51888726864933fb",
+        "candidate_sha256": "dbdbf6e6ea4e52714e1c16cef7626602865b5f0b737c5397d71c0f6fbfc59fc4",
+        "target": "CallElimCorrect.substOldPostSubset",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.substOldPostSubset' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 5205,
+        "reason": "",
+        "observations_json": "{\"dependency_digest\":\"41e2fc3982f2820333225856a17d29456292829ecddd3fce68f40e82fde2ccb8\",\"driver_sha256\":\"aeea536fe9913b1b282d5bf44f63b81b4eb49c98e53b6effa1545326f7402a15\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":5205,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":5205998,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":5206,\"reference_raw_heartbeats\":5206005,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15809.246}"
+      }
+    },
+    {
+      "name": "CallElimCorrect.extractedOldExprInVars",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "baseline_compiles": true,
+      "context_id": "3619826100209849e940621dec34f7566269754a46f7c8a1cdec386a2e9bcad2",
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "63f1bd5b1bf2d3ad710d5ad592aa96956cdbe96202d02e5f29911be7069114fc",
+      "receipt": {
+        "request_id": "a260c7bd66333461305d275f10c5d710f051087b2c9cd3d384bd4f244b765db5",
+        "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "target": "CallElimCorrect.extractedOldExprInVars",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 2607,
+        "reason": "",
+        "observations_json": "{\"dependency_digest\":\"9daa22eafd804aec0dc591979cf5303dcb340bae54d38a8749cade501eb786a5\",\"driver_sha256\":\"aeea536fe9913b1b282d5bf44f63b81b4eb49c98e53b6effa1545326f7402a15\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607572,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16103.903}"
+      }
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "lean_tag": "v4.29.1",
+      "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "lean_tag": "v4.27.0",
+      "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "baseline_compiles": true,
+      "context_id": "cabda6f38f5c445ae8cf2a910585d09a240142950e00dcc2d7972eed5572ecf1",
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "63f1bd5b1bf2d3ad710d5ad592aa96956cdbe96202d02e5f29911be7069114fc",
+      "receipt": {
+        "request_id": "cdeffeefc646eefce6eeebedb8cb0b989b857deb1e118160a4f27033d8db44f4",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4689,
+        "reason": "",
+        "observations_json": "{\"dependency_digest\":\"6fcf79773f4e2228b7705f9ed62cdf0f8dab91f5eeee229d58423d205aca81ec\",\"driver_sha256\":\"aeea536fe9913b1b282d5bf44f63b81b4eb49c98e53b6effa1545326f7402a15\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689118,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689131,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":3885.332}"
+      }
+    },
+    {
+      "name": "fundamental_theorem_of_variational_calculus'",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "baseline_compiles": true,
+      "context_id": "d3d12113afb8642b98dcb9dd936f992dac2fc78b8694530b0fdc64ab3b2e35a4",
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "63f1bd5b1bf2d3ad710d5ad592aa96956cdbe96202d02e5f29911be7069114fc",
+      "receipt": {
+        "request_id": "9b34bea997c108a495ace5c0be8f740160122f650f16a19ab9b167e202527a58",
+        "candidate_sha256": "ae3a05ebcb1ec68d71b29734366ba8e73e3d3068bcc3a53e5b71ec3990bc84dd",
+        "target": "fundamental_theorem_of_variational_calculus'",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'fundamental_theorem_of_variational_calculus'' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "heartbeats": 12454,
+        "reason": "",
+        "observations_json": "{\"dependency_digest\":\"b3ba1914a7cd8607bf6ab44a1a4bef5000d48534557b593a242e107b37281b0f\",\"driver_sha256\":\"aeea536fe9913b1b282d5bf44f63b81b4eb49c98e53b6effa1545326f7402a15\",\"lean_githash\":\"8c9756b28d64dab099da31a4c09229a9e6a2ef35\",\"lean_version\":\"4.32.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":12454,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":12454940,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"reference_heartbeats\":12492,\"reference_raw_heartbeats\":12492511,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":7791.066}"
+      }
+    },
+    {
+      "name": "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "baseline_compiles": true,
+      "context_id": "3574b669d5abd81d4435f7756b219ccf86288bdeb010a0fc111916683492ecde",
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "63f1bd5b1bf2d3ad710d5ad592aa96956cdbe96202d02e5f29911be7069114fc",
+      "receipt": {
+        "request_id": "3c57e4ad8a06bb969cdf057812871e355c470104cc44e7b101812628d54becd6",
+        "candidate_sha256": "9839fbd7f2dedf9c22190403722dc98210c990a14188a042ddf41ab5e050496c",
+        "target": "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "heartbeats": 27475,
+        "reason": "",
+        "observations_json": "{\"dependency_digest\":\"8e56a9a5153b1e4fd4dad61f772338888f483d6583dda832838bcc4ba2375ad3\",\"driver_sha256\":\"aeea536fe9913b1b282d5bf44f63b81b4eb49c98e53b6effa1545326f7402a15\",\"lean_githash\":\"8c9756b28d64dab099da31a4c09229a9e6a2ef35\",\"lean_version\":\"4.32.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":27475,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":27475681,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"reference_heartbeats\":27479,\"reference_raw_heartbeats\":27479265,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15876.099}"
+      }
+    },
+    {
+      "name": "FieldSpecification.WickAlgebra.\u03b9_timeOrderF_superCommuteF_eq_time",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "baseline_compiles": true,
+      "context_id": "959dfcfaeb95becea726f5539fa3413b03c0c96ce3bfcb61ada20700324b06f7",
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "63f1bd5b1bf2d3ad710d5ad592aa96956cdbe96202d02e5f29911be7069114fc",
+      "receipt": {
+        "request_id": "ac3db5c75ee46d89f8ba32ad9b15011921283fabd40c41c80f3736df5b61b010",
+        "candidate_sha256": "b0b0bdda4094c15be7cfd13caee9f73b03ddf22c9de85a90567a1291cc6f0306",
+        "target": "FieldSpecification.WickAlgebra.\u03b9_timeOrderF_superCommuteF_eq_time",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'FieldSpecification.WickAlgebra.\u03b9_timeOrderF_superCommuteF_eq_time' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "heartbeats": 42721,
+        "reason": "",
+        "observations_json": "{\"dependency_digest\":\"03aef5060df5d3973858b9a1941aa015cd4b0299367af4fe5d6b986463c4554f\",\"driver_sha256\":\"aeea536fe9913b1b282d5bf44f63b81b4eb49c98e53b6effa1545326f7402a15\",\"lean_githash\":\"8c9756b28d64dab099da31a4c09229a9e6a2ef35\",\"lean_version\":\"4.32.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":42721,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":42721987,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"reference_heartbeats\":42722,\"reference_raw_heartbeats\":42722895,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":12335.69}"
+      }
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "pinned_toolchain_missing: v4.33.0-rc2"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "baseline_compiles": true,
+      "context_id": "9397c433d1516b6dc2c9dcbc376d7922487e0a655c2626513a51a0a56c3c9c9d",
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "63f1bd5b1bf2d3ad710d5ad592aa96956cdbe96202d02e5f29911be7069114fc",
+      "receipt": {
+        "request_id": "9507cce8b4923642c826d1fb59441f3e24b85127ce63a58ea8489e7d0076c7a9",
+        "candidate_sha256": "e8b89255b06b284c8a4f4ba9a140c458d8c4640f63014c9c0037585855039be7",
+        "target": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "heartbeats": 62189,
+        "reason": "",
+        "observations_json": "{\"dependency_digest\":\"7f33530d1fd252e8b3b32cae3217e279979c52255caa0c279522675248a98ce4\",\"driver_sha256\":\"aeea536fe9913b1b282d5bf44f63b81b4eb49c98e53b6effa1545326f7402a15\",\"lean_githash\":\"68218e876d2a38b1985b8590fff244a83c321783\",\"lean_version\":\"4.31.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":62189,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":62189779,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"reference_heartbeats\":62197,\"reference_raw_heartbeats\":62197640,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":12544.705}"
+      }
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "pinned_toolchain_missing: v4.33.0-rc2"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "baseline_compiles": true,
+      "context_id": "baa3e5ba1b3642003885f6d6f3dbf1b3d5fa23bb5345f798b13dcb1792530182",
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "63f1bd5b1bf2d3ad710d5ad592aa96956cdbe96202d02e5f29911be7069114fc",
+      "receipt": {
+        "request_id": "1def7a38b92bb7e31de62cddd979ec720ec733a5eb8f74a16bbbb1da028eb6b2",
+        "candidate_sha256": "35f528e8e77dceff098e735cfb0ee98ea989fecca8258a7d59632f211cc5ffdc",
+        "target": "Cslib.SKI.parallelReduction_diamond",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Cslib.SKI.parallelReduction_diamond' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "heartbeats": 1643,
+        "reason": "",
+        "observations_json": "{\"dependency_digest\":\"c1537dee3b082d9cf9bf92cbe9a33c51f6c1cbba2b0df8adc09bdae613c549d9\",\"driver_sha256\":\"aeea536fe9913b1b282d5bf44f63b81b4eb49c98e53b6effa1545326f7402a15\",\"lean_githash\":\"68218e876d2a38b1985b8590fff244a83c321783\",\"lean_version\":\"4.31.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":1643,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":1643018,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"reference_heartbeats\":1643,\"reference_raw_heartbeats\":1643615,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":5761.892}"
+      }
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.30.0",
+      "git_commit": "c7944a9fb44c3298f1a960a5e574ab23a6ab8ed5",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "pinned_toolchain_missing: v4.33.0-rc2"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "baseline_compiles": true,
+      "context_id": "74e123cfb4d571ddf59bb535fdf38363d499b6f22b6f12198e711929407f505c",
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "63f1bd5b1bf2d3ad710d5ad592aa96956cdbe96202d02e5f29911be7069114fc",
+      "receipt": {
+        "request_id": "54d98bf352a5c883e07225a02918cb8e388de9f70f663692933557f4860f19b4",
+        "candidate_sha256": "90ec3fb53d6c4e9485868b3d1f1bceac5de6abc8b429d456281744fd1b0fa828",
+        "target": "Cslib.CCS.bisimilarity_congr_choice",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Cslib.CCS.bisimilarity_congr_choice' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "heartbeats": 4020,
+        "reason": "",
+        "observations_json": "{\"dependency_digest\":\"3ba749f9471156bc92b2f026da9b514cd2b455d163b2195b859c54bfc31f37c7\",\"driver_sha256\":\"aeea536fe9913b1b282d5bf44f63b81b4eb49c98e53b6effa1545326f7402a15\",\"lean_githash\":\"68218e876d2a38b1985b8590fff244a83c321783\",\"lean_version\":\"4.31.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":4020,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4020386,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"reference_heartbeats\":4020,\"reference_raw_heartbeats\":4020398,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":6979.869}"
+      }
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "baseline_compiles": true,
+      "context_id": "d89ba8bb499efa24dbb1693321103b9b7b98f5818059fc211b71197468bf8a7f",
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "63f1bd5b1bf2d3ad710d5ad592aa96956cdbe96202d02e5f29911be7069114fc",
+      "receipt": {
+        "request_id": "bcd5801e4bdc1e7d1f0cbfbc70b6bc6e719531cb554ff652be1edf5c13a00b3f",
+        "candidate_sha256": "561da2e1599d85a33fddbdbdb9eca3f05f504c3dfaa7e32d367eef4eba532033",
+        "target": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "heartbeats": 16664,
+        "reason": "",
+        "observations_json": "{\"dependency_digest\":\"4824ab229501bffffcb5cbf41172930eedbb5b0ff772b2f9c2e96e692537766d\",\"driver_sha256\":\"aeea536fe9913b1b282d5bf44f63b81b4eb49c98e53b6effa1545326f7402a15\",\"lean_githash\":\"68218e876d2a38b1985b8590fff244a83c321783\",\"lean_version\":\"4.31.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"diagnostics\":[{\"message\":\"automatically included section variable(s) unused in theorem `Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius`:\\n  [CharP L 2]\\n  [NeZero \u2113]\\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\\n  omit [CharP L 2] [NeZero \u2113] in theorem ...\\n\\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  ofNat_pos\\n\\nHint: Omit it from the simp argument list.\\n  simp only [sum_const, Set.toFinset_card, smul_eq_mul, o\u0335f\u0335N\u0335a\u0335t\u0335_\u0335p\u0335o\u0335s\u0335,\u0335 \u0335pow_pos, _root_.mul_le_mul_right,\\n  \u0332  \u0332 \u0332 \u0332 \u0332 \u0332 \u0332 \u0332ge_iff_le]\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  pow_pos\\n\\nHint: Omit it from the simp argument list.\\n  simp only [sum_const, Set.toFinset_card, smul_eq_mul, ofNat_pos, p\u0335o\u0335w\u0335_\u0335p\u0335o\u0335s\u0335,\u0335_root_.mul_le_mul_right,\\n          ge_iff_le]\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  _root_.mul_le_mul_right\\n\\nHint: Omit it from the simp argument list.\\n  simp only [sum_const, Set.toFinset_card, smul_eq_mul, ofNat_pos, pow_pos, _\u0335r\u0335o\u0335o\u0335t\u0335_\u0335.\u0335m\u0335u\u0335l\u0335_\u0335l\u0335e\u0335_\u0335m\u0335u\u0335l\u0335_\u0335r\u0335i\u0335g\u0335h\u0335t\u0335,\u0335 \u0335ge_iff_le]\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"'unfold d_fw at h_sInf_mem' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"}],\"heartbeats\":16664,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":16664186,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"reference_heartbeats\":16666,\"reference_raw_heartbeats\":16666741,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16388.331}"
+      }
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.28.0",
+      "git_commit": "673fa440714eb1949b8b50a28f2a4f52b1837e9b",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "pinned_toolchain_missing: v4.28.0"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "baseline_compiles": true,
+      "context_id": "22171a681a86df9e63702b54b1825449ba73d47cf0fde41f74ece2deba476167",
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "63f1bd5b1bf2d3ad710d5ad592aa96956cdbe96202d02e5f29911be7069114fc",
+      "receipt": {
+        "request_id": "4cbe2b2b59c883e03d17af1c767776ea0bb331f7f0a3528212523164e1a132cc",
+        "candidate_sha256": "67401740132ca27612c5a143c6dd3a90205f5d84a7c0850182c9391592a0752f",
+        "target": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Binius.BinaryBasefold.fold_advances_evaluation_poly' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "heartbeats": 47012,
+        "reason": "",
+        "observations_json": "{\"dependency_digest\":\"f532d5df6ecc7c2722ef178c89fc5e45d4c17a3da0ff941bb4bc91a48180e366\",\"driver_sha256\":\"aeea536fe9913b1b282d5bf44f63b81b4eb49c98e53b6effa1545326f7402a15\",\"lean_githash\":\"68218e876d2a38b1985b8590fff244a83c321783\",\"lean_version\":\"4.31.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"diagnostics\":[{\"message\":\"`Subtype.eq_iff` has been deprecated: Use `Subtype.ext_iff` instead\\n\\nNote: The updated constant has a different type:\\n  \u2200 {\u03b1 : Sort u} {p : \u03b1 \u2192 Prop} {a1 a2 : { x // p x }}, a1 = a2 \u2194 \u2191a1 = \u2191a2\\ninstead of\\n  \u2200 {\u03b1 : Sort u_1} {p : \u03b1 \u2192 Prop} {a1 a2 : { x // p x }}, a1 = a2 \u2194 \u2191a1 = \u2191a2\",\"severity\":\"warning\"},{\"message\":\"`Subtype.eq_iff` has been deprecated: Use `Subtype.ext_iff` instead\\n\\nNote: The updated constant has a different type:\\n  \u2200 {\u03b1 : Sort u} {p : \u03b1 \u2192 Prop} {a1 a2 : { x // p x }}, a1 = a2 \u2194 \u2191a1 = \u2191a2\\ninstead of\\n  \u2200 {\u03b1 : Sort u_1} {p : \u03b1 \u2192 Prop} {a1 a2 : { x // p x }}, a1 = a2 \u2194 \u2191a1 = \u2191a2\",\"severity\":\"warning\"},{\"message\":\"`AddSubmonoidClass.coe_finset_sum` has been deprecated: Use `AddSubmonoidClass.coe_finsetSum` instead\",\"severity\":\"warning\"},{\"message\":\"`Nat.add_eq_zero` has been deprecated: Use `Nat.add_eq_zero_iff` instead\",\"severity\":\"warning\"},{\"message\":\"automatically included section variable(s) unused in theorem `Binius.BinaryBasefold.fold_advances_evaluation_poly`:\\n  [CharP L 2]\\n  [NeZero \u2113]\\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\\n  omit [CharP L 2] [NeZero \u2113] in theorem ...\\n\\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\",\"severity\":\"warning\"}],\"heartbeats\":47012,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":47012062,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"reference_heartbeats\":47023,\"reference_raw_heartbeats\":47023971,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15203.432}"
+      }
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "baseline_compiles": true,
+      "context_id": "73f24863e905f464fd5b879f165498f85bf29cb18d6314a726492729bc836afd",
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "63f1bd5b1bf2d3ad710d5ad592aa96956cdbe96202d02e5f29911be7069114fc",
+      "receipt": {
+        "request_id": "46f0058623a926be0ed65b9a6e90108081e4e05b75cc07dff12cf33e589041d3",
+        "candidate_sha256": "5e8c33db1f147ea33ed9adae552f5f17c7559384f868799a83392817c2e56979",
+        "target": "interleaved_affine_gaps_imply_tensor_gaps",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'interleaved_affine_gaps_imply_tensor_gaps' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "heartbeats": 9976,
+        "reason": "",
+        "observations_json": "{\"dependency_digest\":\"d5e1179ada457abbe7df459537078ee2a7e280a1ff48c4e9e25d188b8a55281e\",\"driver_sha256\":\"aeea536fe9913b1b282d5bf44f63b81b4eb49c98e53b6effa1545326f7402a15\",\"lean_githash\":\"68218e876d2a38b1985b8590fff244a83c321783\",\"lean_version\":\"4.31.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"diagnostics\":[{\"message\":\"automatically included section variable(s) unused in theorem `interleaved_affine_gaps_imply_tensor_gaps`:\\n  [NoZeroDivisors F]\\n  [Fintype A]\\n  [Module.Free F A]\\n  [Nontrivial \u21a5MC]\\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\\n  omit [NoZeroDivisors F] [Fintype A] [Module.Free F A] [Nontrivial \u21a5MC] in theorem ...\\n\\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\",\"severity\":\"warning\"}],\"heartbeats\":9976,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":9976775,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"reference_heartbeats\":9976,\"reference_raw_heartbeats\":9976908,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":19415.744}"
+      }
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "project_commit_mismatch"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_a4",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "pinned_toolchain_missing: v4.25.0"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_a4",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "putnam_compiled_import_missing: Mathlib"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_a4",
+      "lean_tag": "v4.27.0",
+      "git_commit": "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "[Errno 2] No such file or directory: '/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/putnam_lake/v4.27.0'"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_b2",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "pinned_toolchain_missing: v4.25.0"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_b2",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "putnam_compiled_import_missing: Mathlib"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1995_a3",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "pinned_toolchain_missing: v4.25.0"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1995_a3",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "putnam_compiled_import_missing: Mathlib"
+      ],
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1995_a3",
+      "lean_tag": "v4.27.0",
+      "git_commit": "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "[Errno 2] No such file or directory: '/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/putnam_lake/v4.27.0'"
+      ],
+      "baseline_compiles": null
+    }
+  ]
+}

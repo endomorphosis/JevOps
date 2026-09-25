@@ -1064,7 +1064,11 @@ def jev_rank_variations(
     previous: Sequence[Mapping[str, Any]] = (),
     jev_fn: Optional[Callable[..., Mapping[str, Any]]] = None,
 ) -> dict[str, Any]:
-    """Jev replaces CE/cosine as the batch loss. Compares current vs previous rounds."""
+    """Rank current and previous candidates with optional JeV feedback.
+
+    This advisor does not replace CE/cosine training objectives, differentiate
+    JeV scores, or establish proof validity. Previous rounds are references.
+    """
 
     from jevops.outer import head_chars
 

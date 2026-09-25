@@ -1,0 +1,22 @@
+[
+  {
+    "name": "cslib-v4.30.0",
+    "statuses": {
+      "UNAVAILABLE": 35,
+      "VERIFIED": 1
+    },
+    "processes": 1,
+    "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/cslib-v4.30.0-baseline.json",
+    "sha256": "ccaa254b98c95faee61fb8f86caa1d98188124f00158b07b0a81e3f71d5abda3"
+  },
+  {
+    "name": "arklib-v4.30.0",
+    "statuses": {
+      "UNAVAILABLE": 34,
+      "VERIFIED": 2
+    },
+    "processes": 2,
+    "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/arklib-v4.30.0-baseline.json",
+    "sha256": "d1b0b6f4415018f02894340f894a64e2a77be8b632604bd0477d1302e54f0e1a"
+  }
+]

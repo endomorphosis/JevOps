@@ -256,12 +256,12 @@ def render_lean_toolchain(lean_tag: str) -> str:
     return _fn(normalize_lean_tag(lean_tag))
 
 
-def render_lakefile(lean_tag: str) -> str:
+def render_lakefile(lean_tag: str, *, jsonl_version_pin: str = "") -> str:
     """Per-tag Mathlib+Aesop lakefile. Candidate module is Putnam.Candidate, not Tmp.lean."""
 
     from jevops.lean import render_mathlib_aesop_lakefile
 
-    pin = putnam_pin(lean_tag)
+    pin = putnam_pin(lean_tag, jsonl_version_pin=jsonl_version_pin)
     return render_mathlib_aesop_lakefile(
         package=pin.package,
         lib=pin.lib,
@@ -289,7 +289,7 @@ def putnam_project_files(lean_tag: str, *, jsonl_version_pin: str = "") -> dict[
 
     return putnam_file_map(
         pin,
-        lakefile=render_lakefile(pin.lean_tag),
+        lakefile=render_lakefile(pin.lean_tag, jsonl_version_pin=jsonl_version_pin),
         toolchain=render_lean_toolchain(pin.lean_tag),
         root=render_putnam_root(),
         candidate=render_putnam_candidate_stub(),

@@ -1,0 +1,10 @@
+{
+  "schema": "jevops-arena-source-snapshot/v1",
+  "status": "UNCHANGED",
+  "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/premise-pilot-20260923-YCRydC/runtime",
+  "manifest_sha256": "d7c19f0b7ac586abef13f8ae9a34956a0670ad0452e5ac534aa67a972af83dc5",
+  "content_root": "678b3c1baa767a2b22cd7d75b2a110ee77a9a54fd2e86b659cdb2de1d4a25fd7",
+  "file_count": 118,
+  "bytes": 3241588,
+  "proof_verified": false
+}

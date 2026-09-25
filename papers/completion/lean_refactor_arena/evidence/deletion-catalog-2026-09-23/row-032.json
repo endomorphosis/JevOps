@@ -1,0 +1,24 @@
+{
+  "pin": {
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+  },
+  "label": "edit-31",
+  "source_sha256": "55fac7594db69cfc339c65720eeb1565cb86be550529b9947b6ca8ce9c9617e4",
+  "status": "REJECTED",
+  "context_id": "c05f2041328cf7cd0931ca56ae2c91af99ef4663915803d6dd2c39f6a0d3554e",
+  "receipt": {
+    "request_id": "d887e0d985f5301890e7b5e2a91ac4df0ae59c1854dd23d2a9efab16146b722d",
+    "candidate_sha256": "55fac7594db69cfc339c65720eeb1565cb86be550529b9947b6ca8ce9c9617e4",
+    "target": "Core.InitsUpdatesComm",
+    "outcome": "REJECTED",
+    "type_preserved": false,
+    "exit_code": 0,
+    "axiom_output": "",
+    "heartbeats": null,
+    "reason": "candidate_errors",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"a07f22759ef3aa7cde70314cc088c5ee99a642ed1a58290a81058642231a79ae\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Unknown identifier `Hlen1`\",\"severity\":\"error\"},{\"message\":\"Unknown identifier `Hlen1`\",\"severity\":\"error\"},{\"message\":\"simp_all made no progress\",\"severity\":\"error\"},{\"message\":\"simp_all made no progress\",\"severity\":\"error\"},{\"message\":\"Function expected at\\n  ih Hinit ?m.275\\nbut this term has type\\n  updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\\n    InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\\n\\nNote: Expected a function because this term is being applied to the argument\\n  ?_\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"},{\"message\":\"This simp argument is unused:\\n  isDefined\\n\\nHint: Omit it from the simp argument list.\\n  simp [isNotDefined,̵ ̵i̵s̵D̵e̵f̵i̵n̵e̵d̵] at *\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":7003.313}"
+  },
+  "native_processes": 1,
+  "wall_seconds": 10.9534
+}

@@ -95,6 +95,18 @@ def mine_template(source: str, target_body: str) -> dict[str, Any] | None:
     while right < min(len(a), len(b)) - left and a[-1-right] == b[-1-right]:
         right += 1
     aa, bb = a[left:len(a)-right], b[left:len(b)-right]
+    # A bare `let` deletion is not a context-free rule. Retain its unchanged
+    # continuation so a teacher ending in `rfl` cannot teach deletion before
+    # `exact ⟨y, rfl⟩`, which still needs y. The normal span/indent bounds below
+    # abstain if the full continuation is too large or crosses an outer scope.
+    # This is conservative lexical context retention, not a scope/type proof.
+    if not bb and any(re.match(r"let\b", line.lstrip()) for line in aa):
+        if not right:
+            return None
+        binding_indent = min(len(line)-len(line.lstrip()) for line in aa if line.strip())
+        if any(line.strip() and len(line)-len(line.lstrip()) < binding_indent for line in a[len(a)-right:]):
+            return None
+        aa, bb = a[left:], b[left:]
     if not aa or max(len(aa), len(bb)) > MAX_SPAN:
         return None  # Pure insertions and large structural changes abstain.
     nonempty = [line for line in aa if line.strip()]

@@ -5,6 +5,18 @@ Kernel cache hits never admit proofs; proof_ca validates typed cached evidence
 before reusing an existing verification receipt. Never docker0.
 """
 
+import sys
+from pathlib import Path
+
+# The legal compiler and parser live in this workspace. Prefer that tree over
+# another checkout registered by an editable install, so the two cannot drift.
+_WORKSPACE_DATASETS = Path(__file__).resolve().parents[2] / "external" / "ipfs_datasets"
+if _WORKSPACE_DATASETS.is_dir():
+    _workspace_entry = str(_WORKSPACE_DATASETS)
+    if _workspace_entry in sys.path:
+        sys.path.remove(_workspace_entry)
+    sys.path.insert(0, _workspace_entry)
+
 from jevops import (
     autoencoder,
     autoresearch,

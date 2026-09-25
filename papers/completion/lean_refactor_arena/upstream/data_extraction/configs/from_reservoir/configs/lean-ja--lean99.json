@@ -1,0 +1,33 @@
+{
+    "repo": "https://github.com/lean-ja/lean99",
+    "commit": "229cb7be2972658a758d8d745c3269503183c567",
+    "lean": "leanprover/lean4:v4.13.0-rc4",
+    "name": "\u00ablean99\u00bb",
+    "imports": [
+        "\u00abSrc\u00bb"
+    ],
+    "metadata": {
+        "name": "lean99",
+        "owner": "lean-ja",
+        "fullName": "lean-ja/lean99",
+        "description": "These are Lean translations of Ninety-Nine Haskell Problems (WIP)",
+        "keywords": [],
+        "homepage": "https://lean-ja.github.io/lean99/",
+        "license": "Apache-2.0",
+        "createdAt": "2024-03-17T02:52:54Z",
+        "updatedAt": "2024-10-26T02:08:11Z",
+        "stars": 14,
+        "sources": [
+            {
+                "type": "git",
+                "host": "github",
+                "id": "R_kgDOLhY3Zg",
+                "fullName": "lean-ja/lean99",
+                "repoUrl": "https://github.com/lean-ja/lean99",
+                "gitUrl": "https://github.com/lean-ja/lean99",
+                "defaultBranch": "main"
+            }
+        ],
+        "schemaVersion": "1.2.0"
+    }
+}

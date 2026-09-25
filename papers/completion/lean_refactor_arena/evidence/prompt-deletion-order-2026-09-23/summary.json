@@ -1,0 +1,152 @@
+{
+  "schema": "jevops-refactor-deletion-order-summary/v1",
+  "date": "2026-09-23",
+  "plan_id": "53d77e0b542f89304a0864c3858b17468f58c4ff30790f7fc3201f432e576ed8",
+  "task": "Core.InitsUpdatesComm",
+  "status": "COMPLETE",
+  "task_split": "previously studied public warm-up, not held out",
+  "model_calls_attempted": 8,
+  "returned_responses": 7,
+  "infrastructure_failures": 1,
+  "retry_count": 0,
+  "model_fixture": false,
+  "fallback_used": false,
+  "by_arm": {
+    "before-forward": {
+      "attempts": 2,
+      "responses_returned": 2,
+      "strict_contract": 0,
+      "admitted_deletions": 0,
+      "outcomes": {
+        "output_truncated": 1,
+        "contract_mismatch": 1
+      }
+    },
+    "before-reverse": {
+      "attempts": 2,
+      "responses_returned": 1,
+      "strict_contract": 1,
+      "admitted_deletions": 0,
+      "outcomes": {
+        "edit_rejected": 1,
+        "generation_error": 1
+      }
+    },
+    "after-forward": {
+      "attempts": 2,
+      "responses_returned": 2,
+      "strict_contract": 2,
+      "admitted_deletions": 0,
+      "outcomes": {
+        "edit_rejected": 2
+      }
+    },
+    "after-reverse": {
+      "attempts": 2,
+      "responses_returned": 2,
+      "strict_contract": 2,
+      "admitted_deletions": 1,
+      "outcomes": {
+        "edit_rejected": 1,
+        "parsed": 1
+      }
+    }
+  },
+  "by_contract_position": {
+    "before": {
+      "attempts": 4,
+      "responses_returned": 3,
+      "strict_contract": 1,
+      "admitted_deletions": 0,
+      "outcomes": {
+        "output_truncated": 1,
+        "edit_rejected": 1,
+        "generation_error": 1,
+        "contract_mismatch": 1
+      }
+    },
+    "after": {
+      "attempts": 4,
+      "responses_returned": 4,
+      "strict_contract": 4,
+      "admitted_deletions": 1,
+      "outcomes": {
+        "edit_rejected": 3,
+        "parsed": 1
+      }
+    }
+  },
+  "by_span_order": {
+    "forward": {
+      "attempts": 4,
+      "responses_returned": 4,
+      "strict_contract": 2,
+      "admitted_deletions": 0,
+      "outcomes": {
+        "output_truncated": 1,
+        "edit_rejected": 2,
+        "contract_mismatch": 1
+      }
+    },
+    "reverse": {
+      "attempts": 4,
+      "responses_returned": 3,
+      "strict_contract": 3,
+      "admitted_deletions": 1,
+      "outcomes": {
+        "edit_rejected": 2,
+        "generation_error": 1,
+        "parsed": 1
+      }
+    }
+  },
+  "usage_observed_requests": 7,
+  "partial_observed_usage": {
+    "prompt_tokens": 19978,
+    "completion_tokens": 1231,
+    "total_tokens": 21209
+  },
+  "complete_generation_token_usage": null,
+  "missing_usage_reason": "slot 4 HTTP 500; do not treat missing consumption as zero",
+  "generation_request_wall_seconds_sum": 126.2877,
+  "native_requests": 4,
+  "native_processes": 4,
+  "native_outcomes": {
+    "VERIFIED": 3,
+    "REJECTED": 1,
+    "NOT_RUN_AFTER_NON_SUCCESS": 2
+  },
+  "native_request_wall_seconds_sum": 57.5837,
+  "all_pin_verified_candidates": [],
+  "verified_refactoring_improvements": 0,
+  "performance_confirmation_run": false,
+  "performance_selected": false,
+  "training": false,
+  "promotion": false,
+  "official_score": null,
+  "paid_api_cost": null,
+  "electricity_cost": null,
+  "snapshot_checks": {
+    "generation": "UNCHANGED",
+    "native": "UNCHANGED"
+  },
+  "snapshot_manifest_sha256": "7b15d0608071212d2cd915e26e90812741a9dae09f338ec7cfab634b48a16b8b",
+  "complete_source_snapshot": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/prompt-deletion-order-20260923-MqhR8i/snapshot",
+  "complete_source_snapshot_in_archive": false,
+  "tests": {
+    "passed": 257,
+    "deselected": 1,
+    "seconds": 14.93,
+    "scope": "targeted offline suite, real_kernel_checked excluded"
+  },
+  "interpretation": "Contract-last showed better format compliance in this small pilot, not verified refactoring quality.",
+  "limitations": [
+    "Eight requests on one previously studied task; greedy repetitions are not independent samples.",
+    "HTTP 500 leaves one outcome and token usage unavailable; no retry or semantic inference from it.",
+    "Only prompt presentation changed, not executable tactic or dependent hypothesis order.",
+    "Server model metadata is not independently attested.",
+    "Native execution used trusted-local scratch, not an OS sandbox.",
+    "Earlier system-contract pilot is not a matched control; no historical score comparison.",
+    "No trained policy, performance confirmation or official Arena score."
+  ]
+}

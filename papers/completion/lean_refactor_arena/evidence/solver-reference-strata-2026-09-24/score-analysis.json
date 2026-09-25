@@ -1,0 +1,244 @@
+{
+  "schema": "jevops-local-aggregate-analysis/v1",
+  "source_report_content_sha256": "b5e21120fca88311b2124d61a63f9a26bc35c97e724b8bfa63017d62c723204a",
+  "score_scope": "matched-local-primary-pin",
+  "official_score": null,
+  "proof_verified": false,
+  "fresh_native_processes": 0,
+  "statistical_significance_claimed": false,
+  "objective_ablation_scope": "reanalysis of the same recorded samples; not new verification or policy ablation",
+  "phases": {
+    "screen": {
+      "rows": {
+        "control": {
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "tokens": 222,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2607572,
+              2607574
+            ],
+            [
+              2607585,
+              2607585
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "historical-260": {
+          "label": "historical-260",
+          "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "tokens": 185,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2324397,
+              2324397
+            ],
+            [
+              2324410,
+              2324410
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "merged-simp-only": {
+          "label": "merged-simp-only",
+          "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "tokens": 190,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2049150,
+              2049154
+            ],
+            [
+              2049163,
+              2049163
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        }
+      },
+      "candidate": "merged-simp-only",
+      "comparisons": {
+        "original": {
+          "token_delta": -32,
+          "token_reduction_pct": 14.414414414414411,
+          "heartbeat_reduction_pct_by_order": [
+            21.415354431112764,
+            21.41529422818431
+          ],
+          "nominal_gain_pp_by_order": [
+            11.943256281842393,
+            11.943236214199576
+          ],
+          "conservative_gain_pp_by_order": [
+            11.94193686702049,
+            11.941957892176198
+          ]
+        },
+        "incumbent": {
+          "token_delta": 5,
+          "token_reduction_pct": -2.7027027027026973,
+          "heartbeat_reduction_pct_by_order": [
+            11.84156579104172,
+            11.84158560667008
+          ],
+          "nominal_gain_pp_by_order": [
+            2.767782894647991,
+            2.7677922689398824
+          ],
+          "conservative_gain_pp_by_order": [
+            2.7664776513323095,
+            2.766513946916503
+          ]
+        }
+      },
+      "selected_under_same_data": {
+        "pareto-v1": null,
+        "strict-dual-v1": null,
+        "aggregate-local-v1": "merged-simp-only"
+      }
+    },
+    "confirmation": {
+      "rows": {
+        "control": {
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "tokens": 222,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2607572,
+              2607578,
+              2607572
+            ],
+            [
+              2607589,
+              2607585,
+              2607585
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "historical-260": {
+          "label": "historical-260",
+          "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "tokens": 185,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2324397,
+              2324397,
+              2324397
+            ],
+            [
+              2324413,
+              2324410,
+              2324410
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "merged-simp-only": {
+          "label": "merged-simp-only",
+          "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "tokens": 190,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2049154,
+              2049151,
+              2049150
+            ],
+            [
+              2049163,
+              2049164,
+              2049163
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        }
+      },
+      "candidate": "merged-simp-only",
+      "comparisons": {
+        "original": {
+          "token_delta": -32,
+          "token_reduction_pct": 14.414414414414411,
+          "heartbeat_reduction_pct_by_order": [
+            21.415397351459,
+            21.415321627574112
+          ],
+          "nominal_gain_pp_by_order": [
+            11.94327058862447,
+            11.943245347329507
+          ],
+          "conservative_gain_pp_by_order": [
+            11.94192591872738,
+            11.941934160696396
+          ]
+        },
+        "incumbent": {
+          "token_delta": 5,
+          "token_reduction_pct": -2.7027027027026973,
+          "heartbeat_reduction_pct_by_order": [
+            11.841580131678597,
+            11.841609193325386
+          ],
+          "nominal_gain_pp_by_order": [
+            2.7677858063879706,
+            2.7677989919508543
+          ],
+          "conservative_gain_pp_by_order": [
+            2.766472255937192,
+            2.7664957682878453
+          ]
+        }
+      },
+      "selected_under_same_data": {
+        "pareto-v1": null,
+        "strict-dual-v1": null,
+        "aggregate-local-v1": "merged-simp-only"
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "pin": {
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+  },
+  "label": "edit-32",
+  "source_sha256": "7678af37c8be5c8d02e41190975d315fe0d6d0fa5c45f0cf0a5df59a6bc764d2",
+  "status": "REJECTED",
+  "context_id": "c05f2041328cf7cd0931ca56ae2c91af99ef4663915803d6dd2c39f6a0d3554e",
+  "receipt": {
+    "request_id": "708b3af8341856e5750138d6003cca09e3cd3c4509fcae5e5918e7cbd5e22434",
+    "candidate_sha256": "7678af37c8be5c8d02e41190975d315fe0d6d0fa5c45f0cf0a5df59a6bc764d2",
+    "target": "Core.InitsUpdatesComm",
+    "outcome": "REJECTED",
+    "type_preserved": false,
+    "exit_code": 0,
+    "axiom_output": "",
+    "heartbeats": null,
+    "reason": "candidate_errors",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"a07f22759ef3aa7cde70314cc088c5ee99a642ed1a58290a81058642231a79ae\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Case tag `update_none` not found.\\n\\nNote: There are no cases to select.\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":5695.49}"
+  },
+  "native_processes": 1,
+  "wall_seconds": 9.2152
+}

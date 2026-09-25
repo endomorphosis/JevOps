@@ -1,0 +1,16 @@
+*.jsonl
+.lake
+*.tar.gz
+out/
+instructions/
+Examples*/
+reservoir-index/
+Extracted
+.vscode
+*.olean
+/build
+/lake-packages/*
+.idea
+.DS_Store
+*.pyc
+/temp.lean

@@ -1,0 +1,22 @@
+{
+  "before": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/subgoal-retrieval-20260924-pIFJe9/snapshot",
+    "manifest_sha256": "9de896778e107601be7ae4295a535cfd3d9cdcd743a5b51add239be708edd0d5",
+    "content_root": "a80bedebcc4779b3fffdf77c2f3f25b1a8acbc4e340d174c858f7ec8ba4b917c",
+    "file_count": 242,
+    "bytes": 4994778,
+    "proof_verified": false
+  },
+  "after": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/subgoal-retrieval-20260924-pIFJe9/snapshot",
+    "manifest_sha256": "9de896778e107601be7ae4295a535cfd3d9cdcd743a5b51add239be708edd0d5",
+    "content_root": "a80bedebcc4779b3fffdf77c2f3f25b1a8acbc4e340d174c858f7ec8ba4b917c",
+    "file_count": 242,
+    "bytes": 4994778,
+    "proof_verified": false
+  }
+}

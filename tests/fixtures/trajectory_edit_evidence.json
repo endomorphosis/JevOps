@@ -1,0 +1,3778 @@
+{
+  "schema": "jevops-trajectory-evidence/v1",
+  "measured_on": "2026-09-22",
+  "checkpoint_file": "trajectory_edit_checkpoint.json",
+  "notes": [
+    "Pinned punctuation-aware tokenizer, not comparable to historical identifier-only synthetic token totals.",
+    "Shared structural families; not semantic-family decontamination.",
+    "Raw predictions receive no compiler repair or teacher input.",
+    "Teacher-path coverage is 18/18 steps; endpoint edit-label coverage is separately 10/14.",
+    "Reconstruction heads are frozen at initialization; unchanged operation CE is not reconstruction learning.",
+    "Arena inputs are known regressions, not unseen canaries. Matches 391 local best; no promotion or new high score.",
+    "Pinned-token run produced the identical state digest as the checkpoint used by the real arena evaluation."
+  ],
+  "raw_receipt_sha256": {
+    "pinned-distillation.json": "9ebe3beb8f9ce870be0792ce7c1627a463305c5801ba42cc6f26e61e2a16ad66",
+    "arena.json": "436f330f6c1ba179d1adf72a0cd5bfc5ad041eec0deed34213ab445d07a90783"
+  },
+  "synthetic": {
+    "schema": "jevops-verified-rewrite-distillation/v1",
+    "scope": "synthetic_structural_transfer_not_unseen_semantic_families_or_arena_score",
+    "split_policy": "content_disjoint_alpha_renamed_shared_structural_families",
+    "semantic_family_decontamination": false,
+    "ok": true,
+    "epochs": 40,
+    "fixture_seed": 20260923,
+    "manifest_sha256": "b5bea2ebd8cc463cf5725fd7b9b1298a5001ef9fbd9caabb4c6f7149fbdc3ed5",
+    "state_sha256": "d70bac84d9a58f09d29909d15a125b340221a1f8145c267f7480b79b170baf7b",
+    "extended_curriculum": true,
+    "compositional_holdout": true,
+    "trajectory_training": true,
+    "solver_feedback_enabled": true,
+    "tokenizer_id": "lra-local-ws-punct/v1",
+    "reconstruction_heads_unchanged": true,
+    "model_step": 480,
+    "rewrite_steps": 480,
+    "grammar": {
+      "added_templates": 9,
+      "template_count": 9,
+      "not_mined": [
+        "distill_train_lift_projection_303694:step:0"
+      ],
+      "before_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after_digest": "07398f0d0d34f1a8208eee1181c79e59c59209e4ced4c29377c7e961ff325ea5",
+      "requires_new_edit_ce_baseline": true
+    },
+    "config": {
+      "decay_steps": 1000,
+      "gradient_clip": 1.0,
+      "holdout_fraction": 0.1,
+      "label_smoothing": 0.02,
+      "learning_rate": 0.15,
+      "loss_weights": {
+        "cosine": 0.35,
+        "cross_entropy": 1.0,
+        "fuzzy_prover": 0.2,
+        "kl": 0.01,
+        "length": 0.03,
+        "minimality": 0.1,
+        "nca": 0.2,
+        "reconstruction": 0.8,
+        "reward": 0.5
+      },
+      "max_learning_rate": 0.25,
+      "max_ops": 32,
+      "train_binding_policy": false,
+      "train_rewrite_policy": true,
+      "freeze_reconstruction_heads": true,
+      "rewrite_max_edits": 4,
+      "min_learning_rate": 0.0005,
+      "plateau_factor": 0.5,
+      "plateau_patience": 2,
+      "beam_width": 4,
+      "seed": 17,
+      "temperature": 1.0,
+      "validation_fraction": 0.1,
+      "warmup_steps": 0,
+      "weight_decay": 0.0001,
+      "canary_fraction": 0.1
+    },
+    "train_ids": [
+      "distill_train_exact_local_547339:step:0",
+      "distill_train_terminal_alias_434286:step:0",
+      "distill_train_terminal_alias_434286:step:1",
+      "distill_train_constructor_pack_845876:step:0",
+      "distill_train_symmetry_318162:step:0",
+      "distill_train_symmetry_318162:step:1",
+      "distill_train_projection_383384:step:0",
+      "distill_train_lift_projection_303694:step:0",
+      "distill_train_application_183173:step:0",
+      "distill_train_eta_803321:step:0",
+      "distill_train_solver_arguments_739395:step:0",
+      "distill_train_solver_feedback_738428:step:0"
+    ],
+    "train_parent_ids": [
+      "distill_train_exact_local_547339",
+      "distill_train_terminal_alias_434286",
+      "distill_train_constructor_pack_845876",
+      "distill_train_symmetry_318162",
+      "distill_train_projection_383384",
+      "distill_train_lift_projection_303694",
+      "distill_train_application_183173",
+      "distill_train_eta_803321",
+      "distill_train_solver_arguments_739395",
+      "distill_train_solver_feedback_738428"
+    ],
+    "development_gates": {
+      "validation": {
+        "accepted": true,
+        "status": "semantic_scored",
+        "regressions": {},
+        "objective_delta": 0.8730053409826564
+      },
+      "canary": {
+        "accepted": true,
+        "status": "semantic_scored",
+        "regressions": {},
+        "objective_delta": 0.8730053409826564
+      }
+    },
+    "holdout_gate": {
+      "accepted": true,
+      "status": "semantic_scored",
+      "regressions": {},
+      "objective_delta": 0.7298756654653262
+    },
+    "holdout_valid": true,
+    "holdout_accessed_after_freeze": true,
+    "tuning_allowed_after_holdout": false,
+    "checkpoint_promoted": false,
+    "arena_data_used": false,
+    "live_llm_used": false,
+    "production_memory_used": false,
+    "before": {
+      "train": {
+        "trajectory_step_count": 12,
+        "trajectory_labeled_step_count": 12,
+        "trajectory_complete_examples": 10,
+        "trajectory_cross_entropy": 0.7607246985779726,
+        "trajectory_expected_cosine_loss": 0.3089673696546497,
+        "sample_count": 10,
+        "verified": 10,
+        "verified_shortening": 0,
+        "source_tokens": 71,
+        "prediction_tokens": 71,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 10,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.26539999999999997,
+        "reconstruction_loss": 0.2733333333333333,
+        "objective": 5.570203253485351,
+        "rewrite_cross_entropy": 0.7438303190734659,
+        "rewrite_expected_cosine_loss": 0.2662746775222399,
+        "rewrite_sample_count": 8
+      },
+      "validation": {
+        "trajectory_step_count": 12,
+        "trajectory_labeled_step_count": 12,
+        "trajectory_complete_examples": 10,
+        "trajectory_cross_entropy": 0.7607246985779726,
+        "trajectory_expected_cosine_loss": 0.3089673696546497,
+        "sample_count": 10,
+        "verified": 10,
+        "verified_shortening": 0,
+        "source_tokens": 71,
+        "prediction_tokens": 71,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 10,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.26539999999999997,
+        "reconstruction_loss": 0.2733333333333333,
+        "objective": 5.570203253485351,
+        "rewrite_cross_entropy": 0.7438303190734659,
+        "rewrite_expected_cosine_loss": 0.2662746775222399,
+        "rewrite_sample_count": 8
+      },
+      "canary": {
+        "trajectory_step_count": 12,
+        "trajectory_labeled_step_count": 12,
+        "trajectory_complete_examples": 10,
+        "trajectory_cross_entropy": 0.7607246985779726,
+        "trajectory_expected_cosine_loss": 0.3089673696546497,
+        "sample_count": 10,
+        "verified": 10,
+        "verified_shortening": 0,
+        "source_tokens": 71,
+        "prediction_tokens": 71,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 10,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.26539999999999997,
+        "reconstruction_loss": 0.2733333333333333,
+        "objective": 5.570203253485351,
+        "rewrite_cross_entropy": 0.7438303190734659,
+        "rewrite_expected_cosine_loss": 0.2662746775222399,
+        "rewrite_sample_count": 8
+      }
+    },
+    "after": {
+      "train": {
+        "trajectory_step_count": 12,
+        "trajectory_labeled_step_count": 12,
+        "trajectory_complete_examples": 10,
+        "trajectory_cross_entropy": 0.11685733637831992,
+        "trajectory_expected_cosine_loss": 0.05947339573612076,
+        "sample_count": 10,
+        "verified": 10,
+        "verified_shortening": 9,
+        "source_tokens": 71,
+        "prediction_tokens": 34,
+        "verified_saved_tokens": 37,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 10,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.45,
+        "reconstruction_loss": 0.03333333333333333,
+        "objective": 4.697197912502695,
+        "rewrite_cross_entropy": 0.1401390208356836,
+        "rewrite_expected_cosine_loss": 0.07898074040642018,
+        "rewrite_sample_count": 8
+      },
+      "validation": {
+        "trajectory_step_count": 12,
+        "trajectory_labeled_step_count": 12,
+        "trajectory_complete_examples": 10,
+        "trajectory_cross_entropy": 0.11685733637831992,
+        "trajectory_expected_cosine_loss": 0.05947339573612076,
+        "sample_count": 10,
+        "verified": 10,
+        "verified_shortening": 9,
+        "source_tokens": 71,
+        "prediction_tokens": 34,
+        "verified_saved_tokens": 37,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 10,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.45,
+        "reconstruction_loss": 0.03333333333333333,
+        "objective": 4.697197912502695,
+        "rewrite_cross_entropy": 0.1401390208356836,
+        "rewrite_expected_cosine_loss": 0.07898074040642018,
+        "rewrite_sample_count": 8
+      },
+      "canary": {
+        "trajectory_step_count": 12,
+        "trajectory_labeled_step_count": 12,
+        "trajectory_complete_examples": 10,
+        "trajectory_cross_entropy": 0.11685733637831992,
+        "trajectory_expected_cosine_loss": 0.05947339573612076,
+        "sample_count": 10,
+        "verified": 10,
+        "verified_shortening": 9,
+        "source_tokens": 71,
+        "prediction_tokens": 34,
+        "verified_saved_tokens": 37,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 10,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.45,
+        "reconstruction_loss": 0.03333333333333333,
+        "objective": 4.697197912502695,
+        "rewrite_cross_entropy": 0.1401390208356836,
+        "rewrite_expected_cosine_loss": 0.07898074040642018,
+        "rewrite_sample_count": 8
+      }
+    },
+    "zero_weight_ablation": {
+      "train": {
+        "trajectory_step_count": 12,
+        "trajectory_labeled_step_count": 12,
+        "trajectory_complete_examples": 10,
+        "trajectory_cross_entropy": 0.7607246985779726,
+        "trajectory_expected_cosine_loss": 0.3089673696546497,
+        "sample_count": 10,
+        "verified": 10,
+        "verified_shortening": 0,
+        "source_tokens": 71,
+        "prediction_tokens": 71,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 10,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.26539999999999997,
+        "reconstruction_loss": 0.2733333333333333,
+        "objective": 5.570203253485351,
+        "rewrite_cross_entropy": 0.7438303190734659,
+        "rewrite_expected_cosine_loss": 0.2662746775222399,
+        "rewrite_sample_count": 8
+      },
+      "validation": {
+        "trajectory_step_count": 12,
+        "trajectory_labeled_step_count": 12,
+        "trajectory_complete_examples": 10,
+        "trajectory_cross_entropy": 0.7607246985779726,
+        "trajectory_expected_cosine_loss": 0.3089673696546497,
+        "sample_count": 10,
+        "verified": 10,
+        "verified_shortening": 0,
+        "source_tokens": 71,
+        "prediction_tokens": 71,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 10,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.26539999999999997,
+        "reconstruction_loss": 0.2733333333333333,
+        "objective": 5.570203253485351,
+        "rewrite_cross_entropy": 0.7438303190734659,
+        "rewrite_expected_cosine_loss": 0.2662746775222399,
+        "rewrite_sample_count": 8
+      },
+      "canary": {
+        "trajectory_step_count": 12,
+        "trajectory_labeled_step_count": 12,
+        "trajectory_complete_examples": 10,
+        "trajectory_cross_entropy": 0.7607246985779726,
+        "trajectory_expected_cosine_loss": 0.3089673696546497,
+        "sample_count": 10,
+        "verified": 10,
+        "verified_shortening": 0,
+        "source_tokens": 71,
+        "prediction_tokens": 71,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 10,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.26539999999999997,
+        "reconstruction_loss": 0.2733333333333333,
+        "objective": 5.570203253485351,
+        "rewrite_cross_entropy": 0.7438303190734659,
+        "rewrite_expected_cosine_loss": 0.2662746775222399,
+        "rewrite_sample_count": 8
+      }
+    },
+    "holdout": {
+      "holdout": {
+        "trajectory_step_count": 18,
+        "trajectory_labeled_step_count": 18,
+        "trajectory_complete_examples": 14,
+        "trajectory_cross_entropy": 0.2867821803904296,
+        "trajectory_expected_cosine_loss": 0.047114964480100455,
+        "sample_count": 14,
+        "verified": 14,
+        "verified_shortening": 12,
+        "source_tokens": 111,
+        "prediction_tokens": 63,
+        "verified_saved_tokens": 48,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 14,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.43571428571428567,
+        "reconstruction_loss": 0.04421768707482993,
+        "objective": 4.677639117276369,
+        "rewrite_cross_entropy": 0.11833671759630107,
+        "rewrite_expected_cosine_loss": 0.06573327563328105,
+        "rewrite_sample_count": 10
+      }
+    },
+    "holdout_zero_weight_ablation": {
+      "holdout": {
+        "trajectory_step_count": 18,
+        "trajectory_labeled_step_count": 18,
+        "trajectory_complete_examples": 14,
+        "trajectory_cross_entropy": 0.8181732412185583,
+        "trajectory_expected_cosine_loss": 0.25565732614591336,
+        "sample_count": 14,
+        "verified": 14,
+        "verified_shortening": 0,
+        "source_tokens": 111,
+        "prediction_tokens": 111,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 14,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.2785,
+        "reconstruction_loss": 0.2507936507936508,
+        "objective": 5.407514782741695,
+        "rewrite_cross_entropy": 0.6643789733147673,
+        "rewrite_expected_cosine_loss": 0.2630197420177919,
+        "rewrite_sample_count": 10
+      }
+    },
+    "unique_compile_count": 134,
+    "rejected_compile_count": 20,
+    "holdout_predictions": [
+      {
+        "id": "distill_holdout_exact_local_76450",
+        "family": "exact_local",
+        "prediction": "theorem distill_holdout_exact_local_76450 (p_76450 : Prop) (h_76450 : p_76450) : p_76450 := by\n  assumption\n",
+        "prediction_sha256": "891b18e42af91d2571be26a17a9a7bf0e32d104144bd3a3f49d8ab4df5a87c1a",
+        "source_tokens": 2,
+        "prediction_tokens": 1,
+        "verified": true,
+        "verified_shortening": true,
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0.0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.06263944391355795,
+          "rewrite_expected_cosine_loss": 0.026098517081843433,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1.0,
+          "kl_loss": 0.0,
+          "length_penalty": 0.0,
+          "minimality_reward": 1.0,
+          "nca_loss": 0.0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.0,
+          "reward": 1.0,
+          "reward_loss": 0.0,
+          "total": 4.590579346745887,
+          "typesafe_reward": null,
+          "verifier_reward": 1.0
+        },
+        "trajectory": {
+          "step_count": 1,
+          "labeled_step_count": 1,
+          "complete": true,
+          "cross_entropy": 0.06263944391355795,
+          "expected_cosine_loss": 0.026098517081843433
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "f8f51701eac723ec901d",
+              "start": 0,
+              "probability": 0.9739014829181566,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_exact_local_76450"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_holdout_terminal_alias_48631",
+        "family": "terminal_alias",
+        "prediction": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  assumption\n",
+        "prediction_sha256": "59351e1bf82f17db4219521bf5f458e439dcff033b2af69d0bf2cd110808ba21",
+        "source_tokens": 9,
+        "prediction_tokens": 1,
+        "verified": true,
+        "verified_shortening": true,
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0.0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": null,
+          "rewrite_expected_cosine_loss": null,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1.0,
+          "kl_loss": 0.0,
+          "length_penalty": 0.0,
+          "minimality_reward": 1.0,
+          "nca_loss": 0.0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.0,
+          "reward": 1.0,
+          "reward_loss": 0.0,
+          "total": 4.518805421853684,
+          "typesafe_reward": null,
+          "verifier_reward": 1.0
+        },
+        "trajectory": {
+          "step_count": 2,
+          "labeled_step_count": 2,
+          "complete": true,
+          "cross_entropy": 0.07682789026899012,
+          "expected_cosine_loss": 0.0267209069848712
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "5688d83afec749b4b91f",
+              "start": 0,
+              "probability": 0.9626895341896947,
+              "choices": 3
+            },
+            {
+              "rule_id": "f8f51701eac723ec901d",
+              "start": 0,
+              "probability": 0.9739014829181566,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_terminal_alias_48631"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_holdout_constructor_pack_16582",
+        "family": "constructor_pack",
+        "prediction": "theorem distill_holdout_constructor_pack_16582 (p_16582 q_16582 : Prop) (h_16582 : p_16582) (k_16582 : q_16582) : p_16582 \u2227 q_16582 := by\n  exact \u27e8h_16582, k_16582\u27e9\n",
+        "prediction_sha256": "32773cba2fab4370e02d763ece004f66eef1e5a649e849b5c683ac4fcb934312",
+        "source_tokens": 7,
+        "prediction_tokens": 6,
+        "verified": true,
+        "verified_shortening": true,
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0.0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.0709082293302058,
+          "rewrite_expected_cosine_loss": 0.003991501231114814,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1.0,
+          "kl_loss": 0.0,
+          "length_penalty": 0.0,
+          "minimality_reward": 1.0,
+          "nca_loss": 0.0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.0,
+          "reward": 1.0,
+          "reward_loss": 0.0,
+          "total": 4.59111067661478,
+          "typesafe_reward": null,
+          "verifier_reward": 1.0
+        },
+        "trajectory": {
+          "step_count": 1,
+          "labeled_step_count": 1,
+          "complete": true,
+          "cross_entropy": 0.0709082293302058,
+          "expected_cosine_loss": 0.003991501231114814
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "226d10eec59f318c1e9c",
+              "start": 0,
+              "probability": 0.9621919576743324,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_constructor_pack_16582"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_holdout_symmetry_614767",
+        "family": "symmetry",
+        "prediction": "theorem distill_holdout_symmetry_614767 (p_614767 q_614767 : Nat) (h_614767 : p_614767 = q_614767) : p_614767 = q_614767 := by\n  assumption\n",
+        "prediction_sha256": "8ab8b5a7ff4faac24836fbb992285744817fef79aa94dd5309215237f58cf1d3",
+        "source_tokens": 6,
+        "prediction_tokens": 1,
+        "verified": true,
+        "verified_shortening": true,
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0.0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": null,
+          "rewrite_expected_cosine_loss": null,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1.0,
+          "kl_loss": 0.0,
+          "length_penalty": 0.0,
+          "minimality_reward": 1.0,
+          "nca_loss": 0.0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.0,
+          "reward": 1.0,
+          "reward_loss": 0.0,
+          "total": 4.518805421853684,
+          "typesafe_reward": null,
+          "verifier_reward": 1.0
+        },
+        "trajectory": {
+          "step_count": 2,
+          "labeled_step_count": 2,
+          "complete": true,
+          "cross_entropy": 0.06376004465819494,
+          "expected_cosine_loss": 0.014196505806172592
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "a19dfa0225f61b7113ee",
+              "start": 0,
+              "probability": 0.9641746137562582,
+              "choices": 2
+            },
+            {
+              "rule_id": "f8f51701eac723ec901d",
+              "start": 0,
+              "probability": 0.9821000010798194,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_symmetry_614767"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_holdout_projection_240161",
+        "family": "projection",
+        "prediction": "theorem distill_holdout_projection_240161 (p_240161 q_240161 : Prop) : p_240161 \u2227 q_240161 \u2192 p_240161 := by\n  simp_all\n",
+        "prediction_sha256": "8dc0bfde4e785795c39b175841dfb1abc7576b09b84276b630a07ee89cad0e1b",
+        "source_tokens": 6,
+        "prediction_tokens": 1,
+        "verified": true,
+        "verified_shortening": true,
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0.0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.37995176838828043,
+          "rewrite_expected_cosine_loss": 0.31063204430284674,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1.0,
+          "kl_loss": 0.0,
+          "length_penalty": 0.0,
+          "minimality_reward": 1.0,
+          "nca_loss": 0.0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.0,
+          "reward": 1.0,
+          "reward_loss": 0.0,
+          "total": 5.00747840574796,
+          "typesafe_reward": null,
+          "verifier_reward": 1.0
+        },
+        "trajectory": {
+          "step_count": 1,
+          "labeled_step_count": 1,
+          "complete": true,
+          "cross_entropy": 0.37995176838828043,
+          "expected_cosine_loss": 0.31063204430284674
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "f96a7acf7c2959514765",
+              "start": 0,
+              "probability": 0.6893679556971533,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_projection_240161"
+          ],
+          "axioms": [
+            "propext"
+          ],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_holdout_lift_projection_891716",
+        "family": "lift_projection",
+        "prediction": "theorem distill_holdout_lift_projection_891716 (p_891716 : Prop) : PLift p_891716 \u2192 p_891716 := by\n  intro h_891716\n  exact h_891716.1\n",
+        "prediction_sha256": "eca57719d9de04b830468e488a7ada8e2dbf6cca525b2435762ffe5e3d54092f",
+        "source_tokens": 6,
+        "prediction_tokens": 6,
+        "verified": true,
+        "verified_shortening": false,
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0.0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.3027725395006561,
+          "rewrite_expected_cosine_loss": 0.25319882982889685,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1.0,
+          "kl_loss": 0.0,
+          "length_penalty": 0.0,
+          "minimality_reward": 1.0,
+          "nca_loss": 0.0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.0,
+          "reward": 1.0,
+          "reward_loss": 0.0,
+          "total": 4.910197551794454,
+          "typesafe_reward": null,
+          "verifier_reward": 1.0
+        },
+        "trajectory": {
+          "step_count": 1,
+          "labeled_step_count": 1,
+          "complete": true,
+          "cross_entropy": 0.3027725395006561,
+          "expected_cosine_loss": 0.25319882982889685
+        },
+        "rewrite_policy": {
+          "trace": [],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_lift_projection_891716"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_holdout_application_530167",
+        "family": "application",
+        "prediction": "theorem distill_holdout_application_530167 (p_530167 q_530167 : Prop) (k_530167 : p_530167 \u2192 q_530167) (h_530167 : p_530167) : q_530167 := by\n  exact k_530167 h_530167\n",
+        "prediction_sha256": "5c25cf6a2af2f6596e4287867abe92856010b5cd9f8744c75abe69984a9816dd",
+        "source_tokens": 4,
+        "prediction_tokens": 3,
+        "verified": true,
+        "verified_shortening": true,
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0.0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.09107511409887337,
+          "rewrite_expected_cosine_loss": 0.02737769008055229,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1.0,
+          "kl_loss": 0.0,
+          "length_penalty": 0.0,
+          "minimality_reward": 1.0,
+          "nca_loss": 0.0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.0,
+          "reward": 1.0,
+          "reward_loss": 0.0,
+          "total": 4.619462727480751,
+          "typesafe_reward": null,
+          "verifier_reward": 1.0
+        },
+        "trajectory": {
+          "step_count": 1,
+          "labeled_step_count": 1,
+          "complete": true,
+          "cross_entropy": 0.09107511409887337,
+          "expected_cosine_loss": 0.02737769008055229
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "39d1342dbcd8121e89fc",
+              "start": 0,
+              "probability": 0.962585171822096,
+              "choices": 3
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_application_530167"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_holdout_eta_884431",
+        "family": "eta",
+        "prediction": "theorem distill_holdout_eta_884431 (p_884431 q_884431 : Prop) (k_884431 : p_884431 \u2192 q_884431) : p_884431 \u2192 q_884431 := by\n  assumption\n",
+        "prediction_sha256": "9a2d59e3ade26a005666ff8ccb36b6b1dc060e2d022d417a9a12dccb0a54fbca",
+        "source_tokens": 5,
+        "prediction_tokens": 1,
+        "verified": true,
+        "verified_shortening": true,
+        "loss": {
+          "cosine_loss": 1.0,
+          "cosine_similarity": 0.0,
+          "copy_penalty": 0.0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.06954785499452751,
+          "rewrite_expected_cosine_loss": 0.01054734072610738,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 0.0,
+          "kl_loss": 0.0,
+          "length_penalty": 0.0,
+          "minimality_reward": 1.0,
+          "nca_loss": 0.0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.3333333333333333,
+          "reward": 1.0,
+          "reward_loss": 0.0,
+          "total": 5.033711512769015,
+          "typesafe_reward": null,
+          "verifier_reward": 1.0
+        },
+        "trajectory": {
+          "step_count": 1,
+          "labeled_step_count": 1,
+          "complete": true,
+          "cross_entropy": 0.06954785499452751,
+          "expected_cosine_loss": 0.01054734072610738
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "69f0c33a6916cde43b90",
+              "start": 0,
+              "probability": 0.9639891262459542,
+              "choices": 2
+            },
+            {
+              "rule_id": "f8f51701eac723ec901d",
+              "start": 0,
+              "probability": 0.9739014829181566,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_eta_884431"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_holdout_solver_arguments_193804",
+        "family": "solver_arguments",
+        "prediction": "theorem distill_holdout_solver_arguments_193804 (p_193804 : Nat) : 0 + p_193804 = p_193804 := by\n  simp only [Nat.zero_add]\n",
+        "prediction_sha256": "e4b93aa9b72e3067de9d86825d402b74a107409b99ae17a836d29dacf54684b2",
+        "source_tokens": 11,
+        "prediction_tokens": 7,
+        "verified": true,
+        "verified_shortening": true,
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0.0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.07209272915755956,
+          "rewrite_expected_cosine_loss": 0.0,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1.0,
+          "kl_loss": 0.0,
+          "length_penalty": 0.0,
+          "minimality_reward": 1.0,
+          "nca_loss": 0.0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.0,
+          "reward": 1.0,
+          "reward_loss": 0.0,
+          "total": 4.590898151011244,
+          "typesafe_reward": null,
+          "verifier_reward": 1.0
+        },
+        "trajectory": {
+          "step_count": 1,
+          "labeled_step_count": 1,
+          "complete": true,
+          "cross_entropy": 0.07209272915755956,
+          "expected_cosine_loss": 0.0
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "bbd0ccb7041befe20772",
+              "start": 0,
+              "probability": 0.9606545759406683,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_solver_arguments_193804"
+          ],
+          "axioms": [
+            "propext"
+          ],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "distill_holdout_solver_feedback_657638",
+        "family": "solver_feedback",
+        "prediction": "theorem distill_holdout_solver_feedback_657638 (p_657638 : Nat) : 0 + p_657638 = p_657638 := by\n  simp only [Nat.zero_add]\n",
+        "prediction_sha256": "84f68aa64b00f0cc49223bc62ae3fcd902005b9e032948f95aee2046649d40ce",
+        "source_tokens": 15,
+        "prediction_tokens": 7,
+        "verified": true,
+        "verified_shortening": true,
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0.0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.07212448730180822,
+          "rewrite_expected_cosine_loss": 0.0,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1.0,
+          "kl_loss": 0.0,
+          "length_penalty": 0.0,
+          "minimality_reward": 1.0,
+          "nca_loss": 0.0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.0,
+          "reward": 1.0,
+          "reward_loss": 0.0,
+          "total": 4.590929909155492,
+          "typesafe_reward": null,
+          "verifier_reward": 1.0
+        },
+        "trajectory": {
+          "step_count": 1,
+          "labeled_step_count": 1,
+          "complete": true,
+          "cross_entropy": 0.07212448730180822,
+          "expected_cosine_loss": 0.0
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "0b8678beee9e32fa8ff5",
+              "start": 0,
+              "probability": 0.9606136790666464,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_solver_feedback_657638"
+          ],
+          "axioms": [
+            "propext"
+          ],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "transfer_holdout_composed_application_265235",
+        "family": "composed_application",
+        "prediction": "theorem transfer_holdout_composed_application_265235 (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) (h_265235 : p_265235) : q_265235 \u2227 q_265235 := by\n  constructor\n  case left =>\n    exact f_265235 h_265235\n  case right =>\n    exact f_265235 h_265235\n",
+        "prediction_sha256": "19421ee3958e5d32766f053e2c248a00e175033ea18dd5c1ba375525539c7626",
+        "source_tokens": 17,
+        "prediction_tokens": 15,
+        "verified": true,
+        "verified_shortening": true,
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0.0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": null,
+          "rewrite_expected_cosine_loss": null,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1.0,
+          "kl_loss": 0.0,
+          "length_penalty": 0.0,
+          "minimality_reward": 1.0,
+          "nca_loss": 0.0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.0,
+          "reward": 1.0,
+          "reward_loss": 0.0,
+          "total": 4.518805421853684,
+          "typesafe_reward": null,
+          "verifier_reward": 1.0
+        },
+        "trajectory": {
+          "step_count": 2,
+          "labeled_step_count": 2,
+          "complete": true,
+          "cross_entropy": 0.9855797905633121,
+          "expected_cosine_loss": 0.028888493951743227
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "39d1342dbcd8121e89fc",
+              "start": 5,
+              "probability": 0.6878112778996579,
+              "choices": 5
+            },
+            {
+              "rule_id": "39d1342dbcd8121e89fc",
+              "start": 2,
+              "probability": 0.6897659927368588,
+              "choices": 3
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "transfer_holdout_composed_application_265235"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "transfer_holdout_composed_eta_265235",
+        "family": "composed_eta",
+        "prediction": "theorem transfer_holdout_composed_eta_265235 (b : Bool) (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) : p_265235 \u2192 q_265235 := by\n  cases b\n  case false =>\n    assumption\n  case true =>\n    assumption\n",
+        "prediction_sha256": "796f121c6846374a88fff0dbe83ebf066fe8c7d3bde3282aabe90c6a15f7f7ed",
+        "source_tokens": 20,
+        "prediction_tokens": 12,
+        "verified": true,
+        "verified_shortening": true,
+        "loss": {
+          "cosine_loss": 0.9,
+          "cosine_similarity": 0.1,
+          "copy_penalty": 0.0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": null,
+          "rewrite_expected_cosine_loss": null,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 0.0,
+          "kl_loss": 0.0,
+          "length_penalty": 0.0,
+          "minimality_reward": 1.0,
+          "nca_loss": 0.0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.2857142857142857,
+          "reward": 1.0,
+          "reward_loss": 0.0,
+          "total": 4.887376850425113,
+          "typesafe_reward": null,
+          "verifier_reward": 1.0
+        },
+        "trajectory": {
+          "step_count": 2,
+          "labeled_step_count": 2,
+          "complete": true,
+          "cross_entropy": 0.863188310041864,
+          "expected_cosine_loss": 0.025562395411711868
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "69f0c33a6916cde43b90",
+              "start": 5,
+              "probability": 0.691545663341646,
+              "choices": 3
+            },
+            {
+              "rule_id": "69f0c33a6916cde43b90",
+              "start": 2,
+              "probability": 0.4483665974717121,
+              "choices": 3
+            },
+            {
+              "rule_id": "f8f51701eac723ec901d",
+              "start": 4,
+              "probability": 0.531074545658556,
+              "choices": 3
+            },
+            {
+              "rule_id": "f8f51701eac723ec901d",
+              "start": 2,
+              "probability": 0.57747770290692,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "transfer_holdout_composed_eta_265235"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "transfer_holdout_new_equality_context_265235",
+        "family": "new_equality_context",
+        "prediction": "theorem transfer_holdout_new_equality_context_265235 (p_265235 q_265235 : Int) (h_265235 : p_265235 = q_265235) : p_265235 = q_265235 := by\n  assumption\n",
+        "prediction_sha256": "4b2c460cdfd8590e68f7c7c04d176e3ace6a53a9d6e8a301c62515b3f996a2d4",
+        "source_tokens": 2,
+        "prediction_tokens": 1,
+        "verified": true,
+        "verified_shortening": true,
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0.0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.06225500927754177,
+          "rewrite_expected_cosine_loss": 0.025486833081448883,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1.0,
+          "kl_loss": 0.0,
+          "length_penalty": 0.0,
+          "minimality_reward": 1.0,
+          "nca_loss": 0.0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.0,
+          "reward": 1.0,
+          "reward_loss": 0.0,
+          "total": 4.589980822709733,
+          "typesafe_reward": null,
+          "verifier_reward": 1.0
+        },
+        "trajectory": {
+          "step_count": 1,
+          "labeled_step_count": 1,
+          "complete": true,
+          "cross_entropy": 0.06225500927754177,
+          "expected_cosine_loss": 0.025486833081448883
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "f8f51701eac723ec901d",
+              "start": 0,
+              "probability": 0.9745131669185512,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "transfer_holdout_new_equality_context_265235"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      },
+      {
+        "id": "transfer_holdout_new_identity_control_265235",
+        "family": "new_identity_control",
+        "prediction": "theorem transfer_holdout_new_identity_control_265235 (p_265235 : Nat) : p_265235 = p_265235 := by\n  rfl\n",
+        "prediction_sha256": "8fb529559cab2f4d3137be95ad9280dcf2124e27666ef7ed57162336815a6e81",
+        "source_tokens": 1,
+        "prediction_tokens": 1,
+        "verified": true,
+        "verified_shortening": false,
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0.0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.0,
+          "rewrite_expected_cosine_loss": 0.0,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1.0,
+          "kl_loss": 0.0,
+          "length_penalty": 0.0,
+          "minimality_reward": 1.0,
+          "nca_loss": 0.0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.0,
+          "reward": 1.0,
+          "reward_loss": 0.0,
+          "total": 4.518805421853684,
+          "typesafe_reward": null,
+          "verifier_reward": 1.0
+        },
+        "trajectory": {
+          "step_count": 1,
+          "labeled_step_count": 1,
+          "complete": true,
+          "cross_entropy": 0.0,
+          "expected_cosine_loss": 0.0
+        },
+        "rewrite_policy": {
+          "trace": [],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "transfer_holdout_new_identity_control_265235"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      }
+    ],
+    "teachers": [
+      {
+        "id": "distill_train_exact_local_547339",
+        "split": "train",
+        "family": "exact_local",
+        "source": "theorem distill_train_exact_local_547339 (p_547339 : Prop) (h_547339 : p_547339) : p_547339 := by\n  exact h_547339\n",
+        "target": "theorem distill_train_exact_local_547339 (p_547339 : Prop) (h_547339 : p_547339) : p_547339 := by\n  assumption\n",
+        "source_tokens": 2,
+        "target_tokens": 1,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_train_exact_local_547339"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "rewrite_transport",
+            "kind": "exact_to_assumption",
+            "before_tokens": 2,
+            "before_source": "theorem distill_train_exact_local_547339 (p_547339 : Prop) (h_547339 : p_547339) : p_547339 := by\n  exact h_547339\n",
+            "after_source": "theorem distill_train_exact_local_547339 (p_547339 : Prop) (h_547339 : p_547339) : p_547339 := by\n  assumption\n",
+            "after_tokens": 1,
+            "source_sha256": "0b5bd3a906fcd9aba7961d78526b7bed1a8999d298e973fa77c18795650cdca2",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_train_exact_local_547339"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_train_terminal_alias_434286",
+        "split": "train",
+        "family": "terminal_alias",
+        "source": "theorem distill_train_terminal_alias_434286 (p_434286 : Prop) (h_434286 : p_434286) : p_434286 := by\n  have alias_434286 : p_434286 := h_434286\n  exact alias_434286\n",
+        "target": "theorem distill_train_terminal_alias_434286 (p_434286 : Prop) (h_434286 : p_434286) : p_434286 := by\n  assumption\n",
+        "source_tokens": 9,
+        "target_tokens": 1,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_train_terminal_alias_434286"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "local_alias_reduce",
+            "kind": "terminal_alias",
+            "before_tokens": 9,
+            "before_source": "theorem distill_train_terminal_alias_434286 (p_434286 : Prop) (h_434286 : p_434286) : p_434286 := by\n  have alias_434286 : p_434286 := h_434286\n  exact alias_434286\n",
+            "after_source": "theorem distill_train_terminal_alias_434286 (p_434286 : Prop) (h_434286 : p_434286) : p_434286 := by\n  exact h_434286\n",
+            "after_tokens": 2,
+            "source_sha256": "2ac8acc10f8839898a71799124a1c1eeacbd6dfa1a39a7253605aab83101eb38",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_train_terminal_alias_434286"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          },
+          {
+            "strategy": "rewrite_transport",
+            "kind": "exact_to_assumption",
+            "before_tokens": 2,
+            "before_source": "theorem distill_train_terminal_alias_434286 (p_434286 : Prop) (h_434286 : p_434286) : p_434286 := by\n  exact h_434286\n",
+            "after_source": "theorem distill_train_terminal_alias_434286 (p_434286 : Prop) (h_434286 : p_434286) : p_434286 := by\n  assumption\n",
+            "after_tokens": 1,
+            "source_sha256": "42d66a7a54a18217a4699506f933f2cb9bc484e62d27c9fa6e680bad02bf2d60",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_train_terminal_alias_434286"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_train_constructor_pack_845876",
+        "split": "train",
+        "family": "constructor_pack",
+        "source": "theorem distill_train_constructor_pack_845876 (p_845876 q_845876 : Prop) (h_845876 : p_845876) (k_845876 : q_845876) : p_845876 \u2227 q_845876 := by\n  constructor\n  \u00b7 exact h_845876\n  \u00b7 exact k_845876\n",
+        "target": "theorem distill_train_constructor_pack_845876 (p_845876 q_845876 : Prop) (h_845876 : p_845876) (k_845876 : q_845876) : p_845876 \u2227 q_845876 := by\n  exact \u27e8h_845876, k_845876\u27e9\n",
+        "source_tokens": 7,
+        "target_tokens": 6,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_train_constructor_pack_845876"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "structural_reduce",
+            "kind": "fold_ctor_pair_exacts",
+            "before_tokens": 7,
+            "before_source": "theorem distill_train_constructor_pack_845876 (p_845876 q_845876 : Prop) (h_845876 : p_845876) (k_845876 : q_845876) : p_845876 \u2227 q_845876 := by\n  constructor\n  \u00b7 exact h_845876\n  \u00b7 exact k_845876\n",
+            "after_source": "theorem distill_train_constructor_pack_845876 (p_845876 q_845876 : Prop) (h_845876 : p_845876) (k_845876 : q_845876) : p_845876 \u2227 q_845876 := by\n  exact \u27e8h_845876, k_845876\u27e9\n",
+            "after_tokens": 6,
+            "source_sha256": "c401f4dbbe37032d4ffbfdb448e583482acbe73ca7b4dfbe8a5f34c1dbc964e1",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_train_constructor_pack_845876"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_train_symmetry_318162",
+        "split": "train",
+        "family": "symmetry",
+        "source": "theorem distill_train_symmetry_318162 (p_318162 q_318162 : Nat) (h_318162 : p_318162 = q_318162) : p_318162 = q_318162 := by\n  symm\n  exact Eq.symm h_318162\n",
+        "target": "theorem distill_train_symmetry_318162 (p_318162 q_318162 : Nat) (h_318162 : p_318162 = q_318162) : p_318162 = q_318162 := by\n  assumption\n",
+        "source_tokens": 6,
+        "target_tokens": 1,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_train_symmetry_318162"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "symmetry_reduce",
+            "kind": "symmetry_transport",
+            "before_tokens": 6,
+            "before_source": "theorem distill_train_symmetry_318162 (p_318162 q_318162 : Nat) (h_318162 : p_318162 = q_318162) : p_318162 = q_318162 := by\n  symm\n  exact Eq.symm h_318162\n",
+            "after_source": "theorem distill_train_symmetry_318162 (p_318162 q_318162 : Nat) (h_318162 : p_318162 = q_318162) : p_318162 = q_318162 := by\n  exact h_318162\n",
+            "after_tokens": 2,
+            "source_sha256": "ca76164808fad38bb9427864f477842edf0f49b24b6d47909c9ba7f50663079f",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_train_symmetry_318162"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          },
+          {
+            "strategy": "rewrite_transport",
+            "kind": "exact_to_assumption",
+            "before_tokens": 2,
+            "before_source": "theorem distill_train_symmetry_318162 (p_318162 q_318162 : Nat) (h_318162 : p_318162 = q_318162) : p_318162 = q_318162 := by\n  exact h_318162\n",
+            "after_source": "theorem distill_train_symmetry_318162 (p_318162 q_318162 : Nat) (h_318162 : p_318162 = q_318162) : p_318162 = q_318162 := by\n  assumption\n",
+            "after_tokens": 1,
+            "source_sha256": "6928d68f0cd6fe34cea796992584cdb46bfe385669c25266b0b3af9552f66800",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_train_symmetry_318162"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_train_projection_383384",
+        "split": "train",
+        "family": "projection",
+        "source": "theorem distill_train_projection_383384 (p_383384 q_383384 : Prop) : p_383384 \u2227 q_383384 \u2192 p_383384 := by\n  intro h_383384\n  exact h_383384.1\n",
+        "target": "theorem distill_train_projection_383384 (p_383384 q_383384 : Prop) : p_383384 \u2227 q_383384 \u2192 p_383384 := by\n  simp_all\n",
+        "source_tokens": 6,
+        "target_tokens": 1,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_train_projection_383384"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "logic_simp",
+            "kind": "logic_simp_0",
+            "before_tokens": 6,
+            "before_source": "theorem distill_train_projection_383384 (p_383384 q_383384 : Prop) : p_383384 \u2227 q_383384 \u2192 p_383384 := by\n  intro h_383384\n  exact h_383384.1\n",
+            "after_source": "theorem distill_train_projection_383384 (p_383384 q_383384 : Prop) : p_383384 \u2227 q_383384 \u2192 p_383384 := by\n  simp_all\n",
+            "after_tokens": 1,
+            "source_sha256": "bce791e40aaa864f827faf6bca16832d27910d354b7a8c0d0730745c7016ea70",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_train_projection_383384"
+                ],
+                "axioms": [
+                  "propext"
+                ],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_train_lift_projection_303694",
+        "split": "train",
+        "family": "lift_projection",
+        "source": "theorem distill_train_lift_projection_303694 (p_303694 : Prop) : PLift p_303694 \u2192 p_303694 := by\n  intro h_303694\n  exact h_303694.1\n",
+        "target": "theorem distill_train_lift_projection_303694 (p_303694 : Prop) : PLift p_303694 \u2192 p_303694 := by\n  intro h_303694\n  exact h_303694.1\n",
+        "source_tokens": 6,
+        "target_tokens": 6,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_train_lift_projection_303694"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": []
+      },
+      {
+        "id": "distill_train_application_183173",
+        "split": "train",
+        "family": "application",
+        "source": "theorem distill_train_application_183173 (p_183173 q_183173 : Prop) (k_183173 : p_183173 \u2192 q_183173) (h_183173 : p_183173) : q_183173 := by\n  apply k_183173\n  exact h_183173\n",
+        "target": "theorem distill_train_application_183173 (p_183173 q_183173 : Prop) (k_183173 : p_183173 \u2192 q_183173) (h_183173 : p_183173) : q_183173 := by\n  exact k_183173 h_183173\n",
+        "source_tokens": 4,
+        "target_tokens": 3,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_train_application_183173"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "application_reduce",
+            "kind": "application_reduce",
+            "before_tokens": 4,
+            "before_source": "theorem distill_train_application_183173 (p_183173 q_183173 : Prop) (k_183173 : p_183173 \u2192 q_183173) (h_183173 : p_183173) : q_183173 := by\n  apply k_183173\n  exact h_183173\n",
+            "after_source": "theorem distill_train_application_183173 (p_183173 q_183173 : Prop) (k_183173 : p_183173 \u2192 q_183173) (h_183173 : p_183173) : q_183173 := by\n  exact k_183173 h_183173\n",
+            "after_tokens": 3,
+            "source_sha256": "d1f492c3f9fc8eca3da7794a5ca5003373e29901e408189391610869f7b65d8d",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_train_application_183173"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_train_eta_803321",
+        "split": "train",
+        "family": "eta",
+        "source": "theorem distill_train_eta_803321 (p_803321 q_803321 : Prop) (k_803321 : p_803321 \u2192 q_803321) : p_803321 \u2192 q_803321 := by\n  intro h_803321\n  exact k_803321 h_803321\n",
+        "target": "theorem distill_train_eta_803321 (p_803321 q_803321 : Prop) (k_803321 : p_803321 \u2192 q_803321) : p_803321 \u2192 q_803321 := by\n  exact k_803321\n",
+        "source_tokens": 5,
+        "target_tokens": 2,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_train_eta_803321"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "eta_reduce",
+            "kind": "eta_reduce",
+            "before_tokens": 5,
+            "before_source": "theorem distill_train_eta_803321 (p_803321 q_803321 : Prop) (k_803321 : p_803321 \u2192 q_803321) : p_803321 \u2192 q_803321 := by\n  intro h_803321\n  exact k_803321 h_803321\n",
+            "after_source": "theorem distill_train_eta_803321 (p_803321 q_803321 : Prop) (k_803321 : p_803321 \u2192 q_803321) : p_803321 \u2192 q_803321 := by\n  exact k_803321\n",
+            "after_tokens": 2,
+            "source_sha256": "5b7dd71ab80a6d9a43ef9d836118caae06454332ab1e994e81bcc1705c6d4fd2",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_train_eta_803321"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_train_solver_arguments_739395",
+        "split": "train",
+        "family": "solver_arguments",
+        "source": "theorem distill_train_solver_arguments_739395 (p_739395 : Nat) : 0 + p_739395 = p_739395 := by\n  simp only [Nat.zero_add, Nat.add_zero]\n",
+        "target": "theorem distill_train_solver_arguments_739395 (p_739395 : Nat) : 0 + p_739395 = p_739395 := by\n  simp only [Nat.zero_add]\n",
+        "source_tokens": 11,
+        "target_tokens": 7,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_train_solver_arguments_739395"
+            ],
+            "axioms": [
+              "propext"
+            ],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "solver_argument_reduce",
+            "kind": "solver_argument_delete",
+            "before_tokens": 11,
+            "before_source": "theorem distill_train_solver_arguments_739395 (p_739395 : Nat) : 0 + p_739395 = p_739395 := by\n  simp only [Nat.zero_add, Nat.add_zero]\n",
+            "after_source": "theorem distill_train_solver_arguments_739395 (p_739395 : Nat) : 0 + p_739395 = p_739395 := by\n  simp only [Nat.zero_add]\n",
+            "after_tokens": 7,
+            "source_sha256": "527e9803da3edf6bfa47fb7cbb7a508de776790f37a975130d3e5c05a48c3913",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_train_solver_arguments_739395"
+                ],
+                "axioms": [
+                  "propext"
+                ],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_train_solver_feedback_738428",
+        "split": "train",
+        "family": "solver_feedback",
+        "source": "theorem distill_train_solver_feedback_738428 (p_738428 : Nat) : 0 + p_738428 = p_738428 := by\n  simp only [Nat.zero_add, Nat.add_zero, Nat.mul_one]\n",
+        "target": "theorem distill_train_solver_feedback_738428 (p_738428 : Nat) : 0 + p_738428 = p_738428 := by\n  simp only [Nat.zero_add]\n",
+        "source_tokens": 15,
+        "target_tokens": 7,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_train_solver_feedback_738428"
+            ],
+            "axioms": [
+              "propext"
+            ],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "round": 0,
+            "before_source": "theorem distill_train_solver_feedback_738428 (p_738428 : Nat) : 0 + p_738428 = p_738428 := by\n  simp only [Nat.zero_add, Nat.add_zero, Nat.mul_one]\n",
+            "after_source": "theorem distill_train_solver_feedback_738428 (p_738428 : Nat) : 0 + p_738428 = p_738428 := by\n  simp only [Nat.zero_add]\n",
+            "before_tokens": 15,
+            "after_tokens": 7,
+            "probe_sha256": "23b2aa6c02f7f602ed80820a9ddf21a54e0da38ecdedaa5a04d379dc114ad5bf",
+            "line": 2,
+            "tactic": "simp",
+            "suggestion": "simp only [Nat.zero_add]",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_train_solver_feedback_738428"
+                ],
+                "axioms": [
+                  "propext"
+                ],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            },
+            "strategy": "solver_feedback",
+            "kind": "solver_suggestion"
+          }
+        ]
+      },
+      {
+        "id": "distill_holdout_exact_local_76450",
+        "split": "holdout",
+        "family": "exact_local",
+        "source": "theorem distill_holdout_exact_local_76450 (p_76450 : Prop) (h_76450 : p_76450) : p_76450 := by\n  exact h_76450\n",
+        "target": "theorem distill_holdout_exact_local_76450 (p_76450 : Prop) (h_76450 : p_76450) : p_76450 := by\n  assumption\n",
+        "source_tokens": 2,
+        "target_tokens": 1,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_holdout_exact_local_76450"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "rewrite_transport",
+            "kind": "exact_to_assumption",
+            "before_tokens": 2,
+            "before_source": "theorem distill_holdout_exact_local_76450 (p_76450 : Prop) (h_76450 : p_76450) : p_76450 := by\n  exact h_76450\n",
+            "after_source": "theorem distill_holdout_exact_local_76450 (p_76450 : Prop) (h_76450 : p_76450) : p_76450 := by\n  assumption\n",
+            "after_tokens": 1,
+            "source_sha256": "891b18e42af91d2571be26a17a9a7bf0e32d104144bd3a3f49d8ab4df5a87c1a",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_holdout_exact_local_76450"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_holdout_terminal_alias_48631",
+        "split": "holdout",
+        "family": "terminal_alias",
+        "source": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  have alias_48631 : p_48631 := h_48631\n  exact alias_48631\n",
+        "target": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  assumption\n",
+        "source_tokens": 9,
+        "target_tokens": 1,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_holdout_terminal_alias_48631"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "local_alias_reduce",
+            "kind": "terminal_alias",
+            "before_tokens": 9,
+            "before_source": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  have alias_48631 : p_48631 := h_48631\n  exact alias_48631\n",
+            "after_source": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  exact h_48631\n",
+            "after_tokens": 2,
+            "source_sha256": "563be4315747a6c43292b3b18fcdcd87e705a251fe051222086ed4be5040ec41",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_holdout_terminal_alias_48631"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          },
+          {
+            "strategy": "rewrite_transport",
+            "kind": "exact_to_assumption",
+            "before_tokens": 2,
+            "before_source": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  exact h_48631\n",
+            "after_source": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  assumption\n",
+            "after_tokens": 1,
+            "source_sha256": "59351e1bf82f17db4219521bf5f458e439dcff033b2af69d0bf2cd110808ba21",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_holdout_terminal_alias_48631"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_holdout_constructor_pack_16582",
+        "split": "holdout",
+        "family": "constructor_pack",
+        "source": "theorem distill_holdout_constructor_pack_16582 (p_16582 q_16582 : Prop) (h_16582 : p_16582) (k_16582 : q_16582) : p_16582 \u2227 q_16582 := by\n  constructor\n  \u00b7 exact h_16582\n  \u00b7 exact k_16582\n",
+        "target": "theorem distill_holdout_constructor_pack_16582 (p_16582 q_16582 : Prop) (h_16582 : p_16582) (k_16582 : q_16582) : p_16582 \u2227 q_16582 := by\n  exact \u27e8h_16582, k_16582\u27e9\n",
+        "source_tokens": 7,
+        "target_tokens": 6,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_holdout_constructor_pack_16582"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "structural_reduce",
+            "kind": "fold_ctor_pair_exacts",
+            "before_tokens": 7,
+            "before_source": "theorem distill_holdout_constructor_pack_16582 (p_16582 q_16582 : Prop) (h_16582 : p_16582) (k_16582 : q_16582) : p_16582 \u2227 q_16582 := by\n  constructor\n  \u00b7 exact h_16582\n  \u00b7 exact k_16582\n",
+            "after_source": "theorem distill_holdout_constructor_pack_16582 (p_16582 q_16582 : Prop) (h_16582 : p_16582) (k_16582 : q_16582) : p_16582 \u2227 q_16582 := by\n  exact \u27e8h_16582, k_16582\u27e9\n",
+            "after_tokens": 6,
+            "source_sha256": "32773cba2fab4370e02d763ece004f66eef1e5a649e849b5c683ac4fcb934312",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_holdout_constructor_pack_16582"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_holdout_symmetry_614767",
+        "split": "holdout",
+        "family": "symmetry",
+        "source": "theorem distill_holdout_symmetry_614767 (p_614767 q_614767 : Nat) (h_614767 : p_614767 = q_614767) : p_614767 = q_614767 := by\n  symm\n  exact Eq.symm h_614767\n",
+        "target": "theorem distill_holdout_symmetry_614767 (p_614767 q_614767 : Nat) (h_614767 : p_614767 = q_614767) : p_614767 = q_614767 := by\n  assumption\n",
+        "source_tokens": 6,
+        "target_tokens": 1,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_holdout_symmetry_614767"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "symmetry_reduce",
+            "kind": "symmetry_transport",
+            "before_tokens": 6,
+            "before_source": "theorem distill_holdout_symmetry_614767 (p_614767 q_614767 : Nat) (h_614767 : p_614767 = q_614767) : p_614767 = q_614767 := by\n  symm\n  exact Eq.symm h_614767\n",
+            "after_source": "theorem distill_holdout_symmetry_614767 (p_614767 q_614767 : Nat) (h_614767 : p_614767 = q_614767) : p_614767 = q_614767 := by\n  exact h_614767\n",
+            "after_tokens": 2,
+            "source_sha256": "317cde24f49988d04bcbce3d9f6232b51abc453d31616de1c8af9a66a45dc1e0",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_holdout_symmetry_614767"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          },
+          {
+            "strategy": "rewrite_transport",
+            "kind": "exact_to_assumption",
+            "before_tokens": 2,
+            "before_source": "theorem distill_holdout_symmetry_614767 (p_614767 q_614767 : Nat) (h_614767 : p_614767 = q_614767) : p_614767 = q_614767 := by\n  exact h_614767\n",
+            "after_source": "theorem distill_holdout_symmetry_614767 (p_614767 q_614767 : Nat) (h_614767 : p_614767 = q_614767) : p_614767 = q_614767 := by\n  assumption\n",
+            "after_tokens": 1,
+            "source_sha256": "8ab8b5a7ff4faac24836fbb992285744817fef79aa94dd5309215237f58cf1d3",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_holdout_symmetry_614767"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_holdout_projection_240161",
+        "split": "holdout",
+        "family": "projection",
+        "source": "theorem distill_holdout_projection_240161 (p_240161 q_240161 : Prop) : p_240161 \u2227 q_240161 \u2192 p_240161 := by\n  intro h_240161\n  exact h_240161.1\n",
+        "target": "theorem distill_holdout_projection_240161 (p_240161 q_240161 : Prop) : p_240161 \u2227 q_240161 \u2192 p_240161 := by\n  simp_all\n",
+        "source_tokens": 6,
+        "target_tokens": 1,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_holdout_projection_240161"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "logic_simp",
+            "kind": "logic_simp_0",
+            "before_tokens": 6,
+            "before_source": "theorem distill_holdout_projection_240161 (p_240161 q_240161 : Prop) : p_240161 \u2227 q_240161 \u2192 p_240161 := by\n  intro h_240161\n  exact h_240161.1\n",
+            "after_source": "theorem distill_holdout_projection_240161 (p_240161 q_240161 : Prop) : p_240161 \u2227 q_240161 \u2192 p_240161 := by\n  simp_all\n",
+            "after_tokens": 1,
+            "source_sha256": "8dc0bfde4e785795c39b175841dfb1abc7576b09b84276b630a07ee89cad0e1b",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_holdout_projection_240161"
+                ],
+                "axioms": [
+                  "propext"
+                ],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_holdout_lift_projection_891716",
+        "split": "holdout",
+        "family": "lift_projection",
+        "source": "theorem distill_holdout_lift_projection_891716 (p_891716 : Prop) : PLift p_891716 \u2192 p_891716 := by\n  intro h_891716\n  exact h_891716.1\n",
+        "target": "theorem distill_holdout_lift_projection_891716 (p_891716 : Prop) : PLift p_891716 \u2192 p_891716 := by\n  intro h_891716\n  exact h_891716.1\n",
+        "source_tokens": 6,
+        "target_tokens": 6,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_holdout_lift_projection_891716"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": []
+      },
+      {
+        "id": "distill_holdout_application_530167",
+        "split": "holdout",
+        "family": "application",
+        "source": "theorem distill_holdout_application_530167 (p_530167 q_530167 : Prop) (k_530167 : p_530167 \u2192 q_530167) (h_530167 : p_530167) : q_530167 := by\n  apply k_530167\n  exact h_530167\n",
+        "target": "theorem distill_holdout_application_530167 (p_530167 q_530167 : Prop) (k_530167 : p_530167 \u2192 q_530167) (h_530167 : p_530167) : q_530167 := by\n  exact k_530167 h_530167\n",
+        "source_tokens": 4,
+        "target_tokens": 3,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_holdout_application_530167"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "application_reduce",
+            "kind": "application_reduce",
+            "before_tokens": 4,
+            "before_source": "theorem distill_holdout_application_530167 (p_530167 q_530167 : Prop) (k_530167 : p_530167 \u2192 q_530167) (h_530167 : p_530167) : q_530167 := by\n  apply k_530167\n  exact h_530167\n",
+            "after_source": "theorem distill_holdout_application_530167 (p_530167 q_530167 : Prop) (k_530167 : p_530167 \u2192 q_530167) (h_530167 : p_530167) : q_530167 := by\n  exact k_530167 h_530167\n",
+            "after_tokens": 3,
+            "source_sha256": "5c25cf6a2af2f6596e4287867abe92856010b5cd9f8744c75abe69984a9816dd",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_holdout_application_530167"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_holdout_eta_884431",
+        "split": "holdout",
+        "family": "eta",
+        "source": "theorem distill_holdout_eta_884431 (p_884431 q_884431 : Prop) (k_884431 : p_884431 \u2192 q_884431) : p_884431 \u2192 q_884431 := by\n  intro h_884431\n  exact k_884431 h_884431\n",
+        "target": "theorem distill_holdout_eta_884431 (p_884431 q_884431 : Prop) (k_884431 : p_884431 \u2192 q_884431) : p_884431 \u2192 q_884431 := by\n  exact k_884431\n",
+        "source_tokens": 5,
+        "target_tokens": 2,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_holdout_eta_884431"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "eta_reduce",
+            "kind": "eta_reduce",
+            "before_tokens": 5,
+            "before_source": "theorem distill_holdout_eta_884431 (p_884431 q_884431 : Prop) (k_884431 : p_884431 \u2192 q_884431) : p_884431 \u2192 q_884431 := by\n  intro h_884431\n  exact k_884431 h_884431\n",
+            "after_source": "theorem distill_holdout_eta_884431 (p_884431 q_884431 : Prop) (k_884431 : p_884431 \u2192 q_884431) : p_884431 \u2192 q_884431 := by\n  exact k_884431\n",
+            "after_tokens": 2,
+            "source_sha256": "2b546062a0e3bb1ae64ce8f19e9b8d284e1560c41b2cbf1705624188222e75a1",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_holdout_eta_884431"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_holdout_solver_arguments_193804",
+        "split": "holdout",
+        "family": "solver_arguments",
+        "source": "theorem distill_holdout_solver_arguments_193804 (p_193804 : Nat) : 0 + p_193804 = p_193804 := by\n  simp only [Nat.zero_add, Nat.add_zero]\n",
+        "target": "theorem distill_holdout_solver_arguments_193804 (p_193804 : Nat) : 0 + p_193804 = p_193804 := by\n  simp only [Nat.zero_add]\n",
+        "source_tokens": 11,
+        "target_tokens": 7,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_holdout_solver_arguments_193804"
+            ],
+            "axioms": [
+              "propext"
+            ],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "solver_argument_reduce",
+            "kind": "solver_argument_delete",
+            "before_tokens": 11,
+            "before_source": "theorem distill_holdout_solver_arguments_193804 (p_193804 : Nat) : 0 + p_193804 = p_193804 := by\n  simp only [Nat.zero_add, Nat.add_zero]\n",
+            "after_source": "theorem distill_holdout_solver_arguments_193804 (p_193804 : Nat) : 0 + p_193804 = p_193804 := by\n  simp only [Nat.zero_add]\n",
+            "after_tokens": 7,
+            "source_sha256": "e4b93aa9b72e3067de9d86825d402b74a107409b99ae17a836d29dacf54684b2",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_holdout_solver_arguments_193804"
+                ],
+                "axioms": [
+                  "propext"
+                ],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_holdout_solver_feedback_657638",
+        "split": "holdout",
+        "family": "solver_feedback",
+        "source": "theorem distill_holdout_solver_feedback_657638 (p_657638 : Nat) : 0 + p_657638 = p_657638 := by\n  simp only [Nat.zero_add, Nat.add_zero, Nat.mul_one]\n",
+        "target": "theorem distill_holdout_solver_feedback_657638 (p_657638 : Nat) : 0 + p_657638 = p_657638 := by\n  simp only [Nat.zero_add]\n",
+        "source_tokens": 15,
+        "target_tokens": 7,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_holdout_solver_feedback_657638"
+            ],
+            "axioms": [
+              "propext"
+            ],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "round": 0,
+            "before_source": "theorem distill_holdout_solver_feedback_657638 (p_657638 : Nat) : 0 + p_657638 = p_657638 := by\n  simp only [Nat.zero_add, Nat.add_zero, Nat.mul_one]\n",
+            "after_source": "theorem distill_holdout_solver_feedback_657638 (p_657638 : Nat) : 0 + p_657638 = p_657638 := by\n  simp only [Nat.zero_add]\n",
+            "before_tokens": 15,
+            "after_tokens": 7,
+            "probe_sha256": "ee535e5c1a9e44c7839733dca6effe9aa9af2591ed4c20634c7238091e2668d3",
+            "line": 2,
+            "tactic": "simp",
+            "suggestion": "simp only [Nat.zero_add]",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_holdout_solver_feedback_657638"
+                ],
+                "axioms": [
+                  "propext"
+                ],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            },
+            "strategy": "solver_feedback",
+            "kind": "solver_suggestion"
+          }
+        ]
+      },
+      {
+        "id": "transfer_holdout_composed_application_265235",
+        "split": "holdout",
+        "family": "composed_application",
+        "source": "theorem transfer_holdout_composed_application_265235 (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) (h_265235 : p_265235) : q_265235 \u2227 q_265235 := by\n  constructor\n  case left =>\n    apply f_265235\n    exact h_265235\n  case right =>\n    apply f_265235\n    exact h_265235\n",
+        "target": "theorem transfer_holdout_composed_application_265235 (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) (h_265235 : p_265235) : q_265235 \u2227 q_265235 := by\n  constructor\n  case left =>\n    exact f_265235 h_265235\n  case right =>\n    exact f_265235 h_265235\n",
+        "source_tokens": 17,
+        "target_tokens": 15,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "transfer_holdout_composed_application_265235"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "application_reduce",
+            "kind": "application_reduce",
+            "before_tokens": 17,
+            "before_source": "theorem transfer_holdout_composed_application_265235 (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) (h_265235 : p_265235) : q_265235 \u2227 q_265235 := by\n  constructor\n  case left =>\n    apply f_265235\n    exact h_265235\n  case right =>\n    apply f_265235\n    exact h_265235\n",
+            "after_source": "theorem transfer_holdout_composed_application_265235 (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) (h_265235 : p_265235) : q_265235 \u2227 q_265235 := by\n  constructor\n  case left =>\n    exact f_265235 h_265235\n  case right =>\n    apply f_265235\n    exact h_265235\n",
+            "after_tokens": 16,
+            "source_sha256": "dce72e309bb9ce0432f8a3e02d15aca715baeaff516d58655401a0322c75e624",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "transfer_holdout_composed_application_265235"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          },
+          {
+            "strategy": "application_reduce",
+            "kind": "application_reduce",
+            "before_tokens": 16,
+            "before_source": "theorem transfer_holdout_composed_application_265235 (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) (h_265235 : p_265235) : q_265235 \u2227 q_265235 := by\n  constructor\n  case left =>\n    exact f_265235 h_265235\n  case right =>\n    apply f_265235\n    exact h_265235\n",
+            "after_source": "theorem transfer_holdout_composed_application_265235 (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) (h_265235 : p_265235) : q_265235 \u2227 q_265235 := by\n  constructor\n  case left =>\n    exact f_265235 h_265235\n  case right =>\n    exact f_265235 h_265235\n",
+            "after_tokens": 15,
+            "source_sha256": "19421ee3958e5d32766f053e2c248a00e175033ea18dd5c1ba375525539c7626",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "transfer_holdout_composed_application_265235"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "transfer_holdout_composed_eta_265235",
+        "split": "holdout",
+        "family": "composed_eta",
+        "source": "theorem transfer_holdout_composed_eta_265235 (b : Bool) (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) : p_265235 \u2192 q_265235 := by\n  cases b\n  case false =>\n    intro h_265235\n    exact f_265235 h_265235\n  case true =>\n    intro h_265235\n    exact f_265235 h_265235\n",
+        "target": "theorem transfer_holdout_composed_eta_265235 (b : Bool) (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) : p_265235 \u2192 q_265235 := by\n  cases b\n  case false =>\n    exact f_265235\n  case true =>\n    exact f_265235\n",
+        "source_tokens": 20,
+        "target_tokens": 14,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "transfer_holdout_composed_eta_265235"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "eta_reduce",
+            "kind": "eta_reduce",
+            "before_tokens": 20,
+            "before_source": "theorem transfer_holdout_composed_eta_265235 (b : Bool) (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) : p_265235 \u2192 q_265235 := by\n  cases b\n  case false =>\n    intro h_265235\n    exact f_265235 h_265235\n  case true =>\n    intro h_265235\n    exact f_265235 h_265235\n",
+            "after_source": "theorem transfer_holdout_composed_eta_265235 (b : Bool) (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) : p_265235 \u2192 q_265235 := by\n  cases b\n  case false =>\n    exact f_265235\n  case true =>\n    intro h_265235\n    exact f_265235 h_265235\n",
+            "after_tokens": 17,
+            "source_sha256": "e3b5c52484279c58ee2056218213b451c2db082ec4ac6d880aa7b57ef4556726",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "transfer_holdout_composed_eta_265235"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          },
+          {
+            "strategy": "eta_reduce",
+            "kind": "eta_reduce",
+            "before_tokens": 17,
+            "before_source": "theorem transfer_holdout_composed_eta_265235 (b : Bool) (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) : p_265235 \u2192 q_265235 := by\n  cases b\n  case false =>\n    exact f_265235\n  case true =>\n    intro h_265235\n    exact f_265235 h_265235\n",
+            "after_source": "theorem transfer_holdout_composed_eta_265235 (b : Bool) (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) : p_265235 \u2192 q_265235 := by\n  cases b\n  case false =>\n    exact f_265235\n  case true =>\n    exact f_265235\n",
+            "after_tokens": 14,
+            "source_sha256": "9fd9bf989e6bd72f0f3dc227e1474f2e3dd61d49ba7ec3c9de1977aeb6255bd7",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "transfer_holdout_composed_eta_265235"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "transfer_holdout_new_equality_context_265235",
+        "split": "holdout",
+        "family": "new_equality_context",
+        "source": "theorem transfer_holdout_new_equality_context_265235 (p_265235 q_265235 : Int) (h_265235 : p_265235 = q_265235) : p_265235 = q_265235 := by\n  exact h_265235\n",
+        "target": "theorem transfer_holdout_new_equality_context_265235 (p_265235 q_265235 : Int) (h_265235 : p_265235 = q_265235) : p_265235 = q_265235 := by\n  assumption\n",
+        "source_tokens": 2,
+        "target_tokens": 1,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "transfer_holdout_new_equality_context_265235"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "rewrite_transport",
+            "kind": "exact_to_assumption",
+            "before_tokens": 2,
+            "before_source": "theorem transfer_holdout_new_equality_context_265235 (p_265235 q_265235 : Int) (h_265235 : p_265235 = q_265235) : p_265235 = q_265235 := by\n  exact h_265235\n",
+            "after_source": "theorem transfer_holdout_new_equality_context_265235 (p_265235 q_265235 : Int) (h_265235 : p_265235 = q_265235) : p_265235 = q_265235 := by\n  assumption\n",
+            "after_tokens": 1,
+            "source_sha256": "4b2c460cdfd8590e68f7c7c04d176e3ace6a53a9d6e8a301c62515b3f996a2d4",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "transfer_holdout_new_equality_context_265235"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "transfer_holdout_new_identity_control_265235",
+        "split": "holdout",
+        "family": "new_identity_control",
+        "source": "theorem transfer_holdout_new_identity_control_265235 (p_265235 : Nat) : p_265235 = p_265235 := by\n  rfl\n",
+        "target": "theorem transfer_holdout_new_identity_control_265235 (p_265235 : Nat) : p_265235 = p_265235 := by\n  rfl\n",
+        "source_tokens": 1,
+        "target_tokens": 1,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "transfer_holdout_new_identity_control_265235"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": []
+      }
+    ],
+    "solver_feedback_example": {
+      "schema": "jevops-solver-feedback/v1",
+      "ok": true,
+      "reason": "verified_shortening",
+      "tokenizer_id": "lra-local-ws-punct/v1",
+      "best_source": "theorem distill_train_solver_feedback_738428 (p_738428 : Nat) : 0 + p_738428 = p_738428 := by\n  simp only [Nat.zero_add]\n",
+      "source_tokens": 15,
+      "best_tokens": 7,
+      "source_compile": {
+        "theorem_ok": true,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_train_solver_feedback_738428"
+          ],
+          "axioms": [
+            "propext"
+          ],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        },
+        "token_count": 18,
+        "stdout_tail": "Hint: Omit it from the simp argument list.\n  [apply] simp only [Nat.zero_add, Nat.add_zero]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n'distill_train_solver_feedback_738428' depends on axioms: [propext]",
+        "stderr_tail": "",
+        "diagnostics": [
+          {
+            "severity": "warning",
+            "pos": {
+              "column": 27,
+              "line": 2
+            },
+            "endPos": {
+              "column": 39,
+              "line": 2
+            },
+            "data": "This simp argument is unused:\n  Nat.add_zero\n\nHint: Omit it from the simp argument list.\n  [apply] simp only [Nat.zero_add, Nat.mul_one]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`"
+          },
+          {
+            "severity": "warning",
+            "pos": {
+              "column": 41,
+              "line": 2
+            },
+            "endPos": {
+              "column": 52,
+              "line": 2
+            },
+            "data": "This simp argument is unused:\n  Nat.mul_one\n\nHint: Omit it from the simp argument list.\n  [apply] simp only [Nat.zero_add, Nat.add_zero]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`"
+          },
+          {
+            "severity": "information",
+            "pos": {
+              "column": 0,
+              "line": 4
+            },
+            "endPos": {
+              "column": 6,
+              "line": 4
+            },
+            "data": "'distill_train_solver_feedback_738428' depends on axioms: [propext]"
+          }
+        ],
+        "diagnostics_source_sha256": "9a04a35b6630400ea6619f1f05e389fc6577c7a56146156f1239394ae4e43ea9"
+      },
+      "trajectory": [
+        {
+          "round": 0,
+          "before_source": "theorem distill_train_solver_feedback_738428 (p_738428 : Nat) : 0 + p_738428 = p_738428 := by\n  simp only [Nat.zero_add, Nat.add_zero, Nat.mul_one]\n",
+          "after_source": "theorem distill_train_solver_feedback_738428 (p_738428 : Nat) : 0 + p_738428 = p_738428 := by\n  simp only [Nat.zero_add]\n",
+          "before_tokens": 15,
+          "after_tokens": 7,
+          "probe_sha256": "23b2aa6c02f7f602ed80820a9ddf21a54e0da38ecdedaa5a04d379dc114ad5bf",
+          "line": 2,
+          "tactic": "simp",
+          "suggestion": "simp only [Nat.zero_add]",
+          "compile": {
+            "theorem_ok": true,
+            "kernel_audit": {
+              "schema": "jevops-axiom-audit/v1",
+              "accepted": true,
+              "declarations": [
+                "distill_train_solver_feedback_738428"
+              ],
+              "axioms": [
+                "propext"
+              ],
+              "unexpected_axioms": [],
+              "missing_reports": [],
+              "conflicting_reports": [],
+              "native_axioms": [],
+              "allowed_axioms": [
+                "Classical.choice",
+                "Quot.sound",
+                "propext"
+              ],
+              "independent_kernel_verifier_used": false
+            },
+            "token_count": 16,
+            "stdout_tail": "'distill_train_solver_feedback_738428' depends on axioms: [propext]",
+            "stderr_tail": "",
+            "diagnostics": [
+              {
+                "severity": "information",
+                "pos": {
+                  "column": 0,
+                  "line": 4
+                },
+                "endPos": {
+                  "column": 6,
+                  "line": 4
+                },
+                "data": "'distill_train_solver_feedback_738428' depends on axioms: [propext]"
+              }
+            ],
+            "diagnostics_source_sha256": "b351b99c238ffe1006b53fd4bf10b6ad901cebfb0d1446d3f873d1c7387af6da"
+          }
+        }
+      ],
+      "compile_attempts": [
+        {
+          "source_sha256": "9a04a35b6630400ea6619f1f05e389fc6577c7a56146156f1239394ae4e43ea9",
+          "compile": {
+            "theorem_ok": true,
+            "kernel_audit": {
+              "schema": "jevops-axiom-audit/v1",
+              "accepted": true,
+              "declarations": [
+                "distill_train_solver_feedback_738428"
+              ],
+              "axioms": [
+                "propext"
+              ],
+              "unexpected_axioms": [],
+              "missing_reports": [],
+              "conflicting_reports": [],
+              "native_axioms": [],
+              "allowed_axioms": [
+                "Classical.choice",
+                "Quot.sound",
+                "propext"
+              ],
+              "independent_kernel_verifier_used": false
+            },
+            "token_count": 18,
+            "stdout_tail": "Hint: Omit it from the simp argument list.\n  [apply] simp only [Nat.zero_add, Nat.add_zero]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n'distill_train_solver_feedback_738428' depends on axioms: [propext]",
+            "stderr_tail": "",
+            "diagnostics": [
+              {
+                "severity": "warning",
+                "pos": {
+                  "column": 27,
+                  "line": 2
+                },
+                "endPos": {
+                  "column": 39,
+                  "line": 2
+                },
+                "data": "This simp argument is unused:\n  Nat.add_zero\n\nHint: Omit it from the simp argument list.\n  [apply] simp only [Nat.zero_add, Nat.mul_one]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`"
+              },
+              {
+                "severity": "warning",
+                "pos": {
+                  "column": 41,
+                  "line": 2
+                },
+                "endPos": {
+                  "column": 52,
+                  "line": 2
+                },
+                "data": "This simp argument is unused:\n  Nat.mul_one\n\nHint: Omit it from the simp argument list.\n  [apply] simp only [Nat.zero_add, Nat.add_zero]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`"
+              },
+              {
+                "severity": "information",
+                "pos": {
+                  "column": 0,
+                  "line": 4
+                },
+                "endPos": {
+                  "column": 6,
+                  "line": 4
+                },
+                "data": "'distill_train_solver_feedback_738428' depends on axioms: [propext]"
+              }
+            ],
+            "diagnostics_source_sha256": "9a04a35b6630400ea6619f1f05e389fc6577c7a56146156f1239394ae4e43ea9"
+          }
+        },
+        {
+          "source_sha256": "23b2aa6c02f7f602ed80820a9ddf21a54e0da38ecdedaa5a04d379dc114ad5bf",
+          "compile": {
+            "theorem_ok": true,
+            "kernel_audit": {
+              "schema": "jevops-axiom-audit/v1",
+              "accepted": true,
+              "declarations": [
+                "distill_train_solver_feedback_738428"
+              ],
+              "axioms": [
+                "propext"
+              ],
+              "unexpected_axioms": [],
+              "missing_reports": [],
+              "conflicting_reports": [],
+              "native_axioms": [],
+              "allowed_axioms": [
+                "Classical.choice",
+                "Quot.sound",
+                "propext"
+              ],
+              "independent_kernel_verifier_used": false
+            },
+            "token_count": 18,
+            "stdout_tail": "Try this:\n  [apply] simp only [Nat.zero_add]\n'distill_train_solver_feedback_738428' depends on axioms: [propext]",
+            "stderr_tail": "",
+            "diagnostics": [
+              {
+                "severity": "information",
+                "pos": {
+                  "column": 2,
+                  "line": 2
+                },
+                "endPos": {
+                  "column": 7,
+                  "line": 2
+                },
+                "data": "Try this:\n  [apply] simp only [Nat.zero_add]"
+              },
+              {
+                "severity": "information",
+                "pos": {
+                  "column": 0,
+                  "line": 4
+                },
+                "endPos": {
+                  "column": 6,
+                  "line": 4
+                },
+                "data": "'distill_train_solver_feedback_738428' depends on axioms: [propext]"
+              }
+            ],
+            "diagnostics_source_sha256": "23b2aa6c02f7f602ed80820a9ddf21a54e0da38ecdedaa5a04d379dc114ad5bf"
+          }
+        },
+        {
+          "source_sha256": "b351b99c238ffe1006b53fd4bf10b6ad901cebfb0d1446d3f873d1c7387af6da",
+          "compile": {
+            "theorem_ok": true,
+            "kernel_audit": {
+              "schema": "jevops-axiom-audit/v1",
+              "accepted": true,
+              "declarations": [
+                "distill_train_solver_feedback_738428"
+              ],
+              "axioms": [
+                "propext"
+              ],
+              "unexpected_axioms": [],
+              "missing_reports": [],
+              "conflicting_reports": [],
+              "native_axioms": [],
+              "allowed_axioms": [
+                "Classical.choice",
+                "Quot.sound",
+                "propext"
+              ],
+              "independent_kernel_verifier_used": false
+            },
+            "token_count": 16,
+            "stdout_tail": "'distill_train_solver_feedback_738428' depends on axioms: [propext]",
+            "stderr_tail": "",
+            "diagnostics": [
+              {
+                "severity": "information",
+                "pos": {
+                  "column": 0,
+                  "line": 4
+                },
+                "endPos": {
+                  "column": 6,
+                  "line": 4
+                },
+                "data": "'distill_train_solver_feedback_738428' depends on axioms: [propext]"
+              }
+            ],
+            "diagnostics_source_sha256": "b351b99c238ffe1006b53fd4bf10b6ad901cebfb0d1446d3f873d1c7387af6da"
+          }
+        },
+        {
+          "source_sha256": "277ee9da8fc599f121323d6932d5d8cff61377ad94c128e8ea945cfeb56d358d",
+          "compile": {
+            "theorem_ok": true,
+            "kernel_audit": {
+              "schema": "jevops-axiom-audit/v1",
+              "accepted": true,
+              "declarations": [
+                "distill_train_solver_feedback_738428"
+              ],
+              "axioms": [
+                "propext"
+              ],
+              "unexpected_axioms": [],
+              "missing_reports": [],
+              "conflicting_reports": [],
+              "native_axioms": [],
+              "allowed_axioms": [
+                "Classical.choice",
+                "Quot.sound",
+                "propext"
+              ],
+              "independent_kernel_verifier_used": false
+            },
+            "token_count": 16,
+            "stdout_tail": "Try this:\n  [apply] simp only [Nat.zero_add]\n'distill_train_solver_feedback_738428' depends on axioms: [propext]",
+            "stderr_tail": "",
+            "diagnostics": [
+              {
+                "severity": "information",
+                "pos": {
+                  "column": 2,
+                  "line": 2
+                },
+                "endPos": {
+                  "column": 7,
+                  "line": 2
+                },
+                "data": "Try this:\n  [apply] simp only [Nat.zero_add]"
+              },
+              {
+                "severity": "information",
+                "pos": {
+                  "column": 0,
+                  "line": 4
+                },
+                "endPos": {
+                  "column": 6,
+                  "line": 4
+                },
+                "data": "'distill_train_solver_feedback_738428' depends on axioms: [propext]"
+              }
+            ],
+            "diagnostics_source_sha256": "277ee9da8fc599f121323d6932d5d8cff61377ad94c128e8ea945cfeb56d358d"
+          }
+        }
+      ],
+      "budget_exhausted": false,
+      "minimality_proven": false,
+      "training_enabled": false,
+      "production_memory_used": false
+    }
+  },
+  "arena": {
+    "schema": "jevops-model-only-arena-rewrite/v1",
+    "name": "CallElimCorrect.substOldPostSubset",
+    "ok": true,
+    "state_sha256": "d70bac84d9a58f09d29909d15a125b340221a1f8145c267f7480b79b170baf7b",
+    "reference_source": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1]) := by\n  induction post <;> simp [substOld]\n  case fvar =>\n    intro\n\n\n\n    simp_all\n  case op =>\n    intro\n\n    simp_all\n  case const =>\n    intro\n    simp_all\n  case bvar =>\n    intro\n    simp_all\n  case abs ih =>\n    assumption\n  case ite cih tih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intro\n      simp_all\n  case app ih1 ih2 =>\n    split\n    . split\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intros x Hin\n        simp_all\n    . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply ih1 <;> assumption\n        intros x Hin\n        simp_all\n        cases Hin <;> simp_all\n      . apply List.Subset.trans\n        apply ih2 <;> assumption\n        intro\n        simp_all\n  case quant trih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intro\n      simp_all\n",
+    "reference_tokens": 391,
+    "unique_compile_count": 7,
+    "metric_gates_accepted": true,
+    "router_search_used": false,
+    "teacher_at_inference": false,
+    "training_enabled": false,
+    "checkpoint_promoted": false,
+    "production_memory_used": false,
+    "official_score": null,
+    "scope": "frozen_model_local_regression_not_unseen_arena_holdout",
+    "frozen_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+    "reference_kernel_audit": {
+      "schema": "jevops-axiom-audit/v1",
+      "accepted": true,
+      "declarations": [
+        "CallElimCorrect.substOldPostSubset"
+      ],
+      "axioms": [
+        "Quot.sound",
+        "propext"
+      ],
+      "unexpected_axioms": [],
+      "missing_reports": [],
+      "conflicting_reports": [],
+      "native_axioms": [],
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "independent_kernel_verifier_used": false
+    },
+    "evaluations": [
+      {
+        "input": "frozen_original",
+        "source_tokens": 482,
+        "source_verified": true,
+        "metric_gate": {
+          "accepted": true,
+          "status": "semantic_scored",
+          "regressions": {},
+          "objective_delta": 0.004826162790697808
+        },
+        "trained": {
+          "body_tokens": 481,
+          "verified": true,
+          "verified_shortening": true,
+          "loss": {
+            "cosine_loss": 0.511,
+            "cosine_similarity": 0.489,
+            "copy_penalty": 0.0,
+            "cross_entropy": 4.343805421853687,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 0.0,
+            "kl_loss": 0.0,
+            "length_penalty": 0.1111111111111111,
+            "minimality_reward": 0.8888888888888888,
+            "nca_loss": 0.0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.05232558139534884,
+            "reward": 1.0,
+            "reward_loss": 0.0,
+            "total": 4.57896033141441,
+            "typesafe_reward": null,
+            "verifier_reward": 1.0
+          },
+          "rewrite_policy": {
+            "trace": [
+              {
+                "rule_id": "f8f51701eac723ec901d",
+                "start": 27,
+                "probability": 0.583406195025539,
+                "choices": 2
+              }
+            ],
+            "teacher_used": false,
+            "solver_used": false,
+            "mode": "learned_span_edits",
+            "authority": "model_proposal_requires_Lean"
+          },
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "CallElimCorrect.substOldPostSubset"
+            ],
+            "axioms": [
+              "Quot.sound",
+              "propext"
+            ],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          },
+          "source": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1]) := by\n  induction post <;> simp [substOld]\n  case fvar =>\n    intro x Hin\n    rename_i m name ty2\n    simp at m\n    simp at name\n    simp at ty2\n    simp_all\n  case op =>\n    intro x Hin\n    rename_i m name ty2\n    simp at m\n    simp at name\n    simp at ty2\n    simp_all\n  case const =>\n    intro x Hin\n    rename_i m name\n    simp at m\n    simp_all\n  case bvar =>\n    intro x Hin\n    rename_i m d\n    simp at m\n    simp_all\n  case abs ih =>\n    assumption\n  case ite cih tih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intro x Hin\n      simp_all\n      cases Hin <;> simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intro x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intro x Hin\n      simp_all\n  case app ih1 ih2 =>\n    split\n    . split\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intro x Hin\n        simp_all\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intro x Hin\n        simp_all\n    . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply ih1 <;> assumption\n        intro x Hin\n        simp_all\n        cases Hin <;> simp_all\n      . apply List.Subset.trans\n        apply ih2 <;> assumption\n        intro x Hin\n        simp_all\n  case quant trih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intro x Hin\n      rename_i m1 k1 ty1 trigger1 e1\n      have assoc := List.append_assoc (Lambda.LExpr.LExpr.getVars trigger1) (Lambda.LExpr.LExpr.getVars e1) [h1]\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intro x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intro x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intro x Hin\n      simp_all\n"
+        },
+        "untrained": {
+          "body_tokens": 482,
+          "verified": true,
+          "verified_shortening": false,
+          "loss": {
+            "cosine_loss": 0.5115000000000001,
+            "cosine_similarity": 0.4885,
+            "copy_penalty": 0.0,
+            "cross_entropy": 4.343805421853687,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 0.0,
+            "kl_loss": 0.0,
+            "length_penalty": 0.1111111111111111,
+            "minimality_reward": 0.8888888888888888,
+            "nca_loss": 0.0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.05813953488372093,
+            "reward": 1.0,
+            "reward_loss": 0.0,
+            "total": 4.583786494205108,
+            "typesafe_reward": null,
+            "verifier_reward": 1.0
+          },
+          "rewrite_policy": null,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "CallElimCorrect.substOldPostSubset"
+            ],
+            "axioms": [
+              "Quot.sound",
+              "propext"
+            ],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "zero_edit_weights": {
+          "body_tokens": 482,
+          "verified": true,
+          "verified_shortening": false,
+          "loss": {
+            "cosine_loss": 0.5115000000000001,
+            "cosine_similarity": 0.4885,
+            "copy_penalty": 0.0,
+            "cross_entropy": 4.343805421853687,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 0.0,
+            "kl_loss": 0.0,
+            "length_penalty": 0.1111111111111111,
+            "minimality_reward": 0.8888888888888888,
+            "nca_loss": 0.0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.05813953488372093,
+            "reward": 1.0,
+            "reward_loss": 0.0,
+            "total": 4.583786494205108,
+            "typesafe_reward": null,
+            "verifier_reward": 1.0
+          },
+          "rewrite_policy": {
+            "trace": [],
+            "teacher_used": false,
+            "solver_used": false,
+            "mode": "learned_span_edits",
+            "authority": "model_proposal_requires_Lean"
+          },
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "CallElimCorrect.substOldPostSubset"
+            ],
+            "axioms": [
+              "Quot.sound",
+              "propext"
+            ],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        }
+      },
+      {
+        "input": "historical_best",
+        "source_tokens": 392,
+        "source_verified": true,
+        "metric_gate": {
+          "accepted": true,
+          "status": "semantic_scored",
+          "regressions": {},
+          "objective_delta": 0.005082975460123151
+        },
+        "trained": {
+          "body_tokens": 391,
+          "verified": true,
+          "verified_shortening": true,
+          "loss": {
+            "cosine_loss": 0.5,
+            "cosine_similarity": 0.5,
+            "copy_penalty": 0.0,
+            "cross_entropy": 4.343805421853687,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 1.0,
+            "kl_loss": 0.0,
+            "length_penalty": 0.0,
+            "minimality_reward": 1.0,
+            "nca_loss": 0.0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.0,
+            "reward": 1.0,
+            "reward_loss": 0.0,
+            "total": 4.518805421853687,
+            "typesafe_reward": null,
+            "verifier_reward": 1.0
+          },
+          "rewrite_policy": {
+            "trace": [
+              {
+                "rule_id": "f8f51701eac723ec901d",
+                "start": 18,
+                "probability": 0.583406195025539,
+                "choices": 2
+              }
+            ],
+            "teacher_used": false,
+            "solver_used": false,
+            "mode": "learned_span_edits",
+            "authority": "model_proposal_requires_Lean"
+          },
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "CallElimCorrect.substOldPostSubset"
+            ],
+            "axioms": [
+              "Quot.sound",
+              "propext"
+            ],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          },
+          "source": "open OldExpressions in\ntheorem substOldPostSubset:\n  (Imperative.HasVarsPure.getVars (P:=Expression)\n    (substOld h2 (Lambda.LExpr.fvar m h1 ty) post)).Subset\n    (Imperative.HasVarsPure.getVars (P:=Expression) post ++ [h1]) := by\n  induction post <;> simp [substOld]\n  case fvar =>\n    intro\n    simp_all\n  case op =>\n    intro\n    simp_all\n  case const =>\n    intro\n    simp_all\n  case bvar =>\n    intro\n    simp_all\n  case abs ih =>\n    assumption\n  case ite cih tih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intro x Hin\n      simp_all\n      cases Hin <;> simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intro x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intro\n      simp_all\n  case app ih1 ih2 =>\n    split\n    . split\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intro x Hin\n        simp_all\n      . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n        intro x Hin\n        simp_all\n    . simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply ih1 <;> assumption\n        intro x Hin\n        simp_all\n        cases Hin <;> simp_all\n      . apply List.Subset.trans\n        apply ih2 <;> assumption\n        intro\n        simp_all\n  case quant trih eih =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intro x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    simp [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intro x Hin\n      simp_all\n      cases Hin <;> simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intro\n      simp_all\n"
+        },
+        "untrained": {
+          "body_tokens": 392,
+          "verified": true,
+          "verified_shortening": false,
+          "loss": {
+            "cosine_loss": 0.5005,
+            "cosine_similarity": 0.4995,
+            "copy_penalty": 0.0,
+            "cross_entropy": 4.343805421853687,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 0.0,
+            "kl_loss": 0.0,
+            "length_penalty": 0.0,
+            "minimality_reward": 1.0,
+            "nca_loss": 0.0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.006134969325153374,
+            "reward": 1.0,
+            "reward_loss": 0.0,
+            "total": 4.52388839731381,
+            "typesafe_reward": null,
+            "verifier_reward": 1.0
+          },
+          "rewrite_policy": null,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "CallElimCorrect.substOldPostSubset"
+            ],
+            "axioms": [
+              "Quot.sound",
+              "propext"
+            ],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "zero_edit_weights": {
+          "body_tokens": 392,
+          "verified": true,
+          "verified_shortening": false,
+          "loss": {
+            "cosine_loss": 0.5005,
+            "cosine_similarity": 0.4995,
+            "copy_penalty": 0.0,
+            "cross_entropy": 4.343805421853687,
+            "binding_cross_entropy": null,
+            "rewrite_cross_entropy": null,
+            "rewrite_expected_cosine_loss": null,
+            "fuzzy_prover_reward": null,
+            "ir_exact_match": 0.0,
+            "kl_loss": 0.0,
+            "length_penalty": 0.0,
+            "minimality_reward": 1.0,
+            "nca_loss": 0.0,
+            "nca_reward": null,
+            "reconstruction_loss": 0.006134969325153374,
+            "reward": 1.0,
+            "reward_loss": 0.0,
+            "total": 4.52388839731381,
+            "typesafe_reward": null,
+            "verifier_reward": 1.0
+          },
+          "rewrite_policy": {
+            "trace": [],
+            "teacher_used": false,
+            "solver_used": false,
+            "mode": "learned_span_edits",
+            "authority": "model_proposal_requires_Lean"
+          },
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "CallElimCorrect.substOldPostSubset"
+            ],
+            "axioms": [
+              "Quot.sound",
+              "propext"
+            ],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        }
+      }
+    ]
+  }
+}

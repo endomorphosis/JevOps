@@ -1427,6 +1427,61 @@ def pack_canary(
     }
 
 
+def drive_nested_canary(
+    record: Mapping[str, Any],
+    *,
+    args: Any,
+    memory: dict[str, Any],
+    ledger: Any,
+    rng: Any,
+    model: Optional[Mapping[str, Any]],
+    compile_one: Optional[Callable[..., Mapping[str, Any]]],
+    research_fn: Optional[Callable[..., dict[str, Any]]],
+    pick_fn: Optional[Callable[..., dict[str, Any]]],
+    router_fn: Optional[Callable[..., dict[str, Any]]],
+    start_fn: Callable[..., str],
+    state_root: Any,
+    clone_fn: Callable[..., Any],
+    relpath_fn: Callable[..., str],
+    analyze_fn: Callable[..., Any],
+    walk_fn: Callable[..., dict[str, Any]],
+    min_steps: int,
+    default_depth: int,
+) -> dict[str, Any]:
+    """Load keep-best tactics, walk, and restore the clone. Lake stays in the walker."""
+
+    from jevops.outer import clone_restore, get_str, inner_budget, restore_if
+
+    tactics = start_fn(record, out=getattr(args, "out", None), from_best=bool(getattr(args, "from_best", False)))
+    _clone, dest, restore = clone_restore(record, state_root, clone_fn=clone_fn, relpath_fn=relpath_fn)
+    return run_nested(
+        tactics=tactics,
+        dest=dest,
+        restore=restore,
+        name=get_str(record, "name"),
+        analyze_fn=lambda body: analyze_fn(record, tactics=body, model=model),
+        pack_fn=pack_canary,
+        budget_fn=lambda: inner_budget(args, min_steps=min_steps, default_depth=default_depth),
+        walk_fn=lambda body, restore, max_steps, max_depth: walk_fn(
+            record,
+            body,
+            args=args,
+            memory=memory,
+            ledger=ledger,
+            rng=rng,
+            model=model,
+            restore=restore,
+            max_steps=max_steps,
+            max_depth=max_depth,
+            compile_one=compile_one,
+            research_fn=research_fn,
+            pick_fn=pick_fn,
+            router_fn=router_fn,
+        ),
+        restore_fn=restore_if,
+    )
+
+
 def run_nested(
     *,
     tactics: str,
@@ -1851,3 +1906,464 @@ def recurse_walk(
     """Call a nested walker with shared child kwargs. Closures stay injected."""
 
     return fn(record, tactics, **dict(base), node=node, tape=tape, stack=stack, **extra)
+
+
+def drive_inner_walk(
+    record: Mapping[str, Any],
+    tactics: str,
+    *,
+    args: Any,
+    memory: dict[str, Any],
+    ledger: Any,
+    rng: Any,
+    model: Optional[Mapping[str, Any]],
+    restore: bytes,
+    depth: int,
+    node: str,
+    allow_families: Optional[set[str]],
+    allow_skills: Optional[set[str]],
+    steps: Optional[list[int]],
+    max_steps: int,
+    max_depth: int,
+    compile_one: Optional[Callable[..., Mapping[str, Any]]],
+    research_fn: Optional[Callable[..., dict[str, Any]]],
+    pick_fn: Optional[Callable[..., dict[str, Any]]],
+    router_fn: Optional[Callable[..., dict[str, Any]]],
+    tape: Optional[Any],
+    stack: Optional[Any],
+    walk_fn: Callable[..., dict[str, Any]],
+    default_compile: Callable[..., Mapping[str, Any]],
+    default_research: Callable[..., dict[str, Any]],
+    default_pick: Callable[..., dict[str, Any]],
+    tape_factory: Callable[[], Any],
+    stack_factory: Callable[[], Any],
+    link_fn: Callable[[dict[str, Any], str], None],
+    overlay_fn: Callable[[dict[str, Any]], None],
+    analyze_fn: Callable[..., dict[str, Any]],
+    residual_fn: Callable[..., Any],
+    expand_skills_fn: Callable[..., None],
+    drafts_fn: Callable[..., list[dict[str, Any]]],
+    eval_fn: Callable[..., dict[str, Any]],
+    credit_fn: Callable[..., None],
+    spawn_subloop_fn: Callable[..., dict[str, Any]],
+    lake_round_fn: Callable[..., Any],
+    subloops: Any,
+) -> dict[str, Any]:
+    """Keep-looping walker. Nest/spawn recurse through ``walk_fn``. Lake stays in the injected compile."""
+
+    from jevops.memory import remember_intent
+    from jevops.outer import first_set, first_truthy, get_list, get_str, ignore_error, or_int, overlay_map, replace_if, stripped_or, with_defaults
+
+    raw_compile, research, pick, counter, tape, stack = bind_walk_defaults(
+        compile_one=compile_one,
+        research_fn=research_fn,
+        pick_fn=pick_fn,
+        steps=steps,
+        tape=tape,
+        stack=stack,
+        default_compile=default_compile,
+        default_research=default_research,
+        default_pick=default_pick,
+        tape_factory=tape_factory,
+        stack_factory=stack_factory,
+    )
+
+    def compile_fn(row: Mapping[str, Any], body: str, **kwargs: Any) -> Mapping[str, Any]:
+        kwargs = replace_if(compile_one is None, with_defaults(kwargs, memory=memory), kwargs)
+        return raw_compile(row, body, **kwargs)
+
+    body = stripped_or(tactics, "")
+    tape = begin_session(
+        memory=memory,
+        tape=tape,
+        stack=stack,
+        problem=get_str(record, "name"),
+        body=body,
+        depth=depth,
+        link_fn=link_fn,
+        overlay_fn=overlay_fn,
+    )
+
+    def _research(analysis: Mapping[str, Any], nxt: str) -> dict[str, Any]:
+        return research(
+            record,
+            analysis,
+            tactics=nxt,
+            ledger=ledger,
+            memory=memory,
+            allow_families=allow_families,
+            allow_skills=allow_skills,
+            tree_node=node,
+        )
+
+    def _remember(intent: Mapping[str, Any], nxt: str) -> None:
+        remember_intent(
+            memory,
+            name=get_str(record, "name"),
+            tactics=nxt,
+            intent=intent,
+            residual_fn=residual_fn,
+        )
+
+    def _expand(nxt: str) -> None:
+        expand_skills_fn(memory, name=get_str(record, "name"), tactics=nxt)
+
+    def _drafts(nxt: str, analysis: Mapping[str, Any], intent: Mapping[str, Any]) -> list[dict[str, Any]]:
+        return drafts_fn(
+            nxt,
+            rng,
+            n=or_int(getattr(args, "drafts", 6), 6, floor=2),
+            families=get_list(analysis, "families"),
+            counts=analysis.get("counts"),
+            name=get_str(record, "name"),
+            memory=memory,
+            allow_families=first_set(allow_families, intent.get("allow_families")),
+        )
+
+    base = child_base(
+        args=args,
+        memory=memory,
+        ledger=ledger,
+        rng=rng,
+        model=model,
+        restore=restore,
+        depth=depth + 1,
+        steps=counter,
+        max_steps=max_steps,
+        max_depth=max_depth,
+        compile_one=compile_fn,
+        research_fn=research,
+        pick_fn=pick,
+        router_fn=router_fn,
+    )
+
+    def _extra(compose: str, nest_child: str, tool_name: str, nxt: str) -> dict[str, Any]:
+        return extra_payload(
+            compose,
+            nest_child=nest_child,
+            tool_name=tool_name,
+            default_hook="portable_rewrites.py",
+            fork=overlay_map(base, record=record, tactics=nxt, problem=get_str(record, "name")),
+        )
+
+    walk_args = args
+    allow_families_outer = allow_families
+    allow_skills_outer = allow_skills
+
+    def _theorem(name: str, *, tactics: str, resolved: Mapping[str, Any], args: Mapping[str, Any]) -> dict[str, Any]:
+        del resolved, args
+        evaled = eval_fn(
+            name,
+            current=record,
+            tactics=tactics,
+            compile_fn=compile_fn,
+            args=walk_args,
+            restore=restore,
+            memory=memory,
+        )
+
+        def _credit() -> None:
+            credit_fn(memory, evaled, record)
+
+        ignore_error(_credit)
+        return evaled
+
+    def _ptr_nest(*, tactics: str, node: str, allow_families: Optional[set[str]] = None, allow_skills: Optional[set[str]] = None) -> dict[str, Any]:
+        return recurse_walk(
+            walk_fn,
+            record,
+            tactics,
+            base,
+            node=node,
+            tape=tape,
+            stack=stack,
+            allow_families=first_truthy(allow_families, allow_families_outer),
+            allow_skills=first_truthy(allow_skills, allow_skills_outer),
+        )
+
+    def _spawn(child: str, tactics: str = "") -> dict[str, Any]:
+        return spawn_subloop_fn(child, record=record, tactics=first_truthy(tactics, body), **base, node=child)
+
+    def _nest(*, child: str, allow_families: Optional[set[str]] = None, allow_skills: Optional[set[str]] = None, tactics: str = "") -> dict[str, Any]:
+        return recurse_walk(
+            walk_fn,
+            record,
+            first_truthy(tactics, body),
+            base,
+            node=child,
+            tape=tape,
+            stack=stack,
+            allow_families=allow_families,
+            allow_skills=allow_skills,
+        )
+
+    return inner_loop(
+        memory=memory,
+        tape=tape,
+        stack=stack,
+        record=record,
+        body=body,
+        depth=depth,
+        node=node,
+        max_steps=max_steps,
+        max_depth=max_depth,
+        counter=counter,
+        analyze_fn=lambda nxt: analyze_fn(record, tactics=nxt, model=model),
+        research_fn=_research,
+        remember_fn=_remember,
+        expand_fn=_expand,
+        draft_fn=_drafts,
+        pick_fn=pick,
+        lake_round=lake_round_fn,
+        compile_fn=compile_fn,
+        ledger=ledger,
+        args=args,
+        restore=restore,
+        spawn_fn=_spawn,
+        nest_fn=_nest,
+        ptr_nest_fn=_ptr_nest,
+        theorem_fn=_theorem,
+        subloops=subloops,
+        extra_fn=_extra,
+        router_fn=router_fn,
+        allow_families=allow_families,
+        allow_skills=allow_skills,
+    )
+
+
+def drive_live_canaries(
+    args: Any,
+    *,
+    load_records_fn: Callable[[], tuple[Any, str, Sequence[Mapping[str, Any]]]],
+    feature_fn: Callable[..., Any],
+    fit_fn: Callable[..., Any],
+    analyze_fn: Callable[..., Any],
+    sample_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    load_memory_fn: Callable[[], dict[str, Any]],
+    save_memory_fn: Callable[[dict[str, Any]], Any],
+    rank_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    ledger_cls: Callable[..., Any],
+    seed_fn: Callable[[dict[str, Any]], Any],
+    overlay_fn: Callable[[dict[str, Any]], Any],
+    keepbest_fn: Callable[[dict[str, Any]], Any],
+    halt_fn: Callable[..., bool],
+    nested_fn: Callable[..., Any],
+    gap_fn: Callable[[dict[str, Any]], Any],
+    inits_name: str,
+    canary_139: Any,
+    read_fn: Callable[[Any], str],
+    max_live_tokens: int,
+    inner_max_steps: int,
+    rng_cls: Callable[[int], Any],
+) -> dict[str, Any]:
+    """Sample warmup canaries, rank leftovers, and run the nested walker. Lake stays injected."""
+
+    from jevops.jev import canary_live_payload
+    from jevops.nca import live_status
+    from jevops.outer import (
+        arg_value,
+        begin_live_sample,
+        call_if,
+        call_if_file,
+        finish_live_write,
+        first_int,
+        jev_budget,
+        lookup_named,
+        memory_counts,
+        or_int,
+        overlay_map,
+        pin_calls,
+        safe_call,
+        seed_runtime,
+        stripped_or,
+        with_key,
+        write_json,
+        write_json_pair,
+    )
+    from jevops.pick import ensure_named, filter_by_tokens
+
+    _raw, digest, records = load_records_fn()
+    k = or_int(arg_value(args, "k", 1, cast=int), 1, floor=1)
+    model, landscape, sampled = begin_live_sample(
+        records,
+        feature_fn=feature_fn,
+        fit_fn=fit_fn,
+        analyze_fn=analyze_fn,
+        all_small=args.all_small,
+        filter_fn=lambda recs, land: filter_by_tokens(recs, land, cap=max_live_tokens),
+        sample_fn=lambda: sample_fn(records, k=k, seed=first_int(args.seed)),
+        include=args.include_inits,
+        ensure_fn=lambda rows, recs: ensure_named(rows, recs, name=inits_name, k=k),
+    )
+    memory = load_memory_fn()
+    pin_calls(lambda: reset_pass_flags(memory), lambda: save_memory_fn(memory))()
+    sampled = rank_fn(
+        sampled,
+        out=args.out,
+        from_best=bool(arg_value(args, "from_best", False)),
+        memory=memory,
+    )
+    n_rounds = or_int(arg_value(args, "rounds", 1, cast=int), 1, floor=1)
+    ledger = ledger_cls(
+        name="warmup#random-canary",
+        max_jev_calls=jev_budget(len(list(sampled)), n_rounds, inner_max_steps),
+        max_mistral_calls=0,
+    )
+    rng = rng_cls(first_int(args.seed))
+    seed_runtime(
+        memory,
+        seed_fn=seed_fn,
+        overlay_fn=overlay_fn,
+        keepbest_fn=keepbest_fn,
+    )
+
+    def _extra_139() -> dict[str, Any]:
+        inits = lookup_named(
+            records,
+            inits_name,
+            error_cls=RuntimeError,
+            miss=f"unknown warm-up problem: {inits_name}",
+        )
+        return with_key(
+            analyze_fn(inits, tactics=stripped_or(read_fn(canary_139), ""), model=model),
+            "cut",
+            "cascade-best-139",
+        )
+
+    extra_139 = call_if(args.init_139, lambda: call_if_file(canary_139, _extra_139))
+    canaries, lake_rows = run_sampled(
+        sampled,
+        memory=memory,
+        halt_fn=halt_fn,
+        run_fn=lambda rec: nested_fn(rec, args=args, memory=memory, ledger=ledger, rng=rng, model=model),
+    )
+    mem_path = save_memory_fn(memory)
+    gaps = gap_fn(memory)
+    nca_status = overlay_map(safe_call(live_status, memory, default={}))
+    return finish_live_write(
+        args.out,
+        canary_live_payload(
+            digest=digest,
+            seed=first_int(args.seed),
+            k=first_int(args.k),
+            n_records=len(records),
+            landscape=landscape,
+            model=model,
+            extra_139=extra_139,
+            canaries=canaries,
+            lake=lake_rows,
+            gaps=gaps,
+            mem_path=mem_path,
+            memory=memory_counts(memory),
+            nca_status=nca_status,
+            ledger=ledger,
+        ),
+        prefix="random-canary",
+        latest="random-canary-latest.json",
+        gaps=gaps,
+        nca_status=nca_status,
+        write_fn=write_json,
+        pair_fn=write_json_pair,
+    )
+
+
+def drive_named_canary(
+    name: str,
+    *,
+    max_new_tokens: int,
+    generate_timeout: float,
+    load_named_fn: Callable[[str], tuple[Mapping[str, Any], Sequence[Mapping[str, Any]], str]],
+    neighbors_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    state_fn: Callable[..., Any],
+    route_fn: Callable[..., Any],
+    wants_llm_fn: Callable[..., Any],
+    health_fn: Callable[[], Any],
+    retrieve_fn: Callable[..., Any],
+    prompt_fn: Callable[..., str],
+    generate_fn: Callable[..., Any],
+    extract_fn: Callable[[str], str],
+    admit_fn: Callable[..., Any],
+    redact_fn: Callable[[Any], Any],
+) -> dict[str, Any]:
+    """Route one named warmup canary and optionally generate. Does not lake-compile."""
+
+    import time
+
+    from jevops.outer import elapsed_ms
+
+    record, records, digest = load_named_fn(name)
+    neighbors = list(neighbors_fn(record, records))
+    names = [str(item.get("name") or "") for item in neighbors]
+    state = state_fn(record, neighbors=neighbors)
+    started = time.perf_counter()
+    route = route_fn(state, names)
+    route_dict = route.as_dict()
+    jev_wants_llm = None if route.skipped else wants_llm_fn(route_dict, record)
+    health = health_fn()
+    generation = None
+    tactics = ""
+    admission = None
+    if health.ok:
+        retrieval = retrieve_fn(record, records)
+        prompt = prompt_fn(record, retrieval)
+        generation = generate_fn(
+            prompt,
+            health=health,
+            source=str(record.get("source") or ""),
+            max_new_tokens=max_new_tokens,
+            timeout=generate_timeout,
+        )
+        tactics = extract_fn(generation.text)
+        view = admit_fn(record, tactics)
+        if hasattr(view, "as_dict"):
+            admission = view.as_dict()
+        else:
+            admission = {
+                "accepted": bool(getattr(view, "accepted", False)),
+                "code": str(getattr(view, "failure_code", "")),
+                "reason": str(getattr(view, "reason", "")),
+            }
+    candidate_state = state_fn(
+        record,
+        neighbors=neighbors,
+        candidate={"tactics_head": tactics[:400], "n_chars": len(tactics)},
+    )
+    candidate_gate = None
+    if not route.skipped and tactics:
+        candidate_gate = route_fn(candidate_state, names).as_dict()
+    gen_payload = None
+    if generation is not None:
+        gen_payload = {
+            "error": generation.error,
+            "skipped": generation.skipped,
+            "text_head": (generation.text or "")[:400],
+            "n_chars": len(generation.text or ""),
+            "tactics_head": tactics[:400],
+            "n_tactics_chars": len(tactics),
+            "identity": generation.identity.__dict__,
+        }
+    return redact_fn(
+        {
+            "kind": "lra_warmup",
+            "name": name,
+            "source": record.get("source"),
+            "proof_length": record.get("proof_length"),
+            "num_lines": record.get("num_lines"),
+            "warmup_jsonl_sha256": digest,
+            "health_ok": bool(health.ok),
+            "route": route_dict,
+            "jev_recommends_llm": jev_wants_llm,
+            "called_leanstral": bool(health.ok),
+            "generation": gen_payload,
+            "admission": admission,
+            "candidate_gate": candidate_gate,
+            "compile": {
+                "attempted": False,
+                "reason": "tag-pinned lake/oleans not installed for live Strata/CSLib; FOL kernel is the live oracle on this pass",
+            },
+            "arena_score": None,
+            "official_score": None,
+            "jev_generated_lean": False,
+            "wall_ms": elapsed_ms(started),
+        }
+    )

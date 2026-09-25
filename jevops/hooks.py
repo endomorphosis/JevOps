@@ -55,6 +55,31 @@ def resolve(name: str, module: str, attr: Optional[str] = None) -> Any:
     return try_import(module, attr)
 
 
+def lazy_attr(module: str, attr: str) -> Callable[..., Any]:
+    """Import ``module.attr`` on first call. Does not import it at registration."""
+
+    def fn(*args: Any, **kwargs: Any) -> Any:
+        mod = importlib.import_module(module)
+        return getattr(mod, attr)(*args, **kwargs)
+
+    fn.__name__ = attr
+    fn.__qualname__ = f"{module}.{attr}"
+    return fn
+
+
+def lazy_const(module: str, attr: str, default: Any = None) -> Callable[[], Any]:
+    """Read ``module.attr`` on call. Import failure returns ``default``."""
+
+    def fn() -> Any:
+        try:
+            mod = importlib.import_module(module)
+            return getattr(mod, attr, default)
+        except Exception:
+            return default
+
+    return fn
+
+
 def const(name: str, default: Any = None) -> Any:
     """Read a thunk/constant hook (``root_goal``, ``blocked_ids``)."""
 

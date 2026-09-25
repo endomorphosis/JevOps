@@ -1,0 +1,23 @@
+{
+  "pin": {
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+  },
+  "label": "draft-0",
+  "source_sha256": "99cac8c59bfc36e1acba41c1525a0175b9d8a10bed3bc31371a731e694eab8c7",
+  "status": "REJECTED",
+  "receipt": {
+    "request_id": "03ab02a446ce79ba443dca9c028fceb7faa16a7599100e618b6897fc063ce809",
+    "candidate_sha256": "99cac8c59bfc36e1acba41c1525a0175b9d8a10bed3bc31371a731e694eab8c7",
+    "target": "Core.InitsUpdatesComm",
+    "outcome": "REJECTED",
+    "type_preserved": false,
+    "exit_code": 0,
+    "axiom_output": "",
+    "heartbeats": null,
+    "reason": "candidate_errors",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"c21049c66609ac7e77f85411e7fc174f90da884c9b0be866978af32135472560\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unexpected end of input; expected '{'\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6079.492}"
+  },
+  "context_id": "6579f255a16f2ade8f2138cf975d572591005fe1ba473161436845ff437c7b08",
+  "wall_seconds": 7.888
+}

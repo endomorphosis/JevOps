@@ -1,0 +1,23 @@
+{#- ChatML, plus the tool-call markup this model already emits.
+    The markers let llama.cpp parse a call into message.tool_calls.
+    Shell tools are not enabled. -#}
+{%- for message in messages -%}
+    {%- if message.role == 'assistant' and message.tool_calls is defined and message.tool_calls -%}
+        {{- '<|im_start|>assistant\n' -}}
+        {%- if message.content %}{{ message.content }}{% endif %}
+        {%- for tool_call in message.tool_calls -%}
+            {%- set fname = tool_call.function.name -%}
+            {%- set args = tool_call.function.arguments -%}
+            {%- if args is not string %}{% set args = args | tojson %}{% endif -%}
+            {{- '<|tool_call_begin|>function=' + fname + '<|tool_call_arg_begin|>' + args + '<|tool_call_arg_end|><|tool_call_end|>' -}}
+        {%- endfor -%}
+        {{- '<|im_end|>\n' -}}
+    {%- elif message.role == 'tool' -%}
+        {{- '<|im_start|>tool\n' + (message.content or '') + '<|im_end|>\n' -}}
+    {%- else -%}
+        {{- '<|im_start|>' + message.role + '\n' + (message.content or '') + '<|im_end|>\n' -}}
+    {%- endif -%}
+{%- endfor -%}
+{%- if add_generation_prompt -%}
+    {{- '<|im_start|>assistant\n' -}}
+{%- endif -%}

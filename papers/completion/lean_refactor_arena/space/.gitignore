@@ -1,0 +1,10 @@
+.claude/
+CLAUDE.md
+__pycache__/
+*.pyc
+.DS_Store
+gradio_cached_examples/
+flagged/
+leaderboard.json
+.leaderboard.*.json
+leaderboard_warmup.json

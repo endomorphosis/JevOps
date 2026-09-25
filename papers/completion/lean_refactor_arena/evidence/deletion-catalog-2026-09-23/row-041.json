@@ -1,0 +1,24 @@
+{
+  "pin": {
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+  },
+  "label": "edit-40",
+  "source_sha256": "25f21d0a87b3b8c48f3683e76c7031b29fa483e37e9f1a2270321d4951d13033",
+  "status": "REJECTED",
+  "context_id": "c05f2041328cf7cd0931ca56ae2c91af99ef4663915803d6dd2c39f6a0d3554e",
+  "receipt": {
+    "request_id": "1eafab7a7e51892e1b6f93ec60608f9c14b9a7ab407f24cc64e9037a1e766d03",
+    "candidate_sha256": "25f21d0a87b3b8c48f3683e76c7031b29fa483e37e9f1a2270321d4951d13033",
+    "target": "Core.InitsUpdatesComm",
+    "outcome": "REJECTED",
+    "type_preserved": false,
+    "exit_code": 0,
+    "axiom_output": "",
+    "heartbeats": null,
+    "reason": "candidate_errors",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"a07f22759ef3aa7cde70314cc088c5ee99a642ed1a58290a81058642231a79ae\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Tactic `apply` failed: could not unify the type of `UpdateStatesNotDefMonotone' ?m.109 Hups`\\n  isNotDefined σ₀ ?m.106\\nwith the goal\\n  isNotDefined σ ks'\\n\\ncase refine_1.a\\nP : PureExpr\\nσ✝ σ' : SemanticStore P\\nks ks' : List P.Ident\\nvs✝ vs' : List P.Expr\\nHlen1 : ks'.length = vs'.length\\nσ : SemanticStore P\\nx : P.Ident\\nv : P.Expr\\nσ₀ : SemanticStore P\\nxs : List P.Ident\\nvs : List P.Expr\\nσ₁ : SemanticStore P\\nHup : UpdateState P σ x v σ₀\\nHups : UpdateStates σ₀ xs vs σ₁\\nih :\\n  ∀ {σ'' : SemanticStore P},\\n    InitStates σ₁ ks' vs' σ'' →\\n      isDefined σ₁ xs →\\n        xs.length = vs.length →\\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\\nσ'' : SemanticStore P\\nHinit : InitStates σ₁ ks' vs' σ''\\nHk : isDefined σ₁ (x :: xs)\\nHlen2 : (x :: xs).length = (v :: vs).length\\n⊢ isNotDefined σ ks'\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":5356.807}"
+  },
+  "native_processes": 1,
+  "wall_seconds": 8.5817
+}

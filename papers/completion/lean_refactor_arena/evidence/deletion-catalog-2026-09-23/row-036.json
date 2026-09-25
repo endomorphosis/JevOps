@@ -1,0 +1,24 @@
+{
+  "pin": {
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+  },
+  "label": "edit-35",
+  "source_sha256": "dec2437aff4f04fbfc59c4a915e06b9283babdeffa0b31baa6a74a7387f0838f",
+  "status": "REJECTED",
+  "context_id": "c05f2041328cf7cd0931ca56ae2c91af99ef4663915803d6dd2c39f6a0d3554e",
+  "receipt": {
+    "request_id": "30da2380b801dff135995d3bd6f666d1fc27c2d8c70093e02c9335be44057931",
+    "candidate_sha256": "dec2437aff4f04fbfc59c4a915e06b9283babdeffa0b31baa6a74a7387f0838f",
+    "target": "Core.InitsUpdatesComm",
+    "outcome": "REJECTED",
+    "type_preserved": false,
+    "exit_code": 0,
+    "axiom_output": "",
+    "heartbeats": null,
+    "reason": "candidate_errors",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"a07f22759ef3aa7cde70314cc088c5ee99a642ed1a58290a81058642231a79ae\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Type mismatch\\n  InitStatesNodup Hinit\\nhas type\\n  ks'.Nodup\\nbut is expected to have type\\n  InitStates σ✝ ks' vs' (updatedStates σ✝ ks' vs')\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":8505.512}"
+  },
+  "native_processes": 1,
+  "wall_seconds": 11.6554
+}

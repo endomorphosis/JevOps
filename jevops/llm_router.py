@@ -8,6 +8,8 @@ providers:
 * ``deterministic``/``fixture``: offline, fail-closed JSON proposals;
 * ``codex_cli``: an explicitly selected local Codex CLI;
 * ``openai_compatible``: an explicitly configured HTTP endpoint.
+* ``leanstral_local``/``leanstral``: the existing local Leanstral server, client only.
+* ``muse``: Meta Muse Spark on ``https://api.meta.ai/v1``. Proposals only.
 
 This is an advisory proposal channel.  It does not apply code, admit Lean, or
 silently switch providers.  The verifier and outer action gate remain the
@@ -31,6 +33,10 @@ from typing import Any, Mapping, Optional, Sequence
 class LLMRouterError(RuntimeError):
     """A selected local router provider could not produce a response."""
 
+    def __init__(self, message, *, category="router", http_status=None):
+        super().__init__(message)
+        self.category, self.http_status = category, http_status
+
 
 _TRACE = threading.local()
 
@@ -53,6 +59,11 @@ def _provider(value: Any) -> str:
         "openai": "openai_compatible",
         "openai-compatible": "openai_compatible",
         "http": "openai_compatible",
+        "leanstral": "leanstral_local",
+        "leanstral-local": "leanstral_local",
+        "muse": "muse",
+        "muse-spark": "muse",
+        "meta": "muse",
     }.get(key, key or "deterministic")
 
 
@@ -119,7 +130,16 @@ def _extract_codex_text(stdout: str, last_message: str) -> str:
     return result.strip() or str(stdout or "").strip()
 
 
-def _codex_generate(prompt: str, *, model: str, timeout: float, reasoning_effort: str = "", **kwargs: Any) -> str:
+def _codex_generate(
+    prompt: str,
+    *,
+    model: str,
+    timeout: float,
+    reasoning_effort: str = "",
+    sandbox: str = "",
+    **kwargs: Any,
+) -> str:
+    del kwargs
     executable = shutil.which(_env("JEVOPS_CODEX_BIN", default="codex"))
     if not executable:
         raise LLMRouterError("codex CLI not found on PATH")
@@ -128,6 +148,8 @@ def _codex_generate(prompt: str, *, model: str, timeout: float, reasoning_effort
     command = [executable, "exec", "--skip-git-repo-check", "-m", model]
     if reasoning_effort:
         command.extend(["-c", f'model_reasoning_effort="{reasoning_effort}"'])
+    if str(sandbox or "").strip():
+        command.extend(["--sandbox", str(sandbox).strip()])
     command.extend(["--output-last-message", last_message_path, "--json", "-"])
     try:
         result = subprocess.run(
@@ -139,7 +161,8 @@ def _codex_generate(prompt: str, *, model: str, timeout: float, reasoning_effort
             timeout=max(1.0, float(timeout)),
         )
         try:
-            last_message = open(last_message_path, encoding="utf-8", errors="replace").read()
+            with open(last_message_path, encoding="utf-8", errors="replace") as handle:
+                last_message = handle.read()
         except OSError:
             last_message = ""
     except (OSError, subprocess.TimeoutExpired) as exc:
@@ -205,7 +228,7 @@ def _http_generate(
 
 
 def generate_text(
-    prompt: str,
+    prompt: Optional[str],
     *,
     provider: Optional[str] = None,
     model_name: Optional[str] = None,
@@ -217,12 +240,56 @@ def generate_text(
 ) -> str:
     """Generate text through one explicitly selected in-tree provider."""
 
+    _TRACE.value = {}  # A failed request must not inherit a previous success.
     selected = _provider(provider)
-    model = str(model_name or _env("JEVOPS_LLM_MODEL", default="jevops-deterministic"))
+    if kwargs.get("response_format") is not None and selected != "leanstral_local":
+        raise LLMRouterError("response_format is supported only by the local Leanstral adapter")
+    if kwargs.get("messages") is not None and selected not in {"leanstral_local", "muse"}:
+        raise LLMRouterError("structured messages are supported only by Leanstral and Muse")
+    model = str(model_name or _env("JEVOPS_LLM_MODEL",
+                default={"leanstral_local": "Leanstral", "muse": "muse-spark-1.3"}.get(
+                    selected, "jevops-deterministic")))
     effort = str(reasoning_effort or _env("JEVOPS_CODEX_REASONING_EFFORT", default=""))
     if selected == "deterministic":
         _set_trace(provider=selected, model=model, fixture=True, reason="offline")
         return _deterministic_response(prompt)
+    if selected == "muse":
+        from .muse import MuseError, chat_completion as muse_completion
+
+        try:
+            response = muse_completion(
+                prompt or "",
+                messages=kwargs.get("messages"),
+                model=model,
+                base_url=str(kwargs.get("base_url") or ""),
+                api_key=str(kwargs.get("api_key") or ""),
+                max_new_tokens=max_new_tokens,
+                timeout=timeout,
+                reasoning_effort=str(reasoning_effort or kwargs.get("reasoning_effort") or "low"),
+            )
+        except MuseError as exc:
+            raise LLMRouterError(str(exc), category=exc.category, http_status=exc.http_status) from None
+        _set_trace(
+            provider=selected,
+            model=model,
+            reason="generated",
+            response_model=response.get("model") or "",
+            finish_reason=response.get("finish_reason") or "",
+            usage=response.get("usage") or {},
+            external_dependency=True,
+        )
+        return str(response.get("text") or "")
+    if selected == "leanstral_local":
+        from .leanstral import LeanstralError, chat_completion
+        try:
+            response = chat_completion(prompt, messages=kwargs.get("messages"), model=model, base_url=kwargs.get("base_url") or "",
+                max_new_tokens=max_new_tokens, timeout=timeout, temperature=temperature, stop=kwargs.get("stop"),
+                response_format=kwargs.get("response_format"))
+        except LeanstralError as exc:
+            raise LLMRouterError(str(exc), category=exc.category, http_status=exc.http_status) from None
+        _set_trace(provider=selected, model=model, reason="generated",
+                   **{k: v for k, v in response.items() if k != "text"})
+        return response["text"]
     if selected == "codex_cli":
         text = _codex_generate(prompt, model=model, timeout=timeout, reasoning_effort=effort, **kwargs)
     elif selected == "openai_compatible":

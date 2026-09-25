@@ -23,9 +23,10 @@ design implication is to retain a verified Pareto frontier and measure costs
 under the benchmark's pinned environment, rather than collapse all objectives
 into token count. [Lean Refactor, 2026](https://arxiv.org/html/2605.20244v1).
 
-Currently this repository measures source-body length and compile receipts.
-The new slicing experiment records wall time per invocation. It does **not**
-yet measure elaborated `Expr` DAG size or isolated kernel time. The e-graph's
+The original slicing experiment measures source-body length, compile receipts
+and wall time per invocation. The [proof-cost follow-up](KERNEL_COMPRESSION_NEXT.md)
+now measures compiled `Expr` structural/tree size and adds teacher admission
+guards; isolated kernel time remains unmeasured. The e-graph's
 `render_chars`/`ast_nodes` objectives concern propositional formulas, not arena
 proof tokens. Only recompiling and measuring the complete proposed proof can
 establish a proof-length improvement.
@@ -90,8 +91,10 @@ from declaring the shortest tactic spelling the fastest proof.
 
 Implemented: `grind_control`, explicit simplifier-set proposals, existing simp
 lemma deletion, and `rewrite_transport` proposals such as replacing
-`simp [...] at h; exact h` with `simpa [...] using h`. Automatic harvesting and
-replaying of `grind?`/`simp?`/`exact?` suggestion diagnostics is still future work.
+`simp [...] at h; exact h` with `simpa [...] using h`. The
+[solver-feedback follow-up](SOLVER_TRAJECTORIES.md) adds bounded single-line
+`grind?`/`simp?`/`linarith?` suggestion replay. General scripts and `exact?`
+retrieval remain future work.
 Every optional Mathlib tactic is an invocation of the installed solver, not a
 new implementation of that solver.
 

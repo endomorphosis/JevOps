@@ -1,0 +1,9 @@
+{
+  "pin": {
+    "lean_tag": "v4.27.0",
+    "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+  },
+  "label": "edit-32",
+  "source_sha256": "7678af37c8be5c8d02e41190975d315fe0d6d0fa5c45f0cf0a5df59a6bc764d2",
+  "status": "NOT_RUN_AFTER_NON_SUCCESS"
+}

@@ -1,0 +1,46 @@
+{
+  "authority": "source-plan parity only; original native measurements remain source/context-bound; no renewed proof evidence",
+  "cases": [
+    {
+      "case": "and-comm",
+      "changed_plan_fields_except_implementation": [],
+      "current_implementation_sha256": "8f26994cb19245393e061ac09c2c2853c0eb4460d3cce497a0d5fc17b2e5b383",
+      "identical_sources": true,
+      "old_implementation_sha256": "eba24eccd88be471d1be4a790d0a03b06b621b8a3a99cfecf0280f57a15cf86c",
+      "saved_receipt_sha256": "2a99a1d45659fe944dec63d945be1b763321d78f1cd110e54a2f9d9c60ab8875"
+    },
+    {
+      "case": "or-chain",
+      "changed_plan_fields_except_implementation": [],
+      "current_implementation_sha256": "8f26994cb19245393e061ac09c2c2853c0eb4460d3cce497a0d5fc17b2e5b383",
+      "identical_sources": true,
+      "old_implementation_sha256": "eba24eccd88be471d1be4a790d0a03b06b621b8a3a99cfecf0280f57a15cf86c",
+      "saved_receipt_sha256": "4bc7315f1896abba8ec2c89b635b86ffa6af2fcd6a5696d239196460216e14b1"
+    },
+    {
+      "case": "iff-reverse",
+      "changed_plan_fields_except_implementation": [],
+      "current_implementation_sha256": "8f26994cb19245393e061ac09c2c2853c0eb4460d3cce497a0d5fc17b2e5b383",
+      "identical_sources": true,
+      "old_implementation_sha256": "eba24eccd88be471d1be4a790d0a03b06b621b8a3a99cfecf0280f57a15cf86c",
+      "saved_receipt_sha256": "ea32547cd69e1a5d4f555de0fc103464cceb54d21f465edc47c6345987c5ee05"
+    },
+    {
+      "case": "negative-implicit-remap",
+      "changed_plan_fields_except_implementation": [],
+      "current_implementation_sha256": "8f26994cb19245393e061ac09c2c2853c0eb4460d3cce497a0d5fc17b2e5b383",
+      "identical_sources": true,
+      "old_implementation_sha256": "eba24eccd88be471d1be4a790d0a03b06b621b8a3a99cfecf0280f57a15cf86c",
+      "saved_receipt_sha256": "63e2a89eeeaee380ffa4fb6e14437fceab6fc66f1e3d68515442690122604705"
+    }
+  ],
+  "comparison": "strict canonical JSON, normalizing tuple/list representation",
+  "compiler_invocations": 0,
+  "fresh_native_verification": false,
+  "promoted": false,
+  "reason": "post-pilot capture/fallback hardening and JSON roundtrip admission fix",
+  "schema": "jevops-relation-rendering-source-revalidation/v1",
+  "status": "IDENTICAL",
+  "supersedes": "source-revalidation.json",
+  "training_enabled": false
+}

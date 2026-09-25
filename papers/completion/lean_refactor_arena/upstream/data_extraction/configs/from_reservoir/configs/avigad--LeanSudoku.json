@@ -1,0 +1,35 @@
+{
+    "repo": "https://github.com/avigad/LeanSudoku",
+    "commit": "c5d60b817e68dd0efebe93abb9271af752bbcd36",
+    "lean": "leanprover/lean4:v4.13.0-rc4",
+    "name": "LeanSudoku",
+    "imports": [
+        "LeanSudoku"
+    ],
+    "metadata": {
+        "name": "LeanSudoku",
+        "owner": "avigad",
+        "fullName": "avigad/LeanSudoku",
+        "description": "Playing Sudoku in the Lean 4 proof assistant",
+        "keywords": [
+            "math"
+        ],
+        "homepage": null,
+        "license": "Apache-2.0",
+        "createdAt": "2024-10-10T18:19:05Z",
+        "updatedAt": "2024-10-25T18:12:20Z",
+        "stars": 5,
+        "sources": [
+            {
+                "type": "git",
+                "host": "github",
+                "id": "R_kgDOM-ethA",
+                "fullName": "avigad/LeanSudoku",
+                "repoUrl": "https://github.com/avigad/LeanSudoku",
+                "gitUrl": "https://github.com/avigad/LeanSudoku",
+                "defaultBranch": "main"
+            }
+        ],
+        "schemaVersion": "1.2.0"
+    }
+}

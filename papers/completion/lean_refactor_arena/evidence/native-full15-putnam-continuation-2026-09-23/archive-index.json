@@ -1,0 +1,292 @@
+[
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/full15-benchmark-20260923-IrlqY5/runtime/inputs/corpus.jsonl",
+    "archive": "inputs/corpus.jsonl",
+    "sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/full15-benchmark-20260923-IrlqY5/baseline.json",
+    "archive": "inputs/previous-baseline.json",
+    "sha256": "c78db0d35abd1b2073f66113930506eb6916f45a90cb367eebc24125fd42e8a4"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/full15-benchmark-20260923-IrlqY5/trial-subst.json",
+    "archive": "inputs/trial-subst.json",
+    "sha256": "9ff039941596ccc7bd6188166065d27b740a11a2a5f6a6abbc4e9da9bbb644b4"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/full15-benchmark-20260923-IrlqY5/trial-extracted.json",
+    "archive": "inputs/trial-extracted.json",
+    "sha256": "72eb9cdfd7fadde08e942dd31a0b66fe54a6109a737052efdc0615bb14da6d65"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/full15-benchmark-20260923-IrlqY5/trial-core.json",
+    "archive": "inputs/trial-core.json",
+    "sha256": "b1b0b5022f6abda5fcb6362ff3c872ef0a952d33939180c07e71f83e614fda68"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/cslib-v4.30.0-baseline.json",
+    "archive": "inputs/cslib-v4.30.0-baseline.json",
+    "sha256": "ccaa254b98c95faee61fb8f86caa1d98188124f00158b07b0a81e3f71d5abda3"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/arklib-v4.30.0-baseline.json",
+    "archive": "inputs/arklib-v4.30.0-baseline.json",
+    "sha256": "d1b0b6f4415018f02894340f894a64e2a77be8b632604bd0477d1302e54f0e1a"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/plan.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/plan.json",
+    "sha256": "1fd26e82fcb2ea754cddb22c206163001607522825c9d13b29acf91e0242cb8f"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/snapshot-before.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/snapshot-before.json",
+    "sha256": "8978e3a4d36560e1949f0f438bfbd5a4a9e74539aa6a1446698ca11917ff1c53"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/cslib-v4.30.0-projects.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/cslib-v4.30.0-projects.json",
+    "sha256": "7a28f3985b8e0652472d0321fa24490a94fd01a6e718eb29beaf0dd68e8ea6ab"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/cslib-v4.30.0.log",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/cslib-v4.30.0.log",
+    "sha256": "ccaa254b98c95faee61fb8f86caa1d98188124f00158b07b0a81e3f71d5abda3"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/cslib-v4.30.0-baseline.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/cslib-v4.30.0-baseline.json",
+    "sha256": "ccaa254b98c95faee61fb8f86caa1d98188124f00158b07b0a81e3f71d5abda3"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/arklib-v4.30.0-projects.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/arklib-v4.30.0-projects.json",
+    "sha256": "b12bd5fab8064407e892aa23cdab613cee8e618e03dc7819d5da55660ffb60ca"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/arklib-v4.30.0.log",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/arklib-v4.30.0.log",
+    "sha256": "d1b0b6f4415018f02894340f894a64e2a77be8b632604bd0477d1302e54f0e1a"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/arklib-v4.30.0-baseline.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/arklib-v4.30.0-baseline.json",
+    "sha256": "d1b0b6f4415018f02894340f894a64e2a77be8b632604bd0477d1302e54f0e1a"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/snapshot-after.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/snapshot-after.json",
+    "sha256": "8978e3a4d36560e1949f0f438bfbd5a4a9e74539aa6a1446698ca11917ff1c53"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/outcomes.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/outcomes.json",
+    "sha256": "2450c77863f26da03051d706ad674430dea093e452075310dcc9b396d0cc7ec6"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-putnam-v4.25.0/putnam-v4.25.0-baseline.json",
+    "archive": "inputs/putnam-v4.25.0-baseline.json",
+    "sha256": "203f8d5a95dd65fc9a3b5065aadcf1ca40931195fb058b4d10f26eb88f0c18cf"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-putnam-v4.25.0/plan.json",
+    "archive": "measurements/measurements-putnam-v4.25.0/plan.json",
+    "sha256": "9acda3ed5a7f5aef2c9b63044d739bb2db6381da96c9d886b18ac98d92b572f1"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-putnam-v4.25.0/snapshot-before.json",
+    "archive": "measurements/measurements-putnam-v4.25.0/snapshot-before.json",
+    "sha256": "8978e3a4d36560e1949f0f438bfbd5a4a9e74539aa6a1446698ca11917ff1c53"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-putnam-v4.25.0/putnam-v4.25.0-projects.json",
+    "archive": "measurements/measurements-putnam-v4.25.0/putnam-v4.25.0-projects.json",
+    "sha256": "31f51c2d8553a32e2a538d6afae7a779af55685d3dbb7bb1943dd975d7f777f4"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-putnam-v4.25.0/putnam-v4.25.0.log",
+    "archive": "measurements/measurements-putnam-v4.25.0/putnam-v4.25.0.log",
+    "sha256": "203f8d5a95dd65fc9a3b5065aadcf1ca40931195fb058b4d10f26eb88f0c18cf"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-putnam-v4.25.0/putnam-v4.25.0-baseline.json",
+    "archive": "measurements/measurements-putnam-v4.25.0/putnam-v4.25.0-baseline.json",
+    "sha256": "203f8d5a95dd65fc9a3b5065aadcf1ca40931195fb058b4d10f26eb88f0c18cf"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-putnam-v4.25.0/snapshot-after.json",
+    "archive": "measurements/measurements-putnam-v4.25.0/snapshot-after.json",
+    "sha256": "8978e3a4d36560e1949f0f438bfbd5a4a9e74539aa6a1446698ca11917ff1c53"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-putnam-v4.25.0/outcomes.json",
+    "archive": "measurements/measurements-putnam-v4.25.0/outcomes.json",
+    "sha256": "cc015d97f70f9a307883ba8f2a5d551a5350f15b0d32f7be3d84af1f0ee6737a"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790150072654781028.json",
+    "archive": "preparation/1790150072654781028.json",
+    "sha256": "4d1a66259009e94095b89188c3ab0614828965b033a24022df3402cbc6c92ac7"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790150072654781028.log",
+    "archive": "preparation/1790150072654781028.log",
+    "sha256": "04bcd280480e1c4a0151d24f7c04df38c303b245147c2ac136562ef8b7678f31"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790150126535508494.json",
+    "archive": "preparation/1790150126535508494.json",
+    "sha256": "2eb3a25ff30d0d9591142f6b2601ce8c14ccdde38a7439e9dd1020f09e787618"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790150126535508494.log",
+    "archive": "preparation/1790150126535508494.log",
+    "sha256": "459ab03b4372e95f8e2453e68110c450896ef2218d6a33c6ee71c5984817e7a1"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790150752301250269.json",
+    "archive": "preparation/1790150752301250269.json",
+    "sha256": "c58da5c326292e1e3d12d4bc63d99b80ab938062eca9eed5926c065d3838640b"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790150752301250269.log",
+    "archive": "preparation/1790150752301250269.log",
+    "sha256": "2ca03fde1004005acdb7022e2a6bb7a06a60a1241933a86d2250a5ec84618fac"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790152583426052327.json",
+    "archive": "preparation/1790152583426052327.json",
+    "sha256": "cd084bf3b2506e8d333e186df6e6294700bea9f661cf53ecb862d6b586a23835"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790152583426052327.log",
+    "archive": "preparation/1790152583426052327.log",
+    "sha256": "8874aa261246768991d6f3455934a7097772917cc1c0d6728ac025592407ecf3"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790157414426464156.json",
+    "archive": "preparation/1790157414426464156.json",
+    "sha256": "1fb6be01b1413df87862cc17c81d2f1d01c3f901ba1911d5d2e08f47ccfe513d"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790157414426464156.log",
+    "archive": "preparation/1790157414426464156.log",
+    "sha256": "fb5a1041f47b880b26d5747796d5b3956aff77f640c4ed4fcb9be14c2a71bb65"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790157775374634229.json",
+    "archive": "preparation/1790157775374634229.json",
+    "sha256": "e1c33c217b50136274cdb085398dab93a50b65c4f6218830170fbaef9d3a958c"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790157775374634229.log",
+    "archive": "preparation/1790157775374634229.log",
+    "sha256": "0fa200de062b028ee99c47e0a776ad2f15e6f943782f30173595d46a20b0b142"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790157826893340655.json",
+    "archive": "preparation/1790157826893340655.json",
+    "sha256": "11122bdd0f3617682607dba8d21a24d1eb58af05a1a5ceef37e15846cdd0137d"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790157826893340655.log",
+    "archive": "preparation/1790157826893340655.log",
+    "sha256": "b22b5e2790f2850ffae8845bfa9927e7c1f5f7533543cd89ee3a776fadbca579"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/preparation-plan.json",
+    "archive": "preparation/preparation-plan.json",
+    "sha256": "76cd6a6b70216825a952d9020d715a67744f6ba926d12004e107e92818d2ba8d"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/preparation-results.json",
+    "archive": "preparation/preparation-results.json",
+    "sha256": "5891a002dd1f62f135fbae85d71234380215920cd770000beca9d34a7f147bd6"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_exact.py",
+    "archive": "preparation/prepare_exact.py",
+    "sha256": "37c4a25aa915b4caa3fec78515ecae443e848e47f4c3e49fa78d2c8575fd6ce8"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_remaining.py",
+    "archive": "preparation/prepare_remaining.py",
+    "sha256": "88052edd76fa13a45c2bff72c08dd4913ddedff86722a0b5bbd93c5dfc3a0979"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measure_prepared.py",
+    "archive": "preparation/measure_prepared.py",
+    "sha256": "f80006a542af0271add8676f62fb97b48a1a7d21930f6ff929350fbee3ff4b9b"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/archive_completion.py",
+    "archive": "preparation/archive_completion.py",
+    "sha256": "b1661f45d2a261eeee447a60b1657a4b69f86474534c00f72f8117da5f916293"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_putnam25.py",
+    "archive": "preparation/prepare_putnam25.py",
+    "sha256": "8846a199166e03a83473bbe6b872912ec3bbf3efd4560964d82f2cb665ea11a0"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/putnam25-plan.json",
+    "archive": "preparation/putnam25-plan.json",
+    "sha256": "6ce3f19b7da17200a6d972673d6705c4e7cf4be72300e420ff25a1ae26f13296"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/putnam25-result.json",
+    "archive": "preparation/putnam25-result.json",
+    "sha256": "1fb6be01b1413df87862cc17c81d2f1d01c3f901ba1911d5d2e08f47ccfe513d"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/resume_putnam25.py",
+    "archive": "preparation/resume_putnam25.py",
+    "sha256": "cf6c4abd9ac6c1dc502695919616120db3f8a72158288c2032153d8e1591131c"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/putnam25-resume-plan.json",
+    "archive": "preparation/putnam25-resume-plan.json",
+    "sha256": "8ac3d3981716a8a05e3c16785f3d9cd06179b292ba2ad89b4f6112602698443f"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/putnam25-resume-result.json",
+    "archive": "preparation/putnam25-resume-result.json",
+    "sha256": "11122bdd0f3617682607dba8d21a24d1eb58af05a1a5ceef37e15846cdd0137d"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/inspect_source_gap.py",
+    "archive": "preparation/inspect_source_gap.py",
+    "sha256": "1e0b7924e471f5c6c65b3f078619402d1ffb86c5743fa0399eb98bd10e8964ff"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/source-gap-diagnostic.json",
+    "archive": "preparation/source-gap-diagnostic.json",
+    "sha256": "82c7195c5b4eee5b0e74840e4fe0fe5e6c0f5d9c14884a6181f29f109e76aa0b"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/storage_preflight.py",
+    "archive": "preparation/storage_preflight.py",
+    "sha256": "d6f2301139896edc92480e5865b6977925a3e4ebb7c9535fe540e147d6c00c36"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/storage-preflight.json",
+    "archive": "preparation/storage-preflight.json",
+    "sha256": "3d97641dd0ee3e26d71efaf4eb7261ad773de82d51ed9a98c52fca839fcddd52"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/full15-benchmark-20260923-IrlqY5/runtime/snapshot.json",
+    "archive": "native-runtime.snapshot.json",
+    "sha256": "0dc965d987860cfbae9ff470d52f068fb8ac1f081056f5c89d038d91f23203fc"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/report-code-v3/snapshot.json",
+    "archive": "reporter.snapshot.json",
+    "sha256": "833ab5852a2e7940483a8b0fcb609981ca6f429eaeebb6a485180176afb757c2"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/report-code-v3/jevops/arena_benchmark_report.py",
+    "archive": "report-generator.py",
+    "sha256": "a8deca39d3db4c552750529187bad6f94cba23255dca8c3742167e433e76fb8d"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "name": "putnam-v4.25.0",
+    "statuses": {
+      "UNAVAILABLE": 33,
+      "VERIFIED": 3
+    },
+    "processes": 3,
+    "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-putnam-v4.25.0/putnam-v4.25.0-baseline.json",
+    "sha256": "203f8d5a95dd65fc9a3b5065aadcf1ca40931195fb058b4d10f26eb88f0c18cf"
+  }
+]

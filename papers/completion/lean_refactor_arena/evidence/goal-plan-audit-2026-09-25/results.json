@@ -1,0 +1,73 @@
+{
+  "schema": "jevops-plan-goal-audit/v1",
+  "date": "2026-09-25",
+  "snapshot": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/tmp/jevops-goal-audit-20260925-kGQKio/source",
+    "manifest_sha256": "09afb94b121dab7185f28612f18dbb42c468cfec1e19c957387cdd0c8418351d",
+    "content_root": "f86b366a2630ddd87f5533ab0e3c5afbfc2613a2ceffefbdacc07d2a76de8261",
+    "file_count": 1965,
+    "bytes": 50043051,
+    "proof_verified": false
+  },
+  "implementation_and_test_files_matching_current_checkout": 358,
+  "junit": {
+    "seal-selftests": {
+      "selected": 42,
+      "fresh_passed": 42,
+      "reused": 0,
+      "skipped": 0,
+      "errors_or_failures": 0,
+      "junit_sha256": "b6ef2e1f9224a1a993557057a7fda03267374be51a903fd49147f4827fcc8306"
+    },
+    "cold": {
+      "selected": 335,
+      "fresh_passed": 303,
+      "reused": 0,
+      "skipped": 32,
+      "errors_or_failures": 0,
+      "junit_sha256": "6b6fb2bdb68bf7122367fc01c57b005c450c50f4299793ce2394e869c2d1eadb"
+    },
+    "warm": {
+      "selected": 335,
+      "fresh_passed": 12,
+      "reused": 291,
+      "skipped": 32,
+      "errors_or_failures": 0,
+      "junit_sha256": "81de5cca736ab68ff6a9be4139bd7d6207c719d6872010853012ceb8c7736b4b"
+    },
+    "safety": {
+      "selected": 616,
+      "fresh_passed": 480,
+      "reused": 0,
+      "skipped": 136,
+      "errors_or_failures": 0,
+      "junit_sha256": "1bf10ab364f5c0f29b74edfe0e1142bb93017c30a4144edc25273d5f85f23707"
+    }
+  },
+  "seal_counts": {
+    "selftests": 0,
+    "cold_fresh": 291,
+    "warm_reused": 291,
+    "safety_fresh": 470
+  },
+  "native_status": {
+    "expected_exit": 1,
+    "unsealed_native_cases": 29,
+    "body_execution": false
+  },
+  "timings_seconds": {
+    "selftests": 38.89,
+    "cold": 21.26,
+    "warm": 19.18,
+    "safety": 30.73
+  },
+  "native_lean_checks": 0,
+  "live_model_calls": 0,
+  "downloads": 0,
+  "dependency_builds": 0,
+  "production_promotion": false,
+  "official_score": null,
+  "scope": "planning and seal/reuse validation, not closure of implementation roadmap or adversarial metric-integrity gates"
+}

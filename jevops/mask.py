@@ -1173,6 +1173,63 @@ def closed_with_replay(
     return rows[: int(max_candidates)]
 
 
+def drive_leanstral_fills(
+    record: Mapping[str, Any],
+    tactics: str,
+    holes: Sequence[Any],
+    *,
+    ledger: Optional[Any],
+    shots: Sequence[Mapping[str, Any]],
+    schedule_id: str,
+    n_shots: int,
+    load_keys_fn: Callable[[], Any],
+    find_fn: Callable[[str], Sequence[Any]],
+    catalog_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    skeleton_fn: Callable[..., str],
+    prompt_fn: Callable[..., str],
+    chat_fn: Callable[..., Mapping[str, Any]],
+    parse_fn: Callable[..., Any],
+    token_fn: Callable[[str], int],
+    extract_fn: Callable[[str], str],
+    default_model: str,
+) -> list[dict[str, Any]]:
+    """Fill symbol holes with one hosted chat call. Does not write Lean."""
+
+    from jevops.outer import call_if, cap_or_fill, generate_text_and_usage, get_str, head_chars, head_seq
+    from jevops.search import holes_or_find
+
+    load_keys_fn()
+    holes = holes_or_find(holes, lambda: find_fn(tactics), kinds=("operator", "phrase"), n=8, head_fn=head_seq)
+
+    def _fill() -> list[dict[str, Any]]:
+        use_shots = cap_or_fill(shots, n_shots, lambda: catalog_fn(tactics, n_shots=n_shots))
+        skeleton = skeleton_fn(tactics, holes)
+        raw = chat_fn(prompt_fn(record, skeleton, holes, use_shots), max_tokens=600, temperature=0.3, n=1)
+        text, inn, out = generate_text_and_usage(raw, fallback_in=200)
+        call_if(
+            ledger is not None,
+            lambda: ledger.record(
+                "mistral",
+                input_tokens=inn,
+                output_tokens=out,
+                model=get_str(raw, "model", default=default_model),
+            ),
+        )
+        return pack_leanstral_fill_rows(
+            tactics=tactics,
+            holes=holes,
+            text=text,
+            fills=parse_fn(text, holes),
+            token_fn=token_fn,
+            extract_fn=extract_fn,
+            schedule_id=schedule_id,
+            n_shots=len(list(use_shots)),
+            head_fn=head_chars,
+        )
+
+    return call_if(holes, _fill, default=[])
+
+
 def pack_leanstral_fill_rows(
     *,
     tactics: str,
@@ -1680,6 +1737,164 @@ def closed_multihole_row(
     packed["generator"] = generator
     packed["n_masks"] = len(list(holes or ()))
     return packed
+
+
+def drive_mask_rows(
+    tactics: str,
+    holes: Sequence[Any],
+    *,
+    as_row: Callable[[Any], Mapping[str, Any]],
+) -> str:
+    """Skeleton from hole objects. Not a lake file."""
+
+    return mask_skeleton(tactics, [as_row(item) for item in holes])
+
+
+def drive_apply_row(
+    tactics: str,
+    hole: Any,
+    fill: str,
+    *,
+    as_row: Callable[[Any], Mapping[str, Any]],
+) -> str:
+    """Apply one fill to a hole object. Not an admit."""
+
+    return apply_fill(tactics, as_row(hole), fill)
+
+
+def drive_family_rank(
+    holes: Sequence[Any],
+    *,
+    rank: Mapping[str, int],
+    cap: int,
+    default_rank: int = 9,
+) -> list[Any]:
+    """Rank holes by family, then longer original text. Not a lake admit."""
+
+    return rank_cap(
+        holes,
+        key=lambda hole: (
+            rank.get(getattr(hole, "family", ""), default_rank),
+            -len(getattr(hole, "original", "") or ""),
+            getattr(hole, "hole_id", ""),
+        ),
+        cap=cap,
+    )
+
+
+def drive_score_schedule(
+    score: Any,
+    *,
+    one_hole: bool,
+    one_table: Sequence[Mapping[str, Any]],
+    multi_table: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Pick the one-hole or multi-hole schedule table. Not a lake admit."""
+
+    from jevops.outer import either
+
+    table = either(one_hole, lambda: one_table, lambda: multi_table)
+    return schedule_for_score(score, table)
+
+
+def drive_span_holes(
+    tactics: str,
+    span: int,
+    *,
+    stride: Optional[int],
+    tokens_fn: Callable[[str], Sequence[Any]],
+    skip_fn: Callable[[str], bool],
+    from_row: Callable[[Any], Any],
+) -> list[Any]:
+    """Token windows mapped through from_row. Not a lake admit."""
+
+    rows = span_windows(tactics, span, stride=stride, tokens=list(tokens_fn(tactics) or ()), skip_fn=skip_fn)
+    return [from_row(row) for row in rows]
+
+
+def drive_schedule_holes(
+    tactics: str,
+    *,
+    n_masks: int,
+    span: int,
+    windows_fn: Callable[..., Sequence[Any]],
+    holes_fn: Callable[..., Sequence[Any]],
+    from_row: Callable[[Any], Any],
+    rehole: Callable[[Any, int], Any],
+    as_row: Callable[[Any], Any],
+) -> list[Any]:
+    """Non-overlapping windows, else the first symbol holes. Not a lake admit."""
+
+    from jevops.outer import either, or_int
+
+    count = or_int(n_masks, 1, floor=1)
+    windows = list(windows_fn(tactics, span) or ())
+    return either(
+        windows,
+        lambda: [from_row(row) for row in pick_nonoverlapping([as_row(item) for item in windows], n=count)],
+        lambda: [rehole(hole, index) for index, hole in enumerate(list(holes_fn(tactics, count) or ())[:count])],
+    )
+
+
+def drive_prefer_holes(
+    tactics: str,
+    span: int,
+    *,
+    max_pos: int,
+    windows_fn: Callable[..., Sequence[Any]],
+    score_fn: Callable[[Any], int],
+    schedule_fn: Callable[..., Sequence[Any]],
+    from_row: Callable[[Any], Any],
+    rehole: Callable[[Any, int], Any],
+    as_row: Callable[[Any], Any],
+) -> list[Any]:
+    """Prefer a scored window. Empty windows fall back to the schedule."""
+
+    from jevops.outer import either, or_int
+
+    windows = list(windows_fn(tactics, span) or ())
+    return either(
+        windows,
+        lambda: [
+            rehole(from_row(row), 0)
+            for row in pick_scored(
+                [as_row(hole) for hole in windows],
+                n=or_int(max_pos, 1, floor=1),
+                score_fn=score_fn,
+                reindex=False,
+            )
+        ],
+        lambda: list(schedule_fn(tactics, span) or ()),
+    )
+
+
+def drive_closed_candidates(
+    tactics: str,
+    *,
+    include_replay: bool,
+    replay_loader: Callable[[], Any],
+    holes_fn: Callable[[str], Sequence[Any]],
+    fills_fn: Callable[[Any, str], Sequence[str]],
+    token_fn: Callable[[str], int],
+    as_row_fn: Callable[[Any], Any],
+    max_candidates: int,
+    generator: str = "closed_lean_vocab",
+) -> list[dict[str, Any]]:
+    """Shorter closed-vocab fills. Import failure drops replay. Not a lake admit."""
+
+    from jevops.outer import call_if, ignore_error
+
+    replay_fn = call_if(include_replay, lambda: ignore_error(replay_loader))
+    return closed_with_replay(
+        tactics,
+        holes_fn(tactics),
+        fills_fn=fills_fn,
+        token_fn=token_fn,
+        as_row_fn=as_row_fn,
+        replay_fn=replay_fn,
+        max_candidates=max_candidates,
+        generator=generator,
+    )
 
 
 def kernel_one_hole_rows(

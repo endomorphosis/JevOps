@@ -115,6 +115,42 @@ def split_statement_suffix(
     return src[len(statement) :]
 
 
+def drive_split_statement(
+    record: Mapping[str, Any],
+    *,
+    error_cls: Any,
+    body_cls: Any,
+    suffix_fn: Callable[..., str],
+) -> Any:
+    """Prefix-bind a warmup record. Never scans the statement for ``:=``."""
+
+    name = get_str(record, "name")
+    statement = require_str(
+        record.get("statement"),
+        error_cls=error_cls,
+        empty=f"{name}: statement must be a non-empty string",
+    )
+    src = require_str(
+        record.get("src"),
+        error_cls=error_cls,
+        empty=f"{name}: src must be a non-empty string",
+    )
+    suffix = suffix_fn(
+        src,
+        statement,
+        name=name,
+        error_cls=error_cls,
+        miss_msg=f"{name}: src does not start with the frozen statement",
+    )
+    return body_cls(
+        name=name,
+        source=get_str(record, "source"),
+        statement=statement,
+        body_suffix=suffix,
+        header=as_str(record.get("header")),
+    )
+
+
 def prefix_bind_flags(src: str, statement: str, suffix: str = "") -> dict[str, bool]:
     """Prefix-bind flags from src.startswith(statement) and src[len(statement):]. Never scans for :=."""
 
@@ -153,6 +189,38 @@ def join_decl(
     if isinstance(header, str) and header.strip():
         return header.rstrip() + "\n\n" + core
     return core
+
+
+def tactic_head_or_empty(
+    record: Mapping[str, Any],
+    *,
+    block_fn: Callable[[Mapping[str, Any]], str],
+    n_lines: int,
+) -> str:
+    """First tactic lines, or empty when the block cannot be read. Not a lake admit."""
+
+    try:
+        block = block_fn(record)
+    except Exception:
+        return ""
+    return head_lines(block, n_lines)
+
+
+def select_starting_tactics(
+    record: Mapping[str, Any],
+    *,
+    from_best: bool,
+    block_fn: Callable[[Mapping[str, Any]], str],
+    out: Any = None,
+    name: str = "",
+    extras: Optional[Mapping[str, str]] = None,
+) -> str:
+    """Frozen tactics, or a keep-best body when from_best. Does not generate Lean."""
+
+    tactics = block_fn(record)
+    if not from_best:
+        return tactics
+    return starting_body(tactics, out, name, extras=extras)
 
 
 def head_lines(text: str, n: int) -> str:
@@ -513,6 +581,39 @@ def deterministic_route(
     return {"action": "nest_inner", "reason": "continue_typesafe"}
 
 
+def drive_route_action(
+    *,
+    board: Mapping[str, Any],
+    gaps: list[dict[str, Any]],
+    last_lake: list[dict[str, Any]],
+    stalled: bool,
+    llm: bool,
+    memory: Optional[Mapping[str, Any]],
+    ledger: Any,
+    status_fn: Callable[[Any], Mapping[str, Any]],
+    generate_fn: Callable[[str], str],
+    prompt_fn: Callable[..., str],
+) -> dict[str, Any]:
+    """Drop LLM when the NCA has halted, else route. Does not write Lean."""
+
+    nca = status_fn(memory)
+    llm_on = false_when(llm, nca.get("budget_dead"), nca.get("halt"))
+    return route_next(
+        gaps=gaps,
+        last_lake=last_lake,
+        stalled=stalled,
+        llm=llm_on,
+        memory=memory,
+        generate_fn=optional_fn(llm_on, generate_fn),
+        prompt=call_if(
+            llm_on,
+            lambda: prompt_fn(board, gaps, last_lake, nca),
+            default="",
+        ),
+        ledger=ledger,
+    )
+
+
 def route_next(
     *,
     gaps: list[dict[str, Any]],
@@ -798,7 +899,7 @@ def make_llm_router_generate(
             or trace.get("provider_name")
             or ""
         ).strip().lower().replace("-", "_")
-        provider_aliases = {"codex": "codex_cli", "copilot": "copilot_cli"}
+        provider_aliases = {"codex": "codex_cli", "copilot": "copilot_cli", "leanstral": "leanstral_local"}
         expected_provider = provider_aliases.get(expected_provider, expected_provider)
         actual_provider = provider_aliases.get(actual_provider, actual_provider)
         expected_model = str(model_name or "").strip()
@@ -1594,6 +1695,7 @@ def run_steps(
     hard_stop_fn: Optional[Any] = None,
     stalled_limit: int = 2,
     on_inner_start: Optional[Any] = None,
+    on_step: Optional[Any] = None,
 ) -> dict[str, Any]:
     """OUTER route/apply then INNER payload. Implementations inject lake/Jev."""
 
@@ -1657,6 +1759,17 @@ def run_steps(
             payload=payload,
         )
         history.append(row)
+        if on_step is not None:
+            try:
+                on_step(
+                    {
+                        **row,
+                        "last_lake": list(last_lake),
+                        "payload": dict(payload or {}),
+                    }
+                )
+            except Exception as exc:
+                row["watch_error"] = exc_head(exc, 200)
         halt = None
         if halt_fn is not None:
             try:
@@ -1906,6 +2019,23 @@ def nca_status(memory: Optional[Mapping[str, Any]] = None) -> dict[str, Any]:
     }
 
 
+def public_fields(
+    obj: Any,
+    names: Sequence[str],
+    *,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> dict[str, Any]:
+    """Copy named attributes. Lists are copied. Does not admit anything."""
+
+    out: dict[str, Any] = {}
+    for name in names:
+        value = getattr(obj, name)
+        out[name] = list(value) if isinstance(value, list) else value
+    if extra:
+        out.update(dict(extra))
+    return out
+
+
 def load_env_file(
     path: Any,
     *,
@@ -1933,6 +2063,55 @@ def load_env_file(
         dest.setdefault(key, val)
         loaded[key] = val
     return loaded
+
+
+def redact_secret_fields(payload: Any) -> Any:
+    """Redact key/token fields. Preserves input_tokens and output_tokens."""
+
+    if isinstance(payload, Mapping):
+        out = {}
+        for key, value in payload.items():
+            name = str(key).lower()
+            if "key" in name or "token" in name and "input_tokens" not in name and "output_tokens" not in name:
+                if name in {"input_tokens", "output_tokens", "total_tokens"}:
+                    out[key] = redact_secret_fields(value)
+                elif isinstance(value, str) and value:
+                    out[key] = "[redacted]"
+                else:
+                    out[key] = redact_secret_fields(value)
+            else:
+                out[key] = redact_secret_fields(value)
+        return out
+    if isinstance(payload, list):
+        return [redact_secret_fields(item) for item in payload]
+    if isinstance(payload, str) and payload.startswith("apikey_"):
+        return "[redacted]"
+    return payload
+
+
+def pin_front_paths(
+    paths: Sequence[Any],
+    *,
+    env: Mapping[str, str],
+    defaults: Mapping[str, str],
+    assign_fn: Optional[Callable[[], Any]] = None,
+) -> None:
+    """Put paths at the front of sys.path and setdefault env. Does not start a server."""
+
+    import os
+    import sys
+
+    for path in paths:
+        text = str(path)
+        if text in sys.path:
+            sys.path.remove(text)
+        sys.path.insert(0, text)
+    for key, value in env.items():
+        os.environ[key] = value
+    for key, value in defaults.items():
+        os.environ.setdefault(key, value)
+    if assign_fn is not None:
+        assign_fn()
 
 
 def pin_sys_path(
@@ -4583,6 +4762,52 @@ def pack_client_session(
     )
 
 
+def drive_plan_session(
+    *,
+    pin_fn: Callable[[], Any],
+    probe_fn: Callable[[], Any],
+    inspect_fn: Callable[..., Any],
+    decide_fn: Callable[..., str],
+    exec_fn: Callable[[bool], Any],
+    autostart_env: str,
+    allow_owner_exec: bool = False,
+    wait_seconds: float = 0.0,
+    lock_path: Any = None,
+    execute_owner: bool = False,
+    session_cls: Any = None,
+) -> Any:
+    """Inspect health and the gpu-0 lock. Never takes exclusive ownership."""
+
+    pin_fn()
+    health = probe_fn()
+    lock = inspect_fn(lock_path)
+    action = decide_fn(
+        health,
+        lock,
+        allow_owner_exec=allow_owner_exec,
+        wait_seconds=wait_seconds,
+    )
+    owner = exec_fn(False)
+    owner = call_if(
+        action == "exec_owner" and execute_owner,
+        lambda: exec_fn(True),
+        default=owner,
+    )
+    return pack_client_session(
+        action=action,
+        health=health,
+        lock=lock,
+        autostart=env_str(autostart_env),
+        owner=owner,
+        reason=session_reason(
+            action,
+            lock_held=bool(getattr(lock, "held", False)),
+            allow_owner_exec=allow_owner_exec,
+        ),
+        session_cls=session_cls,
+    )
+
+
 def generate_client_flow(
     *,
     health: Any,
@@ -4622,6 +4847,163 @@ def generate_client_flow(
                 return generate_fn()
         return skip_fn(health, getattr(owner, "error", "") or exec_reason)
     return skip_fn(health, skip_reason)
+
+
+def drive_pin_docker0_client(
+    *,
+    base_url: Any = None,
+    default_url: str,
+    host: str,
+    port: Any,
+) -> str:
+    """Bind llama.cpp to docker0 as a client. Never enables autostart."""
+
+    url = rstrip_or(base_url, default_url)
+    pin_env(
+        {
+            "IPFS_ACCELERATE_LLAMA_CPP_AUTOSTART": "0",
+            "IPFS_ACCELERATE_LLAMA_CPP_AUTO_INSTALL": "0",
+            "IPFS_ACCELERATE_LLAMA_CPP_PREFETCH_MODEL": "0",
+            "IPFS_ACCELERATE_LLAMA_CPP_AUTO_UPDATE": "0",
+            "IPFS_ACCELERATE_LLAMA_CPP_BASE_URL": url,
+            "IPFS_ACCELERATE_LLAMA_CPP_HOST": host,
+        }
+    )
+    call_if(
+        url == rstrip_or(default_url),
+        lambda: pin_env({"IPFS_ACCELERATE_LLAMA_CPP_PORT": text_or(port)}),
+    )
+    pin_sys_path(
+        "",
+        defaults={
+            "IPFS_ACCEL_SKIP_CORE": "1",
+            "IPFS_AUTO_INSTALL": "false",
+        },
+    )
+    return url
+
+
+def drive_inspect_lock(
+    path: Any = None,
+    *,
+    pin_fn: Callable[[], Any],
+    default_path_fn: Callable[[], Any],
+    error_cls: Any,
+    lock_cls: Any,
+) -> Any:
+    """Inspect a lock file. Does not take exclusive ownership."""
+
+    pin_fn()
+    lock_path = Path(if_none(path, factory=default_path_fn))
+    info = inspect_lock(lock_path, error_cls=error_cls)
+    return lock_cls(
+        path=get_str(info, "path"),
+        exists=bool(info["exists"]),
+        held=bool(info["held"]),
+        pid=info["pid"],
+        method=get_str(info, "method"),
+        error=get_str(info, "error"),
+    )
+
+
+def drive_maybe_owner(
+    *,
+    execute: bool = False,
+    script: Any = None,
+    extra_env: Optional[Mapping[str, str]] = None,
+    timeout: float = 5.0,
+    argv_fn: Callable[..., Sequence[str]],
+    relative_fn: Callable[[], Sequence[str]],
+    autostart_env: str,
+    run_fn: Callable[..., Mapping[str, Any]],
+    pack_fn: Callable[..., Any],
+) -> Any:
+    """Record or run the owner argv. This process still does not take EX."""
+
+    argv = list(argv_fn(script=script))
+    rel = replace_if(script is not None, argv, relative_fn())
+    extra = overlay_map(
+        {autostart_env: "0", "IPFS_ACCELERATE_LLAMA_CPP_AUTO_INSTALL": "0"},
+        **overlay_map(extra_env),
+    )
+    return run_owner_exec(
+        execute=execute,
+        argv=argv,
+        argv_relative=rel,
+        pack_fn=pack_fn,
+        target=call_if(len(argv) > 2, lambda: Path(argv[2]), default=""),
+        run_fn=run_fn,
+        env=env_copy(extra),
+        timeout=timeout,
+    )
+
+
+def call_or_empty(import_fn: Callable[[], Any], call_fn: Callable[[Any], Any]) -> Any:
+    """Call after import. Import failure is an empty list, not a success."""
+
+    try:
+        module = import_fn()
+    except Exception:
+        return []
+    return call_fn(module)
+
+
+def read_digest_jsonl(
+    path: Any,
+    *,
+    frozen: str,
+    error_cls: Any = SystemExit,
+    mismatch_fmt: str = "warmup JSONL hash mismatch: {digest} != {frozen}",
+) -> tuple[bytes, str, list[Any]]:
+    """Read JSONL and refuse a digest mismatch. Does not rewrite the file."""
+
+    raw = Path(path).read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    if digest != frozen:
+        raise error_cls(mismatch_fmt.format(digest=digest, frozen=frozen))
+    records = [json.loads(line) for line in raw.decode("utf-8").splitlines() if line.strip()]
+    return raw, digest, records
+
+
+def drive_generate_as_client(
+    *,
+    pin_fn: Callable[[], Any],
+    autostart_env: str,
+    error_cls: Any,
+    probe_fn: Callable[[], Any],
+    inspect_fn: Callable[..., Any],
+    generate_fn: Callable[[], Any],
+    wait_fn: Callable[[float], Any],
+    exec_fn: Callable[[bool], Any],
+    skip_fn: Callable[..., Any],
+    decide_fn: Callable[..., str],
+    allow_owner_exec: bool = False,
+    wait_seconds: float = 0.0,
+    execute_owner: bool = False,
+    lock_path: Any = None,
+    expected: str = "0",
+) -> Any:
+    """Pin, refuse autostart, probe, then client flow. Never takes exclusive lock."""
+
+    pin_fn()
+    require_env_eq(
+        autostart_env,
+        expected,
+        error_cls=error_cls,
+        fmt="{key} must be {expected}; refusing to generate",
+    )
+    return generate_client_flow(
+        health=probe_fn(),
+        lock=inspect_fn(lock_path),
+        generate_fn=generate_fn,
+        wait_fn=wait_fn,
+        exec_fn=exec_fn,
+        skip_fn=skip_fn,
+        decide_fn=decide_fn,
+        allow_owner_exec=allow_owner_exec,
+        wait_seconds=wait_seconds,
+        execute_owner=execute_owner,
+    )
 
 
 def spend_kind(
@@ -4685,6 +5067,115 @@ def closed_skip(
     if extra:
         out.update(dict(extra))
     return out
+
+
+def drive_skill_loop(
+    *,
+    outer: int,
+    llm: bool,
+    out: Any,
+    rounds: int,
+    lake_top: int,
+    drafts: int,
+    timeout: float,
+    seed: int,
+    generate: Optional[Callable[..., str]],
+    run_inner: Optional[Callable[[Any], dict[str, Any]]],
+    memory: Optional[dict[str, Any]],
+    persist_memory: bool,
+    load_memory_fn: Callable[[], dict[str, Any]],
+    seed_fn: Callable[[dict[str, Any]], Any],
+    overlay_fn: Callable[[dict[str, Any]], Any],
+    keepbest_fn: Callable[[dict[str, Any]], Any],
+    ledger_cls: Callable[..., Any],
+    default_inner: Callable[[Any], dict[str, Any]],
+    nest_depth: int,
+    board_fn: Callable[[], Mapping[str, int]],
+    board_total_fn: Callable[[Mapping[str, int]], int],
+    route_fn: Callable[..., Any],
+    canary_args_fn: Callable[..., Any],
+    apply_fn: Callable[..., Any],
+    gaps_fn: Callable[[dict[str, Any]], Any],
+    save_fn: Callable[[dict[str, Any]], Any],
+    memory_default: Any,
+    halt_fn: Callable[[dict[str, Any]], Mapping[str, Any]],
+    flatten_fn: Callable[..., Any],
+    protocol: str,
+    pr_id: str,
+    on_step: Optional[Any] = None,
+) -> dict[str, Any]:
+    """Outer skill loop. The inner runner still owns lake. Jev does not write Lean."""
+
+    memory = if_none(memory, factory=load_memory_fn)
+    seed_runtime(memory, seed_fn=seed_fn, overlay_fn=overlay_fn, keepbest_fn=keepbest_fn)
+    ledger = ledger_cls(
+        name="warmup#skill-improve-loop",
+        max_jev_calls=jev_budget(6 * first_int(rounds) * first_int(outer), 1, 1),
+        max_grok_calls=or_int(call_if(llm, lambda: first_int(outer), default=0), 1, floor=1),
+        max_mistral_calls=0,
+    )
+    inner = if_none(run_inner, default_inner)
+
+    def _board() -> tuple[dict[str, int], int]:
+        return mapping_and_total(board_fn, board_total_fn)
+
+    def _route(*, board: Any, gaps: Any, last_lake: Any, stalled: Any) -> Any:
+        return route_fn(
+            board=board,
+            gaps=gaps,
+            last_lake=last_lake,
+            stalled=stalled,
+            llm=bool(llm),
+            ledger=ledger,
+            generate=generate,
+            memory=memory,
+        )
+
+    def _inner(step: int) -> dict[str, Any]:
+        return inner(
+            canary_args_fn(
+                out=out,
+                rounds=rounds,
+                lake_top=lake_top,
+                drafts=drafts,
+                timeout=timeout,
+                seed=seed + step,
+                nest_depth=nest_depth,
+            )
+        )
+
+    stepped = run_steps(
+        n=first_int(outer),
+        memory=memory,
+        llm=bool(llm),
+        gaps_fn=lambda: gaps_fn(memory),
+        route_fn=_route,
+        apply_fn=apply_fn,
+        inner_fn=_inner,
+        board_fn=_board,
+        persist_fn=optional_fn(persist_memory, save_fn),
+        halt_fn=lambda mem: overlay_map(halt_fn(mem)),
+        flatten_fn=flatten_fn,
+        hard_stop_fn=lambda: bool(getattr(ledger, "hard_stopped", False)),
+        stalled_limit=2,
+        on_inner_start=lambda mem: pop_nested(mem, "nca", "overlay_done"),
+        on_step=on_step,
+    )
+    mem_path = either(persist_memory, lambda: save_fn(memory), lambda: memory_default)
+    return skill_loop_payload(
+        outer=outer,
+        llm=llm,
+        history=get_list(stepped, "history"),
+        board=board_fn(),
+        total=board_total_fn(board_fn()),
+        best_total=stepped.get("best_total"),
+        stop_reason=get_str(stepped, "stop_reason"),
+        memory_path=mem_path,
+        memory_skills=get_list(memory, "skills"),
+        ledger=ledger,
+        protocol=protocol,
+        pr_id=pr_id,
+    )
 
 
 def skill_loop_payload(
@@ -4909,6 +5400,207 @@ def pack_chat_response(
     return packed
 
 
+def post_hosted_chat(
+    prompt: str,
+    *,
+    url: str,
+    model: str,
+    max_tokens: int,
+    timeout: float,
+    temperature: float,
+    n: int,
+    stop: Optional[Sequence[str]],
+    assert_url: Callable[[str], None],
+    resolve_key: Callable[[], str],
+    redact_fn: Callable[[str, str], str],
+    error_cls: type[BaseException],
+    extra: Optional[Mapping[str, Any]] = None,
+    http_fmt: str = "HTTP {status}: {body}",
+    json_fmt: str = "invalid JSON: {exc}",
+    not_object: str = "non-object JSON payload",
+) -> dict[str, Any]:
+    """POST chat/completions. Caller asserts the host. Does not write Lean."""
+
+    import time
+
+    assert_url(url)
+    key = resolve_key()
+    payload = chat_request_payload(
+        prompt,
+        model=model,
+        max_tokens=max_tokens,
+        temperature=temperature,
+        n=n,
+        stop=stop,
+    )
+    started = time.perf_counter()
+    status, data, final_url = http_json(
+        url,
+        payload,
+        timeout=float(timeout),
+        headers={
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        },
+        error_cls=error_cls,
+        redact_fn=lambda message: redact_fn(message, key),
+        http_fmt=http_fmt,
+        json_fmt=json_fmt,
+        not_object=not_object,
+    )
+    resolved = first_truthy(final_url, url)
+    assert_url(resolved)
+    return pack_chat_response(
+        data,
+        status=status,
+        url=resolved,
+        wall_ms=elapsed_ms(started),
+        model=model,
+        extra=extra,
+    )
+
+
+def drive_grok_generate(
+    prompt: str,
+    ledger: Any,
+    *,
+    max_new_tokens: int,
+    timeout: float,
+    source: str,
+    generate: Optional[Callable[..., str]],
+    get_trace: Optional[Callable[[], Mapping[str, Any]]],
+    fixture: bool,
+    lookup_fn: Callable[[str], Any],
+    default_new: int,
+    default_timeout: float,
+    estimate_fn: Callable[[str], int],
+    identity_from_trace_fn: Callable[..., Any],
+    load_router_fn: Callable[[], tuple[Callable[..., str], Callable[[], Mapping[str, Any]]]],
+    fail_closed: Mapping[str, Any],
+    live_kwargs_fn: Callable[[], Mapping[str, Any]],
+    identity_cls: Callable[..., Any],
+    requested_provider: str,
+    requested_model: str,
+    error_cls: type[BaseException],
+) -> tuple[str, Any, Any]:
+    """Call grok through an injected router. No Leanstral fallback. Does not admit Lean."""
+
+    from dataclasses import asdict
+
+    from jevops.lean import coalesce_limits, identity_from_mapping, refuse_if_fallback, require_text
+
+    max_new_tokens, timeout = coalesce_limits(
+        source=source,
+        max_new=max_new_tokens,
+        timeout=timeout,
+        lookup_fn=lookup_fn,
+        default_new=default_new,
+        default_timeout=default_timeout,
+    )
+    estimated_in = estimate_fn(prompt)
+    estimated_out = first_int(max_new_tokens)
+
+    def _identity(*, model: str, fixture: bool, extra: Optional[Mapping[str, Any]] = None, text: str = "") -> dict[str, Any]:
+        del model, fixture
+        ident = identity_from_trace_fn(overlay_map(extra), generated=True)
+        refuse_if_fallback(
+            ident,
+            error_cls=error_cls,
+            fmt="resolved provider/model is a forbidden Leanstral/HF fallback: {provider}/{model}",
+        )
+        require_text(text, error_cls=error_cls, msg="grok returned a non-text payload")
+        return asdict(ident)
+
+    def _live() -> tuple[str, Mapping[str, Any], tuple[int, int]]:
+        raise_if(generate is None and fixture, error_cls, "fixture generate callable required")
+        router_generate, router_trace = fill_none(generate, get_trace, load_router_fn)
+        call_kwargs = either(generate is not None, lambda: overlay_map(fail_closed), live_kwargs_fn)
+        text = reraise_as(
+            lambda: router_generate(
+                prompt,
+                max_new_tokens=first_int(max_new_tokens),
+                timeout=float(timeout),
+                **call_kwargs,
+            ),
+            (Exception,),
+            error_cls,
+            skip_types=(error_cls,),
+            fmt="grok generate_text failed: {exc}",
+        )
+        trace = overlay_map(call_or(router_trace, {}))
+        inn, out = usage_or_estimate(trace, fallback_in=estimated_in, estimate_fn=estimate_fn, text=text)
+        return text_or(text), trace, (inn, out)
+
+    text, identity_dict, line = ledger_generate(
+        ledger,
+        "grok",
+        estimated_in=estimated_in,
+        estimated_out=estimated_out,
+        model=requested_model,
+        fixture=False,
+        fixture_text="",
+        live_fn=_live,
+        identity_fn=_identity,
+        error_cls=error_cls,
+        estimate_fn=estimate_fn,
+        refuse_fmt="grok call refused: {reason}",
+        after_fmt="grok spend refused after call: {reason}",
+    )
+    return (
+        text,
+        identity_from_mapping(
+            identity_cls,
+            identity_dict,
+            requested_provider=requested_provider,
+            requested_model=requested_model,
+        ),
+        line,
+    )
+
+
+def drive_mistral_generate(
+    prompt: str,
+    ledger: Any,
+    *,
+    max_new_tokens: int,
+    timeout: float,
+    model: str,
+    fixture: bool,
+    fixture_text: str,
+    estimate_fn: Callable[[str], int],
+    chat_fn: Callable[..., Mapping[str, Any]],
+    identity_fn: Callable[..., Mapping[str, Any]],
+    error_cls: type[BaseException],
+) -> tuple[str, Mapping[str, Any], Any]:
+    """Call hosted Mistral through an injected chat function. Does not admit Lean."""
+
+    estimated_in = estimate_fn(prompt)
+    estimated_out = first_int(max_new_tokens)
+
+    def _live() -> tuple[str, Mapping[str, Any], tuple[int, int]]:
+        payload = chat_fn(prompt, model=model, max_tokens=max_new_tokens, timeout=timeout)
+        inn = first_int(payload.get("input_tokens"), estimated_in)
+        out = first_int(payload.get("output_tokens"), estimate_fn(get_str(payload, "text")))
+        return get_str(payload, "text"), payload, (inn, out)
+
+    return ledger_generate(
+        ledger,
+        "mistral",
+        estimated_in=estimated_in,
+        estimated_out=estimated_out,
+        model=model,
+        fixture=fixture,
+        fixture_text=fixture_text,
+        live_fn=_live,
+        identity_fn=identity_fn,
+        error_cls=error_cls,
+        estimate_fn=estimate_fn,
+        refuse_fmt="mistral call refused: {reason}",
+        after_fmt="mistral spend refused after call: {reason}",
+    )
+
+
 def ledger_generate(
     ledger: Any,
     kind: str,
@@ -5124,6 +5816,23 @@ def path_safe(name: str, *, empty: str = "unnamed") -> str:
     return text or empty
 
 
+def drive_kg_search(
+    query: str,
+    memory: Optional[Mapping[str, Any]],
+    *,
+    graph_fn: Callable[[Optional[Mapping[str, Any]]], Mapping[str, Any]],
+    hit_fn: Callable[..., dict[str, Any]],
+    cap: int,
+) -> list[dict[str, Any]]:
+    """Search an injected skill graph. Does not compile."""
+
+    graph = graph_fn(memory)
+    return map_hits(
+        matching_nodes(get_list(graph, "nodes"), query, cap=cap),
+        lambda node: hit_fn(get_str(node, "id"), source="kg", query=query, extra={"kind": node.get("kind")}),
+    )
+
+
 def matching_nodes(
     nodes: Sequence[Mapping[str, Any]],
     query: str,
@@ -5144,6 +5853,45 @@ def matching_nodes(
         if len(hits) >= max(0, int(cap)):
             break
     return hits
+
+
+def drive_duckdb_search(
+    query: str,
+    *,
+    db_path: Optional[Any],
+    candidate_fn: Callable[[], Sequence[Any]],
+    table_sql: Mapping[str, str],
+    hit_fn: Callable[..., dict[str, Any]],
+    refuse_names: Sequence[str] = ("control.duckdb",),
+) -> tuple[list[dict[str, Any]], str]:
+    """Query the first available symbol index. Advisory only. Does not compile."""
+
+    if try_import("duckdb") is None:
+        return [], "duckdb_unavailable"
+    paths = [
+        path
+        for path in first_not_none(call_if(db_path is not None, lambda: [db_path]), factory=candidate_fn)
+        if path is not None and path.is_file()
+    ]
+    if not paths:
+        return [], "no_duckdb_index"
+    hits, used = query_first_engine(
+        paths,
+        table_sql,
+        [f"%{query.casefold()}%"],
+        refuse_names=refuse_names,
+        row_fn=lambda row: call_if(
+            row and row[0],
+            lambda: hit_fn(
+                text_or(row[0]),
+                source="duckdb",
+                query=query,
+                path=text_or(row[1]),
+                extra={"kind": text_or(row_cell(row, 2, default=""))},
+            ),
+        ),
+    )
+    return hits, replace_if(used in {"no_index", "no_matching_table", "query_failed"}, "duckdb_no_symbols", used)
 
 
 def query_first_engine(
@@ -6144,6 +6892,1229 @@ def rank_named_rows(
     return rows
 
 
+def drive_named_live_rank(
+    names: Sequence[str],
+    *,
+    load_fn: Callable[[], tuple[Any, str, Sequence[Any]]],
+    rank_fn: Callable[..., Any],
+    schema: str,
+    redact_fn: Callable[[Any], Any],
+    pin_fns: Sequence[Callable[[], Any]] = (),
+    prepare_fn: Optional[Callable[[Sequence[Any]], Any]] = None,
+    extra: Optional[Mapping[str, Any]] = None,
+    extra_fn: Optional[Callable[..., Mapping[str, Any]]] = None,
+) -> dict[str, Any]:
+    """Pin, load, rank named rows, and pack. Does not compile Lean."""
+
+    import time
+
+    if pin_fns:
+        pin_calls(*pin_fns)()
+    _raw, digest, records = load_fn()
+    ctx = prepare_fn(records) if prepare_fn is not None else None
+    started = time.perf_counter()
+    rows = rank_named_rows(names, records, lambda record: rank_fn(record, records, ctx))
+    packed = extra_fn(records, ctx) if extra_fn is not None else dict(extra or {})
+    return pack_live_rank(
+        schema=schema,
+        digest=digest,
+        canaries=rows,
+        wall_ms=elapsed_ms(started),
+        extra=packed,
+        redact_fn=redact_fn,
+    )
+
+
+def drive_insert_packed(
+    execute_fn: Callable[..., Any],
+    sql: str,
+    receipt: Any,
+    *,
+    schema: str,
+    dumps_fn: Callable[[Any], str],
+    tiny_fn: Callable[[Any], str],
+    error_cls: Any,
+    fail_fmt: str,
+) -> bool:
+    """Pack a receipt and INSERT it. Existing keys are skipped."""
+
+    params = pack_receipt_insert_params(receipt, schema=schema, dumps_fn=dumps_fn, tiny_fn=tiny_fn)
+    return insert_ignore_conflict(execute_fn, sql, params, error_cls=error_cls, fail_fmt=fail_fmt)
+
+
+def drive_fetch_rows(
+    execute_fn: Callable[..., Any],
+    sql: str,
+    key: Any,
+    row_fn: Callable[[Any], Any],
+) -> list[Any]:
+    """Map one SELECT. Never writes."""
+
+    return fetch_mapped(execute_fn(sql, (key,)), row_fn)
+
+
+def drive_lookup_cell(
+    execute_fn: Callable[..., Any],
+    sql: str,
+    params: Sequence[Any],
+    *,
+    index: int = 1,
+) -> Optional[str]:
+    """One cell from one SELECT. Missing is None."""
+
+    result = execute_fn(sql, tuple(params))
+    return str_or_none(row_cell(result.fetchone(), index))
+
+
+def drive_identity_public(
+    identity: Any,
+    fields: Sequence[str],
+    *,
+    extra: Optional[Mapping[str, Any]] = None,
+) -> Optional[dict[str, Any]]:
+    """Public provider identity. Mapping inputs pass through."""
+
+    def _fields() -> Optional[dict[str, Any]]:
+        row = object_fields(identity, tuple(fields), extra=dict(extra or {"arena_score": None}))
+        set_if(
+            row,
+            row and "fallback_used" in row,
+            "fallback_used",
+            bool(overlay_map(row).get("fallback_used")),
+        )
+        return row
+
+    return either(isinstance(identity, Mapping), lambda: overlay_map(identity), _fields)
+
+
+def drive_fill_prompt(
+    path: Any,
+    record: Optional[Mapping[str, Any]],
+    fields: Mapping[str, Any],
+    *,
+    blanks: Mapping[str, str],
+) -> str:
+    """Fill a prompt template. Does not call a model."""
+
+    return fill_template(read_text(path), overlay_str(dict(blanks), overlay_map(record), fields))
+
+
+def drive_allow_files(primary: Sequence[Any], extras: Sequence[Any], *, cap: int = 40) -> list[Any]:
+    """Harness files first, then allowlisted extras that exist."""
+
+    files = head_seq(sorted(primary), cap)
+    files.extend(existing_files(tuple(extras)))
+    return files
+
+
+def drive_workspace_text(
+    workspace: Any,
+    dest_name: str,
+    *,
+    glob: str,
+    drop: str,
+    reject_fn: Callable[[str], bool],
+    error_cls: Any,
+    miss_fmt: str,
+) -> str:
+    """Read the written tactics file. Chat is never consulted."""
+
+    dest = Path(workspace) / dest_name
+    return first_file_text(
+        glob_after(workspace, glob, first=dest),
+        drop_substr=drop,
+        reject_fn=reject_fn,
+        error_cls=error_cls,
+        miss=miss_fmt.format(workspace=workspace),
+    )
+
+
+def drive_poll_health(
+    *,
+    timeout: float,
+    interval: float,
+    probe: Optional[Callable[[], Any]],
+    default_probe: Callable[[], Any],
+) -> Any:
+    """Poll until ok. Does not take a lock."""
+
+    return poll_until(
+        if_none(probe, default_probe),
+        ok_fn=lambda item: bool(getattr(item, "ok", False)),
+        timeout=timeout,
+        interval=interval,
+    )
+
+
+def drive_harness_ptr(path: str, *, marker: str, ptr_fn: Callable[[str, str], str]) -> str:
+    """ptr://codepath for a harness-relative path. Empty path is empty."""
+
+    text = posix_slash(path)
+    return call_if(
+        text,
+        lambda: ptr_fn(
+            "codepath",
+            path_to_dots(replace_if(text.startswith(marker), "harness/" + without_prefix(text, marker), text)),
+        ),
+        default="",
+    )
+
+
+def retry_verdict_skipped(verdict: Optional[str], bad: Sequence[str] = ("fail", "error")) -> bool:
+    """True when a stored verdict should not be retried."""
+
+    return verdict in set(bad)
+
+
+def drive_tags_ok(
+    version_info: Any,
+    receipts: Sequence[Any],
+    *,
+    id_fn: Callable[[Any], Any],
+    ok_fn: Callable[[Any], bool],
+) -> bool:
+    """Every version tag is present and ok. Empty tag list is not ok."""
+
+    return listed_all_ok(flatten_version_tags(version_info), receipts, id_fn=id_fn, ok_fn=ok_fn)
+
+
+def drive_any_env_key(env: Optional[Mapping[str, str]], names: Sequence[str]) -> bool:
+    """True when any named key is set. Does not read secret values into logs."""
+
+    from jevops.jev import any_key
+
+    return any_key(env_mapping(env), names)
+
+
+def drive_either_call(env: Any, *fns: Callable[[Any], Any]) -> bool:
+    """First truthy injected check. Does not start a server."""
+
+    return bool(first_truthy(*(fn(env) for fn in fns), default=False))
+
+
+def drive_all_call(env: Any, *fns: Callable[[Any], Any]) -> bool:
+    """True when every injected check is true."""
+
+    return all(bool(fn(env)) for fn in fns)
+
+
+def drive_required_env_key(
+    env: Optional[Mapping[str, str]],
+    names: Sequence[str],
+    *,
+    error_cls: Any,
+    miss: str,
+) -> str:
+    """First nonempty env value, or raise. Does not log the value."""
+
+    value = first_nonempty(env_mapping(env), *names)
+    raise_if(not value, error_cls, miss)
+    return value
+
+
+def drive_token_limits(
+    source: str,
+    table: Mapping[str, tuple[Any, ...]],
+    default: tuple[Any, ...],
+) -> tuple[int, int]:
+    """(max_new_tokens, timeout) for a source key."""
+
+    tokens, timeout = keyed_pair(source, table, default)
+    return first_int(tokens), first_int(timeout)
+
+
+def drive_owner_argv(
+    script: Any,
+    default_fn: Callable[[], Any],
+    bind: str,
+    gpu: str,
+    *,
+    python: Optional[str] = None,
+) -> list[str]:
+    """Argv for an optional owner process. Does not exec it."""
+
+    return python_argv(path_or(script, factory=default_fn), "--bind", bind, "--gpu", gpu, python=python)
+
+
+def drive_guarded_tokens(
+    text: Any,
+    tokens: Sequence[str],
+    *,
+    error_cls: Any,
+    miss: str,
+    boundary: str,
+) -> tuple[str, ...]:
+    """Refuse a non-string, then return whole-word token hits."""
+
+    from jevops.repair import forbidden_tokens
+
+    raise_if(not isinstance(text, str), error_cls, miss)
+    return forbidden_tokens(text, tokens, boundary=boundary)
+
+
+def drive_overlay_named(
+    load_fn: Callable[..., Any],
+    name: str,
+    *,
+    error_cls: Any,
+    miss: str,
+    extra: Any = None,
+) -> tuple[Any, list[Any], str]:
+    """Named warmup record as a plain dict, plus the pack."""
+
+    record, records, digest = load_named_pack(
+        load_fn, name, error_cls=error_cls, miss=miss, extra=extra
+    )
+    return overlay_map(record), records, digest
+
+
+def drive_url_clone(url: str, state_root: Any, *, factory: Callable[[], Any]) -> Any:
+    """Clone directory under the state root. Does not run git."""
+
+    return url_clone_dir(path_or(state_root, factory=factory), url)
+
+
+def drive_tag_sort(tag: str, *, normalize_fn: Callable[[str], str]) -> Any:
+    """Sort key for a normalized lean tag."""
+
+    return version_sort_key(normalize_fn(tag))
+
+
+def drive_joined(
+    state_root: Any,
+    *parts: Any,
+    factory: Callable[[], Any],
+) -> Any:
+    """Join parts under state_root, or factory() when state_root is None."""
+
+    return join_under(path_or(state_root, factory=factory), *parts)
+
+
+def drive_kind_joined(
+    job: Any,
+    state_root: Any,
+    *parts: Any,
+    kind: str,
+    factory: Callable[[], Any],
+    error_cls: Any,
+    miss: str,
+) -> Any:
+    """Join parts for one job kind. The wrong kind fails closed."""
+
+    raise_if(getattr(job, "kind", None) != kind, error_cls, miss)
+    return join_under(path_or(state_root, factory=factory), *parts)
+
+
+def drive_lake_argv(
+    tag: str,
+    args: Sequence[str],
+    *,
+    pin_fn: Callable[..., Mapping[str, Any]],
+    elan_home: Any = None,
+) -> list[str]:
+    """Tag-pinned lake argv. Never searches PATH."""
+
+    pin = pin_fn(tag, elan_home=elan_home)
+    return prepend_argv(pin["lake_path"], *args)
+
+
+def drive_failed_history(path: Any, *, load_fn: Callable[[Any], Any]) -> Any:
+    """Leaf ids from a history JSON file."""
+
+    return failed_leaves_from_history(load_fn(path))
+
+
+def drive_named_block(
+    load_fn: Callable[[], Any],
+    name: str,
+    *,
+    tactic_fn: Callable[[Any], str],
+    error_cls: Any,
+    miss: str,
+) -> str:
+    """Tactic block of one named warmup record. Does not rewrite the JSONL."""
+
+    _raw, _digest, records = load_fn()
+    record = lookup_named(records, name, error_cls=error_cls, miss=miss)
+    return tactic_fn(record).strip("\n")
+
+
+def drive_record_src(
+    record: Mapping[str, Any],
+    tactics: str,
+    *,
+    join_fn: Callable[[str, str], str],
+) -> dict[str, Any]:
+    """Copy the record with src set to statement plus tactics."""
+
+    return with_field(record, "src", join_fn(get_str(record, "statement"), tactics))
+
+
+def drive_starting_body(
+    record: Mapping[str, Any],
+    *,
+    from_best: bool,
+    block_fn: Callable[[Mapping[str, Any]], str],
+    out: Any = None,
+    extras: Optional[Mapping[str, str]] = None,
+    name_default: str = "canary",
+) -> str:
+    """Keep-best body or the frozen tactic block. Does not generate Lean."""
+
+    return select_starting_tactics(
+        record,
+        from_best=from_best,
+        block_fn=block_fn,
+        out=out,
+        name=get_str(record, "name", default=name_default),
+        extras=extras,
+    )
+
+
+def drive_first_field(
+    records: Sequence[Any],
+    key: str,
+    value: Any,
+    *,
+    error_cls: Any,
+    miss: str,
+) -> Any:
+    """First record whose field equals value."""
+
+    return first_where(records, field_eq(key, value), error_cls=error_cls, miss=miss)
+
+
+def drive_prefer_file(
+    primary: Any,
+    fallback: Any,
+    *,
+    read_fn: Callable[[Any], str],
+    missing_fn: Callable[[], str],
+) -> str:
+    """Text of the first existing file, else missing_fn(). Does not write Lean."""
+
+    path = either(Path(primary).is_file(), lambda: primary, lambda: fallback)
+    return either(Path(path).is_file(), lambda: stripped_or(read_fn(path), ""), missing_fn)
+
+
+def drive_public_receipt(
+    root: Any,
+    *,
+    path_fn: Callable[[], Any],
+    payload_fn: Callable[[], Any],
+    reject_fn: Callable[[Any], None],
+    write_fn: Callable[[Any, Any], None],
+) -> Any:
+    """Write a public receipt after the reject hook. Not the control plane."""
+
+    path = path_fn()
+    payload = payload_fn()
+    reject_fn(payload)
+    write_fn(path, payload)
+    return path
+
+
+def drive_call_after(setup_fn: Callable[[], Any], call_fn: Callable[[], Any]) -> Any:
+    """Run setup, then the follow-up. Does not start a server by itself."""
+
+    setup_fn()
+    return call_fn()
+
+
+def drive_load_env_files(paths: Sequence[Any], *, strip_quotes: bool = False) -> None:
+    """Load each env file. Missing files are the loader's concern."""
+
+    for path in paths:
+        load_env_file(path, strip_quotes=strip_quotes)
+
+
+def drive_read_extract(
+    path: Any,
+    *,
+    read_fn: Callable[[Any], str],
+    extract_fn: Callable[[str], str],
+) -> str:
+    """Read a file and extract tactics. Does not generate Lean."""
+
+    return extract_fn(read_fn(path))
+
+
+def drive_prompt_neighbors(
+    record: Mapping[str, Any],
+    records: Sequence[Mapping[str, Any]],
+    *,
+    retrieve_fn: Callable[..., Any],
+    neighbor_fn: Callable[..., Any],
+    k: int,
+) -> Any:
+    """Retrieve, then take the neighbor slice. Not a score."""
+
+    return neighbor_fn(retrieve_fn(record, records), k=k)
+
+
+def drive_unique_edits(
+    current: str,
+    reference: str,
+    rng: Any,
+    *,
+    propose_fn: Callable[..., Sequence[Mapping[str, Any]]],
+) -> dict[str, str]:
+    """Unique tactic bodies from proposed edits, keeping current."""
+
+    return unique_kind_bodies(
+        propose_fn(current, reference, rng, limit=None),
+        keep={"keep": current},
+        skip_eq=current,
+    )
+
+
+def drive_popped_walk(kwargs: dict[str, Any], *, walk_fn: Callable[..., Any]) -> Any:
+    """Pop record and tactics, then walk. Mutates kwargs like the subloop entry."""
+
+    record = kwargs.pop("record")
+    tactics = stripped_or(kwargs.pop("tactics", ""), "")
+    return walk_fn(record, tactics, **kwargs)
+
+
+def drive_then_mark(pin_fn: Callable[[], Any], mark_fn: Callable[[], Any]) -> Any:
+    """Run pin_fn, then mark_fn, and return the pin result."""
+
+    url = pin_fn()
+    mark_fn()
+    return url
+
+
+def drive_hit_sum(text: str, specs: Sequence[tuple[Any, int, bool]]) -> int:
+    """Sum weighted needle hits. specs are (needles, weight, add_len)."""
+
+    total = 0
+    for needles, weight, add_len in specs:
+        total += count_hits(text, needles, weight=int(weight), add_len=bool(add_len))
+    return total
+
+
+def drive_mapped_lines(
+    reference: str,
+    *,
+    lines_fn: Callable[[str], Sequence[Any]],
+    name_fn: Callable[[str], Any],
+) -> Any:
+    """Map stripped lines through name_fn, dropping empties."""
+
+    return mapped_nonempty(lines_fn(reference), lambda line: name_fn(line.strip()))
+
+
+def drive_sorted_pins(
+    version_info: Any,
+    *,
+    iter_fn: Callable[[Any], Sequence[Any]],
+    pin_fn: Callable[[Any], Any],
+    key_fn: Callable[[Any], Any],
+) -> list[Any]:
+    """Map pins and sort them. Does not resolve elan."""
+
+    pins = [pin_fn(item) for item in iter_fn(version_info)]
+    return sorted(pins, key=key_fn, reverse=True)
+
+
+def drive_matching_pin(
+    record: Mapping[str, Any],
+    tag: str,
+    *,
+    pins_fn: Callable[[Any], Sequence[Any]],
+    error_cls: Any,
+) -> Any:
+    """First pin whose lean_tag equals tag."""
+
+    return first_or_last(
+        pins_fn(record.get("version_info")),
+        lambda pin: getattr(pin, "lean_tag", None) == tag,
+        error_cls=error_cls,
+        miss=f"{get_str(record, 'name')}: no version_info pins",
+    )
+
+
+def drive_hole_from_row(row: Mapping[str, Any], *, cls: Any) -> Any:
+    """Build a hole object from a window row. The class stays with the consumer."""
+
+    return cls(
+        hole_id=get_str(row, "hole_id", default="SYM_0"),
+        kind=get_str(row, "kind", default="span"),
+        start=first_int(row["start"]),
+        end=first_int(row["end"]),
+        original=get_str(row, "original"),
+        n_tokens=first_int(row.get("n_tokens"), default=1),
+    )
+
+
+def drive_prefixed_when(symbol: str, *, needle: str, prefix: str) -> str:
+    """prefix+symbol when symbol starts with needle, else empty."""
+
+    return call_if(text_or(symbol).startswith(needle), lambda: f"{prefix}{symbol}", default="")
+
+
+def drive_named_json_path(root: Any, name: str, tag: str, *, sanitize_fn: Callable[[str], str]) -> Any:
+    """receipts/<sanitized-name>/<tag>.json under root."""
+
+    return join_under(root, "receipts", sanitize_fn(name), f"{tag}.json")
+
+
+def drive_plane_report(
+    cfg: Mapping[str, Any],
+    *,
+    plane: str,
+    script_exists: bool,
+    flags: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Control-plane pin check. Does not open DuckDB."""
+
+    found = cfg.get("primary_control_plane")
+    out = {
+        "primary_control_plane": found,
+        "matches_constant": found == plane,
+        "run_warmup_exists": bool(script_exists),
+    }
+    out.update(dict(flags))
+    return out
+
+
+def drive_wrapped_engine(
+    path: Any,
+    *,
+    duckdb_module: Any,
+    wrap_fn: Callable[[Any], Any],
+) -> tuple[Any, str]:
+    """Open an engine and wrap the raw connection. Does not run SQL."""
+
+    raw, engine = connect_engine(path, duckdb_module=duckdb_module)
+    return wrap_fn(raw), engine
+
+
+def drive_exec_each(conn: Any, statements: Sequence[str]) -> None:
+    """Execute each statement in order. The caller supplies insert-only SQL."""
+
+    for sql in statements:
+        conn.execute(sql)
+
+
+def drive_usage_record(
+    ledger: Any,
+    result: Any,
+    *,
+    kind: str,
+    model: str,
+    fallback: int,
+) -> None:
+    """Record input/output tokens from a result. Does not read a secret."""
+
+    inn, out = result_usage(result, fallback_in=fallback)
+    ledger.record(kind, input_tokens=inn, output_tokens=out, model=model)
+
+
+def drive_module_client(module: Any) -> Any:
+    """TypeSafeClient from client_kwargs. Does not call the network."""
+
+    return module.TypeSafeClient(**client_kwargs(module))
+
+
+def drive_dir_of(
+    job: Any,
+    state_root: Any,
+    *,
+    dir_fn: Callable[..., Any],
+    marker: str,
+    suffix: str,
+) -> bool:
+    """True when dir_fn is marked and has the suffix. Not a live bake."""
+
+    return dir_marked(dir_fn(job, state_root), marker=marker, suffix=suffix)
+
+
+def drive_write_text(path: Any, text: str, *, encoding: str = "utf-8") -> None:
+    """Create parents and write text. Does not write Lean."""
+
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(text, encoding=encoding)
+
+
+def drive_write_rendered(
+    path: Any,
+    rows: Sequence[Any],
+    *,
+    render_fn: Callable[[Sequence[Any]], str],
+) -> None:
+    """Render rows, then write the text."""
+
+    drive_write_text(path, render_fn(rows))
+
+
+def drive_replace_tree(src: Any, dest: Any) -> None:
+    """Replace dest with a copy of src."""
+
+    import shutil
+
+    target = Path(dest)
+    if target.exists():
+        shutil.rmtree(target)
+    shutil.copytree(src, target)
+
+
+def drive_refresh_ledger(ledger: Any, *, money_fn: Callable[[Any], Any], usd_fn: Callable[[Any], float]) -> None:
+    """Recompute spent and remaining dollars from the decimal spent counter."""
+
+    from decimal import Decimal
+
+    budget = money_fn(Decimal(str(ledger.budget_usd)))
+    remaining = budget - ledger._spent
+    if remaining < Decimal("0"):
+        remaining = Decimal("0")
+    ledger.spent_usd = usd_fn(ledger._spent)
+    ledger.remaining_usd = usd_fn(remaining)
+
+
+def drive_authorize_ledger(
+    ledger: Any,
+    kind: str,
+    input_tokens: int,
+    output_tokens: int,
+    *,
+    cost_fn: Callable[..., Any],
+    money_fn: Callable[[Any], Any],
+) -> tuple[bool, str, Any]:
+    """Authorize one spend against the decimal budget and call caps."""
+
+    from decimal import Decimal
+
+    return authorize_then_stop(
+        ledger,
+        kind,
+        cost_fn=lambda: cost_fn(kind, input_tokens, output_tokens),
+        spent=ledger._spent,
+        budget=money_fn(Decimal(str(ledger.budget_usd))),
+        zero=Decimal("0"),
+        official=ledger.official_track2,
+        counts={"grok": ledger.grok_calls, "mistral": ledger.mistral_calls, "jev": ledger.jev_calls},
+        limits={
+            "grok": first_int(ledger.max_grok_calls),
+            "mistral": first_int(ledger.max_mistral_calls),
+            "jev": first_int(ledger.max_jev_calls),
+        },
+    )
+
+
+def drive_ledger_line(
+    ledger: Any,
+    kind: str,
+    *,
+    input_tokens: int,
+    output_tokens: int,
+    fixture: bool,
+    model: str,
+    models: Mapping[str, str],
+    error_cls: Any,
+    unknown_fmt: str,
+    line_cls: Any,
+    usd_fn: Callable[[Any], float],
+    money_fn: Callable[[Any], Any],
+    attr_map: Mapping[str, str],
+) -> Any:
+    """Authorize, bump the counter, and append one usage line. Does not call a provider."""
+
+    allowed, reason, cost = ledger.authorize(kind, input_tokens, output_tokens)
+    kind_key, default_model, call_index = spend_kind(
+        kind,
+        models=models,
+        counts={"grok": ledger.grok_calls, "mistral": ledger.mistral_calls, "jev": ledger.jev_calls},
+        error_cls=error_cls,
+        unknown_fmt=unknown_fmt,
+    )
+
+    def _bump() -> None:
+        ledger._spent = money_fn(ledger._spent + cost)
+        bump_named(ledger, kind_key, attr_map, error_cls=error_cls, fmt=unknown_fmt)
+
+    return record_usage_line(
+        ledger,
+        line_cls,
+        allowed=allowed,
+        reason=reason,
+        cost=cost,
+        usd_fn=usd_fn,
+        bump_fn=_bump,
+        refresh_fn=ledger._refresh,
+        kind=kind_key,
+        input_tokens=input_tokens,
+        output_tokens=output_tokens,
+        call_index=call_index,
+        fixture=fixture,
+        model=first_truthy(model, default_model),
+    )
+
+
+def drive_fixture_call(calls: list[Any], prompt: str, kwargs: Mapping[str, Any], text: str) -> str:
+    """Record one fixture call and return the canned text. Does not POST."""
+
+    calls.append({"prompt": prompt, "kwargs": overlay_map(kwargs)})
+    return text
+
+
+def drive_default_home(env_key: str, *parts: str) -> Any:
+    """Env path, or the home directory joined with parts. Does not search PATH."""
+
+    return first_env_path(env_key, default=Path.home().joinpath(*parts))
+
+
+def drive_ledger_public(
+    ledger: Any,
+    fields: Sequence[str],
+    *,
+    transform: Mapping[str, Any],
+    line_fn: Callable[[Any], Any],
+) -> dict[str, Any]:
+    """Public ledger dict, including one dict per usage line."""
+
+    return attrs_dict(
+        ledger,
+        fields,
+        transform=dict(transform),
+        extra={
+            "includes_jev_and_grok": True,
+            "lines": [line_fn(line) for line in ledger.lines],
+        },
+    )
+
+
+def drive_owner_lock(lock_id: str) -> Any:
+    """Path of the owner lock file. Does not take the lock and does not start a server."""
+
+    import os
+
+    return xdg_runtime_dir() / f"leanstral-jobs-{os.getuid()}" / f"{lock_id}.lock"
+
+
+def drive_root_tuple(required: Sequence[Any], optional: Any) -> tuple[Any, ...]:
+    """Resolved required paths, plus optional when that directory exists."""
+
+    extra = Path(optional)
+    return tuple(append_if([Path(item).resolve() for item in required], extra.is_dir(), extra.resolve()))
+
+
+def drive_scaled_spend(
+    kind: str,
+    input_tokens: int,
+    output_tokens: int,
+    rates: Mapping[str, Any],
+    *,
+    scale: str,
+    money_fn: Callable[[Any], Any],
+    error_cls: Any,
+    unknown_fmt: str,
+) -> Any:
+    """Spend in decimal units. scale is the divisor, as a decimal string."""
+
+    from decimal import Decimal
+
+    return spend_for(
+        kind,
+        input_tokens,
+        output_tokens,
+        rates,
+        scale=Decimal(scale),
+        money_fn=money_fn,
+        error_cls=error_cls,
+        unknown_fmt=unknown_fmt,
+    )
+
+
+def drive_print_fail(message: str, payload: Mapping[str, Any], *, prefix: str = "FAIL: ") -> None:
+    """Write a fail line, then the JSON payload."""
+
+    import sys
+
+    sys.stdout.write(prefix + str(message) + "\n")
+    print_json(payload)
+
+
+def drive_tag_bins(
+    tag: str,
+    *,
+    elan_home: Any,
+    home_fn: Callable[[], Any],
+    normalize_fn: Callable[[str], str],
+    dirname_fn: Callable[[str], str],
+    bins: Sequence[str] = ("lean", "lake"),
+) -> dict[str, Any]:
+    """Elan bin paths for one tag. Never searches PATH."""
+
+    home = path_or(elan_home, factory=home_fn)
+    normalized = normalize_fn(tag)
+    return pinned_bin_paths(home, dirname_fn(normalized), tuple(bins), extra={"lean_tag": normalized})
+
+
+def drive_installed_head(
+    record: Mapping[str, Any],
+    clone: Any,
+    *,
+    pins_fn: Callable[[Any], Sequence[Any]],
+    resolve_fn: Callable[[Any], Any],
+    filter_fn: Callable[..., list[Any]],
+) -> list[Any]:
+    """Installed pins whose commit matches the clone HEAD when .git exists."""
+
+    head = call_if((Path(clone) / ".git").exists(), lambda: git_head(clone), default="")
+    return filter_fn(pins_fn(record.get("version_info")), resolve_fn=resolve_fn, head=head)
+
+
+def drive_exec_parent(
+    *,
+    candidates_fn: Callable[[], Sequence[Any]],
+    probe: str,
+    error_cls: Any,
+    miss: str,
+) -> Any:
+    """A directory that can exec shebang scripts. Refuses noexec /tmp."""
+
+    return exec_capable_dir(candidates_fn(), probe_name=probe, error_cls=error_cls, miss=miss)
+
+
+def drive_after_value(
+    records: Sequence[Mapping[str, Any]],
+    name: str,
+    *,
+    field: str,
+    value: str,
+) -> list[Mapping[str, Any]]:
+    """Records after name whose field equals value."""
+
+    return after_named(records, name, pred=field_eq(field, value))
+
+
+def drive_env_existing(
+    env_key: str,
+    extras: Sequence[Any],
+    *,
+    exclude: Sequence[str] = (),
+) -> list[Any]:
+    """Optional env path, then extras, dropping missing and excluded names."""
+
+    env_path = optional_env_path(env_key)
+    paths = append_if([], env_path is not None, env_path)
+    paths.extend(extras)
+    return existing_files(paths, exclude_names=tuple(exclude))
+
+
+def drive_required_parse(
+    path: Any,
+    *,
+    error_cls: Any,
+    miss: str,
+    parse_fn: Callable[[str], Any],
+) -> Any:
+    """Require a file, then parse its text."""
+
+    required = require_file(path, error_cls=error_cls, miss=miss)
+    return parse_fn(read_text(required))
+
+
+def drive_class_ann(
+    path: Any,
+    class_name: str,
+    *,
+    error_cls: Any,
+    miss: str,
+    missing_msg: str,
+    names_fn: Callable[[str, str], Any],
+) -> Any:
+    """AnnAssign names on a class. Missing class fails closed."""
+
+    required = require_file(path, error_cls=error_cls, miss=miss)
+    names = names_fn(read_text(required), class_name)
+    raise_if(names is None, error_cls, missing_msg)
+    return names
+
+
+def drive_pin_then(
+    path: Any,
+    *,
+    defaults: Mapping[str, str],
+    after_fn: Callable[[], Any],
+) -> Any:
+    """Pin sys.path, then run the injected follow-up. Does not start a server."""
+
+    pin_sys_path(path, defaults=defaults)
+    return after_fn()
+
+
+def drive_prompt_or_plain(
+    shots: Any,
+    *,
+    shot_fn: Callable[[], str],
+    plain_fn: Callable[[], str],
+) -> str:
+    """Few-shot prompt when shots exist, else the plain prompt."""
+
+    return first_not_none(call_if(shots, shot_fn), factory=plain_fn)
+
+
+def drive_search_at(
+    query: str,
+    root: Any,
+    default: Any,
+    search_fn: Callable[..., Any],
+    **kwargs: Any,
+) -> Any:
+    """Search under root, or default when root is None."""
+
+    return search_fn(query, root=if_none(root, default), **kwargs)
+
+
+def drive_router_text(
+    *,
+    preamble: str,
+    actions: Any,
+    extra: str,
+    board: Mapping[str, Any],
+    gaps: Any,
+    last_lake: Any,
+    nca_status: Any,
+    total_fn: Callable[[Mapping[str, Any]], Any],
+) -> str:
+    """Format the outer router prompt, including the board total."""
+
+    return format_prompt(
+        preamble=preamble,
+        actions=actions,
+        extra=extra,
+        board=board,
+        gaps=gaps,
+        last_lake=last_lake,
+        nca_status=nca_status,
+        total=total_fn(board),
+    )
+
+
+def drive_auth_file(
+    env: Optional[Mapping[str, str]],
+    *,
+    name: str = "auth.json",
+    env_key: str = "GROK_HOME",
+    default_dir: str = ".grok",
+) -> bool:
+    """True when the auth file exists. Does not read its contents."""
+
+    source = env_mapping(env)
+    return nonempty_file(
+        home_config_file(name, env_key=env_key, default_dir=default_dir, environ=source)
+    )
+
+
+def drive_insert_stamped(
+    execute_fn: Callable[..., Any],
+    sql: str,
+    params: Sequence[Any],
+    *,
+    created_at: Any = None,
+    error_cls: Any = ValueError,
+    fail_fmt: str = "INSERT failed: {exc}",
+) -> bool:
+    """INSERT with a timestamp. Existing rows stay. Never DELETE."""
+
+    import time
+
+    stamp = float(if_none(created_at, factory=time.time))
+    return insert_ignore_conflict(
+        execute_fn,
+        sql,
+        tuple(params) + (stamp,),
+        error_cls=error_cls,
+        fail_fmt=fail_fmt,
+    )
+
+
+def drive_lookup_row(
+    execute_fn: Callable[..., Any],
+    sql: str,
+    params: Sequence[Any],
+    columns: Sequence[str],
+) -> Optional[dict[str, Any]]:
+    """One SELECT row as a dict. Missing row is None."""
+
+    result = execute_fn(sql, tuple(params))
+    return row_dict(result.fetchone(), tuple(columns))
+
+
+def drive_canary_namespace(
+    *,
+    out: Any,
+    rounds: Any,
+    lake_top: Any,
+    drafts: Any,
+    timeout: Any,
+    seed: Any,
+    nest_depth: Any,
+    k: Any,
+) -> Any:
+    """Closed canary argv. Does not generate or compile."""
+
+    return namespace(
+        live=True,
+        all_small=True,
+        from_best=True,
+        rounds=first_int(rounds),
+        lake_top=first_int(lake_top),
+        drafts=first_int(drafts),
+        timeout=float(timeout),
+        init_139=True,
+        seed=first_int(seed),
+        k=k,
+        out=out,
+        include_inits=False,
+        quiet=True,
+        nest_depth=first_int(nest_depth),
+    )
+
+
+def drive_eval_entry(kwargs: Mapping[str, Any], *, eval_fn: Callable[..., Any]) -> Any:
+    """Unpack a subloop payload into an eval call. Does not compile."""
+
+    record = overlay_map(kwargs.get("record"))
+    return eval_fn(
+        text_or(
+            first_truthy(kwargs.get("name"), kwargs.get("theorem"), record.get("name"), default="")
+        ),
+        current=record,
+        tactics=get_str(kwargs, "tactics"),
+        compile_fn=first_truthy(kwargs.get("compile_one"), kwargs.get("compile_fn")),
+        args=kwargs.get("args"),
+        restore=first_truthy(kwargs.get("restore"), default=b""),
+        memory=as_dict(kwargs.get("memory")),
+    )
+
+
+def drive_retrieve_named(
+    *,
+    missing: bool,
+    missing_fn: Callable[[], tuple[Any, Sequence[Any], Any]],
+    present_fn: Callable[[], tuple[Any, Sequence[Any], Any]],
+    retrieve_fn: Callable[[Any, Sequence[Any]], Any],
+) -> Any:
+    """Load or look up one record, then retrieve. Does not compile."""
+
+    record, rows, _digest = either(missing, missing_fn, present_fn)
+    return retrieve_fn(record, rows)
+
+
+def drive_pin_loop(
+    *,
+    client_pin_fn: Callable[[], Any],
+    autostart_env: str,
+    typesafe: str,
+    generator: str,
+    hardware: str,
+    loop: str,
+) -> None:
+    """Pin the warmup loop off docker0 autostart. Does not generate."""
+
+    client_pin_fn()
+    pin_env(
+        {
+            autostart_env: "0",
+            "LRA_TYPESAFE": typesafe,
+            "LRA_GENERATOR": generator,
+            "LRA_HARDWARE": hardware,
+            "LRA_LOOP": loop,
+        }
+    )
+    pin_sys_path(
+        "",
+        defaults={
+            "IPFS_ACCEL_SKIP_CORE": "1",
+            "IPFS_AUTO_INSTALL": "false",
+        },
+    )
+
+
+def drive_live_grok_kwargs(
+    *,
+    base: Mapping[str, Any],
+    turns_env: str,
+    turns_default: int,
+    socket_env: str,
+    socket_default: str,
+    bin_name: str = "grok",
+) -> dict[str, Any]:
+    """Fail-closed grok kwargs plus an isolated CLI leader socket."""
+
+    grok_bin = which_bin(bin_name)
+    kwargs = overlay_map(
+        base,
+        grok_max_turns=env_int(turns_env, turns_default, minimum=1),
+    )
+    return set_if(
+        kwargs,
+        grok_bin,
+        "grok_cli_cmd",
+        [grok_bin, "--leader-socket", env_str(socket_env, socket_default)],
+    )
+
+
+def drive_write_ledger_receipt(
+    ledger: Any,
+    path: Any,
+    *,
+    error_cls: Any,
+    allowed_fn: Callable[[Any], tuple[bool, str]],
+    pack_fn: Callable[[Any], Mapping[str, Any]],
+) -> Any:
+    """Write a ledger receipt. Refuses Track 2 and disallowed paths."""
+
+    raise_if(
+        first_truthy(getattr(ledger, "official_track2", False), getattr(ledger, "contaminates_track2", False)),
+        error_cls,
+        "refusing to write a Track 1 ledger into official Track 2 state",
+    )
+    allowed, reason = allowed_fn(path)
+    raise_if(not allowed, error_cls, f"refusing receipt path {path}: {reason}")
+    write_json(path, pack_fn(ledger))
+    return path
+
+
+def reraise_mapped(
+    fn: Callable[[], Any],
+    src_cls: type[BaseException],
+    map_fn: Callable[[BaseException], BaseException],
+) -> Any:
+    """Run fn. On src_cls, raise map_fn(exc) from that exception."""
+
+    try:
+        return fn()
+    except src_cls as exc:
+        raise map_fn(exc) from exc
+
+
+def drive_charge_usage(
+    ledger: Any,
+    usage: Any,
+    *,
+    fixture: bool,
+    used_fixture: bool,
+    model: Any,
+    default_model: str,
+    kind: str = "jev",
+) -> Any:
+    """Record one usage line. Does not write Lean."""
+
+    input_tokens, output_tokens = usage_tokens(overlay_map(usage), fallback_in=0)
+    return ledger.record(
+        kind,
+        input_tokens=input_tokens,
+        output_tokens=output_tokens,
+        fixture=bool(first_truthy(fixture, used_fixture, default=False)),
+        model=first_truthy(model, default_model),
+    )
+
+
 def pack_live_rank(
     *,
     schema: str,
@@ -6771,6 +8742,216 @@ def bind_named_skip(skip_fn: Callable[..., Any], **fixed: Any) -> Callable[..., 
         return overlay_named_skip(skip_fn, **payload)
 
     return _skip
+
+
+def drive_track1_named(
+    name: str,
+    *,
+    mode: Optional[str],
+    official_track2: bool,
+    fixture: bool,
+    repair: bool,
+    lean_feedback: str,
+    path: Any,
+    env: Optional[Mapping[str, str]],
+    generate: Optional[Callable[..., str]],
+    get_trace: Optional[Callable[[], Mapping[str, Any]]],
+    receipts_dir: Optional[Any],
+    resolve_fn: Callable[..., str],
+    track2_fn: Callable[..., bool],
+    load_fn: Callable[..., tuple[Mapping[str, Any], Sequence[Mapping[str, Any]], str]],
+    ledger_cls: Callable[..., Any],
+    skip_fn: Callable[..., Any],
+    prompt_fn: Callable[[Mapping[str, Any]], str],
+    fixture_grok: Any,
+    fixture_trace_fn: Callable[[], Mapping[str, Any]],
+    limits_fn: Callable[[str], tuple[int, float]],
+    result_cls: Callable[..., Any],
+    remaining_default: float,
+    neighbor_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    state_fn: Callable[..., Any],
+    fixture_client: Any,
+    answers_fn: Callable[[], Mapping[str, Any]],
+    router_cls: Callable[..., Any],
+    generate_fn: Callable[..., tuple[str, Any, Any]],
+    charge_fn: Callable[..., Any],
+    keys_fn: Callable[[Mapping[str, str]], bool],
+    grok_key_fn: Callable[[Mapping[str, str]], bool],
+    jev_key_fn: Callable[[Mapping[str, str]], bool],
+    default_mode: str,
+    requested_provider: str,
+    requested_model: str,
+    max_grok_calls: int,
+    write_receipt_fn: Callable[..., Any],
+    error_cls: type[BaseException],
+) -> dict[str, Any]:
+    """Route one warmup name, then generate with grok. Lake stays outside this driver."""
+
+    import time
+    from dataclasses import asdict
+
+    source_env = env_copy(base=env)
+    resolved = resolve_fn(flag=mode, env=source_env, official_track2=official_track2)
+    track2 = track2_fn(flag=official_track2, env=source_env)
+    record, records, digest = load_fn(name, path)
+    ledger = ledger_cls(name=name, official_track2=track2)
+    using_fixture = bool(first_truthy(fixture, generate is not None, default=False))
+    skip = bind_named_skip(skip_fn, digest=digest, name=name, ledger=ledger)
+    started = time.perf_counter()
+    prompt = prompt_fn(record)
+    grok_factory, grok_trace = either(
+        using_fixture,
+        lambda: fill_none(generate, get_trace, lambda: (fixture_grok, fixture_trace_fn)),
+        lambda: (generate, get_trace),
+    )
+    max_new, timeout = limits_fn(get_str(record, "source"))
+    finish = bind_finish(
+        result_cls,
+        ledger,
+        digest=digest,
+        mode=resolved,
+        name=name,
+        used_fixture=using_fixture,
+        remaining_default=remaining_default,
+    )
+    held: dict[str, Any] = {}
+
+    def _begin() -> tuple[Any, Any, Any]:
+        return begin_named_route(
+            record,
+            records,
+            neighbor_fn=neighbor_fn,
+            state_fn=state_fn,
+            fixture=using_fixture,
+            factory_fn=lambda: fixture_factory(fixture_client, answers_fn),
+            router_cls=router_cls,
+            mode="inloop",
+            official_track2=False,
+            env=overlay_map({"LRA_TYPESAFE": "inloop"}, **without_keys(source_env, ("LRA_OFFICIAL_TRACK2", "LRA_TRACK"))),
+            require_key=not using_fixture,
+        )
+
+    def _route(router: Any, state: Any, neighbors: Any) -> Any:
+        held["neighbors"] = neighbors
+        result = router.route(state, neighbor_names=names_of(neighbors))
+        held["jev_result"] = result
+        return result
+
+    def _generate() -> tuple[bool, Any, Any]:
+        return call_caught(
+            lambda: call_then(
+                lambda text_prompt: generate_fn(
+                    text_prompt,
+                    ledger,
+                    max_new_tokens=max_new,
+                    timeout=timeout,
+                    source=get_str(record, "source"),
+                    generate=grok_factory,
+                    get_trace=grok_trace,
+                    fixture=using_fixture,
+                ),
+                prompt,
+                cond=repair,
+                second=append_repair(prompt, lean_feedback),
+            ),
+            error_cls,
+        )
+
+    return run_named_route(
+        early_pairs=(
+            (
+                first_truthy(track2, resolved != "track1"),
+                lambda: skip(
+                    extra=closed_skip_extra(
+                        record,
+                        default_mode=default_mode,
+                        official_track2_stays_off=True,
+                        is_default_winning_path=False,
+                    ),
+                    reason=replace_if(track2, "official_track2_off", "not_default_winning_path"),
+                    mode=replace_if(track2, "off", resolved),
+                    official_track2=track2,
+                    used_fixture=fixture,
+                ),
+            ),
+            (
+                not using_fixture and not keys_fn(source_env),
+                lambda: skip(
+                    extra=closed_skip_extra(
+                        record,
+                        grok_key_configured=grok_key_fn(source_env),
+                        jev_key_configured=jev_key_fn(source_env),
+                        keys_configured=False,
+                        is_default_winning_path=False,
+                    ),
+                    reason="no_key",
+                    mode=resolved,
+                    used_fixture=False,
+                ),
+            ),
+        ),
+        begin_fn=_begin,
+        route_fn=_route,
+        charge_fn=lambda result: charge_unless_skipped(result, lambda: charge_fn(ledger, result, fixture=using_fixture)),
+        skip_pairs_fn=lambda result, line: (
+            (
+                result.skipped and not using_fixture,
+                lambda: skip(
+                    extra=closed_skip_extra(extra={"jev_route": result.as_dict()}),
+                    reason=first_truthy(result.reason, "jev_skipped"),
+                    mode=resolved,
+                    used_fixture=using_fixture,
+                ),
+            ),
+            (
+                line is not None and line.skipped,
+                lambda: skip(
+                    extra=closed_skip_extra(extra={"jev_route": result.as_dict()}),
+                    reason=line.reason,
+                    mode=resolved,
+                    used_fixture=using_fixture,
+                ),
+            ),
+        ),
+        generate_fn=_generate,
+        fail_fn=lambda exc: finish(
+            skipped=True,
+            reason=or_str(ledger.reason, exc),
+            extra={
+                "called_grok": ledger.grok_calls > 0,
+                "called_jev": ledger.jev_calls > 0,
+                "jev_route": held["jev_result"].as_dict(),
+                "wall_ms": elapsed_ms(started),
+            },
+            overlay_extra={"error": text_or(exc), "source": get_str(record, "source")},
+        ),
+        success_fn=lambda packed: finish(
+            skipped=False,
+            reason="generated",
+            extra={
+                "called_grok": True,
+                "called_jev": not held["jev_result"].skipped,
+                "text": packed[0],
+                "identity": asdict(packed[1]),
+                "jev_route": held["jev_result"].as_dict(),
+                "wall_ms": elapsed_ms(started),
+            },
+            overlay_extra={
+                "source": record.get("source"),
+                "n_neighbors": len(held["neighbors"]),
+                "default_mode": default_mode,
+                "requested_provider": requested_provider,
+                "requested_model": requested_model,
+                "budget_usd": remaining_default,
+                "max_grok_calls": max_grok_calls,
+                "official_track2_stays_off": True,
+                "keys_configured": keys_fn(source_env),
+            },
+        ),
+        after_fn=None
+        if receipts_dir is None
+        else (lambda: write_receipt_fn(ledger, Path(receipts_dir) / name / "track1_ledger.json")),
+    )
 
 
 def run_named_route(

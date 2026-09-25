@@ -1,0 +1,70 @@
+{
+  "schema": "jevops-refactor-local-edit-summary/v1",
+  "date": "2026-09-23",
+  "task": "Core.InitsUpdatesComm",
+  "plan_id": "a773eeefbaa972cfc56a75de4024248ad52926aaa68b19d88a5f112e1e0eea66",
+  "status": "COMPLETE",
+  "task_split": "previously studied public warm-up; not held out",
+  "model_calls": 8,
+  "model_fixture": false,
+  "fallback_used": false,
+  "generation_outcomes_by_arm": {
+    "whole-body": {
+      "parsed": 3,
+      "output_truncated": 1
+    },
+    "delete-span": {
+      "contract_mismatch": 4
+    }
+  },
+  "generation_usage": {
+    "prompt_tokens": 22756,
+    "completion_tokens": 2888,
+    "total_tokens": 25644
+  },
+  "generation_request_wall_seconds_sum": 168.7269,
+  "native_requests": 8,
+  "native_processes": 8,
+  "native_outcomes": {
+    "VERIFIED": 6,
+    "REJECTED": 2,
+    "NOT_RUN_AFTER_NON_SUCCESS": 4
+  },
+  "native_request_wall_seconds_sum": 116.8192,
+  "all_pin_verified_candidates": [
+    "draft-0"
+  ],
+  "reference_equivalent_after_body_dedent_rstrip": [
+    "draft-0"
+  ],
+  "normalization_used_for_comparison_only": true,
+  "verified_refactoring_improvements": 0,
+  "performance_confirmation_run": false,
+  "performance_selected": false,
+  "training": false,
+  "promotion": false,
+  "official_score": null,
+  "paid_api_cost": null,
+  "electricity_cost": null,
+  "snapshot_checks": {
+    "generation": "UNCHANGED",
+    "native": "UNCHANGED"
+  },
+  "snapshot_manifest_sha256": "ac6cecdd3a85ecaba140e401be77c0928d08f6a6339dbe81b81b9049f32fab7f",
+  "complete_source_snapshot": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/prompt-local-edits-20260923-MavU32/snapshot",
+  "source_snapshot_in_archive": false,
+  "tests": {
+    "passed": 252,
+    "deselected": 1,
+    "seconds": 11.48,
+    "scope": "targeted offline regression suite; real_kernel_checked excluded",
+    "frozen_harness_offline_self_check_ok": true
+  },
+  "limitations": [
+    "Small greedy pilot, not independent sampling or an official/held-out score.",
+    "Server model metadata is not independently attested.",
+    "Native verification used trusted-local scratch, not an OS sandbox.",
+    "Reference-first validity measurements are not order-balanced performance confirmation.",
+    "Host Python and prepared Lean dependencies are not copied into the source snapshot."
+  ]
+}

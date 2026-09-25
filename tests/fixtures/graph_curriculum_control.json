@@ -1,0 +1,941 @@
+{
+  "schema": "jevops-multirule-graph-curriculum/v1/measurement",
+  "ok": true,
+  "evidence_kind": "saved_callback_observations_not_fresh_verification",
+  "freeze_sha256": "7e6180303e2ae3d487c3edc79a2c696677cdd429de0ee8eea1b35b423cedbbdd",
+  "evaluation_sha256": "e7dfb159a0fd6c82775ac823d6f2a491854b14e66c16ce4ce9e3ceb0c71955f2",
+  "toolchain": [
+    "4.34.0",
+    "293d5d0c0c3f3dded4688b3ccd6a33939ac5102b"
+  ],
+  "torch_version": "2.13.0+cu130",
+  "seed": 17,
+  "epochs": 80,
+  "selected": "multiscale_online_0.25",
+  "grammar": {
+    "schema": "jevops-multirule-graph-curriculum/v1",
+    "template_count": 4,
+    "templates_sha256": "1639eeba6fce23cf4d5de588f26667fcfeaaf9efcdb900cfa7892a35c8d5e9a6",
+    "training_origins": {
+      "09cef27068f7ef72f4a9": [
+        "multi_train_alias_reflexive_12797398"
+      ],
+      "39d1342dbcd8121e89fc": [
+        "multi_train_application_57467894"
+      ],
+      "69f0c33a6916cde43b90": [
+        "multi_train_eta_28579918"
+      ],
+      "f9f18648f072411cf01a": [
+        "multi_train_alias_hypothesis_17043782",
+        "multi_train_alias_nonreflexive_63168410"
+      ]
+    },
+    "rows": [
+      {
+        "id": "multi_train_alias_hypothesis_17043782",
+        "family": "alias_hypothesis",
+        "choice_count": 3,
+        "target_choice": 2,
+        "identity_target": false,
+        "rule_ids": [
+          null,
+          "09cef27068f7ef72f4a9",
+          "f9f18648f072411cf01a"
+        ]
+      },
+      {
+        "id": "multi_train_alias_reflexive_12797398",
+        "family": "alias_reflexive",
+        "choice_count": 3,
+        "target_choice": 1,
+        "identity_target": false,
+        "rule_ids": [
+          null,
+          "09cef27068f7ef72f4a9",
+          "f9f18648f072411cf01a"
+        ]
+      },
+      {
+        "id": "multi_train_alias_nonreflexive_63168410",
+        "family": "alias_nonreflexive",
+        "choice_count": 3,
+        "target_choice": 2,
+        "identity_target": false,
+        "rule_ids": [
+          null,
+          "09cef27068f7ef72f4a9",
+          "f9f18648f072411cf01a"
+        ]
+      },
+      {
+        "id": "multi_train_application_57467894",
+        "family": "application",
+        "choice_count": 2,
+        "target_choice": 1,
+        "identity_target": false,
+        "rule_ids": [
+          null,
+          "39d1342dbcd8121e89fc"
+        ]
+      },
+      {
+        "id": "multi_train_eta_28579918",
+        "family": "eta",
+        "choice_count": 2,
+        "target_choice": 1,
+        "identity_target": false,
+        "rule_ids": [
+          null,
+          "69f0c33a6916cde43b90"
+        ]
+      }
+    ],
+    "teacher_optimality_proven": false,
+    "frozen_grammar_shared_across_arms": true
+  },
+  "training_statistics": {
+    "fixed_graph": {
+      "config": {
+        "learning_rate": 0.15,
+        "selectable": false,
+        "update": "online"
+      },
+      "updates": 400,
+      "examples_seen": 400,
+      "before": {
+        "correct_count": 0,
+        "cross_entropy": 0.936426245424844,
+        "expected_cosine_loss": 0.41641494162711207
+      },
+      "after": {
+        "correct_count": 5,
+        "cross_entropy": 0.11097504256378354,
+        "expected_cosine_loss": 0.05652398087292344
+      }
+    },
+    "frozen_multiscale": {
+      "config": {
+        "learning_rate": 0.15,
+        "selectable": false,
+        "update": "batch"
+      },
+      "updates": 80,
+      "examples_seen": 400,
+      "before": {
+        "correct_count": 0,
+        "cross_entropy": 0.936426245424844,
+        "expected_cosine_loss": 0.41641494162711207
+      },
+      "after": {
+        "correct_count": 5,
+        "cross_entropy": 0.16561393285127038,
+        "expected_cosine_loss": 0.10367378541998058
+      },
+      "encoder_changed": false
+    },
+    "last_batch_0.05": {
+      "config": {
+        "learning_rate": 0.05,
+        "pooling": "last",
+        "selectable": true,
+        "update": "batch"
+      },
+      "updates": 80,
+      "examples_seen": 400,
+      "before": {
+        "correct_count": 0,
+        "cross_entropy": 0.936426245424844,
+        "expected_cosine_loss": 0.41641494162711207
+      },
+      "after": {
+        "correct_count": 5,
+        "cross_entropy": 0.3374536954444963,
+        "expected_cosine_loss": 0.20578219374217915
+      },
+      "encoder_changed": true
+    },
+    "last_batch_0.15": {
+      "config": {
+        "learning_rate": 0.15,
+        "pooling": "last",
+        "selectable": true,
+        "update": "batch"
+      },
+      "updates": 80,
+      "examples_seen": 400,
+      "before": {
+        "correct_count": 0,
+        "cross_entropy": 0.936426245424844,
+        "expected_cosine_loss": 0.41641494162711207
+      },
+      "after": {
+        "correct_count": 5,
+        "cross_entropy": 0.08254109344357233,
+        "expected_cosine_loss": 0.02434269688094242
+      },
+      "encoder_changed": true
+    },
+    "last_batch_0.25": {
+      "config": {
+        "learning_rate": 0.25,
+        "pooling": "last",
+        "selectable": true,
+        "update": "batch"
+      },
+      "updates": 80,
+      "examples_seen": 400,
+      "before": {
+        "correct_count": 0,
+        "cross_entropy": 0.936426245424844,
+        "expected_cosine_loss": 0.41641494162711207
+      },
+      "after": {
+        "correct_count": 5,
+        "cross_entropy": 0.07259459119385159,
+        "expected_cosine_loss": 0.012125985800428117
+      },
+      "encoder_changed": true
+    },
+    "last_online_0.05": {
+      "config": {
+        "learning_rate": 0.05,
+        "pooling": "last",
+        "selectable": true,
+        "update": "online"
+      },
+      "updates": 400,
+      "examples_seen": 400,
+      "before": {
+        "correct_count": 0,
+        "cross_entropy": 0.936426245424844,
+        "expected_cosine_loss": 0.41641494162711207
+      },
+      "after": {
+        "correct_count": 5,
+        "cross_entropy": 0.07924059672515174,
+        "expected_cosine_loss": 0.023463542911512036
+      },
+      "encoder_changed": true
+    },
+    "last_online_0.15": {
+      "config": {
+        "learning_rate": 0.15,
+        "pooling": "last",
+        "selectable": true,
+        "update": "online"
+      },
+      "updates": 400,
+      "examples_seen": 400,
+      "before": {
+        "correct_count": 0,
+        "cross_entropy": 0.936426245424844,
+        "expected_cosine_loss": 0.41641494162711207
+      },
+      "after": {
+        "correct_count": 5,
+        "cross_entropy": 0.070742663916364,
+        "expected_cosine_loss": 0.0070782852546476815
+      },
+      "encoder_changed": true
+    },
+    "last_online_0.25": {
+      "config": {
+        "learning_rate": 0.25,
+        "pooling": "last",
+        "selectable": true,
+        "update": "online"
+      },
+      "updates": 400,
+      "examples_seen": 400,
+      "before": {
+        "correct_count": 0,
+        "cross_entropy": 0.936426245424844,
+        "expected_cosine_loss": 0.41641494162711207
+      },
+      "after": {
+        "correct_count": 5,
+        "cross_entropy": 0.07075329448463367,
+        "expected_cosine_loss": 0.006671847409399277
+      },
+      "encoder_changed": true
+    },
+    "multiscale_batch_0.05": {
+      "config": {
+        "learning_rate": 0.05,
+        "pooling": "multiscale",
+        "selectable": true,
+        "update": "batch"
+      },
+      "updates": 80,
+      "examples_seen": 400,
+      "before": {
+        "correct_count": 0,
+        "cross_entropy": 0.936426245424844,
+        "expected_cosine_loss": 0.41641494162711207
+      },
+      "after": {
+        "correct_count": 5,
+        "cross_entropy": 0.2203904187394548,
+        "expected_cosine_loss": 0.14754339738703096
+      },
+      "encoder_changed": true
+    },
+    "multiscale_batch_0.15": {
+      "config": {
+        "learning_rate": 0.15,
+        "pooling": "multiscale",
+        "selectable": true,
+        "update": "batch"
+      },
+      "updates": 80,
+      "examples_seen": 400,
+      "before": {
+        "correct_count": 0,
+        "cross_entropy": 0.936426245424844,
+        "expected_cosine_loss": 0.41641494162711207
+      },
+      "after": {
+        "correct_count": 5,
+        "cross_entropy": 0.07809508692011025,
+        "expected_cosine_loss": 0.02103807693463692
+      },
+      "encoder_changed": true
+    },
+    "multiscale_batch_0.25": {
+      "config": {
+        "learning_rate": 0.25,
+        "pooling": "multiscale",
+        "selectable": true,
+        "update": "batch"
+      },
+      "updates": 80,
+      "examples_seen": 400,
+      "before": {
+        "correct_count": 0,
+        "cross_entropy": 0.936426245424844,
+        "expected_cosine_loss": 0.41641494162711207
+      },
+      "after": {
+        "correct_count": 5,
+        "cross_entropy": 0.07191950115628837,
+        "expected_cosine_loss": 0.010808368266852213
+      },
+      "encoder_changed": true
+    },
+    "multiscale_online_0.05": {
+      "config": {
+        "learning_rate": 0.05,
+        "pooling": "multiscale",
+        "selectable": true,
+        "update": "online"
+      },
+      "updates": 400,
+      "examples_seen": 400,
+      "before": {
+        "correct_count": 0,
+        "cross_entropy": 0.936426245424844,
+        "expected_cosine_loss": 0.41641494162711207
+      },
+      "after": {
+        "correct_count": 4,
+        "cross_entropy": 0.3575822291666605,
+        "expected_cosine_loss": 0.17207953177960628
+      },
+      "encoder_changed": true
+    },
+    "multiscale_online_0.15": {
+      "config": {
+        "learning_rate": 0.15,
+        "pooling": "multiscale",
+        "selectable": true,
+        "update": "online"
+      },
+      "updates": 400,
+      "examples_seen": 400,
+      "before": {
+        "correct_count": 0,
+        "cross_entropy": 0.936426245424844,
+        "expected_cosine_loss": 0.41641494162711207
+      },
+      "after": {
+        "correct_count": 5,
+        "cross_entropy": 0.07088181517967455,
+        "expected_cosine_loss": 0.0069841324122566755
+      },
+      "encoder_changed": true
+    },
+    "multiscale_online_0.25": {
+      "config": {
+        "learning_rate": 0.25,
+        "pooling": "multiscale",
+        "selectable": true,
+        "update": "online"
+      },
+      "updates": 400,
+      "examples_seen": 400,
+      "before": {
+        "correct_count": 0,
+        "cross_entropy": 0.936426245424844,
+        "expected_cosine_loss": 0.41641494162711207
+      },
+      "after": {
+        "correct_count": 5,
+        "cross_entropy": 0.07071582405464345,
+        "expected_cosine_loss": 0.006566971700748714
+      },
+      "encoder_changed": true
+    },
+    "node_bag": {
+      "config": {
+        "learning_rate": 0.15,
+        "selectable": false,
+        "update": "batch"
+      },
+      "updates": 80,
+      "examples_seen": 400,
+      "before": {
+        "correct_count": 0,
+        "cross_entropy": 0.936426245424844,
+        "expected_cosine_loss": 0.41641494162711207
+      },
+      "after": {
+        "correct_count": 5,
+        "cross_entropy": 0.2878894383076663,
+        "expected_cosine_loss": 0.18575549208032677
+      },
+      "encoder_changed": true
+    }
+  },
+  "compile_calls": {
+    "training": 10,
+    "evaluation": 14
+  },
+  "summary": {
+    "fixed_graph": {
+      "cross_entropy": 0.18683595742558742,
+      "expected_cosine_loss": 0.0894211709688452,
+      "loss_sample_count": 7,
+      "nonregressing_count": 7,
+      "sample_count": 7,
+      "valid_count": 7,
+      "verified_saved_tokens": 66
+    },
+    "frozen_multiscale": {
+      "cross_entropy": 0.1410332621276751,
+      "expected_cosine_loss": 0.07343715600665224,
+      "loss_sample_count": 7,
+      "nonregressing_count": 7,
+      "sample_count": 7,
+      "valid_count": 7,
+      "verified_saved_tokens": 66
+    },
+    "last_online_0.15": {
+      "cross_entropy": 0.07438318489360829,
+      "expected_cosine_loss": 0.0048072002450553234,
+      "loss_sample_count": 7,
+      "nonregressing_count": 7,
+      "sample_count": 7,
+      "valid_count": 7,
+      "verified_saved_tokens": 66
+    },
+    "multiscale_online_0.25": {
+      "cross_entropy": 0.07537516517481059,
+      "expected_cosine_loss": 0.0036605544077677535,
+      "loss_sample_count": 7,
+      "nonregressing_count": 7,
+      "sample_count": 7,
+      "valid_count": 7,
+      "verified_saved_tokens": 66
+    },
+    "node_bag": {
+      "cross_entropy": 0.23791270132258074,
+      "expected_cosine_loss": 0.1369141301411653,
+      "loss_sample_count": 7,
+      "nonregressing_count": 7,
+      "sample_count": 7,
+      "valid_count": 7,
+      "verified_saved_tokens": 66
+    }
+  },
+  "by_split": {
+    "canary": {
+      "fixed_graph": {
+        "cross_entropy": 0.19730648494470882,
+        "expected_cosine_loss": 0.06702574977111933,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 18
+      },
+      "frozen_multiscale": {
+        "cross_entropy": 0.08393505864509801,
+        "expected_cosine_loss": 0.014937544544823022,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 18
+      },
+      "last_online_0.15": {
+        "cross_entropy": 0.07525436315296155,
+        "expected_cosine_loss": 0.0031195447495340816,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 18
+      },
+      "multiscale_online_0.25": {
+        "cross_entropy": 0.07458486301082516,
+        "expected_cosine_loss": 0.0011071266280951876,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 18
+      },
+      "node_bag": {
+        "cross_entropy": 0.1130125395289724,
+        "expected_cosine_loss": 0.030187859303524526,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 18
+      }
+    },
+    "holdout": {
+      "fixed_graph": {
+        "cross_entropy": 0.2211607495189456,
+        "expected_cosine_loss": 0.1527190825850441,
+        "loss_sample_count": 3,
+        "nonregressing_count": 3,
+        "sample_count": 3,
+        "valid_count": 3,
+        "verified_saved_tokens": 32
+      },
+      "frozen_multiscale": {
+        "cross_entropy": 0.22624261011048627,
+        "expected_cosine_loss": 0.16010037826953596,
+        "loss_sample_count": 3,
+        "nonregressing_count": 3,
+        "sample_count": 3,
+        "valid_count": 3,
+        "verified_saved_tokens": 32
+      },
+      "last_online_0.15": {
+        "cross_entropy": 0.07269918666408241,
+        "expected_cosine_loss": 0.008210447026159093,
+        "loss_sample_count": 3,
+        "nonregressing_count": 3,
+        "sample_count": 3,
+        "valid_count": 3,
+        "verified_saved_tokens": 32
+      },
+      "multiscale_online_0.25": {
+        "cross_entropy": 0.07240165530390608,
+        "expected_cosine_loss": 0.007443858258898552,
+        "loss_sample_count": 3,
+        "nonregressing_count": 3,
+        "sample_count": 3,
+        "valid_count": 3,
+        "verified_saved_tokens": 32
+      },
+      "node_bag": {
+        "cross_entropy": 0.43067720906267387,
+        "expected_cosine_loss": 0.2967523093168241,
+        "loss_sample_count": 3,
+        "nonregressing_count": 3,
+        "sample_count": 3,
+        "valid_count": 3,
+        "verified_saved_tokens": 32
+      }
+    },
+    "validation": {
+      "fixed_graph": {
+        "cross_entropy": 0.12487824176642874,
+        "expected_cosine_loss": 0.016869724742272756,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 16
+      },
+      "frozen_multiscale": {
+        "cross_entropy": 0.07031744363603548,
+        "expected_cosine_loss": 0.001941934074155861,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 16
+      },
+      "last_online_0.15": {
+        "cross_entropy": 0.07603800397854384,
+        "expected_cosine_loss": 0.0013899855689209124,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 16
+      },
+      "multiscale_online_0.25": {
+        "cross_entropy": 0.08062573214515278,
+        "expected_cosine_loss": 0.0005390264107441207,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 16
+      },
+      "node_bag": {
+        "cross_entropy": 0.07366610150604927,
+        "expected_cosine_loss": 0.0038831322153177568,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 16
+      }
+    }
+  },
+  "gates": {
+    "all_splits_pass": true,
+    "baseline_complete_loss_coverage": true,
+    "baseline_savings_nonregression": true,
+    "complete_cost_and_loss_coverage": true,
+    "complete_validity": true,
+    "cross_entropy_nonregression": true,
+    "expected_cosine_loss_nonregression": true
+  },
+  "split_gates": {
+    "canary": {
+      "baseline_complete_loss_coverage": true,
+      "baseline_savings_nonregression": true,
+      "complete_cost_and_loss_coverage": true,
+      "complete_validity": true,
+      "cross_entropy_nonregression": true,
+      "expected_cosine_loss_nonregression": true
+    },
+    "holdout": {
+      "baseline_complete_loss_coverage": true,
+      "baseline_savings_nonregression": true,
+      "complete_cost_and_loss_coverage": true,
+      "complete_validity": true,
+      "cross_entropy_nonregression": true,
+      "expected_cosine_loss_nonregression": true
+    },
+    "validation": {
+      "baseline_complete_loss_coverage": true,
+      "baseline_savings_nonregression": true,
+      "complete_cost_and_loss_coverage": true,
+      "complete_validity": true,
+      "cross_entropy_nonregression": true,
+      "expected_cosine_loss_nonregression": true
+    }
+  },
+  "selected_observations": [
+    {
+      "id": "multi_validation_introduced_chain_81517090",
+      "family": "introduced_chain",
+      "split": "validation",
+      "source_tokens": 21,
+      "prediction_tokens": 6,
+      "verified_saved_tokens": 15,
+      "choice": 2,
+      "teacher_choice": 2,
+      "check": {
+        "expression_nonregression": true,
+        "prediction_proof": {
+          "expanded_expression_nodes": 9,
+          "expression_depth": 5,
+          "structure_sha256": "14024ef8e988c1348b7fc73af9101c30a8a64aef09c5dfec422dbfd8f9cffe76",
+          "unique_expression_nodes": 6
+        },
+        "source_proof": {
+          "expanded_expression_nodes": 18,
+          "expression_depth": 8,
+          "structure_sha256": "5475418996a019fd5b00d1a0e832d1c4c2e37aea1f22cab0122b5e6a9c2343dc",
+          "unique_expression_nodes": 13
+        },
+        "verified": true
+      },
+      "teacher_check": {
+        "expression_nonregression": true,
+        "prediction_proof": {
+          "expanded_expression_nodes": 9,
+          "expression_depth": 5,
+          "structure_sha256": "14024ef8e988c1348b7fc73af9101c30a8a64aef09c5dfec422dbfd8f9cffe76",
+          "unique_expression_nodes": 6
+        },
+        "source_proof": {
+          "expanded_expression_nodes": 18,
+          "expression_depth": 8,
+          "structure_sha256": "5475418996a019fd5b00d1a0e832d1c4c2e37aea1f22cab0122b5e6a9c2343dc",
+          "unique_expression_nodes": 13
+        },
+        "verified": true
+      }
+    },
+    {
+      "id": "multi_validation_nested_application_84782572",
+      "family": "nested_application",
+      "split": "validation",
+      "source_tokens": 6,
+      "prediction_tokens": 5,
+      "verified_saved_tokens": 1,
+      "choice": 1,
+      "teacher_choice": 1,
+      "check": {
+        "expression_nonregression": true,
+        "prediction_proof": {
+          "expanded_expression_nodes": 21,
+          "expression_depth": 9,
+          "structure_sha256": "4ee1afff9db41800460f69ddbbec47bf2a151f8f87ab4a8eefc3c59997cef000",
+          "unique_expression_nodes": 14
+        },
+        "source_proof": {
+          "expanded_expression_nodes": 21,
+          "expression_depth": 9,
+          "structure_sha256": "4ee1afff9db41800460f69ddbbec47bf2a151f8f87ab4a8eefc3c59997cef000",
+          "unique_expression_nodes": 14
+        },
+        "verified": true
+      },
+      "teacher_check": {
+        "expression_nonregression": true,
+        "prediction_proof": {
+          "expanded_expression_nodes": 21,
+          "expression_depth": 9,
+          "structure_sha256": "4ee1afff9db41800460f69ddbbec47bf2a151f8f87ab4a8eefc3c59997cef000",
+          "unique_expression_nodes": 14
+        },
+        "source_proof": {
+          "expanded_expression_nodes": 21,
+          "expression_depth": 9,
+          "structure_sha256": "4ee1afff9db41800460f69ddbbec47bf2a151f8f87ab4a8eefc3c59997cef000",
+          "unique_expression_nodes": 14
+        },
+        "verified": true
+      }
+    },
+    {
+      "id": "multi_canary_branch_chain_86472751",
+      "family": "branch_chain",
+      "split": "canary",
+      "source_tokens": 29,
+      "prediction_tokens": 14,
+      "verified_saved_tokens": 15,
+      "choice": 2,
+      "teacher_choice": 2,
+      "check": {
+        "expression_nonregression": true,
+        "prediction_proof": {
+          "expanded_expression_nodes": 47,
+          "expression_depth": 14,
+          "structure_sha256": "dad737bb6fcf37e8a7abbe72520dc86d0584a9ff184049bdcd2a0296cdbc61d0",
+          "unique_expression_nodes": 31
+        },
+        "source_proof": {
+          "expanded_expression_nodes": 56,
+          "expression_depth": 14,
+          "structure_sha256": "6666d83d57fb24176ea9d908a70673febc58feb9f821ee5a2e51563ba6d58ee1",
+          "unique_expression_nodes": 36
+        },
+        "verified": true
+      },
+      "teacher_check": {
+        "expression_nonregression": true,
+        "prediction_proof": {
+          "expanded_expression_nodes": 47,
+          "expression_depth": 14,
+          "structure_sha256": "dad737bb6fcf37e8a7abbe72520dc86d0584a9ff184049bdcd2a0296cdbc61d0",
+          "unique_expression_nodes": 31
+        },
+        "source_proof": {
+          "expanded_expression_nodes": 56,
+          "expression_depth": 14,
+          "structure_sha256": "6666d83d57fb24176ea9d908a70673febc58feb9f821ee5a2e51563ba6d58ee1",
+          "unique_expression_nodes": 36
+        },
+        "verified": true
+      }
+    },
+    {
+      "id": "multi_canary_prefixed_eta_77895028",
+      "family": "prefixed_eta",
+      "split": "canary",
+      "source_tokens": 7,
+      "prediction_tokens": 4,
+      "verified_saved_tokens": 3,
+      "choice": 1,
+      "teacher_choice": 1,
+      "check": {
+        "expression_nonregression": true,
+        "prediction_proof": {
+          "expanded_expression_nodes": 11,
+          "expression_depth": 5,
+          "structure_sha256": "aad4919c07eae3b60e813fcfbdda4fbf0b570c83984298de32d12c3de02ae028",
+          "unique_expression_nodes": 8
+        },
+        "source_proof": {
+          "expanded_expression_nodes": 15,
+          "expression_depth": 7,
+          "structure_sha256": "19922ab9e3470023081da0c956e0d420b6a0403857d4f21c4b6ea3cb338dcac5",
+          "unique_expression_nodes": 13
+        },
+        "verified": true
+      },
+      "teacher_check": {
+        "expression_nonregression": true,
+        "prediction_proof": {
+          "expanded_expression_nodes": 11,
+          "expression_depth": 5,
+          "structure_sha256": "aad4919c07eae3b60e813fcfbdda4fbf0b570c83984298de32d12c3de02ae028",
+          "unique_expression_nodes": 8
+        },
+        "source_proof": {
+          "expanded_expression_nodes": 15,
+          "expression_depth": 7,
+          "structure_sha256": "19922ab9e3470023081da0c956e0d420b6a0403857d4f21c4b6ea3cb338dcac5",
+          "unique_expression_nodes": 13
+        },
+        "verified": true
+      }
+    },
+    {
+      "id": "multi_holdout_beta_equality_48649329",
+      "family": "beta_equality",
+      "split": "holdout",
+      "source_tokens": 17,
+      "prediction_tokens": 1,
+      "verified_saved_tokens": 16,
+      "choice": 1,
+      "teacher_choice": 1,
+      "check": {
+        "expression_nonregression": true,
+        "prediction_proof": {
+          "expanded_expression_nodes": 23,
+          "expression_depth": 7,
+          "structure_sha256": "532837babe8a0a0c180f8442cbdf466d0eb4e4b6d0e7eab87d0a26f051d5fc52",
+          "unique_expression_nodes": 15
+        },
+        "source_proof": {
+          "expanded_expression_nodes": 54,
+          "expression_depth": 10,
+          "structure_sha256": "0556f5326f86b8d243f13dc8f8234c5bfd7d7a96bbeadf9a41c3b70dfe82d176",
+          "unique_expression_nodes": 25
+        },
+        "verified": true
+      },
+      "teacher_check": {
+        "expression_nonregression": true,
+        "prediction_proof": {
+          "expanded_expression_nodes": 23,
+          "expression_depth": 7,
+          "structure_sha256": "532837babe8a0a0c180f8442cbdf466d0eb4e4b6d0e7eab87d0a26f051d5fc52",
+          "unique_expression_nodes": 15
+        },
+        "source_proof": {
+          "expanded_expression_nodes": 54,
+          "expression_depth": 10,
+          "structure_sha256": "0556f5326f86b8d243f13dc8f8234c5bfd7d7a96bbeadf9a41c3b70dfe82d176",
+          "unique_expression_nodes": 25
+        },
+        "verified": true
+      }
+    },
+    {
+      "id": "multi_holdout_order_hypothesis_25633900",
+      "family": "order_hypothesis",
+      "split": "holdout",
+      "source_tokens": 17,
+      "prediction_tokens": 2,
+      "verified_saved_tokens": 15,
+      "choice": 2,
+      "teacher_choice": 2,
+      "check": {
+        "expression_nonregression": true,
+        "prediction_proof": {
+          "expanded_expression_nodes": 15,
+          "expression_depth": 8,
+          "structure_sha256": "1816d6976df1a75ed44b94fc11738205863b007e835839507a54366a780f1926",
+          "unique_expression_nodes": 12
+        },
+        "source_proof": {
+          "expanded_expression_nodes": 48,
+          "expression_depth": 11,
+          "structure_sha256": "b1c76fa90bbb63a00abf2745379cf0c14de09fa1b9ba7ffa9a0d401fbfcb8a3c",
+          "unique_expression_nodes": 24
+        },
+        "verified": true
+      },
+      "teacher_check": {
+        "expression_nonregression": true,
+        "prediction_proof": {
+          "expanded_expression_nodes": 15,
+          "expression_depth": 8,
+          "structure_sha256": "1816d6976df1a75ed44b94fc11738205863b007e835839507a54366a780f1926",
+          "unique_expression_nodes": 12
+        },
+        "source_proof": {
+          "expanded_expression_nodes": 48,
+          "expression_depth": 11,
+          "structure_sha256": "b1c76fa90bbb63a00abf2745379cf0c14de09fa1b9ba7ffa9a0d401fbfcb8a3c",
+          "unique_expression_nodes": 24
+        },
+        "verified": true
+      }
+    },
+    {
+      "id": "multi_holdout_negation_application_93428246",
+      "family": "negation_application",
+      "split": "holdout",
+      "source_tokens": 4,
+      "prediction_tokens": 3,
+      "verified_saved_tokens": 1,
+      "choice": 1,
+      "teacher_choice": 1,
+      "check": {
+        "expression_nonregression": true,
+        "prediction_proof": {
+          "expanded_expression_nodes": 11,
+          "expression_depth": 5,
+          "structure_sha256": "009eb4776c8df53361388f20355bf8732ae3cb595c889d6fc123f8aa4c6429a1",
+          "unique_expression_nodes": 9
+        },
+        "source_proof": {
+          "expanded_expression_nodes": 11,
+          "expression_depth": 5,
+          "structure_sha256": "009eb4776c8df53361388f20355bf8732ae3cb595c889d6fc123f8aa4c6429a1",
+          "unique_expression_nodes": 9
+        },
+        "verified": true
+      },
+      "teacher_check": {
+        "expression_nonregression": true,
+        "prediction_proof": {
+          "expanded_expression_nodes": 11,
+          "expression_depth": 5,
+          "structure_sha256": "009eb4776c8df53361388f20355bf8732ae3cb595c889d6fc123f8aa4c6429a1",
+          "unique_expression_nodes": 9
+        },
+        "source_proof": {
+          "expanded_expression_nodes": 11,
+          "expression_depth": 5,
+          "structure_sha256": "009eb4776c8df53361388f20355bf8732ae3cb595c889d6fc123f8aa4c6429a1",
+          "unique_expression_nodes": 9
+        },
+        "verified": true
+      }
+    }
+  ],
+  "models_unchanged": true,
+  "scope": "new_goal_layouts_training_mined_edit_grammar",
+  "semantic_family_decontamination": false,
+  "checkpoint_promoted": false,
+  "official_score": null,
+  "measurement_sha256": "906ebdcc8f152255e58b7739fa10ab5409915fe855b7c72caba4a7e51a83b313"
+}

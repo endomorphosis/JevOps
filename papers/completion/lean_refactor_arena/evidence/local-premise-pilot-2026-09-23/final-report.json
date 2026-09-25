@@ -1,0 +1,213 @@
+{
+  "schema": "jevops-local-premise-pilot/v1",
+  "plan_id": "068b18513e164ae99c89b74bc8680a64978c4aa32cbc14caa332214154bb7904",
+  "status": "COMPLETE",
+  "controls": [
+    {
+      "request_id": "959ca4f0e03beefe963ffadef4787942a6463b1cf79c6a0dbad651fcb935d38d",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4227,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"259aceb3ea7d174e25d26e34edd2e0e5296ba09ad4160bac9f09a1c88aa84a6d\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227576,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227600,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":18108.365}"
+    },
+    {
+      "request_id": "43828f3b654a47f943a00ec4f93398221cf8dd36bbd468fb9a7ecb945e3bf6e4",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4657,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"65871974f9468a2989ba8e6c97ceb0f1841e8decfcd50a7e67fe5e3fc7224947\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657774,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657793,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":18019.068}"
+    },
+    {
+      "request_id": "83194f6799b83079981236f544beafe44c3cd5d1fc66e1cc5d6854669ac27ee9",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4689,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"b8c110563637d5f47c197d6f1ec866e568c1a3fbe0687f68d7aedeeb0a94ba0a\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689118,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689133,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":5516.306}"
+    }
+  ],
+  "screen": [
+    {
+      "family": "whole",
+      "candidate": {
+        "label": "whole-0",
+        "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := _root_.Core.UpdateStatesNotDefMonotone'",
+        "provenance": "unverified premise-baseline; request 30946ca2560f3c95280c34147f033850ffdbd1743641c12efa2430746b3f942f"
+      },
+      "receipts": [
+        {
+          "request_id": "b02f929f49adc3615be61565816f09b5c6a3c2bf772efc7d3fffe2a415b42661",
+          "candidate_sha256": "6556b26eb4615d9b222236f3fcb2599a64af074358ef0fb27b885fac236faefc",
+          "target": "Core.InitsUpdatesComm",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"259aceb3ea7d174e25d26e34edd2e0e5296ba09ad4160bac9f09a1c88aa84a6d\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Type mismatch\\n  UpdateStatesNotDefMonotone'\\nhas type\\n  isNotDefined ?m.11 ?m.12 → UpdateStates ?m.10 ?m.14 ?m.13 ?m.11 → isNotDefined ?m.10 ?m.12\\nbut is expected to have type\\n  UpdateStates σ ks vs σ' →\\n    InitStates σ' ks' vs' σ'' → ∃ σ₁, σ₁ = updatedStates σ ks' vs' ∧ InitStates σ ks' vs' σ₁ ∧ UpdateStates σ₁ ks vs σ''\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11081.009}"
+        }
+      ],
+      "tokens": 1,
+      "status": "REJECTED"
+    },
+    {
+      "family": "local",
+      "candidate": {
+        "label": "local-0",
+        "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  exact _root_.Core.updatedStatesInit",
+        "provenance": "unverified local premise; request 7e4292c30bb71cc0ee837f7826ab1284e1986c008212791efa4b4f8e4b1bcc34; event 2"
+      },
+      "receipts": [
+        {
+          "request_id": "b557d55143862130fc4881bdf51dc435d63620132037bef52ecb66907ef69022",
+          "candidate_sha256": "d96c7579b4b24d2f12caf2368cb682fb067a39d67db503a881f73f4930e10c19",
+          "target": "Core.InitsUpdatesComm",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"259aceb3ea7d174e25d26e34edd2e0e5296ba09ad4160bac9f09a1c88aa84a6d\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Type mismatch\\n  updatedStatesInit\\nhas type\\n  List.length ?m.12 = List.length ?m.13 →\\n    isNotDefined ?m.11 ?m.12 → List.Nodup ?m.12 → InitStates ?m.11 ?m.12 ?m.13 (updatedStates ?m.11 ?m.12 ?m.13)\\nbut is expected to have type\\n  UpdateStates σ ks vs σ' →\\n    InitStates σ' ks' vs' σ'' → ∃ σ₁, σ₁ = updatedStates σ ks' vs' ∧ InitStates σ ks' vs' σ₁ ∧ UpdateStates σ₁ ks vs σ''\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11754.332}"
+        }
+      ],
+      "tokens": 3,
+      "status": "REJECTED"
+    },
+    {
+      "family": "whole",
+      "candidate": {
+        "label": "whole-1",
+        "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := _root_.Core.InitStatesSomeMonotone",
+        "provenance": "unverified premise-baseline; request 30946ca2560f3c95280c34147f033850ffdbd1743641c12efa2430746b3f942f"
+      },
+      "receipts": [
+        {
+          "request_id": "46a9a4e0d6e24fefa5f3a67efe97933c0715d9b42fb064e5a69284b2ebbc63c6",
+          "candidate_sha256": "cd3bca96e95089cdba7c89a2331db2e41797a2647bf7416fefeb9c36a3cdfbde",
+          "target": "Core.InitsUpdatesComm",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"259aceb3ea7d174e25d26e34edd2e0e5296ba09ad4160bac9f09a1c88aa84a6d\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Type mismatch\\n  InitStatesSomeMonotone\\nhas type\\n  ?m.10 ?m.12 = some ?m.13 → InitStates ?m.10 ?m.14 ?m.15 ?m.11 → ?m.11 ?m.12 = some ?m.13\\nbut is expected to have type\\n  UpdateStates σ ks vs σ' →\\n    InitStates σ' ks' vs' σ'' → ∃ σ₁, σ₁ = updatedStates σ ks' vs' ∧ InitStates σ ks' vs' σ₁ ∧ UpdateStates σ₁ ks vs σ''\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11566.493}"
+        }
+      ],
+      "tokens": 1,
+      "status": "REJECTED"
+    },
+    {
+      "family": "local",
+      "candidate": {
+        "label": "local-1",
+        "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  exact _root_.Core.InitStatesNodup",
+        "provenance": "unverified local premise; request 7e4292c30bb71cc0ee837f7826ab1284e1986c008212791efa4b4f8e4b1bcc34; event 2"
+      },
+      "receipts": [
+        {
+          "request_id": "c298723652bcdd62d017de1416d16c2bf95d9a61db2081a44edfcfdfef0937f1",
+          "candidate_sha256": "1d9a1190a29c82edea68383ed6cc7edc1f78730607b3f2e868d231e60e64ab28",
+          "target": "Core.InitsUpdatesComm",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"259aceb3ea7d174e25d26e34edd2e0e5296ba09ad4160bac9f09a1c88aa84a6d\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Type mismatch\\n  InitStatesNodup\\nhas type\\n  InitStates ?m.11 ?m.12 ?m.13 ?m.14 → List.Nodup ?m.12\\nbut is expected to have type\\n  UpdateStates σ ks vs σ' →\\n    InitStates σ' ks' vs' σ'' → ∃ σ₁, σ₁ = updatedStates σ ks' vs' ∧ InitStates σ ks' vs' σ₁ ∧ UpdateStates σ₁ ks vs σ''\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11494.935}"
+        }
+      ],
+      "tokens": 3,
+      "status": "REJECTED"
+    }
+  ],
+  "families": {
+    "whole": {
+      "drafts": 2,
+      "cap": 2,
+      "verified": 0
+    },
+    "local": {
+      "drafts": 2,
+      "cap": 2,
+      "verified": 0
+    }
+  },
+  "all_pin_verified": [],
+  "measurement": null,
+  "evidence_mode": "trusted_local_native",
+  "os_sandbox": false,
+  "training": false,
+  "promoted": false,
+  "official_score": null,
+  "model_calls": 0,
+  "api_cost": null,
+  "electricity_cost": null,
+  "reason": "screened_fixed_candidates_no_promotion",
+  "reserved_processes": 13,
+  "native_processes": 13,
+  "charges": [
+    {
+      "label": "control-v4.29.1",
+      "units": 1
+    },
+    {
+      "label": "control-v4.27.0",
+      "units": 1
+    },
+    {
+      "label": "control-v4.26.0",
+      "units": 1
+    },
+    {
+      "label": "all-pin-inventory",
+      "units": 3
+    },
+    {
+      "label": "project-capture",
+      "units": 1
+    },
+    {
+      "label": "local-replay-0",
+      "units": 1
+    },
+    {
+      "label": "local-replay-1",
+      "units": 1
+    },
+    {
+      "label": "screen-whole-0-v4.29.1",
+      "units": 1
+    },
+    {
+      "label": "screen-local-0-v4.29.1",
+      "units": 1
+    },
+    {
+      "label": "screen-whole-1-v4.29.1",
+      "units": 1
+    },
+    {
+      "label": "screen-local-1-v4.29.1",
+      "units": 1
+    }
+  ],
+  "wall_seconds": 334.6633
+}

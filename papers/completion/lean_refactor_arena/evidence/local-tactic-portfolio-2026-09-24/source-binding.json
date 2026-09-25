@@ -1,0 +1,22 @@
+{
+  "before": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-tactic-portfolio-20260924-fQILB1/snapshot",
+    "manifest_sha256": "142d4d9739fbeb67750c2b2c68adbf3c0fc99ca0f74daa250eab0586e6f42495",
+    "content_root": "d51a72f2d4dfbac9deb71f32433bfb16b24d0bbbc22b676efe1df4c3e8fd0f0f",
+    "file_count": 229,
+    "bytes": 4772648,
+    "proof_verified": false
+  },
+  "after": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-tactic-portfolio-20260924-fQILB1/snapshot",
+    "manifest_sha256": "142d4d9739fbeb67750c2b2c68adbf3c0fc99ca0f74daa250eab0586e6f42495",
+    "content_root": "d51a72f2d4dfbac9deb71f32433bfb16b24d0bbbc22b676efe1df4c3e8fd0f0f",
+    "file_count": 229,
+    "bytes": 4772648,
+    "proof_verified": false
+  }
+}

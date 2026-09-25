@@ -1,0 +1,4 @@
+MODE: repair a promising failed simplification.
+Use the exact candidate_source attached to a REJECTED diagnostic. Do not attribute that message to the reference or another candidate. Find the earliest structural cause before changing later tactics.
+For function-expected/overapplication errors after deleting a have, inspect whether induction generalized one fewer variable; remove only the surplus argument and its corresponding goal block. For missing-goal or unsolved-goal errors, reconcile goal count/order with the preceding tactic. Restore a removed premise when implicit automation needed it.
+Use successful contrast examples if supplied, but do not transplant constants or binders from a different scope. If no semantic rejection is available, perform a conservative dependency-aware simplification; do not invent a diagnostic from a timeout.

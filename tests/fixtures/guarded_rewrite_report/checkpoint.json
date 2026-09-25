@@ -1,0 +1,894 @@
+{
+  "config": {
+    "decay_steps": 1000,
+    "gradient_clip": 1.0,
+    "holdout_fraction": 0.1,
+    "label_smoothing": 0.02,
+    "learning_rate": 0.15,
+    "loss_weights": {
+      "cosine": 0.35,
+      "cross_entropy": 1.0,
+      "fuzzy_prover": 0.2,
+      "kl": 0.01,
+      "length": 0.03,
+      "minimality": 0.1,
+      "nca": 0.2,
+      "reconstruction": 0.8,
+      "reward": 0.5
+    },
+    "max_learning_rate": 0.25,
+    "max_ops": 32,
+    "train_binding_policy": false,
+    "train_rewrite_policy": true,
+    "freeze_reconstruction_heads": true,
+    "rewrite_max_edits": 4,
+    "min_learning_rate": 0.0005,
+    "plateau_factor": 0.5,
+    "plateau_patience": 2,
+    "beam_width": 4,
+    "seed": 17,
+    "temperature": 1.0,
+    "validation_fraction": 0.1,
+    "warmup_steps": 0,
+    "weight_decay": 0.0001,
+    "canary_fraction": 0.1
+  },
+  "state": {
+    "schema": "jevops-lean-ir-autoencoder-model/v2",
+    "version": 2,
+    "step": 320,
+    "accepted_steps": 0,
+    "plateau_factor": 1.0,
+    "vocab": [
+      "intro",
+      "intros",
+      "exact",
+      "apply",
+      "assumption",
+      "cases",
+      "induction",
+      "simp",
+      "simp_all",
+      "rw",
+      "nth_rewrite",
+      "dsimp",
+      "unfold",
+      "change",
+      "show",
+      "have",
+      "use",
+      "refine",
+      "exfalso",
+      "contradiction",
+      "left",
+      "right",
+      "rfl",
+      "trivial",
+      "constructor",
+      "rintro",
+      "rcases",
+      "subst",
+      "ext",
+      "funext",
+      "all_goals",
+      "any_goals",
+      "first",
+      "try",
+      "solve_by_elim",
+      "exact_mod_cast",
+      "field_simp",
+      "positivity",
+      "simp_rw",
+      "omega",
+      "linarith",
+      "nlinarith",
+      "norm_num",
+      "ring",
+      "ring_nf",
+      "aesop",
+      "grind",
+      "decide",
+      "simpa",
+      "subst_vars",
+      "ac_rfl",
+      "by_contra",
+      "by_cases",
+      "classical",
+      "push_neg",
+      "bv_decide",
+      "norm_cast",
+      "push_cast",
+      "abel",
+      "abel_nf",
+      "noncomm_ring",
+      "group",
+      "order",
+      "bound",
+      "zify",
+      "qify",
+      "decide_cbv",
+      "split_ifs",
+      "contrapose",
+      "fin_cases",
+      "interval_cases",
+      "revert",
+      "clear",
+      "symm",
+      "let",
+      "skip",
+      "<eos>"
+    ],
+    "feature_buckets": 256,
+    "op_bias": {
+      "intro": 0.0,
+      "intros": 0.0,
+      "exact": 0.0,
+      "apply": 0.0,
+      "assumption": 0.0,
+      "cases": 0.0,
+      "induction": 0.0,
+      "simp": 0.0,
+      "simp_all": 0.0,
+      "rw": 0.0,
+      "nth_rewrite": 0.0,
+      "dsimp": 0.0,
+      "unfold": 0.0,
+      "change": 0.0,
+      "show": 0.0,
+      "have": 0.0,
+      "use": 0.0,
+      "refine": 0.0,
+      "exfalso": 0.0,
+      "contradiction": 0.0,
+      "left": 0.0,
+      "right": 0.0,
+      "rfl": 0.0,
+      "trivial": 0.0,
+      "constructor": 0.0,
+      "rintro": 0.0,
+      "rcases": 0.0,
+      "subst": 0.0,
+      "ext": 0.0,
+      "funext": 0.0,
+      "all_goals": 0.0,
+      "any_goals": 0.0,
+      "first": 0.0,
+      "try": 0.0,
+      "solve_by_elim": 0.0,
+      "exact_mod_cast": 0.0,
+      "field_simp": 0.0,
+      "positivity": 0.0,
+      "simp_rw": 0.0,
+      "omega": 0.0,
+      "linarith": 0.0,
+      "nlinarith": 0.0,
+      "norm_num": 0.0,
+      "ring": 0.0,
+      "ring_nf": 0.0,
+      "aesop": 0.0,
+      "grind": 0.0,
+      "decide": 0.0,
+      "simpa": 0.0,
+      "subst_vars": 0.0,
+      "ac_rfl": 0.0,
+      "by_contra": 0.0,
+      "by_cases": 0.0,
+      "classical": 0.0,
+      "push_neg": 0.0,
+      "bv_decide": 0.0,
+      "norm_cast": 0.0,
+      "push_cast": 0.0,
+      "abel": 0.0,
+      "abel_nf": 0.0,
+      "noncomm_ring": 0.0,
+      "group": 0.0,
+      "order": 0.0,
+      "bound": 0.0,
+      "zify": 0.0,
+      "qify": 0.0,
+      "decide_cbv": 0.0,
+      "split_ifs": 0.0,
+      "contrapose": 0.0,
+      "fin_cases": 0.0,
+      "interval_cases": 0.0,
+      "revert": 0.0,
+      "clear": 0.0,
+      "symm": 0.0,
+      "let": 0.0,
+      "skip": 0.0,
+      "<eos>": 0.0
+    },
+    "transition": {},
+    "feature_op": {},
+    "latent_bias": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "feature_latent": {},
+    "binding_steps": 0,
+    "binding_weights": {
+      "bias": 0.0,
+      "reaches_root": 0.0,
+      "direct_root_use": 0.0,
+      "used_by_binding": 0.0,
+      "no_users": 0.0,
+      "trivial_true": 0.0
+    },
+    "rewrite_steps": 320,
+    "rewrite_templates": [
+      {
+        "id": "8173adc32d619379f9c0",
+        "before": [
+          "intro ",
+          0,
+          "\nexact ",
+          0,
+          ".1"
+        ],
+        "after": [
+          "exact And.left"
+        ],
+        "slots": 1,
+        "lines": 2,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "8d64f824969f5ae1e6dd",
+        "before": [
+          "have ",
+          0,
+          " : ",
+          1,
+          " \u2227 ",
+          2,
+          " := ",
+          3,
+          ".right\nexact ",
+          0,
+          ".left"
+        ],
+        "after": [
+          "exact ",
+          3,
+          ".right.left"
+        ],
+        "slots": 4,
+        "lines": 2,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "e9b2090aa2fdbf291b43",
+        "before": [
+          "have ",
+          0,
+          " : ",
+          1,
+          " := ",
+          2,
+          "\napply ",
+          3,
+          "\nexact ",
+          0,
+          ""
+        ],
+        "after": [
+          "exact ",
+          3,
+          " ",
+          2,
+          ""
+        ],
+        "slots": 4,
+        "lines": 3,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "ba58af8a4b13bd5ed918",
+        "before": [
+          "have ",
+          0,
+          " : ",
+          1,
+          " := ",
+          2,
+          "\napply ",
+          3,
+          ".mp\nexact ",
+          0,
+          ""
+        ],
+        "after": [
+          "exact ",
+          3,
+          ".mp ",
+          2,
+          ""
+        ],
+        "slots": 4,
+        "lines": 3,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "9c282a58cd74241223ac",
+        "before": [
+          "have ",
+          0,
+          " : ",
+          1,
+          " := ",
+          2,
+          "\nexact ",
+          3,
+          " ",
+          0,
+          ""
+        ],
+        "after": [
+          "exact ",
+          3,
+          " ",
+          2,
+          ""
+        ],
+        "slots": 4,
+        "lines": 2,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "87379f83aa479a76715a",
+        "before": [
+          "have ",
+          0,
+          " : ",
+          1,
+          " := ",
+          2,
+          "\nconstructor\n\u00b7 exact ",
+          0,
+          "\n\u00b7 exact ",
+          3,
+          ""
+        ],
+        "after": [
+          "exact \u27e8",
+          2,
+          ", ",
+          3,
+          "\u27e9"
+        ],
+        "slots": 4,
+        "lines": 4,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "bd41eb577e656074554b",
+        "before": [
+          "have ",
+          0,
+          " : ",
+          1,
+          " := ",
+          2,
+          "\nleft\nexact ",
+          0,
+          ""
+        ],
+        "after": [
+          "exact Or.inl ",
+          2,
+          ""
+        ],
+        "slots": 3,
+        "lines": 3,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "bba21930a09d62d21661",
+        "before": [
+          "have ",
+          0,
+          " : ",
+          1,
+          " - ",
+          2,
+          " \u2264 (7) := by omega\nexact ",
+          0,
+          ""
+        ],
+        "after": [
+          "omega"
+        ],
+        "slots": 3,
+        "lines": 2,
+        "scope": "lexical_local_copy_requires_Lean"
+      }
+    ],
+    "rewrite_weights": {
+      "8173adc32d619379f9c0|bias": 0.5640871026075347,
+      "8173adc32d619379f9c0|first": 0.5640871026075347,
+      "8173adc32d619379f9c0|last": 0.5640871026075347,
+      "8173adc32d619379f9c0|nested": 0.0,
+      "8173adc32d619379f9c0|prev:bos": 0.5640871026075347,
+      "8173adc32d619379f9c0|next:eos": 0.5640871026075347,
+      "8173adc32d619379f9c0|domain:Prop": 0.5640871026075347,
+      "8173adc32d619379f9c0|domain:Nat": 0.0,
+      "8173adc32d619379f9c0|domain:Int": 0.0,
+      "8173adc32d619379f9c0|domain:Bool": 0.0,
+      "8173adc32d619379f9c0|domain:List": 0.0,
+      "8173adc32d619379f9c0|domain:Fin": 0.0,
+      "8173adc32d619379f9c0|domain:PLift": 0.0,
+      "8d64f824969f5ae1e6dd|bias": 0.5639723153525038,
+      "8d64f824969f5ae1e6dd|first": 0.5639723153525038,
+      "8d64f824969f5ae1e6dd|last": 0.5639723153525038,
+      "8d64f824969f5ae1e6dd|nested": 0.0,
+      "8d64f824969f5ae1e6dd|prev:bos": 0.5639723153525038,
+      "8d64f824969f5ae1e6dd|next:eos": 0.5639723153525038,
+      "8d64f824969f5ae1e6dd|domain:Prop": 0.5639723153525038,
+      "8d64f824969f5ae1e6dd|domain:Nat": 0.0,
+      "8d64f824969f5ae1e6dd|domain:Int": 0.0,
+      "8d64f824969f5ae1e6dd|domain:Bool": 0.0,
+      "8d64f824969f5ae1e6dd|domain:List": 0.0,
+      "8d64f824969f5ae1e6dd|domain:Fin": 0.0,
+      "8d64f824969f5ae1e6dd|domain:PLift": 0.0,
+      "e9b2090aa2fdbf291b43|bias": 0.5702275445539665,
+      "e9b2090aa2fdbf291b43|first": 0.5702275445539665,
+      "e9b2090aa2fdbf291b43|last": 0.5702275445539665,
+      "e9b2090aa2fdbf291b43|nested": 0.0,
+      "e9b2090aa2fdbf291b43|prev:bos": 0.5702275445539665,
+      "e9b2090aa2fdbf291b43|next:eos": 0.5702275445539665,
+      "e9b2090aa2fdbf291b43|domain:Prop": 0.5702275445539665,
+      "e9b2090aa2fdbf291b43|domain:Nat": 0.0,
+      "e9b2090aa2fdbf291b43|domain:Int": 0.0,
+      "e9b2090aa2fdbf291b43|domain:Bool": 0.0,
+      "e9b2090aa2fdbf291b43|domain:List": 0.0,
+      "e9b2090aa2fdbf291b43|domain:Fin": 0.0,
+      "e9b2090aa2fdbf291b43|domain:PLift": 0.0,
+      "ba58af8a4b13bd5ed918|bias": 0.5701107842705885,
+      "ba58af8a4b13bd5ed918|first": 0.5701107842705885,
+      "ba58af8a4b13bd5ed918|last": 0.5701107842705885,
+      "ba58af8a4b13bd5ed918|nested": 0.0,
+      "ba58af8a4b13bd5ed918|prev:bos": 0.5701107842705885,
+      "ba58af8a4b13bd5ed918|next:eos": 0.5701107842705885,
+      "ba58af8a4b13bd5ed918|domain:Prop": 0.5701107842705885,
+      "ba58af8a4b13bd5ed918|domain:Nat": 0.0,
+      "ba58af8a4b13bd5ed918|domain:Int": 0.0,
+      "ba58af8a4b13bd5ed918|domain:Bool": 0.0,
+      "ba58af8a4b13bd5ed918|domain:List": 0.0,
+      "ba58af8a4b13bd5ed918|domain:Fin": 0.0,
+      "ba58af8a4b13bd5ed918|domain:PLift": 0.0,
+      "9c282a58cd74241223ac|bias": 0.5636232090445334,
+      "9c282a58cd74241223ac|first": 0.5636232090445334,
+      "9c282a58cd74241223ac|last": 0.5636232090445334,
+      "9c282a58cd74241223ac|nested": 0.0,
+      "9c282a58cd74241223ac|prev:bos": 0.5636232090445334,
+      "9c282a58cd74241223ac|next:eos": 0.5636232090445334,
+      "9c282a58cd74241223ac|domain:Prop": 0.5636232090445334,
+      "9c282a58cd74241223ac|domain:Nat": 0.0,
+      "9c282a58cd74241223ac|domain:Int": 0.0,
+      "9c282a58cd74241223ac|domain:Bool": 0.0,
+      "9c282a58cd74241223ac|domain:List": 0.0,
+      "9c282a58cd74241223ac|domain:Fin": 0.0,
+      "9c282a58cd74241223ac|domain:PLift": 0.0,
+      "87379f83aa479a76715a|bias": 0.5579679657360854,
+      "87379f83aa479a76715a|first": 0.5579679657360854,
+      "87379f83aa479a76715a|last": 0.5579679657360854,
+      "87379f83aa479a76715a|nested": 0.0,
+      "87379f83aa479a76715a|prev:bos": 0.5579679657360854,
+      "87379f83aa479a76715a|next:eos": 0.5579679657360854,
+      "87379f83aa479a76715a|domain:Prop": 0.5579679657360854,
+      "87379f83aa479a76715a|domain:Nat": 0.0,
+      "87379f83aa479a76715a|domain:Int": 0.0,
+      "87379f83aa479a76715a|domain:Bool": 0.0,
+      "87379f83aa479a76715a|domain:List": 0.0,
+      "87379f83aa479a76715a|domain:Fin": 0.0,
+      "87379f83aa479a76715a|domain:PLift": 0.0,
+      "bd41eb577e656074554b|bias": 0.5697557364006616,
+      "bd41eb577e656074554b|first": 0.5697557364006616,
+      "bd41eb577e656074554b|last": 0.5697557364006616,
+      "bd41eb577e656074554b|nested": 0.0,
+      "bd41eb577e656074554b|prev:bos": 0.5697557364006616,
+      "bd41eb577e656074554b|next:eos": 0.5697557364006616,
+      "bd41eb577e656074554b|domain:Prop": 0.5697557364006616,
+      "bd41eb577e656074554b|domain:Nat": 0.0,
+      "bd41eb577e656074554b|domain:Int": 0.0,
+      "bd41eb577e656074554b|domain:Bool": 0.0,
+      "bd41eb577e656074554b|domain:List": 0.0,
+      "bd41eb577e656074554b|domain:Fin": 0.0,
+      "bd41eb577e656074554b|domain:PLift": 0.0,
+      "bba21930a09d62d21661|bias": 0.5956574997063457,
+      "bba21930a09d62d21661|first": 0.5956574997063457,
+      "bba21930a09d62d21661|last": 0.5956574997063457,
+      "bba21930a09d62d21661|nested": 0.0,
+      "bba21930a09d62d21661|prev:bos": 0.5956574997063457,
+      "bba21930a09d62d21661|next:eos": 0.5956574997063457,
+      "bba21930a09d62d21661|domain:Prop": 0.0,
+      "bba21930a09d62d21661|domain:Nat": 0.0,
+      "bba21930a09d62d21661|domain:Int": 0.5956574997063457,
+      "bba21930a09d62d21661|domain:Bool": 0.0,
+      "bba21930a09d62d21661|domain:List": 0.0,
+      "bba21930a09d62d21661|domain:Fin": 0.0,
+      "bba21930a09d62d21661|domain:PLift": 0.0
+    }
+  },
+  "state_sha256": "bb6f5f3583d08f033f478eacbcf5db6441e247bddbfbe44d7aa4905d52257d07",
+  "manifest": [
+    {
+      "id": "constructive_train_projection_521862",
+      "split": "train",
+      "family": "constructive_projection",
+      "strategies": [
+        "logic_simp"
+      ],
+      "source": "theorem constructive_train_projection_521862 (p_521862 q_521862 : Prop) : p_521862 \u2227 q_521862 \u2192 p_521862 := by\n  intro h_521862\n  exact h_521862.1\n"
+    },
+    {
+      "id": "constructive_train_nested_projection_521862",
+      "split": "train",
+      "family": "constructive_nested_projection",
+      "strategies": [],
+      "source": "theorem constructive_train_nested_projection_521862 (p_521862 q_521862 : Prop) (h_521862 : p_521862 \u2227 (q_521862 \u2227 p_521862)) : q_521862 := by\n  have a_521862 : q_521862 \u2227 p_521862 := h_521862.right\n  exact a_521862.left\n"
+    },
+    {
+      "id": "constructive_train_modus_ponens_521862",
+      "split": "train",
+      "family": "constructive_modus_ponens",
+      "strategies": [],
+      "source": "theorem constructive_train_modus_ponens_521862 (p_521862 q_521862 : Prop) (f_521862 : p_521862 \u2192 q_521862) (h_521862 : p_521862) : q_521862 := by\n  have a_521862 : p_521862 := h_521862\n  apply f_521862\n  exact a_521862\n"
+    },
+    {
+      "id": "constructive_train_iff_elimination_521862",
+      "split": "train",
+      "family": "constructive_iff_elimination",
+      "strategies": [],
+      "source": "theorem constructive_train_iff_elimination_521862 (p_521862 q_521862 : Prop) (f_521862 : p_521862 \u2194 q_521862) (h_521862 : p_521862) : q_521862 := by\n  have a_521862 : p_521862 := h_521862\n  apply f_521862.mp\n  exact a_521862\n"
+    },
+    {
+      "id": "constructive_train_contradiction_521862",
+      "split": "train",
+      "family": "constructive_contradiction",
+      "strategies": [],
+      "source": "theorem constructive_train_contradiction_521862 (p_521862 : Prop) (h_521862 : p_521862) (k_521862 : \u00ac p_521862) : False := by\n  have a_521862 : p_521862 := h_521862\n  exact k_521862 a_521862\n"
+    },
+    {
+      "id": "constructive_train_conjunction_521862",
+      "split": "train",
+      "family": "constructive_conjunction",
+      "strategies": [],
+      "source": "theorem constructive_train_conjunction_521862 (p_521862 q_521862 : Prop) (h_521862 : p_521862) (k_521862 : q_521862) : p_521862 \u2227 q_521862 := by\n  have a_521862 : p_521862 := h_521862\n  constructor\n  \u00b7 exact a_521862\n  \u00b7 exact k_521862\n"
+    },
+    {
+      "id": "constructive_train_disjunction_521862",
+      "split": "train",
+      "family": "constructive_disjunction",
+      "strategies": [],
+      "source": "theorem constructive_train_disjunction_521862 (p_521862 q_521862 : Prop) (h_521862 : p_521862) : p_521862 \u2228 q_521862 := by\n  have a_521862 : p_521862 := h_521862\n  left\n  exact a_521862\n"
+    },
+    {
+      "id": "constructive_validation_projection_720785",
+      "split": "validation",
+      "family": "constructive_projection",
+      "strategies": [
+        "logic_simp"
+      ],
+      "source": "theorem constructive_validation_projection_720785 (p_720785 q_720785 : Prop) : p_720785 \u2227 q_720785 \u2192 p_720785 := by\n  intro h_720785\n  exact h_720785.1\n"
+    },
+    {
+      "id": "constructive_validation_nested_projection_720785",
+      "split": "validation",
+      "family": "constructive_nested_projection",
+      "strategies": [],
+      "source": "theorem constructive_validation_nested_projection_720785 (p_720785 q_720785 : Prop) (h_720785 : p_720785 \u2227 (q_720785 \u2227 p_720785)) : q_720785 := by\n  have a_720785 : q_720785 \u2227 p_720785 := h_720785.right\n  exact a_720785.left\n"
+    },
+    {
+      "id": "constructive_validation_modus_ponens_720785",
+      "split": "validation",
+      "family": "constructive_modus_ponens",
+      "strategies": [],
+      "source": "theorem constructive_validation_modus_ponens_720785 (p_720785 q_720785 : Prop) (f_720785 : p_720785 \u2192 q_720785) (h_720785 : p_720785) : q_720785 := by\n  have a_720785 : p_720785 := h_720785\n  apply f_720785\n  exact a_720785\n"
+    },
+    {
+      "id": "constructive_validation_iff_elimination_720785",
+      "split": "validation",
+      "family": "constructive_iff_elimination",
+      "strategies": [],
+      "source": "theorem constructive_validation_iff_elimination_720785 (p_720785 q_720785 : Prop) (f_720785 : p_720785 \u2194 q_720785) (h_720785 : p_720785) : q_720785 := by\n  have a_720785 : p_720785 := h_720785\n  apply f_720785.mp\n  exact a_720785\n"
+    },
+    {
+      "id": "constructive_validation_contradiction_720785",
+      "split": "validation",
+      "family": "constructive_contradiction",
+      "strategies": [],
+      "source": "theorem constructive_validation_contradiction_720785 (p_720785 : Prop) (h_720785 : p_720785) (k_720785 : \u00ac p_720785) : False := by\n  have a_720785 : p_720785 := h_720785\n  exact k_720785 a_720785\n"
+    },
+    {
+      "id": "constructive_validation_conjunction_720785",
+      "split": "validation",
+      "family": "constructive_conjunction",
+      "strategies": [],
+      "source": "theorem constructive_validation_conjunction_720785 (p_720785 q_720785 : Prop) (h_720785 : p_720785) (k_720785 : q_720785) : p_720785 \u2227 q_720785 := by\n  have a_720785 : p_720785 := h_720785\n  constructor\n  \u00b7 exact a_720785\n  \u00b7 exact k_720785\n"
+    },
+    {
+      "id": "constructive_validation_disjunction_720785",
+      "split": "validation",
+      "family": "constructive_disjunction",
+      "strategies": [],
+      "source": "theorem constructive_validation_disjunction_720785 (p_720785 q_720785 : Prop) (h_720785 : p_720785) : p_720785 \u2228 q_720785 := by\n  have a_720785 : p_720785 := h_720785\n  left\n  exact a_720785\n"
+    },
+    {
+      "id": "constructive_canary_projection_401244",
+      "split": "canary",
+      "family": "constructive_projection",
+      "strategies": [
+        "logic_simp"
+      ],
+      "source": "theorem constructive_canary_projection_401244 (p_401244 q_401244 : Prop) : p_401244 \u2227 q_401244 \u2192 p_401244 := by\n  intro h_401244\n  exact h_401244.1\n"
+    },
+    {
+      "id": "constructive_canary_nested_projection_401244",
+      "split": "canary",
+      "family": "constructive_nested_projection",
+      "strategies": [],
+      "source": "theorem constructive_canary_nested_projection_401244 (p_401244 q_401244 : Prop) (h_401244 : p_401244 \u2227 (q_401244 \u2227 p_401244)) : q_401244 := by\n  have a_401244 : q_401244 \u2227 p_401244 := h_401244.right\n  exact a_401244.left\n"
+    },
+    {
+      "id": "constructive_canary_modus_ponens_401244",
+      "split": "canary",
+      "family": "constructive_modus_ponens",
+      "strategies": [],
+      "source": "theorem constructive_canary_modus_ponens_401244 (p_401244 q_401244 : Prop) (f_401244 : p_401244 \u2192 q_401244) (h_401244 : p_401244) : q_401244 := by\n  have a_401244 : p_401244 := h_401244\n  apply f_401244\n  exact a_401244\n"
+    },
+    {
+      "id": "constructive_canary_iff_elimination_401244",
+      "split": "canary",
+      "family": "constructive_iff_elimination",
+      "strategies": [],
+      "source": "theorem constructive_canary_iff_elimination_401244 (p_401244 q_401244 : Prop) (f_401244 : p_401244 \u2194 q_401244) (h_401244 : p_401244) : q_401244 := by\n  have a_401244 : p_401244 := h_401244\n  apply f_401244.mp\n  exact a_401244\n"
+    },
+    {
+      "id": "constructive_canary_contradiction_401244",
+      "split": "canary",
+      "family": "constructive_contradiction",
+      "strategies": [],
+      "source": "theorem constructive_canary_contradiction_401244 (p_401244 : Prop) (h_401244 : p_401244) (k_401244 : \u00ac p_401244) : False := by\n  have a_401244 : p_401244 := h_401244\n  exact k_401244 a_401244\n"
+    },
+    {
+      "id": "constructive_canary_conjunction_401244",
+      "split": "canary",
+      "family": "constructive_conjunction",
+      "strategies": [],
+      "source": "theorem constructive_canary_conjunction_401244 (p_401244 q_401244 : Prop) (h_401244 : p_401244) (k_401244 : q_401244) : p_401244 \u2227 q_401244 := by\n  have a_401244 : p_401244 := h_401244\n  constructor\n  \u00b7 exact a_401244\n  \u00b7 exact k_401244\n"
+    },
+    {
+      "id": "constructive_canary_disjunction_401244",
+      "split": "canary",
+      "family": "constructive_disjunction",
+      "strategies": [],
+      "source": "theorem constructive_canary_disjunction_401244 (p_401244 q_401244 : Prop) (h_401244 : p_401244) : p_401244 \u2228 q_401244 := by\n  have a_401244 : p_401244 := h_401244\n  left\n  exact a_401244\n"
+    },
+    {
+      "id": "constructive_holdout_projection_485266",
+      "split": "holdout",
+      "family": "constructive_projection",
+      "strategies": [
+        "logic_simp"
+      ],
+      "source": "theorem constructive_holdout_projection_485266 (p_485266 q_485266 : Prop) : p_485266 \u2227 q_485266 \u2192 p_485266 := by\n  intro h_485266\n  exact h_485266.1\n"
+    },
+    {
+      "id": "constructive_holdout_nested_projection_485266",
+      "split": "holdout",
+      "family": "constructive_nested_projection",
+      "strategies": [],
+      "source": "theorem constructive_holdout_nested_projection_485266 (p_485266 q_485266 : Prop) (h_485266 : p_485266 \u2227 (q_485266 \u2227 p_485266)) : q_485266 := by\n  have a_485266 : q_485266 \u2227 p_485266 := h_485266.right\n  exact a_485266.left\n"
+    },
+    {
+      "id": "constructive_holdout_modus_ponens_485266",
+      "split": "holdout",
+      "family": "constructive_modus_ponens",
+      "strategies": [],
+      "source": "theorem constructive_holdout_modus_ponens_485266 (p_485266 q_485266 : Prop) (f_485266 : p_485266 \u2192 q_485266) (h_485266 : p_485266) : q_485266 := by\n  have a_485266 : p_485266 := h_485266\n  apply f_485266\n  exact a_485266\n"
+    },
+    {
+      "id": "constructive_holdout_iff_elimination_485266",
+      "split": "holdout",
+      "family": "constructive_iff_elimination",
+      "strategies": [],
+      "source": "theorem constructive_holdout_iff_elimination_485266 (p_485266 q_485266 : Prop) (f_485266 : p_485266 \u2194 q_485266) (h_485266 : p_485266) : q_485266 := by\n  have a_485266 : p_485266 := h_485266\n  apply f_485266.mp\n  exact a_485266\n"
+    },
+    {
+      "id": "constructive_holdout_contradiction_485266",
+      "split": "holdout",
+      "family": "constructive_contradiction",
+      "strategies": [],
+      "source": "theorem constructive_holdout_contradiction_485266 (p_485266 : Prop) (h_485266 : p_485266) (k_485266 : \u00ac p_485266) : False := by\n  have a_485266 : p_485266 := h_485266\n  exact k_485266 a_485266\n"
+    },
+    {
+      "id": "constructive_holdout_conjunction_485266",
+      "split": "holdout",
+      "family": "constructive_conjunction",
+      "strategies": [],
+      "source": "theorem constructive_holdout_conjunction_485266 (p_485266 q_485266 : Prop) (h_485266 : p_485266) (k_485266 : q_485266) : p_485266 \u2227 q_485266 := by\n  have a_485266 : p_485266 := h_485266\n  constructor\n  \u00b7 exact a_485266\n  \u00b7 exact k_485266\n"
+    },
+    {
+      "id": "constructive_holdout_disjunction_485266",
+      "split": "holdout",
+      "family": "constructive_disjunction",
+      "strategies": [],
+      "source": "theorem constructive_holdout_disjunction_485266 (p_485266 q_485266 : Prop) (h_485266 : p_485266) : p_485266 \u2228 q_485266 := by\n  have a_485266 : p_485266 := h_485266\n  left\n  exact a_485266\n"
+    },
+    {
+      "id": "difference_train_670481",
+      "split": "train",
+      "family": "difference_certificate",
+      "source": "theorem difference_train_670481 (x0 x1 x2 : Int) (h0 : x0 - x1 \u2264 (2)) (h1 : x1 - x2 \u2264 (3)) : x0 - x2 \u2264 (7) := by\n  have bound_670481 : x0 - x2 \u2264 (7) := by omega\n  exact bound_670481\n",
+      "strategies": [
+        "arithmetic_linear"
+      ],
+      "certificate": {
+        "removed_index": 2,
+        "path": [
+          0,
+          1
+        ]
+      },
+      "constraints": [
+        {
+          "left": 0,
+          "right": 1,
+          "bound": 2
+        },
+        {
+          "left": 1,
+          "right": 2,
+          "bound": 3
+        },
+        {
+          "left": 0,
+          "right": 2,
+          "bound": 7
+        }
+      ]
+    },
+    {
+      "id": "difference_validation_720785",
+      "split": "validation",
+      "family": "difference_certificate",
+      "source": "theorem difference_validation_720785 (x0 x1 x2 : Int) (h0 : x0 - x1 \u2264 (2)) (h1 : x1 - x2 \u2264 (3)) : x0 - x2 \u2264 (7) := by\n  have bound_720785 : x0 - x2 \u2264 (7) := by omega\n  exact bound_720785\n",
+      "strategies": [
+        "arithmetic_linear"
+      ],
+      "certificate": {
+        "removed_index": 2,
+        "path": [
+          0,
+          1
+        ]
+      },
+      "constraints": [
+        {
+          "left": 0,
+          "right": 1,
+          "bound": 2
+        },
+        {
+          "left": 1,
+          "right": 2,
+          "bound": 3
+        },
+        {
+          "left": 0,
+          "right": 2,
+          "bound": 7
+        }
+      ]
+    },
+    {
+      "id": "difference_canary_401244",
+      "split": "canary",
+      "family": "difference_certificate",
+      "source": "theorem difference_canary_401244 (x0 x1 x2 : Int) (h0 : x0 - x1 \u2264 (2)) (h1 : x1 - x2 \u2264 (3)) : x0 - x2 \u2264 (7) := by\n  have bound_401244 : x0 - x2 \u2264 (7) := by omega\n  exact bound_401244\n",
+      "strategies": [
+        "arithmetic_linear"
+      ],
+      "certificate": {
+        "removed_index": 2,
+        "path": [
+          0,
+          1
+        ]
+      },
+      "constraints": [
+        {
+          "left": 0,
+          "right": 1,
+          "bound": 2
+        },
+        {
+          "left": 1,
+          "right": 2,
+          "bound": 3
+        },
+        {
+          "left": 0,
+          "right": 2,
+          "bound": 7
+        }
+      ]
+    },
+    {
+      "id": "difference_holdout_485266",
+      "split": "holdout",
+      "family": "difference_certificate",
+      "source": "theorem difference_holdout_485266 (x0 x1 x2 : Int) (h0 : x0 - x1 \u2264 (2)) (h1 : x1 - x2 \u2264 (3)) : x0 - x2 \u2264 (7) := by\n  have bound_485266 : x0 - x2 \u2264 (7) := by omega\n  exact bound_485266\n",
+      "strategies": [
+        "arithmetic_linear"
+      ],
+      "certificate": {
+        "removed_index": 2,
+        "path": [
+          0,
+          1
+        ]
+      },
+      "constraints": [
+        {
+          "left": 0,
+          "right": 1,
+          "bound": 2
+        },
+        {
+          "left": 1,
+          "right": 2,
+          "bound": 3
+        },
+        {
+          "left": 0,
+          "right": 2,
+          "bound": 7
+        }
+      ]
+    }
+  ],
+  "manifest_sha256": "76e90d64c949cb43b5a547d2ab18c4df0da35dc63f13e73bdb04743704d86262",
+  "train_parent_ids": [
+    "constructive_train_projection_521862",
+    "constructive_train_nested_projection_521862",
+    "constructive_train_modus_ponens_521862",
+    "constructive_train_iff_elimination_521862",
+    "constructive_train_contradiction_521862",
+    "constructive_train_conjunction_521862",
+    "constructive_train_disjunction_521862",
+    "difference_train_670481"
+  ],
+  "train_ids": [
+    "constructive_train_projection_521862:step:0",
+    "constructive_train_nested_projection_521862:step:0",
+    "constructive_train_modus_ponens_521862:step:0",
+    "constructive_train_iff_elimination_521862:step:0",
+    "constructive_train_contradiction_521862:step:0",
+    "constructive_train_conjunction_521862:step:0",
+    "constructive_train_disjunction_521862:step:0",
+    "difference_train_670481:step:0"
+  ],
+  "tokenizer_id": "lra-local-ws-punct/v1",
+  "checkpoint_promoted": false,
+  "arena_data_used": false,
+  "reconstruction_heads_unchanged": true,
+  "schema": "jevops-typed-edit-checkpoint/v1",
+  "scope": "synthetic_structural_transfer_not_unseen_semantic_families_or_arena_score",
+  "expression_nonregression_accepted": true
+}

@@ -1,0 +1,253 @@
+{
+  "schema": "jevops-prompt-validity-triage/v1",
+  "plan_id": "8836b3d28ee7309103cfe6dceac180617901ad15f5d1d5725c71fd56f9f0073d",
+  "generation_plan_id": "d364e4d60ffce58002def6f5373f75d3931b47858369048c0cdc385d89748433",
+  "status": "CONTROL_FAILED",
+  "rows": [
+    {
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "status": "VERIFIED",
+      "receipt": {
+        "request_id": "85cd12b8d988aa2816a3461cc8210fe3d061abad688f26c4967eebee3601a6a5",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4689,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"8529bc70d924a5bf0bc4553a615c5202a19c01f12cb4a017c4a822a5c16855a0\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689118,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689131,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":5804.056}"
+      },
+      "context_id": "86a949080bf313d7b360554b4306c58f8c53499af864dc48eaebf24ad546e806",
+      "wall_seconds": 8.0228
+    },
+    {
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "label": "draft-0",
+      "source_sha256": "4138b228fa925512b54e4248d75e4aab7a0366e12f84b091fe9ff60c2afe3de6",
+      "status": "REJECTED",
+      "receipt": {
+        "request_id": "60185fd08c1c25bc457f27c07d7fb84dbb8d1b97862ce2462cdf8cde984c10e2",
+        "candidate_sha256": "4138b228fa925512b54e4248d75e4aab7a0366e12f84b091fe9ff60c2afe3de6",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"8529bc70d924a5bf0bc4553a615c5202a19c01f12cb4a017c4a822a5c16855a0\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\nσ σ' σ'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates σ ks vs σ'\\nHinit : InitStates σ' ks' vs' σ''\\n⊢ ∃ σ₁, σ₁ = updatedStates σ ks' vs' ∧ InitStates σ ks' vs' σ₁ ∧ UpdateStates σ₁ ks vs σ''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":5210.822}"
+      },
+      "context_id": "86a949080bf313d7b360554b4306c58f8c53499af864dc48eaebf24ad546e806",
+      "wall_seconds": 7.8901
+    },
+    {
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "label": "draft-1",
+      "source_sha256": "9fbe690262148aedab8617939fc24736657b2ec7566337f5fcf1b8c06035dfb7",
+      "status": "REJECTED",
+      "receipt": {
+        "request_id": "b15e5fc8280d1cefec2be9acfcf65026a790e1a4508ae30c849e096b3d6ec2ef",
+        "candidate_sha256": "9fbe690262148aedab8617939fc24736657b2ec7566337f5fcf1b8c06035dfb7",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "REJECTED",
+        "type_preserved": false,
+        "exit_code": 0,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "candidate_errors",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"8529bc70d924a5bf0bc4553a615c5202a19c01f12cb4a017c4a822a5c16855a0\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\nP : PureExpr\\nσ σ' σ'' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHup : UpdateStates σ ks vs σ'\\nHinit : InitStates σ' ks' vs' σ''\\n⊢ ∃ σ₁, σ₁ = updatedStates σ ks' vs' ∧ InitStates σ ks' vs' σ₁ ∧ UpdateStates σ₁ ks vs σ''\",\"severity\":\"error\"},{\"message\":\"unexpected token 'exists'; expected command\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":5758.74}"
+      },
+      "context_id": "86a949080bf313d7b360554b4306c58f8c53499af864dc48eaebf24ad546e806",
+      "wall_seconds": 7.3857
+    },
+    {
+      "pin": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "status": "VERIFIED",
+      "receipt": {
+        "request_id": "feba9b5f865731b6f85fd1a6012da33711c74cec730b03693aa6735cff8f61e8",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+        "heartbeats": 4657,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"6e2c938c93c13e3206dc5913b877bb01f5bb32f2c5086528a90ef28c7dd39044\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657778,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657793,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16010.63}"
+      },
+      "context_id": "2728c51b4ee9ec37854a8488cbbdad083cfba2b6244394e046536d75376f297e",
+      "wall_seconds": 20.3196
+    },
+    {
+      "pin": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "label": "draft-0",
+      "source_sha256": "4138b228fa925512b54e4248d75e4aab7a0366e12f84b091fe9ff60c2afe3de6",
+      "status": "NOT_RUN_AFTER_NON_SUCCESS"
+    },
+    {
+      "pin": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "label": "draft-1",
+      "source_sha256": "9fbe690262148aedab8617939fc24736657b2ec7566337f5fcf1b8c06035dfb7",
+      "status": "NOT_RUN_AFTER_NON_SUCCESS"
+    },
+    {
+      "pin": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "status": "ERROR",
+      "receipt": {
+        "request_id": "f591ccead4a1ecfefdd30065f359125c933141ce8ba1c69c3261a7b1cbd0eda2",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "ERROR",
+        "type_preserved": false,
+        "exit_code": null,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "ValueError: dependencies_changed_start_new_context",
+        "observations_json": "{}"
+      },
+      "context_id": "0061e4d261e944b21cd6d54dc072a40a50ee072ad35d5fc9523ed5cb00489238",
+      "wall_seconds": 20.1459
+    },
+    {
+      "pin": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "label": "draft-0",
+      "source_sha256": "4138b228fa925512b54e4248d75e4aab7a0366e12f84b091fe9ff60c2afe3de6",
+      "status": "NOT_RUN_AFTER_NON_SUCCESS"
+    },
+    {
+      "pin": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "label": "draft-1",
+      "source_sha256": "9fbe690262148aedab8617939fc24736657b2ec7566337f5fcf1b8c06035dfb7",
+      "status": "NOT_RUN_AFTER_NON_SUCCESS"
+    }
+  ],
+  "contexts": {
+    "v4.26.0": {
+      "problem": "Core.InitsUpdatesComm",
+      "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ''",
+      "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [← updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "reference_length": 224,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ],
+      "dependency_digests": [
+        "8529bc70d924a5bf0bc4553a615c5202a19c01f12cb4a017c4a822a5c16855a0"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "4c770c02b46fba6fac732bb0853760a2433817917ddf8acfdbc443a1e49cbaa8",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    },
+    "v4.27.0": {
+      "problem": "Core.InitsUpdatesComm",
+      "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ''",
+      "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [← updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "reference_length": 224,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+        }
+      ],
+      "dependency_digests": [
+        "6e2c938c93c13e3206dc5913b877bb01f5bb32f2c5086528a90ef28c7dd39044"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "4c770c02b46fba6fac732bb0853760a2433817917ddf8acfdbc443a1e49cbaa8",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    },
+    "v4.29.1": {
+      "problem": "Core.InitsUpdatesComm",
+      "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ''",
+      "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [← updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "reference_length": 224,
+      "reference_heartbeats": null,
+      "versions": [
+        {
+          "lean_tag": "v4.29.1",
+          "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+        }
+      ],
+      "dependency_digests": [
+        "3f48e76965b42497fc30ccd09a0b827ea29fc2b2563b06b8a60f7c3a0d550080"
+      ],
+      "verifier_id": "jevops-native-arena",
+      "verifier_version": "4c770c02b46fba6fac732bb0853760a2433817917ddf8acfdbc443a1e49cbaa8",
+      "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+      "header": "",
+      "repository": "https://github.com/strata-org/Strata",
+      "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+      "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90}",
+      "allowed_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    }
+  },
+  "native_requests": 5,
+  "native_processes": 5,
+  "all_pin_verified_candidates": [],
+  "performance_selected": false,
+  "promotion": false,
+  "official_score": null,
+  "fingerprint_file_reads": 32177,
+  "fingerprint_stat_hits": 87792
+}

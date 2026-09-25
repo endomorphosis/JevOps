@@ -29,9 +29,15 @@ with:
 
 ```
 python papers/completion/lean_refactor_arena/harness/run_warmup.py --plan
-python papers/completion/lean_refactor_arena/harness/run_warmup.py --self-check
+python papers/completion/lean_refactor_arena/harness/run_warmup.py --offline-self-check
 python papers/completion/lean_refactor_arena/tools/verify_lra_batch.py --schedule
 ```
+
+Local Leanstral generation now uses the in-tree `jevops.llm_router` client,
+not an implicit `ipfs_accelerate_py` import. The offline check uses both fixture
+generators and synthetic compilers; it probes no server. `--self-check` retains
+its historical optional-live behavior, and `--no-live` alone still probes health.
+See the [migration, live commands and tested boundaries](../../../LEANSTRAL_INTEGRATION.md).
 
 `harness/autoencoder_bridge.py` is an explicitly experimental adapter for the
 JevOps text → Lean IR → text model and the strict `codex_cli` /
@@ -42,6 +48,48 @@ separate from the candidate-target diagnostic. It writes no Arena score:
 ```
 python papers/completion/lean_refactor_arena/harness/autoencoder_bridge.py --plan
 ```
+
+The complete upstream Lean Refactor source snapshot is also vendored at
+[`upstream/`](upstream/), including its optimizer agents, prompts, configs,
+and data-extraction project. Its provenance and the retained Mathlib gitlink
+are recorded in [`upstream/UPSTREAM_IMPORT.md`](upstream/UPSTREAM_IMPORT.md).
+This does not install the upstream LangChain/LangGraph/model/LeanClient
+dependencies or copy the large Mathlib checkout into the JevOps core. The
+snapshot is therefore available for inspection and optional execution, while
+the in-tree warm-up harness remains the reproducible offline path.
+
+The public Arena Space application is vendored separately at [`space/`](space/)
+with its Gradio/FastAPI UI, benchmark metadata, leaderboard client, assets,
+and Docker metadata. Its `space/UPSTREAM_IMPORT.md` records the source commit
+and makes the boundary explicit: the Space is UI-only, while Lean compilation
+and official scoring happen in a separate worker that is not part of the
+public repository. Web UI dependencies remain optional and are not installed
+by JevOps core.
+
+## Corpus readiness
+
+The complete corpus currently available from the public Arena is the frozen
+15-problem warm-up: three rows each from Strata, PhysLib, CSLib, ArkLib, and
+PutnamBench. It is ready to pass to an optimizer as:
+
+```bash
+python papers/completion/lean_refactor_arena/tools/check_corpus.py
+```
+
+The checker validates every JSONL row, exact statement-prefix binding,
+version pins, uniqueness, source coverage, and the frozen SHA-256. Use a
+future corpus without changing the checker with:
+
+```bash
+python papers/completion/lean_refactor_arena/tools/check_corpus.py \
+  --jsonl /path/to/benchmark_data_full.jsonl --require-full
+```
+
+As of this snapshot, the official full benchmark is not public; the Space
+announces November 1, 2026 as its release date. The manifest at
+[`data/corpus_manifest.json`](data/corpus_manifest.json) records that boundary
+explicitly. The warm-up file is therefore the complete *available* offline
+fixture, not a claim that it is the unreleased full benchmark.
 
 An actual refactoring run is measured only when the repository clones,
 tag-pinned elan toolchains, olean caches, per-problem receipts, and hardware

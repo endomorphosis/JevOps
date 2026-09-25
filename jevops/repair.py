@@ -1017,6 +1017,33 @@ def call_short_names(source: str) -> set[str]:
     return names
 
 
+def drive_forbidden_sql(
+    source: str,
+    *,
+    constants_fn: Callable[[str], Sequence[str]],
+    head_re: Any,
+    allowed_re: Any,
+    forbidden_re: Any,
+    limit: int = 80,
+) -> list[str]:
+    """String constants that are mutating SQL, not prose. The consumer supplies the patterns."""
+
+    from jevops.outer import head_chars
+
+    issues: list[str] = []
+    for value in constants_fn(source):
+        stripped = str(value).strip()
+        if head_re.match(stripped) or (allowed_re.match(stripped) and forbidden_re.search(stripped)):
+            issues.append(head_chars(stripped, limit))
+    return issues
+
+
+def present_nonnull(payload: Mapping[str, Any], keys: Sequence[str]) -> list[str]:
+    """Keys that are present and not None. Missing keys are not failures."""
+
+    return [str(key) for key in keys if key in payload and payload.get(key) is not None]
+
+
 def score_keys(source: str, forbidden: Sequence[str] = ()) -> list[str]:
     """keyword.arg / AnnAssign target.id in forbidden. None constants are skipped."""
 
@@ -1137,6 +1164,39 @@ def assigned_constant(tree: ast.AST, name: str) -> Any:
                 if isinstance(value, ast.Constant):
                     return value.value
     return None
+
+
+def assignment_score_issues(source: str, forbidden: Sequence[str]) -> list[str]:
+    """Keyword, assign, and annotated-assign uses of score names. None is allowed."""
+
+    tree = ast.parse(source)
+    banned = set(forbidden)
+    issues: list[str] = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.keyword) and node.arg in banned:
+            value = node.value
+            if isinstance(value, ast.Constant) and value.value is None:
+                continue
+            issues.append(f"keyword {node.arg} at line {getattr(node, 'lineno', 0)}")
+        if isinstance(node, ast.Assign):
+            targets: list[str] = []
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    targets.append(target.id)
+                elif isinstance(target, ast.Attribute):
+                    targets.append(target.attr)
+            if any(name in banned for name in targets):
+                value = node.value
+                if isinstance(value, ast.Constant) and value.value is None:
+                    continue
+                issues.append(f"assign {targets} at line {getattr(node, 'lineno', 0)}")
+        if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
+            if node.target.id in banned:
+                value = node.value
+                if value is None or (isinstance(value, ast.Constant) and value.value is None):
+                    continue
+                issues.append(f"ann-assign {node.target.id} at line {getattr(node, 'lineno', 0)}")
+    return issues
 
 
 def numeric_score_assignments(source: str, forbidden: Sequence[str] = ()) -> list[str]:

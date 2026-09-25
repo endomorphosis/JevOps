@@ -1,0 +1,116 @@
+{
+  "cache_policy": "retain_all",
+  "compression_improvement_claimed": false,
+  "diagnostic_native_process_attempts": 10,
+  "external_overhead_bytes_after": 32284672,
+  "initial_helper_failures": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/import-closure-s86kgxyk/summary.json",
+  "isolation_weakened": false,
+  "llm_calls": 0,
+  "next_required": "Separately reviewed storage/access design before new isolated controls; do not omit private proof data or bypass limits.",
+  "official_score": null,
+  "problem": "Core.InitsUpdatesComm",
+  "promotion": false,
+  "proofs_verified": 0,
+  "rows": [
+    {
+      "available_external_modules": 80,
+      "driver_sha256": "d6cc86c317c7fc777397feefdca56471a919f7a373abd7d6ec3de3a0c0ebe870",
+      "evidence_mode": "trusted_native_inventory",
+      "inventory_artifact": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/import-closure-v3jpourt/v4.27.0-discovery.json",
+      "lean_githash": "db93fe1608548721853390a10cd40580fe7d22ae",
+      "pin": {
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d",
+        "lean_tag": "v4.27.0"
+      },
+      "plan": {
+        "available_headroom_bytes": 147715328,
+        "bytes_reserved": 0,
+        "content_validated": false,
+        "entries": 333,
+        "files": 320,
+        "max_bytes": 128000000,
+        "payload_bytes": 162692656,
+        "preparation_overhead_bytes": 32284672,
+        "proofs_verified": 0,
+        "reasons": [
+          "import byte budget",
+          "requested reservation budget",
+          "reserved preparation headroom"
+        ],
+        "required_reservation_bytes": 197918720,
+        "schema": "jevops-arena-import-plan/v1",
+        "source_paths": [
+          "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/strata-v4.27.0/.lake/build/lib/lean"
+        ],
+        "status": "DOES_NOT_FIT"
+      },
+      "scope_sha256": "571ea9065bf9f7734fc6a00d461ab4dd72ad659dad5a129bd3e21b03d0e02ae3",
+      "selected_external_modules": 80
+    },
+    {
+      "available_external_modules": 71,
+      "driver_sha256": "d6cc86c317c7fc777397feefdca56471a919f7a373abd7d6ec3de3a0c0ebe870",
+      "evidence_mode": "trusted_native_inventory",
+      "inventory_artifact": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/import-closure-v3jpourt/v4.29.1-discovery.json",
+      "lean_githash": "f72c35b3f637c8c6571d353742168ab66cc22c00",
+      "pin": {
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9",
+        "lean_tag": "v4.29.1"
+      },
+      "plan": {
+        "available_headroom_bytes": 147715328,
+        "bytes_reserved": 0,
+        "content_validated": false,
+        "entries": 297,
+        "files": 284,
+        "max_bytes": 128000000,
+        "payload_bytes": 143703720,
+        "preparation_overhead_bytes": 32284672,
+        "proofs_verified": 0,
+        "reasons": [
+          "import byte budget",
+          "requested reservation budget",
+          "reserved preparation headroom"
+        ],
+        "required_reservation_bytes": 175570944,
+        "schema": "jevops-arena-import-plan/v1",
+        "source_paths": [
+          "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/strata-v4.29.1/.lake/build/lib/lean",
+          "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/strata-v4.29.1/.lake/packages/StrataDDM/.lake/build/lib/lean"
+        ],
+        "status": "DOES_NOT_FIT"
+      },
+      "scope_sha256": "51f3d52e358280ecb45173a1a4702fe239b4938e808a43f8744a1e5e41804d32",
+      "selected_external_modules": 71
+    }
+  ],
+  "schema": "jevops-import-closure-feasibility/v1",
+  "stages_created": 0,
+  "storage_cap_bytes": 50000000000,
+  "synthetic_fixture_compilations": 6,
+  "tests": {
+    "native_fixture": {
+      "errors": 0,
+      "failures": 0,
+      "passed": 6,
+      "skipped": 0,
+      "tests": 6
+    },
+    "offline": {
+      "errors": 0,
+      "failures": 0,
+      "passed": 790,
+      "skipped": 140,
+      "tests": 930
+    },
+    "test_seals": "off"
+  },
+  "training_runs": 0,
+  "watcher": {
+    "native_requests_reserved": 164,
+    "official_score": null,
+    "promotions": 0,
+    "router_calls_reserved": 12,
+    "state": "ENVIRONMENT_FAILED"
+  }
+}

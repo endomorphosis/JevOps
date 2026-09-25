@@ -1,0 +1,3931 @@
+{
+  "schema": "jevops-application-control/v1",
+  "status": "CONTROL_PASSED",
+  "pins": [
+    "v4.26.0",
+    "v4.29.1"
+  ],
+  "process_ceiling": 8,
+  "max_processes": 8,
+  "task_kind": "synthetic-mechanism-control-not-arena-benchmark",
+  "native_processes": 8,
+  "model_calls": 0,
+  "api_cost": null,
+  "official_score": null,
+  "promoted": false,
+  "runs": [
+    {
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "synthetic-application-control/v1"
+      },
+      "reference": {
+        "request_id": "5645807127588ea3b01120fcab52300bf119f9a4a0c6b7fea05daf33b9a2cb5d",
+        "candidate_sha256": "37a67ade6f53df5346ff2ffb7208dd0935565f1cc33702e8f87ad877948c3921",
+        "target": "Suite.sample",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Suite.sample' depends on axioms: []",
+        "heartbeats": 7,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a5a43bbd33f46a73e74d562f70ca0b607c9aad33881ece9c6627a584048327f\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":7,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":7858,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":7,\"reference_raw_heartbeats\":7871,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1327.697}"
+      },
+      "capture": {
+        "schema": "jevops-arena-local/v1",
+        "status": "OBSERVED",
+        "mode": "capture",
+        "ok": true,
+        "evidence_mode": "local_lean",
+        "proof_admitted": false,
+        "whole_source_checked": false,
+        "os_sandbox": false,
+        "reserved_processes": 1,
+        "attempted_processes": 1,
+        "request_sha256": "74dcd570904eaf3faa4704df8da6daafb7f94198ec176857dd2c89fa91c372ce",
+        "stage": {
+          "lean_githash": "d8204c9fd894f91bbb2cdfec5912ec8196fd8562",
+          "lean_version": "4.26.0",
+          "report": {
+            "elaboration_errors": false,
+            "environment": "5dd162fdec08881257038a23ea0ca1def4cb8e95fb1243f93fb48137e89b770e",
+            "events": [
+              {
+                "after": {
+                  "depth": "0",
+                  "expressions": [],
+                  "goals": [],
+                  "level_assign_depth": "0",
+                  "levels": [],
+                  "metavariables": [],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "before": {
+                  "depth": "0",
+                  "expressions": [
+                    [
+                      "sort",
+                      "0"
+                    ],
+                    [
+                      "bvar",
+                      "0"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "Or"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "bvar",
+                      "1"
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "3"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "True"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "app",
+                      "4",
+                      "5"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "h"
+                        ]
+                      ],
+                      "explicit",
+                      "1",
+                      "6"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "p"
+                        ]
+                      ],
+                      "explicit",
+                      "0",
+                      "7"
+                    ],
+                    [
+                      "fvar",
+                      [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "17"
+                        ]
+                      ]
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "9"
+                    ],
+                    [
+                      "app",
+                      "10",
+                      "5"
+                    ]
+                  ],
+                  "goals": [
+                    [
+                      [
+                        "s",
+                        "_uniq"
+                      ],
+                      [
+                        "n",
+                        "19"
+                      ]
+                    ]
+                  ],
+                  "level_assign_depth": "0",
+                  "levels": [
+                    [
+                      "zero"
+                    ]
+                  ],
+                  "metavariables": [
+                    {
+                      "assignment": null,
+                      "depth": "0",
+                      "id": [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "19"
+                        ]
+                      ],
+                      "index": "0",
+                      "instances": [],
+                      "kind": "syntheticOpaque",
+                      "locals": [
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "16"
+                            ]
+                          ],
+                          "index": "0",
+                          "kind": "auxDecl",
+                          "name": [
+                            [
+                              "s",
+                              "sample"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "8",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "17"
+                            ]
+                          ],
+                          "index": "1",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "p"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "0",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "18"
+                            ]
+                          ],
+                          "index": "2",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "h"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "9",
+                          "value": null
+                        }
+                      ],
+                      "name": [],
+                      "scope_args": "0",
+                      "type": "11"
+                    }
+                  ],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "declaration": [
+                  [
+                    "s",
+                    "Suite"
+                  ],
+                  [
+                    "s",
+                    "sample"
+                  ]
+                ],
+                "end": "74",
+                "id": "0",
+                "namespace": [
+                  [
+                    "s",
+                    "Suite"
+                  ]
+                ],
+                "parent": null,
+                "start": "50",
+                "status": "captured",
+                "syntax_kind": [
+                  [
+                    "s",
+                    "Lean"
+                  ],
+                  [
+                    "s",
+                    "Parser"
+                  ],
+                  [
+                    "s",
+                    "Term"
+                  ],
+                  [
+                    "s",
+                    "byTactic"
+                  ]
+                ]
+              },
+              {
+                "after": {
+                  "depth": "0",
+                  "expressions": [],
+                  "goals": [],
+                  "level_assign_depth": "0",
+                  "levels": [],
+                  "metavariables": [],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "before": {
+                  "depth": "0",
+                  "expressions": [
+                    [
+                      "sort",
+                      "0"
+                    ],
+                    [
+                      "bvar",
+                      "0"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "Or"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "bvar",
+                      "1"
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "3"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "True"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "app",
+                      "4",
+                      "5"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "h"
+                        ]
+                      ],
+                      "explicit",
+                      "1",
+                      "6"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "p"
+                        ]
+                      ],
+                      "explicit",
+                      "0",
+                      "7"
+                    ],
+                    [
+                      "fvar",
+                      [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "17"
+                        ]
+                      ]
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "9"
+                    ],
+                    [
+                      "app",
+                      "10",
+                      "5"
+                    ]
+                  ],
+                  "goals": [
+                    [
+                      [
+                        "s",
+                        "_uniq"
+                      ],
+                      [
+                        "n",
+                        "19"
+                      ]
+                    ]
+                  ],
+                  "level_assign_depth": "0",
+                  "levels": [
+                    [
+                      "zero"
+                    ]
+                  ],
+                  "metavariables": [
+                    {
+                      "assignment": null,
+                      "depth": "0",
+                      "id": [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "19"
+                        ]
+                      ],
+                      "index": "0",
+                      "instances": [],
+                      "kind": "syntheticOpaque",
+                      "locals": [
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "16"
+                            ]
+                          ],
+                          "index": "0",
+                          "kind": "auxDecl",
+                          "name": [
+                            [
+                              "s",
+                              "sample"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "8",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "17"
+                            ]
+                          ],
+                          "index": "1",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "p"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "0",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "18"
+                            ]
+                          ],
+                          "index": "2",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "h"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "9",
+                          "value": null
+                        }
+                      ],
+                      "name": [],
+                      "scope_args": "0",
+                      "type": "11"
+                    }
+                  ],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "declaration": [
+                  [
+                    "s",
+                    "Suite"
+                  ],
+                  [
+                    "s",
+                    "sample"
+                  ]
+                ],
+                "end": "52",
+                "id": "1",
+                "namespace": [
+                  [
+                    "s",
+                    "Suite"
+                  ]
+                ],
+                "parent": "0",
+                "start": "50",
+                "status": "captured",
+                "syntax_kind": [
+                  [
+                    "s",
+                    "by"
+                  ]
+                ]
+              },
+              {
+                "after": {
+                  "depth": "0",
+                  "expressions": [],
+                  "goals": [],
+                  "level_assign_depth": "0",
+                  "levels": [],
+                  "metavariables": [],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "before": {
+                  "depth": "0",
+                  "expressions": [
+                    [
+                      "sort",
+                      "0"
+                    ],
+                    [
+                      "bvar",
+                      "0"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "Or"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "bvar",
+                      "1"
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "3"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "True"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "app",
+                      "4",
+                      "5"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "h"
+                        ]
+                      ],
+                      "explicit",
+                      "1",
+                      "6"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "p"
+                        ]
+                      ],
+                      "explicit",
+                      "0",
+                      "7"
+                    ],
+                    [
+                      "fvar",
+                      [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "17"
+                        ]
+                      ]
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "9"
+                    ],
+                    [
+                      "app",
+                      "10",
+                      "5"
+                    ]
+                  ],
+                  "goals": [
+                    [
+                      [
+                        "s",
+                        "_uniq"
+                      ],
+                      [
+                        "n",
+                        "19"
+                      ]
+                    ]
+                  ],
+                  "level_assign_depth": "0",
+                  "levels": [
+                    [
+                      "zero"
+                    ]
+                  ],
+                  "metavariables": [
+                    {
+                      "assignment": null,
+                      "depth": "0",
+                      "id": [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "19"
+                        ]
+                      ],
+                      "index": "0",
+                      "instances": [],
+                      "kind": "syntheticOpaque",
+                      "locals": [
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "16"
+                            ]
+                          ],
+                          "index": "0",
+                          "kind": "auxDecl",
+                          "name": [
+                            [
+                              "s",
+                              "sample"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "8",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "17"
+                            ]
+                          ],
+                          "index": "1",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "p"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "0",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "18"
+                            ]
+                          ],
+                          "index": "2",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "h"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "9",
+                          "value": null
+                        }
+                      ],
+                      "name": [],
+                      "scope_args": "0",
+                      "type": "11"
+                    }
+                  ],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "declaration": [
+                  [
+                    "s",
+                    "Suite"
+                  ],
+                  [
+                    "s",
+                    "sample"
+                  ]
+                ],
+                "end": "74",
+                "id": "2",
+                "namespace": [
+                  [
+                    "s",
+                    "Suite"
+                  ]
+                ],
+                "parent": "1",
+                "start": "55",
+                "status": "captured",
+                "syntax_kind": [
+                  [
+                    "s",
+                    "Lean"
+                  ],
+                  [
+                    "s",
+                    "Parser"
+                  ],
+                  [
+                    "s",
+                    "Tactic"
+                  ],
+                  [
+                    "s",
+                    "tacticSeq"
+                  ]
+                ]
+              }
+            ],
+            "lean_githash": "d8204c9fd894f91bbb2cdfec5912ec8196fd8562",
+            "lean_version": "4.26.0",
+            "proof_admitted": false,
+            "replayable": false,
+            "schema": "jevops-proof-state-trace/v1"
+          },
+          "request_sha256": "74dcd570904eaf3faa4704df8da6daafb7f94198ec176857dd2c89fa91c372ce",
+          "schema": "jevops-arena-local-stage/v1",
+          "target": "Suite.sample"
+        },
+        "capture": {
+          "source_sha256": "37a67ade6f53df5346ff2ffb7208dd0935565f1cc33702e8f87ad877948c3921",
+          "dependency_environment_sha256": "b4a52f2b42ddc53bc6bbef35ef10f21b32ba9964ff977ff9a4c69b7dbc428889",
+          "exporter_sha256": "17690bee6bf665d383df7b7ba5c45ab64e61ea0a85f9bc36384d55e328b2428c",
+          "node_budget": 4096,
+          "event_budget": 128,
+          "origin_sha256": "89f6107f446f3a5b8c5a85751002591d554e69ddbf34dab97f406d31fe019948",
+          "environment": "5dd162fdec08881257038a23ea0ca1def4cb8e95fb1243f93fb48137e89b770e",
+          "origin": {
+            "kind": "arena-project/v1",
+            "context_id": "b4a52f2b42ddc53bc6bbef35ef10f21b32ba9964ff977ff9a4c69b7dbc428889",
+            "record_sha256": "1dfc7e708367feea9b8316c2aee452bf75c1ac413160af958d7a6382640027d9",
+            "target": "Suite.sample",
+            "pin": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "synthetic-application-control/v1"
+            },
+            "adapter_sha256": "c86d33b1cc1d1cc8bd38eabb8d84e6a819ccc7d6e94432044b5960b1c14ff94f",
+            "projection": "closing-source-spans/v1",
+            "evidence_mode": "local_lean"
+          },
+          "ok": true,
+          "proof_admitted": false,
+          "kernel_typechecked": false,
+          "replayable": false,
+          "dependency_closure_verified": false,
+          "trace": {
+            "elaboration_errors": false,
+            "environment": "5dd162fdec08881257038a23ea0ca1def4cb8e95fb1243f93fb48137e89b770e",
+            "events": [
+              {
+                "after": {
+                  "depth": "0",
+                  "expressions": [],
+                  "goals": [],
+                  "level_assign_depth": "0",
+                  "levels": [],
+                  "metavariables": [],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "before": {
+                  "depth": "0",
+                  "expressions": [
+                    [
+                      "sort",
+                      "0"
+                    ],
+                    [
+                      "bvar",
+                      "0"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "Or"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "bvar",
+                      "1"
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "3"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "True"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "app",
+                      "4",
+                      "5"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "h"
+                        ]
+                      ],
+                      "explicit",
+                      "1",
+                      "6"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "p"
+                        ]
+                      ],
+                      "explicit",
+                      "0",
+                      "7"
+                    ],
+                    [
+                      "fvar",
+                      [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "17"
+                        ]
+                      ]
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "9"
+                    ],
+                    [
+                      "app",
+                      "10",
+                      "5"
+                    ]
+                  ],
+                  "goals": [
+                    [
+                      [
+                        "s",
+                        "_uniq"
+                      ],
+                      [
+                        "n",
+                        "19"
+                      ]
+                    ]
+                  ],
+                  "level_assign_depth": "0",
+                  "levels": [
+                    [
+                      "zero"
+                    ]
+                  ],
+                  "metavariables": [
+                    {
+                      "assignment": null,
+                      "depth": "0",
+                      "id": [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "19"
+                        ]
+                      ],
+                      "index": "0",
+                      "instances": [],
+                      "kind": "syntheticOpaque",
+                      "locals": [
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "16"
+                            ]
+                          ],
+                          "index": "0",
+                          "kind": "auxDecl",
+                          "name": [
+                            [
+                              "s",
+                              "sample"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "8",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "17"
+                            ]
+                          ],
+                          "index": "1",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "p"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "0",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "18"
+                            ]
+                          ],
+                          "index": "2",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "h"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "9",
+                          "value": null
+                        }
+                      ],
+                      "name": [],
+                      "scope_args": "0",
+                      "type": "11"
+                    }
+                  ],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "declaration": [
+                  [
+                    "s",
+                    "Suite"
+                  ],
+                  [
+                    "s",
+                    "sample"
+                  ]
+                ],
+                "end": "74",
+                "id": "0",
+                "namespace": [
+                  [
+                    "s",
+                    "Suite"
+                  ]
+                ],
+                "parent": null,
+                "start": "50",
+                "status": "captured",
+                "syntax_kind": [
+                  [
+                    "s",
+                    "Lean"
+                  ],
+                  [
+                    "s",
+                    "Parser"
+                  ],
+                  [
+                    "s",
+                    "Term"
+                  ],
+                  [
+                    "s",
+                    "byTactic"
+                  ]
+                ]
+              },
+              {
+                "after": {
+                  "depth": "0",
+                  "expressions": [],
+                  "goals": [],
+                  "level_assign_depth": "0",
+                  "levels": [],
+                  "metavariables": [],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "before": {
+                  "depth": "0",
+                  "expressions": [
+                    [
+                      "sort",
+                      "0"
+                    ],
+                    [
+                      "bvar",
+                      "0"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "Or"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "bvar",
+                      "1"
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "3"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "True"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "app",
+                      "4",
+                      "5"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "h"
+                        ]
+                      ],
+                      "explicit",
+                      "1",
+                      "6"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "p"
+                        ]
+                      ],
+                      "explicit",
+                      "0",
+                      "7"
+                    ],
+                    [
+                      "fvar",
+                      [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "17"
+                        ]
+                      ]
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "9"
+                    ],
+                    [
+                      "app",
+                      "10",
+                      "5"
+                    ]
+                  ],
+                  "goals": [
+                    [
+                      [
+                        "s",
+                        "_uniq"
+                      ],
+                      [
+                        "n",
+                        "19"
+                      ]
+                    ]
+                  ],
+                  "level_assign_depth": "0",
+                  "levels": [
+                    [
+                      "zero"
+                    ]
+                  ],
+                  "metavariables": [
+                    {
+                      "assignment": null,
+                      "depth": "0",
+                      "id": [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "19"
+                        ]
+                      ],
+                      "index": "0",
+                      "instances": [],
+                      "kind": "syntheticOpaque",
+                      "locals": [
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "16"
+                            ]
+                          ],
+                          "index": "0",
+                          "kind": "auxDecl",
+                          "name": [
+                            [
+                              "s",
+                              "sample"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "8",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "17"
+                            ]
+                          ],
+                          "index": "1",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "p"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "0",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "18"
+                            ]
+                          ],
+                          "index": "2",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "h"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "9",
+                          "value": null
+                        }
+                      ],
+                      "name": [],
+                      "scope_args": "0",
+                      "type": "11"
+                    }
+                  ],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "declaration": [
+                  [
+                    "s",
+                    "Suite"
+                  ],
+                  [
+                    "s",
+                    "sample"
+                  ]
+                ],
+                "end": "52",
+                "id": "1",
+                "namespace": [
+                  [
+                    "s",
+                    "Suite"
+                  ]
+                ],
+                "parent": "0",
+                "start": "50",
+                "status": "captured",
+                "syntax_kind": [
+                  [
+                    "s",
+                    "by"
+                  ]
+                ]
+              },
+              {
+                "after": {
+                  "depth": "0",
+                  "expressions": [],
+                  "goals": [],
+                  "level_assign_depth": "0",
+                  "levels": [],
+                  "metavariables": [],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "before": {
+                  "depth": "0",
+                  "expressions": [
+                    [
+                      "sort",
+                      "0"
+                    ],
+                    [
+                      "bvar",
+                      "0"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "Or"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "bvar",
+                      "1"
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "3"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "True"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "app",
+                      "4",
+                      "5"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "h"
+                        ]
+                      ],
+                      "explicit",
+                      "1",
+                      "6"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "p"
+                        ]
+                      ],
+                      "explicit",
+                      "0",
+                      "7"
+                    ],
+                    [
+                      "fvar",
+                      [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "17"
+                        ]
+                      ]
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "9"
+                    ],
+                    [
+                      "app",
+                      "10",
+                      "5"
+                    ]
+                  ],
+                  "goals": [
+                    [
+                      [
+                        "s",
+                        "_uniq"
+                      ],
+                      [
+                        "n",
+                        "19"
+                      ]
+                    ]
+                  ],
+                  "level_assign_depth": "0",
+                  "levels": [
+                    [
+                      "zero"
+                    ]
+                  ],
+                  "metavariables": [
+                    {
+                      "assignment": null,
+                      "depth": "0",
+                      "id": [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "19"
+                        ]
+                      ],
+                      "index": "0",
+                      "instances": [],
+                      "kind": "syntheticOpaque",
+                      "locals": [
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "16"
+                            ]
+                          ],
+                          "index": "0",
+                          "kind": "auxDecl",
+                          "name": [
+                            [
+                              "s",
+                              "sample"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "8",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "17"
+                            ]
+                          ],
+                          "index": "1",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "p"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "0",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "18"
+                            ]
+                          ],
+                          "index": "2",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "h"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "9",
+                          "value": null
+                        }
+                      ],
+                      "name": [],
+                      "scope_args": "0",
+                      "type": "11"
+                    }
+                  ],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "declaration": [
+                  [
+                    "s",
+                    "Suite"
+                  ],
+                  [
+                    "s",
+                    "sample"
+                  ]
+                ],
+                "end": "74",
+                "id": "2",
+                "namespace": [
+                  [
+                    "s",
+                    "Suite"
+                  ]
+                ],
+                "parent": "1",
+                "start": "55",
+                "status": "captured",
+                "syntax_kind": [
+                  [
+                    "s",
+                    "Lean"
+                  ],
+                  [
+                    "s",
+                    "Parser"
+                  ],
+                  [
+                    "s",
+                    "Tactic"
+                  ],
+                  [
+                    "s",
+                    "tacticSeq"
+                  ]
+                ]
+              }
+            ],
+            "lean_githash": "d8204c9fd894f91bbb2cdfec5912ec8196fd8562",
+            "lean_version": "4.26.0",
+            "proof_admitted": false,
+            "replayable": false,
+            "schema": "jevops-proof-state-trace/v1"
+          },
+          "trace_sha256": "46abd42bdafa00b4ffd0c711a30900a3de3e3f9df35086d11087c0353bc0dacd"
+        }
+      },
+      "baseline_drafts": {
+        "schema": "jevops-local-premise-batch/v1",
+        "request": {
+          "schema": "jevops-local-premise-request/v1",
+          "record_sha256": "1dfc7e708367feea9b8316c2aee452bf75c1ac413160af958d7a6382640027d9",
+          "source_sha256": "37a67ade6f53df5346ff2ffb7208dd0935565f1cc33702e8f87ad877948c3921",
+          "trace_sha256": "46abd42bdafa00b4ffd0c711a30900a3de3e3f9df35086d11087c0353bc0dacd",
+          "capture_environment": "5dd162fdec08881257038a23ea0ca1def4cb8e95fb1243f93fb48137e89b770e",
+          "environment_sha256": "b4a52f2b42ddc53bc6bbef35ef10f21b32ba9964ff977ff9a4c69b7dbc428889",
+          "origin_sha256": "89f6107f446f3a5b8c5a85751002591d554e69ddbf34dab97f406d31fe019948",
+          "index_sha256": "33340ba0a4aaf6e303efb71484b6cc66e8801ec5f7990401fd67ad2b48981b3d",
+          "scope_sha256": "dc2bf4c1fe057d6fc9c51f0043f43f8664550b605c5872402812787619cf4a09",
+          "effective_scope_sha256": "68ea928524e7f0b8beabe8d2419f323736f490a96c21a2934b6e56547d3d4216",
+          "declaration": "Suite.sample",
+          "target": "Suite.sample",
+          "methods": [
+            "exact",
+            "apply"
+          ],
+          "cap": 2,
+          "top_k": 4,
+          "max_scan": 512,
+          "max_events": 16,
+          "max_query_nodes": 256,
+          "ranking_bytes": 1048576,
+          "feature_method": "goal-and-local-type-constants/v1",
+          "tokenizer_id": "lra-reference-lexical/v1",
+          "request_sha256": "11d96e2769f9f1ee6f574b9634f340382e09d534fb9cb8ea450bf4f513021740"
+        },
+        "events": [
+          {
+            "event_id": 1,
+            "event_sha256": "9ea5ea17b99a0b6d5805753ef2e3ab383fc51b54e2be750ea339bb3b1ae68906",
+            "start": "50",
+            "end": "52",
+            "outcomes": [],
+            "status": "UNSUPPORTED_SPAN"
+          },
+          {
+            "event_id": 2,
+            "event_sha256": "6a48f6ef19d8795c4c8cec4e45bf8f8b725fd78f61895d95326d715a675a9aa7",
+            "start": "55",
+            "end": "74",
+            "outcomes": [
+              {
+                "candidate": "exact _root_.library_step",
+                "source_sha256": "1d46b97d6987846242c2a9152f669931bacfba0acf9b73c8729deca33158143b",
+                "tokens": 3,
+                "status": "DRAFT",
+                "label": "local-premise-0"
+              },
+              {
+                "candidate": "apply _root_.library_step",
+                "source_sha256": "4424e0955878b4093bb6ec172813e7cab6f11a590596d2282386b01a2ad3c3af",
+                "tokens": 3,
+                "status": "DRAFT",
+                "label": "local-premise-1"
+              }
+            ],
+            "status": "RANKED",
+            "observation": {
+              "feature_method": "goal-and-local-type-constants/v1",
+              "state_sha256": "f4488fbc3961be678aa3c176b74b796717f5023ad900ccdd8312a204da136ddd",
+              "query": "Or True",
+              "nodes_visited": 12,
+              "status": "READY"
+            },
+            "ranking": {
+              "schema": "jevops-premise-ranking/v1",
+              "index_sha256": "33340ba0a4aaf6e303efb71484b6cc66e8801ec5f7990401fd67ad2b48981b3d",
+              "feature_method": "case-sensitive-qualified-and-leaf-identifiers/v2",
+              "scope_sha256": "68ea928524e7f0b8beabe8d2419f323736f490a96c21a2934b6e56547d3d4216",
+              "goal_sha256": "6c661a0682cefd9a9faf7c322267865c88bf81a60828206dbec150c6a9aaf94d",
+              "target": "Suite.sample",
+              "top_k": 4,
+              "max_scan": 512,
+              "considered": 1,
+              "status": "RANKED",
+              "matches": [
+                {
+                  "name": "library_step",
+                  "score_numerator": 1,
+                  "score_denominator": 2,
+                  "premise_sha256": "366ea08c1f06249b39f69d3dee67ffd85be7a39553131998c435ef8a7a7f54e9"
+                }
+              ],
+              "excluded": [],
+              "proof_verified": false
+            }
+          }
+        ],
+        "proposals": [
+          {
+            "event_id": 2,
+            "candidate": "exact _root_.library_step"
+          },
+          {
+            "event_id": 2,
+            "candidate": "apply _root_.library_step"
+          }
+        ],
+        "drafts": [
+          {
+            "name": "Suite.sample",
+            "label": "local-premise-0",
+            "source": "theorem sample (p : Prop) (h : p) : p \u2228 True := by\n  exact _root_.library_step\n",
+            "provenance": "unverified local premise; request 11d96e2769f9f1ee6f574b9634f340382e09d534fb9cb8ea450bf4f513021740; event 2"
+          },
+          {
+            "name": "Suite.sample",
+            "label": "local-premise-1",
+            "source": "theorem sample (p : Prop) (h : p) : p \u2228 True := by\n  apply _root_.library_step\n",
+            "provenance": "unverified local premise; request 11d96e2769f9f1ee6f574b9634f340382e09d534fb9cb8ea450bf4f513021740; event 2"
+          }
+        ],
+        "origins": [
+          {
+            "label": "local-premise-0",
+            "event_id": 2,
+            "event_sha256": "6a48f6ef19d8795c4c8cec4e45bf8f8b725fd78f61895d95326d715a675a9aa7",
+            "premise": {
+              "name": "library_step",
+              "type_text": "\u2200 {p : Prop}, p \u2192 p \u2228 True",
+              "origin": "explicit-control-prefix",
+              "split": "library",
+              "aliases": [],
+              "dependencies": []
+            },
+            "ranking_sha256": "ac1991d05bae0ced1d0f5b336292f77e00c85e68a70f9400399e8ecaeeb5bcd1"
+          },
+          {
+            "label": "local-premise-1",
+            "event_id": 2,
+            "event_sha256": "6a48f6ef19d8795c4c8cec4e45bf8f8b725fd78f61895d95326d715a675a9aa7",
+            "premise": {
+              "name": "library_step",
+              "type_text": "\u2200 {p : Prop}, p \u2192 p \u2228 True",
+              "origin": "explicit-control-prefix",
+              "split": "library",
+              "aliases": [],
+              "dependencies": []
+            },
+            "ranking_sha256": "ac1991d05bae0ced1d0f5b336292f77e00c85e68a70f9400399e8ecaeeb5bcd1"
+          }
+        ],
+        "base_tokens": 7,
+        "policy": "deterministic-lexical-local-premises/v1",
+        "status": "DRAFTS_ONLY",
+        "truncated": true,
+        "native_verifier_calls": 0,
+        "external_calls_attempted": 0,
+        "proof_verified": false,
+        "proof_admitted": false,
+        "whole_source_checked": false,
+        "fresh_verification_required": true,
+        "training_enabled": false,
+        "promoted": false,
+        "official_score": null
+      },
+      "discovery": {
+        "schema": "jevops-local-application-batch/v1",
+        "request": {
+          "schema": "jevops-local-application-request/v1",
+          "record_sha256": "1dfc7e708367feea9b8316c2aee452bf75c1ac413160af958d7a6382640027d9",
+          "source_sha256": "37a67ade6f53df5346ff2ffb7208dd0935565f1cc33702e8f87ad877948c3921",
+          "trace_sha256": "46abd42bdafa00b4ffd0c711a30900a3de3e3f9df35086d11087c0353bc0dacd",
+          "capture_environment": "5dd162fdec08881257038a23ea0ca1def4cb8e95fb1243f93fb48137e89b770e",
+          "environment_sha256": "b4a52f2b42ddc53bc6bbef35ef10f21b32ba9964ff977ff9a4c69b7dbc428889",
+          "origin_sha256": "89f6107f446f3a5b8c5a85751002591d554e69ddbf34dab97f406d31fe019948",
+          "index_sha256": "33340ba0a4aaf6e303efb71484b6cc66e8801ec5f7990401fd67ad2b48981b3d",
+          "scope_sha256": "dc2bf4c1fe057d6fc9c51f0043f43f8664550b605c5872402812787619cf4a09",
+          "effective_scope_sha256": "68ea928524e7f0b8beabe8d2419f323736f490a96c21a2934b6e56547d3d4216",
+          "declaration": "Suite.sample",
+          "target": "Suite.sample",
+          "methods": [
+            "apply_assumption"
+          ],
+          "cap": 1,
+          "top_k": 4,
+          "max_scan": 512,
+          "max_events": 1,
+          "max_query_nodes": 256,
+          "ranking_bytes": 1048576,
+          "feature_method": "goal-and-local-type-constants/v1",
+          "tokenizer_id": "lra-reference-lexical/v1",
+          "strategy": "application-materialization/v1",
+          "max_applications": 1,
+          "span_order": "headroom-v1",
+          "final_filter": "strictly-fewer-source-tokens/v1",
+          "request_sha256": "f689a652492b2ae6977c70ac80b15db12692841751e4accb2c3374c8a5104538"
+        },
+        "events": [
+          {
+            "event_id": 2,
+            "event_sha256": "6a48f6ef19d8795c4c8cec4e45bf8f8b725fd78f61895d95326d715a675a9aa7",
+            "span_tokens": 6,
+            "status": "RANKED",
+            "observation": {
+              "feature_method": "goal-and-local-type-constants/v1",
+              "state_sha256": "f4488fbc3961be678aa3c176b74b796717f5023ad900ccdd8312a204da136ddd",
+              "query": "Or True",
+              "nodes_visited": 12,
+              "status": "READY"
+            },
+            "ranking": {
+              "schema": "jevops-premise-ranking/v1",
+              "index_sha256": "33340ba0a4aaf6e303efb71484b6cc66e8801ec5f7990401fd67ad2b48981b3d",
+              "feature_method": "case-sensitive-qualified-and-leaf-identifiers/v2",
+              "scope_sha256": "68ea928524e7f0b8beabe8d2419f323736f490a96c21a2934b6e56547d3d4216",
+              "goal_sha256": "6c661a0682cefd9a9faf7c322267865c88bf81a60828206dbec150c6a9aaf94d",
+              "target": "Suite.sample",
+              "top_k": 4,
+              "max_scan": 512,
+              "considered": 1,
+              "status": "RANKED",
+              "matches": [
+                {
+                  "name": "library_step",
+                  "score_numerator": 1,
+                  "score_denominator": 2,
+                  "premise_sha256": "366ea08c1f06249b39f69d3dee67ffd85be7a39553131998c435ef8a7a7f54e9"
+                }
+              ],
+              "excluded": [],
+              "proof_verified": false
+            }
+          }
+        ],
+        "proposals": [
+          {
+            "event_id": 2,
+            "candidate": "exact library_step h"
+          }
+        ],
+        "drafts": [
+          {
+            "name": "Suite.sample",
+            "label": "local-application-0",
+            "source": "theorem sample (p : Prop) (h : p) : p \u2228 True := by\n  exact library_step h\n",
+            "provenance": "unadmitted local_lean extracted application; request f689a652492b2ae6977c70ac80b15db12692841751e4accb2c3374c8a5104538; event 2"
+          }
+        ],
+        "origins": [
+          {
+            "label": "local-application-0",
+            "event_id": 2,
+            "premise": "library_step",
+            "receipt_sha256": "9172d049c490bbb27486141de5dfa942d2b89998f5e12de3057526bf3af3c4b2"
+          }
+        ],
+        "base_tokens": 7,
+        "policy": "lexical-then-native-application/v1",
+        "status": "DRAFTS_ONLY",
+        "truncated": false,
+        "native_verifier_calls": 1,
+        "external_calls_attempted": 0,
+        "proof_verified": false,
+        "proof_admitted": false,
+        "whole_source_checked": false,
+        "fresh_verification_required": true,
+        "training_enabled": false,
+        "promoted": false,
+        "official_score": null,
+        "applications": [
+          {
+            "event_id": 2,
+            "premise": "library_step"
+          }
+        ],
+        "attempts": [
+          {
+            "event_id": 2,
+            "premise": "library_step",
+            "status": "DRAFT",
+            "closing_reproduced": true,
+            "receipt_sha256": "9172d049c490bbb27486141de5dfa942d2b89998f5e12de3057526bf3af3c4b2",
+            "binding": {
+              "source_sha256": "37a67ade6f53df5346ff2ffb7208dd0935565f1cc33702e8f87ad877948c3921",
+              "trace_sha256": "46abd42bdafa00b4ffd0c711a30900a3de3e3f9df35086d11087c0353bc0dacd",
+              "dependency_environment_sha256": "b4a52f2b42ddc53bc6bbef35ef10f21b32ba9964ff977ff9a4c69b7dbc428889",
+              "exporter_sha256": "17690bee6bf665d383df7b7ba5c45ab64e61ea0a85f9bc36384d55e328b2428c",
+              "event_id": 2,
+              "candidate_sha256": "120335305e72ba39832b3b2fc9e4694822ca36eecde5103b58cbcbc9fc099f6c",
+              "node_budget": 4096,
+              "event_budget": 128,
+              "operation": "application-materialization/v1",
+              "premise": "library_step"
+            },
+            "search_outcome": {
+              "axioms": [],
+              "closed_goals_checked": "1",
+              "remaining_goals": "0",
+              "status": "closed_kernel_checked"
+            },
+            "roundtrip_outcome": {
+              "axioms": [],
+              "closed_goals_checked": "1",
+              "remaining_goals": "0",
+              "status": "closed_kernel_checked"
+            },
+            "candidate": "exact library_step h",
+            "source_sha256": "db628574ab1e66e2ebe1555bb99d2dd21ecd3b36b8b25b5e6978997a40bc1be2",
+            "tokens": 4,
+            "label": "local-application-0"
+          }
+        ],
+        "evidence_mode": "local_lean",
+        "reserved_processes": 1,
+        "attempted_processes": 1,
+        "application_attempts": 1,
+        "roundtrip_attempts": 1
+      },
+      "candidate": {
+        "request_id": "434ddc1c4bb6986578f3fc6074966beb25f843dbe7e9361bf93a81c7dc11bd51",
+        "candidate_sha256": "db628574ab1e66e2ebe1555bb99d2dd21ecd3b36b8b25b5e6978997a40bc1be2",
+        "target": "Suite.sample",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Suite.sample' depends on axioms: []",
+        "heartbeats": 6,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a5a43bbd33f46a73e74d562f70ca0b607c9aad33881ece9c6627a584048327f\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":6,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":6807,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":7,\"reference_raw_heartbeats\":7871,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1409.312}"
+      },
+      "source_tokens": 7,
+      "candidate_tokens": 4
+    },
+    {
+      "pin": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "synthetic-application-control/v1"
+      },
+      "reference": {
+        "request_id": "d4e67bb6495c8fb55719e77d85641f3db9dde0e42cf79037efd841cf5a659270",
+        "candidate_sha256": "37a67ade6f53df5346ff2ffb7208dd0935565f1cc33702e8f87ad877948c3921",
+        "target": "Suite.sample",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Suite.sample' depends on axioms: []",
+        "heartbeats": 7,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"03b042cfca6181d741cc99f4b4ad8796abed4728d550b839270beae65f3e774e\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":7,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":7777,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":7,\"reference_raw_heartbeats\":7794,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1449.147}"
+      },
+      "capture": {
+        "schema": "jevops-arena-local/v1",
+        "status": "OBSERVED",
+        "mode": "capture",
+        "ok": true,
+        "evidence_mode": "local_lean",
+        "proof_admitted": false,
+        "whole_source_checked": false,
+        "os_sandbox": false,
+        "reserved_processes": 1,
+        "attempted_processes": 1,
+        "request_sha256": "be7ffae3751a61d2f7031c73ff3896b22359e485193dd073fc08907fbcb676ef",
+        "stage": {
+          "lean_githash": "f72c35b3f637c8c6571d353742168ab66cc22c00",
+          "lean_version": "4.29.1",
+          "report": {
+            "elaboration_errors": false,
+            "environment": "16ed2cdc068e3f726de5d4618230b54ae1998e50a494a3971e18f36775121247",
+            "events": [
+              {
+                "after": {
+                  "depth": "0",
+                  "expressions": [],
+                  "goals": [],
+                  "level_assign_depth": "0",
+                  "levels": [],
+                  "metavariables": [],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "before": {
+                  "depth": "0",
+                  "expressions": [
+                    [
+                      "sort",
+                      "0"
+                    ],
+                    [
+                      "bvar",
+                      "0"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "Or"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "bvar",
+                      "1"
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "3"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "True"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "app",
+                      "4",
+                      "5"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "h"
+                        ]
+                      ],
+                      "explicit",
+                      "1",
+                      "6"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "p"
+                        ]
+                      ],
+                      "explicit",
+                      "0",
+                      "7"
+                    ],
+                    [
+                      "fvar",
+                      [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "17"
+                        ]
+                      ]
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "9"
+                    ],
+                    [
+                      "app",
+                      "10",
+                      "5"
+                    ]
+                  ],
+                  "goals": [
+                    [
+                      [
+                        "s",
+                        "_uniq"
+                      ],
+                      [
+                        "n",
+                        "19"
+                      ]
+                    ]
+                  ],
+                  "level_assign_depth": "0",
+                  "levels": [
+                    [
+                      "zero"
+                    ]
+                  ],
+                  "metavariables": [
+                    {
+                      "assignment": null,
+                      "depth": "0",
+                      "id": [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "19"
+                        ]
+                      ],
+                      "index": "0",
+                      "instances": [],
+                      "kind": "syntheticOpaque",
+                      "locals": [
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "16"
+                            ]
+                          ],
+                          "index": "0",
+                          "kind": "auxDecl",
+                          "name": [
+                            [
+                              "s",
+                              "sample"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "8",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "17"
+                            ]
+                          ],
+                          "index": "1",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "p"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "0",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "18"
+                            ]
+                          ],
+                          "index": "2",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "h"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "9",
+                          "value": null
+                        }
+                      ],
+                      "name": [],
+                      "scope_args": "0",
+                      "type": "11"
+                    }
+                  ],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "declaration": [
+                  [
+                    "s",
+                    "Suite"
+                  ],
+                  [
+                    "s",
+                    "sample"
+                  ]
+                ],
+                "end": "74",
+                "id": "0",
+                "namespace": [
+                  [
+                    "s",
+                    "Suite"
+                  ]
+                ],
+                "parent": null,
+                "start": "50",
+                "status": "captured",
+                "syntax_kind": [
+                  [
+                    "s",
+                    "Lean"
+                  ],
+                  [
+                    "s",
+                    "Parser"
+                  ],
+                  [
+                    "s",
+                    "Term"
+                  ],
+                  [
+                    "s",
+                    "byTactic"
+                  ]
+                ]
+              },
+              {
+                "after": {
+                  "depth": "0",
+                  "expressions": [],
+                  "goals": [],
+                  "level_assign_depth": "0",
+                  "levels": [],
+                  "metavariables": [],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "before": {
+                  "depth": "0",
+                  "expressions": [
+                    [
+                      "sort",
+                      "0"
+                    ],
+                    [
+                      "bvar",
+                      "0"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "Or"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "bvar",
+                      "1"
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "3"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "True"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "app",
+                      "4",
+                      "5"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "h"
+                        ]
+                      ],
+                      "explicit",
+                      "1",
+                      "6"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "p"
+                        ]
+                      ],
+                      "explicit",
+                      "0",
+                      "7"
+                    ],
+                    [
+                      "fvar",
+                      [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "17"
+                        ]
+                      ]
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "9"
+                    ],
+                    [
+                      "app",
+                      "10",
+                      "5"
+                    ]
+                  ],
+                  "goals": [
+                    [
+                      [
+                        "s",
+                        "_uniq"
+                      ],
+                      [
+                        "n",
+                        "19"
+                      ]
+                    ]
+                  ],
+                  "level_assign_depth": "0",
+                  "levels": [
+                    [
+                      "zero"
+                    ]
+                  ],
+                  "metavariables": [
+                    {
+                      "assignment": null,
+                      "depth": "0",
+                      "id": [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "19"
+                        ]
+                      ],
+                      "index": "0",
+                      "instances": [],
+                      "kind": "syntheticOpaque",
+                      "locals": [
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "16"
+                            ]
+                          ],
+                          "index": "0",
+                          "kind": "auxDecl",
+                          "name": [
+                            [
+                              "s",
+                              "sample"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "8",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "17"
+                            ]
+                          ],
+                          "index": "1",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "p"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "0",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "18"
+                            ]
+                          ],
+                          "index": "2",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "h"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "9",
+                          "value": null
+                        }
+                      ],
+                      "name": [],
+                      "scope_args": "0",
+                      "type": "11"
+                    }
+                  ],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "declaration": [
+                  [
+                    "s",
+                    "Suite"
+                  ],
+                  [
+                    "s",
+                    "sample"
+                  ]
+                ],
+                "end": "52",
+                "id": "1",
+                "namespace": [
+                  [
+                    "s",
+                    "Suite"
+                  ]
+                ],
+                "parent": "0",
+                "start": "50",
+                "status": "captured",
+                "syntax_kind": [
+                  [
+                    "s",
+                    "by"
+                  ]
+                ]
+              },
+              {
+                "after": {
+                  "depth": "0",
+                  "expressions": [],
+                  "goals": [],
+                  "level_assign_depth": "0",
+                  "levels": [],
+                  "metavariables": [],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "before": {
+                  "depth": "0",
+                  "expressions": [
+                    [
+                      "sort",
+                      "0"
+                    ],
+                    [
+                      "bvar",
+                      "0"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "Or"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "bvar",
+                      "1"
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "3"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "True"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "app",
+                      "4",
+                      "5"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "h"
+                        ]
+                      ],
+                      "explicit",
+                      "1",
+                      "6"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "p"
+                        ]
+                      ],
+                      "explicit",
+                      "0",
+                      "7"
+                    ],
+                    [
+                      "fvar",
+                      [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "17"
+                        ]
+                      ]
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "9"
+                    ],
+                    [
+                      "app",
+                      "10",
+                      "5"
+                    ]
+                  ],
+                  "goals": [
+                    [
+                      [
+                        "s",
+                        "_uniq"
+                      ],
+                      [
+                        "n",
+                        "19"
+                      ]
+                    ]
+                  ],
+                  "level_assign_depth": "0",
+                  "levels": [
+                    [
+                      "zero"
+                    ]
+                  ],
+                  "metavariables": [
+                    {
+                      "assignment": null,
+                      "depth": "0",
+                      "id": [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "19"
+                        ]
+                      ],
+                      "index": "0",
+                      "instances": [],
+                      "kind": "syntheticOpaque",
+                      "locals": [
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "16"
+                            ]
+                          ],
+                          "index": "0",
+                          "kind": "auxDecl",
+                          "name": [
+                            [
+                              "s",
+                              "sample"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "8",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "17"
+                            ]
+                          ],
+                          "index": "1",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "p"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "0",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "18"
+                            ]
+                          ],
+                          "index": "2",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "h"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "9",
+                          "value": null
+                        }
+                      ],
+                      "name": [],
+                      "scope_args": "0",
+                      "type": "11"
+                    }
+                  ],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "declaration": [
+                  [
+                    "s",
+                    "Suite"
+                  ],
+                  [
+                    "s",
+                    "sample"
+                  ]
+                ],
+                "end": "74",
+                "id": "2",
+                "namespace": [
+                  [
+                    "s",
+                    "Suite"
+                  ]
+                ],
+                "parent": "1",
+                "start": "55",
+                "status": "captured",
+                "syntax_kind": [
+                  [
+                    "s",
+                    "Lean"
+                  ],
+                  [
+                    "s",
+                    "Parser"
+                  ],
+                  [
+                    "s",
+                    "Tactic"
+                  ],
+                  [
+                    "s",
+                    "tacticSeq"
+                  ]
+                ]
+              }
+            ],
+            "lean_githash": "f72c35b3f637c8c6571d353742168ab66cc22c00",
+            "lean_version": "4.29.1",
+            "proof_admitted": false,
+            "replayable": false,
+            "schema": "jevops-proof-state-trace/v1"
+          },
+          "request_sha256": "be7ffae3751a61d2f7031c73ff3896b22359e485193dd073fc08907fbcb676ef",
+          "schema": "jevops-arena-local-stage/v1",
+          "target": "Suite.sample"
+        },
+        "capture": {
+          "source_sha256": "37a67ade6f53df5346ff2ffb7208dd0935565f1cc33702e8f87ad877948c3921",
+          "dependency_environment_sha256": "b4a52f2b42ddc53bc6bbef35ef10f21b32ba9964ff977ff9a4c69b7dbc428889",
+          "exporter_sha256": "17690bee6bf665d383df7b7ba5c45ab64e61ea0a85f9bc36384d55e328b2428c",
+          "node_budget": 4096,
+          "event_budget": 128,
+          "origin_sha256": "7466db5ad2fc187975671837dcdca503c076ac40eaf0afefb1ba5a8886bdc4d0",
+          "environment": "16ed2cdc068e3f726de5d4618230b54ae1998e50a494a3971e18f36775121247",
+          "origin": {
+            "kind": "arena-project/v1",
+            "context_id": "b4a52f2b42ddc53bc6bbef35ef10f21b32ba9964ff977ff9a4c69b7dbc428889",
+            "record_sha256": "1dfc7e708367feea9b8316c2aee452bf75c1ac413160af958d7a6382640027d9",
+            "target": "Suite.sample",
+            "pin": {
+              "lean_tag": "v4.29.1",
+              "git_commit": "synthetic-application-control/v1"
+            },
+            "adapter_sha256": "c86d33b1cc1d1cc8bd38eabb8d84e6a819ccc7d6e94432044b5960b1c14ff94f",
+            "projection": "closing-source-spans/v1",
+            "evidence_mode": "local_lean"
+          },
+          "ok": true,
+          "proof_admitted": false,
+          "kernel_typechecked": false,
+          "replayable": false,
+          "dependency_closure_verified": false,
+          "trace": {
+            "elaboration_errors": false,
+            "environment": "16ed2cdc068e3f726de5d4618230b54ae1998e50a494a3971e18f36775121247",
+            "events": [
+              {
+                "after": {
+                  "depth": "0",
+                  "expressions": [],
+                  "goals": [],
+                  "level_assign_depth": "0",
+                  "levels": [],
+                  "metavariables": [],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "before": {
+                  "depth": "0",
+                  "expressions": [
+                    [
+                      "sort",
+                      "0"
+                    ],
+                    [
+                      "bvar",
+                      "0"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "Or"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "bvar",
+                      "1"
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "3"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "True"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "app",
+                      "4",
+                      "5"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "h"
+                        ]
+                      ],
+                      "explicit",
+                      "1",
+                      "6"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "p"
+                        ]
+                      ],
+                      "explicit",
+                      "0",
+                      "7"
+                    ],
+                    [
+                      "fvar",
+                      [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "17"
+                        ]
+                      ]
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "9"
+                    ],
+                    [
+                      "app",
+                      "10",
+                      "5"
+                    ]
+                  ],
+                  "goals": [
+                    [
+                      [
+                        "s",
+                        "_uniq"
+                      ],
+                      [
+                        "n",
+                        "19"
+                      ]
+                    ]
+                  ],
+                  "level_assign_depth": "0",
+                  "levels": [
+                    [
+                      "zero"
+                    ]
+                  ],
+                  "metavariables": [
+                    {
+                      "assignment": null,
+                      "depth": "0",
+                      "id": [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "19"
+                        ]
+                      ],
+                      "index": "0",
+                      "instances": [],
+                      "kind": "syntheticOpaque",
+                      "locals": [
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "16"
+                            ]
+                          ],
+                          "index": "0",
+                          "kind": "auxDecl",
+                          "name": [
+                            [
+                              "s",
+                              "sample"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "8",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "17"
+                            ]
+                          ],
+                          "index": "1",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "p"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "0",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "18"
+                            ]
+                          ],
+                          "index": "2",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "h"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "9",
+                          "value": null
+                        }
+                      ],
+                      "name": [],
+                      "scope_args": "0",
+                      "type": "11"
+                    }
+                  ],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "declaration": [
+                  [
+                    "s",
+                    "Suite"
+                  ],
+                  [
+                    "s",
+                    "sample"
+                  ]
+                ],
+                "end": "74",
+                "id": "0",
+                "namespace": [
+                  [
+                    "s",
+                    "Suite"
+                  ]
+                ],
+                "parent": null,
+                "start": "50",
+                "status": "captured",
+                "syntax_kind": [
+                  [
+                    "s",
+                    "Lean"
+                  ],
+                  [
+                    "s",
+                    "Parser"
+                  ],
+                  [
+                    "s",
+                    "Term"
+                  ],
+                  [
+                    "s",
+                    "byTactic"
+                  ]
+                ]
+              },
+              {
+                "after": {
+                  "depth": "0",
+                  "expressions": [],
+                  "goals": [],
+                  "level_assign_depth": "0",
+                  "levels": [],
+                  "metavariables": [],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "before": {
+                  "depth": "0",
+                  "expressions": [
+                    [
+                      "sort",
+                      "0"
+                    ],
+                    [
+                      "bvar",
+                      "0"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "Or"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "bvar",
+                      "1"
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "3"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "True"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "app",
+                      "4",
+                      "5"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "h"
+                        ]
+                      ],
+                      "explicit",
+                      "1",
+                      "6"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "p"
+                        ]
+                      ],
+                      "explicit",
+                      "0",
+                      "7"
+                    ],
+                    [
+                      "fvar",
+                      [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "17"
+                        ]
+                      ]
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "9"
+                    ],
+                    [
+                      "app",
+                      "10",
+                      "5"
+                    ]
+                  ],
+                  "goals": [
+                    [
+                      [
+                        "s",
+                        "_uniq"
+                      ],
+                      [
+                        "n",
+                        "19"
+                      ]
+                    ]
+                  ],
+                  "level_assign_depth": "0",
+                  "levels": [
+                    [
+                      "zero"
+                    ]
+                  ],
+                  "metavariables": [
+                    {
+                      "assignment": null,
+                      "depth": "0",
+                      "id": [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "19"
+                        ]
+                      ],
+                      "index": "0",
+                      "instances": [],
+                      "kind": "syntheticOpaque",
+                      "locals": [
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "16"
+                            ]
+                          ],
+                          "index": "0",
+                          "kind": "auxDecl",
+                          "name": [
+                            [
+                              "s",
+                              "sample"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "8",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "17"
+                            ]
+                          ],
+                          "index": "1",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "p"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "0",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "18"
+                            ]
+                          ],
+                          "index": "2",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "h"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "9",
+                          "value": null
+                        }
+                      ],
+                      "name": [],
+                      "scope_args": "0",
+                      "type": "11"
+                    }
+                  ],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "declaration": [
+                  [
+                    "s",
+                    "Suite"
+                  ],
+                  [
+                    "s",
+                    "sample"
+                  ]
+                ],
+                "end": "52",
+                "id": "1",
+                "namespace": [
+                  [
+                    "s",
+                    "Suite"
+                  ]
+                ],
+                "parent": "0",
+                "start": "50",
+                "status": "captured",
+                "syntax_kind": [
+                  [
+                    "s",
+                    "by"
+                  ]
+                ]
+              },
+              {
+                "after": {
+                  "depth": "0",
+                  "expressions": [],
+                  "goals": [],
+                  "level_assign_depth": "0",
+                  "levels": [],
+                  "metavariables": [],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "before": {
+                  "depth": "0",
+                  "expressions": [
+                    [
+                      "sort",
+                      "0"
+                    ],
+                    [
+                      "bvar",
+                      "0"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "Or"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "bvar",
+                      "1"
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "3"
+                    ],
+                    [
+                      "const",
+                      [
+                        [
+                          "s",
+                          "True"
+                        ]
+                      ],
+                      []
+                    ],
+                    [
+                      "app",
+                      "4",
+                      "5"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "h"
+                        ]
+                      ],
+                      "explicit",
+                      "1",
+                      "6"
+                    ],
+                    [
+                      "forall",
+                      [
+                        [
+                          "s",
+                          "p"
+                        ]
+                      ],
+                      "explicit",
+                      "0",
+                      "7"
+                    ],
+                    [
+                      "fvar",
+                      [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "17"
+                        ]
+                      ]
+                    ],
+                    [
+                      "app",
+                      "2",
+                      "9"
+                    ],
+                    [
+                      "app",
+                      "10",
+                      "5"
+                    ]
+                  ],
+                  "goals": [
+                    [
+                      [
+                        "s",
+                        "_uniq"
+                      ],
+                      [
+                        "n",
+                        "19"
+                      ]
+                    ]
+                  ],
+                  "level_assign_depth": "0",
+                  "levels": [
+                    [
+                      "zero"
+                    ]
+                  ],
+                  "metavariables": [
+                    {
+                      "assignment": null,
+                      "depth": "0",
+                      "id": [
+                        [
+                          "s",
+                          "_uniq"
+                        ],
+                        [
+                          "n",
+                          "19"
+                        ]
+                      ],
+                      "index": "0",
+                      "instances": [],
+                      "kind": "syntheticOpaque",
+                      "locals": [
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "16"
+                            ]
+                          ],
+                          "index": "0",
+                          "kind": "auxDecl",
+                          "name": [
+                            [
+                              "s",
+                              "sample"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "8",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "17"
+                            ]
+                          ],
+                          "index": "1",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "p"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "0",
+                          "value": null
+                        },
+                        {
+                          "binder": "explicit",
+                          "id": [
+                            [
+                              "s",
+                              "_uniq"
+                            ],
+                            [
+                              "n",
+                              "18"
+                            ]
+                          ],
+                          "index": "2",
+                          "kind": "default",
+                          "name": [
+                            [
+                              "s",
+                              "h"
+                            ]
+                          ],
+                          "nondep": false,
+                          "type": "9",
+                          "value": null
+                        }
+                      ],
+                      "name": [],
+                      "scope_args": "0",
+                      "type": "11"
+                    }
+                  ],
+                  "schema": "jevops-open-proof-state/v2",
+                  "universe_metavariables": []
+                },
+                "declaration": [
+                  [
+                    "s",
+                    "Suite"
+                  ],
+                  [
+                    "s",
+                    "sample"
+                  ]
+                ],
+                "end": "74",
+                "id": "2",
+                "namespace": [
+                  [
+                    "s",
+                    "Suite"
+                  ]
+                ],
+                "parent": "1",
+                "start": "55",
+                "status": "captured",
+                "syntax_kind": [
+                  [
+                    "s",
+                    "Lean"
+                  ],
+                  [
+                    "s",
+                    "Parser"
+                  ],
+                  [
+                    "s",
+                    "Tactic"
+                  ],
+                  [
+                    "s",
+                    "tacticSeq"
+                  ]
+                ]
+              }
+            ],
+            "lean_githash": "f72c35b3f637c8c6571d353742168ab66cc22c00",
+            "lean_version": "4.29.1",
+            "proof_admitted": false,
+            "replayable": false,
+            "schema": "jevops-proof-state-trace/v1"
+          },
+          "trace_sha256": "8557b2d83acdddbd31f9ce26983afeffdf67c5f8c99b75a21f0bec0c633867ca"
+        }
+      },
+      "baseline_drafts": {
+        "schema": "jevops-local-premise-batch/v1",
+        "request": {
+          "schema": "jevops-local-premise-request/v1",
+          "record_sha256": "1dfc7e708367feea9b8316c2aee452bf75c1ac413160af958d7a6382640027d9",
+          "source_sha256": "37a67ade6f53df5346ff2ffb7208dd0935565f1cc33702e8f87ad877948c3921",
+          "trace_sha256": "8557b2d83acdddbd31f9ce26983afeffdf67c5f8c99b75a21f0bec0c633867ca",
+          "capture_environment": "16ed2cdc068e3f726de5d4618230b54ae1998e50a494a3971e18f36775121247",
+          "environment_sha256": "b4a52f2b42ddc53bc6bbef35ef10f21b32ba9964ff977ff9a4c69b7dbc428889",
+          "origin_sha256": "7466db5ad2fc187975671837dcdca503c076ac40eaf0afefb1ba5a8886bdc4d0",
+          "index_sha256": "33340ba0a4aaf6e303efb71484b6cc66e8801ec5f7990401fd67ad2b48981b3d",
+          "scope_sha256": "dc2bf4c1fe057d6fc9c51f0043f43f8664550b605c5872402812787619cf4a09",
+          "effective_scope_sha256": "68ea928524e7f0b8beabe8d2419f323736f490a96c21a2934b6e56547d3d4216",
+          "declaration": "Suite.sample",
+          "target": "Suite.sample",
+          "methods": [
+            "exact",
+            "apply"
+          ],
+          "cap": 2,
+          "top_k": 4,
+          "max_scan": 512,
+          "max_events": 16,
+          "max_query_nodes": 256,
+          "ranking_bytes": 1048576,
+          "feature_method": "goal-and-local-type-constants/v1",
+          "tokenizer_id": "lra-reference-lexical/v1",
+          "request_sha256": "f7ed16dd3a7ed32d8609e8efdceff86184d9cc444a4dc3f031767a8ba89d5633"
+        },
+        "events": [
+          {
+            "event_id": 1,
+            "event_sha256": "9ea5ea17b99a0b6d5805753ef2e3ab383fc51b54e2be750ea339bb3b1ae68906",
+            "start": "50",
+            "end": "52",
+            "outcomes": [],
+            "status": "UNSUPPORTED_SPAN"
+          },
+          {
+            "event_id": 2,
+            "event_sha256": "6a48f6ef19d8795c4c8cec4e45bf8f8b725fd78f61895d95326d715a675a9aa7",
+            "start": "55",
+            "end": "74",
+            "outcomes": [
+              {
+                "candidate": "exact _root_.library_step",
+                "source_sha256": "1d46b97d6987846242c2a9152f669931bacfba0acf9b73c8729deca33158143b",
+                "tokens": 3,
+                "status": "DRAFT",
+                "label": "local-premise-0"
+              },
+              {
+                "candidate": "apply _root_.library_step",
+                "source_sha256": "4424e0955878b4093bb6ec172813e7cab6f11a590596d2282386b01a2ad3c3af",
+                "tokens": 3,
+                "status": "DRAFT",
+                "label": "local-premise-1"
+              }
+            ],
+            "status": "RANKED",
+            "observation": {
+              "feature_method": "goal-and-local-type-constants/v1",
+              "state_sha256": "f4488fbc3961be678aa3c176b74b796717f5023ad900ccdd8312a204da136ddd",
+              "query": "Or True",
+              "nodes_visited": 12,
+              "status": "READY"
+            },
+            "ranking": {
+              "schema": "jevops-premise-ranking/v1",
+              "index_sha256": "33340ba0a4aaf6e303efb71484b6cc66e8801ec5f7990401fd67ad2b48981b3d",
+              "feature_method": "case-sensitive-qualified-and-leaf-identifiers/v2",
+              "scope_sha256": "68ea928524e7f0b8beabe8d2419f323736f490a96c21a2934b6e56547d3d4216",
+              "goal_sha256": "6c661a0682cefd9a9faf7c322267865c88bf81a60828206dbec150c6a9aaf94d",
+              "target": "Suite.sample",
+              "top_k": 4,
+              "max_scan": 512,
+              "considered": 1,
+              "status": "RANKED",
+              "matches": [
+                {
+                  "name": "library_step",
+                  "score_numerator": 1,
+                  "score_denominator": 2,
+                  "premise_sha256": "366ea08c1f06249b39f69d3dee67ffd85be7a39553131998c435ef8a7a7f54e9"
+                }
+              ],
+              "excluded": [],
+              "proof_verified": false
+            }
+          }
+        ],
+        "proposals": [
+          {
+            "event_id": 2,
+            "candidate": "exact _root_.library_step"
+          },
+          {
+            "event_id": 2,
+            "candidate": "apply _root_.library_step"
+          }
+        ],
+        "drafts": [
+          {
+            "name": "Suite.sample",
+            "label": "local-premise-0",
+            "source": "theorem sample (p : Prop) (h : p) : p \u2228 True := by\n  exact _root_.library_step\n",
+            "provenance": "unverified local premise; request f7ed16dd3a7ed32d8609e8efdceff86184d9cc444a4dc3f031767a8ba89d5633; event 2"
+          },
+          {
+            "name": "Suite.sample",
+            "label": "local-premise-1",
+            "source": "theorem sample (p : Prop) (h : p) : p \u2228 True := by\n  apply _root_.library_step\n",
+            "provenance": "unverified local premise; request f7ed16dd3a7ed32d8609e8efdceff86184d9cc444a4dc3f031767a8ba89d5633; event 2"
+          }
+        ],
+        "origins": [
+          {
+            "label": "local-premise-0",
+            "event_id": 2,
+            "event_sha256": "6a48f6ef19d8795c4c8cec4e45bf8f8b725fd78f61895d95326d715a675a9aa7",
+            "premise": {
+              "name": "library_step",
+              "type_text": "\u2200 {p : Prop}, p \u2192 p \u2228 True",
+              "origin": "explicit-control-prefix",
+              "split": "library",
+              "aliases": [],
+              "dependencies": []
+            },
+            "ranking_sha256": "ac1991d05bae0ced1d0f5b336292f77e00c85e68a70f9400399e8ecaeeb5bcd1"
+          },
+          {
+            "label": "local-premise-1",
+            "event_id": 2,
+            "event_sha256": "6a48f6ef19d8795c4c8cec4e45bf8f8b725fd78f61895d95326d715a675a9aa7",
+            "premise": {
+              "name": "library_step",
+              "type_text": "\u2200 {p : Prop}, p \u2192 p \u2228 True",
+              "origin": "explicit-control-prefix",
+              "split": "library",
+              "aliases": [],
+              "dependencies": []
+            },
+            "ranking_sha256": "ac1991d05bae0ced1d0f5b336292f77e00c85e68a70f9400399e8ecaeeb5bcd1"
+          }
+        ],
+        "base_tokens": 7,
+        "policy": "deterministic-lexical-local-premises/v1",
+        "status": "DRAFTS_ONLY",
+        "truncated": true,
+        "native_verifier_calls": 0,
+        "external_calls_attempted": 0,
+        "proof_verified": false,
+        "proof_admitted": false,
+        "whole_source_checked": false,
+        "fresh_verification_required": true,
+        "training_enabled": false,
+        "promoted": false,
+        "official_score": null
+      },
+      "discovery": {
+        "schema": "jevops-local-application-batch/v1",
+        "request": {
+          "schema": "jevops-local-application-request/v1",
+          "record_sha256": "1dfc7e708367feea9b8316c2aee452bf75c1ac413160af958d7a6382640027d9",
+          "source_sha256": "37a67ade6f53df5346ff2ffb7208dd0935565f1cc33702e8f87ad877948c3921",
+          "trace_sha256": "8557b2d83acdddbd31f9ce26983afeffdf67c5f8c99b75a21f0bec0c633867ca",
+          "capture_environment": "16ed2cdc068e3f726de5d4618230b54ae1998e50a494a3971e18f36775121247",
+          "environment_sha256": "b4a52f2b42ddc53bc6bbef35ef10f21b32ba9964ff977ff9a4c69b7dbc428889",
+          "origin_sha256": "7466db5ad2fc187975671837dcdca503c076ac40eaf0afefb1ba5a8886bdc4d0",
+          "index_sha256": "33340ba0a4aaf6e303efb71484b6cc66e8801ec5f7990401fd67ad2b48981b3d",
+          "scope_sha256": "dc2bf4c1fe057d6fc9c51f0043f43f8664550b605c5872402812787619cf4a09",
+          "effective_scope_sha256": "68ea928524e7f0b8beabe8d2419f323736f490a96c21a2934b6e56547d3d4216",
+          "declaration": "Suite.sample",
+          "target": "Suite.sample",
+          "methods": [
+            "apply_assumption"
+          ],
+          "cap": 1,
+          "top_k": 4,
+          "max_scan": 512,
+          "max_events": 1,
+          "max_query_nodes": 256,
+          "ranking_bytes": 1048576,
+          "feature_method": "goal-and-local-type-constants/v1",
+          "tokenizer_id": "lra-reference-lexical/v1",
+          "strategy": "application-materialization/v1",
+          "max_applications": 1,
+          "span_order": "headroom-v1",
+          "final_filter": "strictly-fewer-source-tokens/v1",
+          "request_sha256": "a5094251f7dcc7e683ccefe5257fec4d778aa48b200a721f59174f58543a6223"
+        },
+        "events": [
+          {
+            "event_id": 2,
+            "event_sha256": "6a48f6ef19d8795c4c8cec4e45bf8f8b725fd78f61895d95326d715a675a9aa7",
+            "span_tokens": 6,
+            "status": "RANKED",
+            "observation": {
+              "feature_method": "goal-and-local-type-constants/v1",
+              "state_sha256": "f4488fbc3961be678aa3c176b74b796717f5023ad900ccdd8312a204da136ddd",
+              "query": "Or True",
+              "nodes_visited": 12,
+              "status": "READY"
+            },
+            "ranking": {
+              "schema": "jevops-premise-ranking/v1",
+              "index_sha256": "33340ba0a4aaf6e303efb71484b6cc66e8801ec5f7990401fd67ad2b48981b3d",
+              "feature_method": "case-sensitive-qualified-and-leaf-identifiers/v2",
+              "scope_sha256": "68ea928524e7f0b8beabe8d2419f323736f490a96c21a2934b6e56547d3d4216",
+              "goal_sha256": "6c661a0682cefd9a9faf7c322267865c88bf81a60828206dbec150c6a9aaf94d",
+              "target": "Suite.sample",
+              "top_k": 4,
+              "max_scan": 512,
+              "considered": 1,
+              "status": "RANKED",
+              "matches": [
+                {
+                  "name": "library_step",
+                  "score_numerator": 1,
+                  "score_denominator": 2,
+                  "premise_sha256": "366ea08c1f06249b39f69d3dee67ffd85be7a39553131998c435ef8a7a7f54e9"
+                }
+              ],
+              "excluded": [],
+              "proof_verified": false
+            }
+          }
+        ],
+        "proposals": [
+          {
+            "event_id": 2,
+            "candidate": "exact library_step h"
+          }
+        ],
+        "drafts": [
+          {
+            "name": "Suite.sample",
+            "label": "local-application-0",
+            "source": "theorem sample (p : Prop) (h : p) : p \u2228 True := by\n  exact library_step h\n",
+            "provenance": "unadmitted local_lean extracted application; request a5094251f7dcc7e683ccefe5257fec4d778aa48b200a721f59174f58543a6223; event 2"
+          }
+        ],
+        "origins": [
+          {
+            "label": "local-application-0",
+            "event_id": 2,
+            "premise": "library_step",
+            "receipt_sha256": "3376af0ea029aedfd5fa52efb9cc8145c690fe030edfde2fd5b0095cc1eaf399"
+          }
+        ],
+        "base_tokens": 7,
+        "policy": "lexical-then-native-application/v1",
+        "status": "DRAFTS_ONLY",
+        "truncated": false,
+        "native_verifier_calls": 1,
+        "external_calls_attempted": 0,
+        "proof_verified": false,
+        "proof_admitted": false,
+        "whole_source_checked": false,
+        "fresh_verification_required": true,
+        "training_enabled": false,
+        "promoted": false,
+        "official_score": null,
+        "applications": [
+          {
+            "event_id": 2,
+            "premise": "library_step"
+          }
+        ],
+        "attempts": [
+          {
+            "event_id": 2,
+            "premise": "library_step",
+            "status": "DRAFT",
+            "closing_reproduced": true,
+            "receipt_sha256": "3376af0ea029aedfd5fa52efb9cc8145c690fe030edfde2fd5b0095cc1eaf399",
+            "binding": {
+              "source_sha256": "37a67ade6f53df5346ff2ffb7208dd0935565f1cc33702e8f87ad877948c3921",
+              "trace_sha256": "8557b2d83acdddbd31f9ce26983afeffdf67c5f8c99b75a21f0bec0c633867ca",
+              "dependency_environment_sha256": "b4a52f2b42ddc53bc6bbef35ef10f21b32ba9964ff977ff9a4c69b7dbc428889",
+              "exporter_sha256": "17690bee6bf665d383df7b7ba5c45ab64e61ea0a85f9bc36384d55e328b2428c",
+              "event_id": 2,
+              "candidate_sha256": "120335305e72ba39832b3b2fc9e4694822ca36eecde5103b58cbcbc9fc099f6c",
+              "node_budget": 4096,
+              "event_budget": 128,
+              "operation": "application-materialization/v1",
+              "premise": "library_step"
+            },
+            "search_outcome": {
+              "axioms": [],
+              "closed_goals_checked": "1",
+              "remaining_goals": "0",
+              "status": "closed_kernel_checked"
+            },
+            "roundtrip_outcome": {
+              "axioms": [],
+              "closed_goals_checked": "1",
+              "remaining_goals": "0",
+              "status": "closed_kernel_checked"
+            },
+            "candidate": "exact library_step h",
+            "source_sha256": "db628574ab1e66e2ebe1555bb99d2dd21ecd3b36b8b25b5e6978997a40bc1be2",
+            "tokens": 4,
+            "label": "local-application-0"
+          }
+        ],
+        "evidence_mode": "local_lean",
+        "reserved_processes": 1,
+        "attempted_processes": 1,
+        "application_attempts": 1,
+        "roundtrip_attempts": 1
+      },
+      "candidate": {
+        "request_id": "bf2da8aeadea0f301b0bef74f7195cbb7a06f734057120346dcfbaa42750736f",
+        "candidate_sha256": "db628574ab1e66e2ebe1555bb99d2dd21ecd3b36b8b25b5e6978997a40bc1be2",
+        "target": "Suite.sample",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Suite.sample' depends on axioms: []",
+        "heartbeats": 6,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"03b042cfca6181d741cc99f4b4ad8796abed4728d550b839270beae65f3e774e\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[],\"diagnostics\":[],\"heartbeats\":6,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":6796,\"reason\":\"\",\"reference_axioms\":[],\"reference_heartbeats\":7,\"reference_raw_heartbeats\":7794,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":1446.378}"
+      },
+      "source_tokens": 7,
+      "candidate_tokens": 4
+    }
+  ],
+  "wall_seconds": 20.4318
+}

@@ -1,0 +1,151 @@
+{
+  "schema": "jevops-local-aggregate-analysis/v1",
+  "source_report_hash": "c6657d513e4083335667b70e8ea1500933defdc99f50bf2946c58133a6386ca5",
+  "score_scope": "matched-local-primary-pin",
+  "official_score": null,
+  "fresh_native_processes": 0,
+  "proof_verified": false,
+  "statistical_significance_claimed": false,
+  "objective_ablation_scope": "reanalysis of same recorded screen; not new verification",
+  "phases": {
+    "screen": {
+      "control": {
+        "tokens": 1372,
+        "token_delta": 0,
+        "raw_heartbeats_by_stratum": [
+          [
+            27475681,
+            27475681
+          ],
+          [
+            27479265,
+            27479265
+          ]
+        ],
+        "admissible": true
+      },
+      "solver-0": {
+        "tokens": 1365,
+        "token_delta": -7,
+        "raw_heartbeats_by_stratum": [
+          [
+            27554621,
+            27554621
+          ],
+          [
+            27558205,
+            27558205
+          ]
+        ],
+        "admissible": true,
+        "nominal_gain_pp_by_order": [
+          0.07429848710982796,
+          0.07431097791086365
+        ],
+        "conservative_gain_pp_by_order": [
+          0.07417716770255527,
+          0.07418967432674911
+        ],
+        "heartbeat_reduction_pct_by_order": [
+          -0.2873086203031727,
+          -0.2872711479000589
+        ],
+        "token_reduction_pct": 0.5102040816326481
+      },
+      "longer-intermediate": {
+        "tokens": 1377,
+        "token_delta": 5,
+        "raw_heartbeats_by_stratum": [
+          [
+            25104564,
+            25104564
+          ],
+          [
+            25108148,
+            25108148
+          ]
+        ],
+        "admissible": true,
+        "nominal_gain_pp_by_order": [
+          2.755147927848347,
+          2.7547727422557533
+        ],
+        "conservative_gain_pp_by_order": [
+          2.7550266084410744,
+          2.754651438671639
+        ],
+        "heartbeat_reduction_pct_by_order": [
+          8.629875270425513,
+          8.628749713647732
+        ],
+        "token_reduction_pct": -0.36443148688045657
+      }
+    },
+    "confirmation": {
+      "control": {
+        "tokens": 1372,
+        "token_delta": 0,
+        "raw_heartbeats_by_stratum": [
+          [
+            27475681,
+            27475681,
+            27475681
+          ],
+          [
+            27479265,
+            27479265,
+            27479265
+          ]
+        ],
+        "admissible": true
+      },
+      "longer-intermediate": {
+        "tokens": 1377,
+        "token_delta": 5,
+        "raw_heartbeats_by_stratum": [
+          [
+            25104564,
+            25104564,
+            25104564
+          ],
+          [
+            25108148,
+            25108148,
+            25108148
+          ]
+        ],
+        "admissible": true,
+        "nominal_gain_pp_by_order": [
+          2.755147927848347,
+          2.7547727422557533
+        ],
+        "conservative_gain_pp_by_order": [
+          2.7550266084410744,
+          2.754651438671639
+        ],
+        "heartbeat_reduction_pct_by_order": [
+          8.629875270425513,
+          8.628749713647732
+        ],
+        "token_reduction_pct": -0.36443148688045657
+      }
+    }
+  },
+  "screen_objective_ablation": {
+    "pareto-v1": {
+      "selected": null,
+      "eligible": []
+    },
+    "strict-dual-v1": {
+      "selected": null,
+      "eligible": []
+    },
+    "aggregate-local-v1": {
+      "selected": "longer-intermediate",
+      "eligible": [
+        "longer-intermediate",
+        "solver-0"
+      ]
+    }
+  }
+}

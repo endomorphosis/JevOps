@@ -1,0 +1,33 @@
+{
+  "schema": "jevops-arena-preparation/v1",
+  "run_id": "1790157414426464156",
+  "command": [
+    "/usr/bin/env",
+    "PATH=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan/toolchains/leanprover--lean4---v4.25.0/bin:/usr/bin:/bin",
+    "/usr/bin/python3",
+    "-B",
+    "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_exact.py",
+    "--destination",
+    "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0",
+    "--tag",
+    "v4.25.0",
+    "--commit",
+    "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+    "--putnam",
+    "--cache",
+    "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0",
+    "--cache",
+    "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib"
+  ],
+  "exit_code": 1,
+  "timed_out": false,
+  "cleanup": "absent_or_daemon_unavailable",
+  "wall_seconds": 176.5977249610005,
+  "log": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790157414426464156.log",
+  "image_id": "sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517",
+  "network_allowed": true,
+  "build_concurrency": 1,
+  "official_score": null,
+  "volume_capacity_bytes": 49018310656,
+  "volume_used_bytes": 29521395712
+}

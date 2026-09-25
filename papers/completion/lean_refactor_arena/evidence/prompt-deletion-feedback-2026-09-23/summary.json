@@ -1,0 +1,168 @@
+{
+  "schema": "jevops-refactor-deletion-feedback-summary/v1",
+  "date": "2026-09-23",
+  "plan_id": "7a3dfdbc34cc58a3d74a7b7a975795d086f3e9b18daa2967e20c8d2b3b2b166c",
+  "catalog_sha256": "52677802aa9a72d367b5a883b0b552a21d71b1d948af13ef7e1026e12f052219",
+  "history_binding": {
+    "manifest_sha256": "6626bad2552508228af3096405b42911a03d430c7f8775c2e91a9baaf75a29ed",
+    "files": {
+      "plan.json": {
+        "sha256": "8846c7d9f0d7f59db026c14225dd13b153c760c81b0419c5b4736cb6268588f8",
+        "bytes": 119873
+      },
+      "native-plan.json": {
+        "sha256": "8c50e15e1c51faeeb87513fe1049e279140e1b85f19321d3bd9d0beb3fd67e61",
+        "bytes": 10738
+      },
+      "native-triage.json": {
+        "sha256": "8ad5e85ad714ded9aa9058ebc9fcbba131194a934caa8658f9f5cf79871ed2dd",
+        "bytes": 21578
+      }
+    },
+    "scope": "only the three named files checked; other archive entries are not consumed"
+  },
+  "task": "Core.InitsUpdatesComm",
+  "status": "COMPLETE",
+  "task_split": "previously studied public warm-up, not held out",
+  "model_calls_attempted": 8,
+  "returned_responses": 8,
+  "infrastructure_failures": 0,
+  "retry_count": 0,
+  "model_fixture": false,
+  "fallback_used": false,
+  "server_declared_context_per_slot": 32768,
+  "by_arm": {
+    "no-feedback-forward": {
+      "attempts": 2,
+      "responses_returned": 2,
+      "strict_contract": 1,
+      "admitted_replies": 1,
+      "unique_sources": 1,
+      "repeated_rejected_sources_among_admitted": 1,
+      "new_sources_among_admitted": 0,
+      "outcomes": {
+        "contract_mismatch": 1,
+        "parsed": 1
+      }
+    },
+    "no-feedback-reverse": {
+      "attempts": 2,
+      "responses_returned": 2,
+      "strict_contract": 1,
+      "admitted_replies": 1,
+      "unique_sources": 1,
+      "repeated_rejected_sources_among_admitted": 1,
+      "new_sources_among_admitted": 0,
+      "outcomes": {
+        "contract_mismatch": 1,
+        "parsed": 1
+      }
+    },
+    "feedback-forward": {
+      "attempts": 2,
+      "responses_returned": 2,
+      "strict_contract": 0,
+      "admitted_replies": 0,
+      "unique_sources": 0,
+      "repeated_rejected_sources_among_admitted": 0,
+      "new_sources_among_admitted": 0,
+      "outcomes": {
+        "contract_mismatch": 2
+      }
+    },
+    "feedback-reverse": {
+      "attempts": 2,
+      "responses_returned": 2,
+      "strict_contract": 1,
+      "admitted_replies": 1,
+      "unique_sources": 1,
+      "repeated_rejected_sources_among_admitted": 1,
+      "new_sources_among_admitted": 0,
+      "outcomes": {
+        "parsed": 1,
+        "contract_mismatch": 1
+      }
+    }
+  },
+  "by_feedback_condition": {
+    "no_feedback": {
+      "attempts": 4,
+      "responses_returned": 4,
+      "strict_contract": 2,
+      "admitted_replies": 2,
+      "unique_sources": 1,
+      "repeated_rejected_sources_among_admitted": 2,
+      "new_sources_among_admitted": 0,
+      "outcomes": {
+        "contract_mismatch": 2,
+        "parsed": 2
+      }
+    },
+    "feedback": {
+      "attempts": 4,
+      "responses_returned": 4,
+      "strict_contract": 1,
+      "admitted_replies": 1,
+      "unique_sources": 1,
+      "repeated_rejected_sources_among_admitted": 1,
+      "new_sources_among_admitted": 0,
+      "outcomes": {
+        "parsed": 1,
+        "contract_mismatch": 3
+      }
+    }
+  },
+  "usage_observed_requests": 8,
+  "complete_generation_token_usage": {
+    "prompt_tokens": 35836,
+    "completion_tokens": 278,
+    "total_tokens": 36114
+  },
+  "generation_request_wall_seconds_sum": 39.7769,
+  "admitted_replies": 3,
+  "unique_admitted_sources": 2,
+  "newly_admitted_sources": 0,
+  "history_pruned_actions": false,
+  "historical_receipts_reused_for_current_verification": false,
+  "native_requests": 5,
+  "native_processes": 5,
+  "native_outcomes": {
+    "VERIFIED": 3,
+    "REJECTED": 2,
+    "NOT_RUN_AFTER_NON_SUCCESS": 4
+  },
+  "native_request_wall_seconds_sum": 70.023,
+  "all_pin_verified_candidates": [],
+  "verified_refactoring_improvements": 0,
+  "performance_confirmation_run": false,
+  "performance_selected": false,
+  "training": false,
+  "promotion": false,
+  "official_score": null,
+  "paid_api_cost": null,
+  "electricity_cost": null,
+  "snapshot_checks": {
+    "generation": "UNCHANGED",
+    "native": "UNCHANGED"
+  },
+  "snapshot_manifest_sha256": "63a4d9ed09b8adff16b6ce7d66696483f9490f6f7cd6b378ef9dafd8ee6e6f88",
+  "complete_source_snapshot": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/prompt-deletion-feedback-20260923-ZEU0J5/snapshot",
+  "complete_source_snapshot_in_archive": false,
+  "tests": {
+    "passed": 378,
+    "deselected": 1,
+    "seconds": 18.47,
+    "scope": "targeted offline suite, real_kernel_checked excluded"
+  },
+  "interpretation": "No improvement from this feedback treatment in this batch; all admitted selections repeated rejected sources.",
+  "limitations": [
+    "Eight requests on one previously studied task; greedy repetitions are not independent samples.",
+    "Historical files are internally checked hints, not authenticated or current proof authority.",
+    "Feedback prompts have 921 additional measured input tokens per request; lengths are unequal.",
+    "Server declared 32768 context tokens per slot versus 8192 in prior ID pilot; cross-study rates are not matched controls.",
+    "Server metadata stayed fixed within this run but is not independently attested.",
+    "Native execution used trusted-local scratch, not an OS sandbox.",
+    "Malformed outputs do not count as avoiding a previously rejected candidate.",
+    "No trained policy, performance confirmation, catalog feasibility sweep or official Arena score."
+  ]
+}

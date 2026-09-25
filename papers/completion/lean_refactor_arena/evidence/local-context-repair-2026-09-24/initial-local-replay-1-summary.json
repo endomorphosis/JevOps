@@ -1,0 +1,40 @@
+{
+  "schema": "jevops-arena-local/v1",
+  "status": "OBSERVED",
+  "ok": true,
+  "closing_reproduced": false,
+  "proof_admitted": false,
+  "whole_source_checked": false,
+  "binding": {
+    "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+    "trace_sha256": "a8da4fe4374ba85bde943464cbbb6bc7aa044a019798ba7861f48de150bce85e",
+    "dependency_environment_sha256": "17d89aeec54edc1b76b97f27d882a84135f3b780f573e93d0f8644ad2726fb9a",
+    "exporter_sha256": "499ce68eee9ac8c93652e27909f15175983845d71847fc530b6f09e68843e3f9",
+    "event_id": 19,
+    "candidate_sha256": "bb41bd27025e65441fb1ea0a5b8c4f34c26d2f068c505a451f2ef62d3fb071c9",
+    "node_budget": 4096,
+    "event_budget": 256
+  },
+  "environment": "67c66fdcf08d2a7162a0fb307570e3a41c691f4c198ea956529beb53423984c1",
+  "native_sha256": "a862b9a1277385b961f5b2a26eae48fdbc64141acd70803b2983505723474d9d",
+  "request_sha256": "5f4ac2d94972433d2cca0b90f8a9d1e52b7d1693203e7cda70c227d888b46946",
+  "baseline": {
+    "axioms": [],
+    "closed_goals_checked": "0",
+    "reason": "Unexpected tactic\n  failed to pretty print term (use 'set_option pp.rawOnError true' for raw representation)",
+    "remaining_goals": null,
+    "status": "rejected"
+  },
+  "proposed": {
+    "axioms": [],
+    "closed_goals_checked": "0",
+    "reason": "Type mismatch\n  Core.updatedStatesInit\nhas type\n  List.length ?m.211 = List.length ?m.212 →\n    Imperative.isNotDefined ?m.210 ?m.211 →\n      List.Nodup ?m.211 → Core.InitStates ?m.210 ?m.211 ?m.212 (Core.updatedStates ?m.210 ?m.211 ?m.212)\nbut is expected to have type\n  Imperative.UpdateState P (Core.updatedStates' σ (ks'.zip vs')) x v\n    (Core.updatedState (Core.updatedStates' σ (ks'.zip vs')) x v)",
+    "remaining_goals": null,
+    "status": "rejected"
+  },
+  "candidate": "exact _root_.Core.updatedStatesInit",
+  "event_id": "19",
+  "raw_path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-context-repair-20260924-MvhckB/run/local-replay-1.json",
+  "raw_sha256": "fba93ac54598be174edef51f4e2e2704eb475691a036e0d2b23518a637c2fa4d",
+  "summary_only": true
+}

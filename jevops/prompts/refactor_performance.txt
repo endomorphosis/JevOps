@@ -1,0 +1,4 @@
+MODE: seek both fewer proof-body tokens and less elaboration work.
+Consider direct lemma applications, narrow simp only sets, explicit rewrites and recorded solver replay instead of repeated broad searches. Do not assume that shorter syntax is faster, or that an opaque helper moves no work outside measurement.
+Raw heartbeats are local observations. Compare candidate and reference only within the same recorded context, Lean pin, measurement method and branch order. Zero is a real measurement; missing data is unknown. Do not average across versions or combine cold and two-branch methods. The shown subset is not a statistical sample or a noise estimate.
+Use a token/heartbeat tradeoff as a search hint, never as an accepted win. A strict dual improvement must beat both axes on fresh matched trials and confirmation; the template itself changes no selector threshold.

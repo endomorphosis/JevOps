@@ -1,0 +1,20 @@
+{
+  "schema": "jevops-lean-refactor-upstream/v1",
+  "source": {
+    "url": "https://github.com/delta-lab-ai/lean-refactor.git",
+    "commit": "05f1dad9719979d1f2d82167fb7aeedf6b85233b",
+    "commit_date": "2026-06-01T23:17:08-07:00"
+  },
+  "imported_at": "2026-09-22",
+  "destination": "papers/completion/lean_refactor_arena/upstream",
+  "tracked_file_count": 353,
+  "mathlib_submodule": {
+    "path": "lean_refactor/mathlib4",
+    "url": "git@github.com:mikeljl/mathlib4.git",
+    "commit": "f198c5fbaae84e872cb341731527553fc9c99f2a",
+    "vendored": false,
+    "reason": "optional large Lean toolchain checkout"
+  },
+  "core_jevops_dependencies_added": false,
+  "upstream_model_and_lean_dependencies_installed": false
+}

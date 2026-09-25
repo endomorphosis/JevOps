@@ -1,0 +1,69 @@
+{
+  "artifacts": [
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-pilot-20260924-a/plan.json",
+      "sha256": "4327c15126368620cb7e7e4fed876999dbbe8095347f99bda11693b3997791d0"
+    },
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-pilot-20260924-a/calls.sqlite",
+      "sha256": "2bbabc27997f70d549bdb2f5f714a396f5b24b815c1cf23629afad2f927ca1f5"
+    },
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-pilot-20260924-a/case-0.json",
+      "sha256": "5f8243650ceb00b09853b80adb34cbb1f1de03914004e84d8a7935f7abf22612"
+    }
+  ],
+  "calls": [
+    {
+      "error_category": null,
+      "error_type": null,
+      "kind": "native",
+      "native_reserved": 1,
+      "recorded_outcome": "VERIFIED",
+      "recorded_status": null,
+      "result_recorded": true,
+      "slot": "0:control:v4.29.1",
+      "tokens_reserved": 0,
+      "usage": null
+    },
+    {
+      "error_category": null,
+      "error_type": null,
+      "kind": "native",
+      "native_reserved": 1,
+      "recorded_outcome": null,
+      "recorded_status": null,
+      "result_recorded": false,
+      "slot": "0:control:v4.27.0",
+      "tokens_reserved": 0,
+      "usage": null
+    }
+  ],
+  "comparison_established": false,
+  "completion_recorded": null,
+  "completion_report_present": false,
+  "generated_at": "2026-09-24T00:02:55.517224+00:00",
+  "generator_sha256": "0738b6e671165a11a955acd09277f1e300ff896a73f90e4e98f4cd58140b37fe",
+  "implementation_drift_at_audit": [
+    {
+      "observed_sha256": "66836a7b605d5effc0fa5801145d1aa5c0cb988970947788446a9a5c531426ea",
+      "path": "arena_local.py",
+      "planned_sha256": "fd2784822e4404ffc99822a3f122bea394fce2610771de4629351c1c7900cb9f"
+    },
+    {
+      "observed_sha256": "36c17a710f2b2895788319848b3b42bf400bb32ddd0b2890c37be7759a1ce5df",
+      "path": "lean/ProofState.lean",
+      "planned_sha256": "a8ffcc7dc43ef4d93651d508d741a8bb99f48cb9d3e1e2457875238168533d39"
+    }
+  ],
+  "model_calls_reserved": 0,
+  "native_requests_reserved": 2,
+  "note": "Reporting only. Missing results stay unknown, not failed or verified. Drift observed at audit time does not date the change. No original artifacts are modified.",
+  "official_score": null,
+  "plan_id": "975ec9a246421e6a43b97882956c81748217715dff82f94ee7f4ff285dbb9f67",
+  "recovered_receipts": false,
+  "run_directory": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-pilot-20260924-a",
+  "schema": "jevops-repair-ledger-audit/v1",
+  "study": "json-schema",
+  "unfinished_reservations": 1
+}

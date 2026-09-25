@@ -5,7 +5,7 @@ Does not write Lean. Lake (or another oracle) still admits.
 """
 from __future__ import annotations
 
-from typing import Any, Mapping, Optional, Sequence
+from typing import Any, Callable, Mapping, Optional, Sequence
 
 EPSILON = 1e-9
 BEAM_K = 3
@@ -43,6 +43,59 @@ def hole_rows(
             row["safe_to_drop"] = bool(safe_fn(start, end, original))
         rows.append(row)
     return rows
+
+
+def drive_analyze_proof(
+    record: Mapping[str, Any],
+    *,
+    tactics: Optional[str],
+    model: Optional[Mapping[str, Any]],
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    count_fn: Callable[[str], Mapping[str, Any]],
+    family_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    holes_fn: Callable[[str], Sequence[Any]],
+    spans: Sequence[Any],
+    windows_fn: Callable[[str, Any], Sequence[Any]],
+    phrases: Mapping[str, Sequence[str]],
+    cases_fn: Callable[[str], Sequence[Any]],
+    token_fn: Callable[[str], int],
+    used_fn: Callable[..., bool],
+    safe_fn: Callable[..., bool],
+    tags_fn: Callable[[Mapping[str, Any]], Sequence[Any]],
+) -> dict[str, Any]:
+    """Count tactics, holes, and spans. Does not compile and does not call a model."""
+
+    from jevops.outer import any_get, attrs_of, call_if, head_seq, if_none, stripped_or, substrings_in
+    from jevops.search import eligible_span_counts
+
+    body = stripped_or(if_none(tactics, factory=lambda: tactic_fn(record)), "")
+    counts = count_fn(body)
+    families = call_if(model, lambda: family_fn(counts, model), default=[])
+    mca_holes = holes_fn(body)
+    span_counts = eligible_span_counts(body, spans, windows_fn)
+    present = substrings_in(body, phrases)
+    cases = attrs_of(cases_fn(body), "label")
+    holes = hole_rows(
+        mca_holes,
+        token_fn=token_fn,
+        used_fn=lambda start, end, original: used_fn(body, start, end, original),
+        safe_fn=lambda start, end, original: safe_fn(body, start, end, original),
+    )
+    return analysis_row(
+        record,
+        n_tokens=token_fn(body),
+        counts=counts,
+        families=families,
+        holes=holes,
+        extra={
+            "n_tags": len(list(tags_fn(record))),
+            "eligible_spans": span_counts,
+            "catalog_phrases_present": present,
+            "case_labels": head_seq(cases, 12),
+            "n_cases": len(cases),
+            "pca_keep": any_get(counts, "n_induction", "n_cases"),
+        },
+    )
 
 
 def analysis_row(
@@ -101,6 +154,41 @@ def line_stats(text: str) -> dict[str, float]:
         "n_blank": float(sum(1 for line in lines if not line.strip())),
         "max_indent": float(max((len(line) - len(line.lstrip()) for line in lines), default=0)),
     }
+
+
+def drive_shot_example(
+    record: Mapping[str, Any],
+    *,
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    holes_fn: Callable[[str], Sequence[Any]],
+    fill_one_fn: Callable[[Any], str],
+    apply_fn: Callable[..., str],
+    skeleton_fn: Callable[..., str],
+    token_fn: Callable[[str], int],
+    hole_id: str = "hole_id",
+    family_attr: str = "family",
+) -> dict[str, Any]:
+    """Template-fill holes for one few-shot row. Does not call a model."""
+
+    from jevops.outer import get_str
+
+    tactics = tactic_fn(record)
+    holes = list(holes_fn(tactics))
+    fills = {getattr(hole, hole_id): fill_one_fn(hole) for hole in holes}
+    filled = apply_fn(tactics, holes, fills)
+    return shot_stats(
+        get_str(record, "name"),
+        tactics,
+        filled,
+        token_fn=token_fn,
+        extra={
+            "n_holes": len(holes),
+            "families": [getattr(hole, family_attr) for hole in holes],
+            "skeleton": skeleton_fn(tactics, holes),
+            "reference": tactics,
+            "filled": filled,
+        },
+    )
 
 
 def shot_stats(
@@ -256,6 +344,23 @@ def attach_ranked(
                 row[str(dest)] = getattr(item, str(src), None)
         rows.append(row)
     return rows
+
+
+def drive_rank_choice(
+    probabilities: Mapping[str, Any],
+    drafts: Sequence[Any],
+    *,
+    k: int,
+    id_fn: Callable[[Any], str],
+    fields: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    """Rank by probability, then join draft fields. Not a lake admit."""
+
+    return attach_ranked(
+        rank_by_prob(probabilities, k=k),
+        {id_fn(item): item for item in drafts},
+        fields,
+    )
 
 
 def present_families(
@@ -453,6 +558,25 @@ def draft_tree(
     return tree
 
 
+def drive_blurb_tree(
+    drafts: Sequence[Mapping[str, Any]],
+    structured: Mapping[str, Any],
+    blurbs: Mapping[str, Any],
+    *,
+    empty_tree: Mapping[str, Mapping[str, str]],
+    attr: str = "what",
+) -> dict[str, dict[str, str]]:
+    """Overlay structured blurbs, then build the draft tree. Does not write Lean."""
+
+    from jevops.outer import overlay_attr
+
+    return draft_tree(
+        drafts,
+        blurbs=overlay_attr(blurbs, structured, attr=attr),
+        empty_tree=empty_tree,
+    )
+
+
 def leftover_sort_key(
     *,
     n_drafts: int,
@@ -613,6 +737,110 @@ def pack_beam(
         "arena_score": None,
         "composite": (paths[0].get("composite") if paths else None),
     }
+
+
+def drive_typesafe_pick(
+    record: Mapping[str, Any],
+    analysis: Mapping[str, Any],
+    drafts: Sequence[Mapping[str, Any]],
+    *,
+    ledger: Optional[Any],
+    memory: Optional[Mapping[str, Any]],
+    setup: Sequence[Callable[[], Any]],
+    spec: Mapping[str, Any],
+    structured: Mapping[str, Any],
+    blurbs: Mapping[str, str],
+    fail_criteria: Mapping[str, str],
+    leaf_focus: str,
+    goal: str,
+    failed_stems_fn: Callable[..., Sequence[str]],
+    model_id: str,
+    beam_k: int,
+    fire_t: float,
+    fire_t_leaf: float,
+    confident: float,
+    uncertain: float,
+    epsilon: float,
+    client_timeout: float = 45.0,
+) -> dict[str, Any]:
+    """Score drafts and pick a family/leaf. Jev does not write Lean."""
+
+    from jevops.jev import (
+        choice_head,
+        expand_questions,
+        instantiate_questions,
+        invoke_system_one,
+        invoke_then_project,
+        noul_attr,
+        record_usage,
+        typesafe_session,
+        unpack_response,
+    )
+    from jevops.outer import get_str, head_seq, if_none
+
+    loaded, skip = typesafe_session(setup=tuple(setup), fallback=False)
+    if skip is not None:
+        return skip
+    choice, noul, score, client = loaded["Choice"], loaded["Noul"], loaded["Score"], loaded["TypeSafeClient"]
+    tree = draft_tree(drafts)
+    criteria = family_criteria(tree, structured=structured, blurbs=blurbs)
+    questions = instantiate_questions(
+        spec,
+        choice=choice,
+        noul=noul,
+        score=score,
+        criteria_overlay={"family": criteria},
+    )
+    questions.update(
+        expand_questions(
+            [item for item in drafts if item.get("kind")],
+            ctor=noul,
+            name_fn=lambda item: f"fail_{item.get('kind')}",
+            instructions_fn=lambda item: {
+                "question": f"Will draft `{item.get('kind')}` fail lake compile?",
+                "inspect": f"`drafts` entry `{item.get('kind')}`",
+                "focus": "true = P(wrong) for this field (SDE per-field battery).",
+            },
+            criteria=fail_criteria,
+            limit=6,
+        )
+    )
+    questions.update(leaf_choice_questions(tree, ctor=choice, focus=leaf_focus))
+    state = pick_state(record, analysis, drafts=drafts, memory=memory, extra={"goal": goal})
+
+    def _project(_result: Any, wall_ms: float, choices: Any, nouls: Any, scores: Any, usage: Any) -> dict[str, Any]:
+        _fam_ans, fam_probs, family_conf, fam_choice = choice_head(choices, "family")
+        leaf_qs = leaf_qs_from_choices(tree, choices, family_conf=family_conf)
+        cut = scores.get("likely_token_cut")
+        return rank_from_answers(
+            tree=tree,
+            fam_probs=fam_probs,
+            family_conf=family_conf,
+            leaf_qs=leaf_qs,
+            drafts=drafts,
+            noul_fail=noul_attr(nouls, "will_fail_compile"),
+            noul_pca=noul_attr(nouls, "breaks_pca"),
+            per_leaf_fail=noul_map(nouls, [item.get("kind") for item in head_seq(drafts, 6)], prefix="fail_"),
+            failed_stems=failed_stems_fn(if_none(memory, default={}), get_str(record, "name")),
+            cut_score=getattr(cut, "score", None),
+            usage=usage,
+            wall_ms=wall_ms,
+            greedy_fam_fallback=fam_choice,
+            beam_k=beam_k,
+            fire_t=fire_t,
+            fire_t_leaf=fire_t_leaf,
+            confident=confident,
+            uncertain=uncertain,
+            epsilon=epsilon,
+        )
+
+    return invoke_then_project(
+        invoke_fn=lambda: invoke_system_one(client(timeout=client_timeout), state, questions),
+        record_fn=lambda usage, model: record_usage(ledger, usage, model=model),
+        unpack_fn=unpack_response,
+        model=model_id,
+        project_fn=_project,
+    )
 
 
 def rank_from_answers(
@@ -1196,6 +1424,51 @@ def compose_steps(
             text = nxt
             applied.append(str(stem))
     return text, applied
+
+
+def drive_rank_live(
+    records: Sequence[Mapping[str, Any]],
+    *,
+    out: Any,
+    from_best: bool,
+    memory: Optional[Mapping[str, Any]],
+    warmup: Optional[Mapping[str, int]],
+    keep: Optional[Mapping[str, int]],
+    warmup_fn: Callable[[], Mapping[str, int]],
+    keep_fn: Callable[[Any], Mapping[str, int]],
+    start_fn: Callable[..., str],
+    prior_fn: Callable[..., Mapping[str, Any]],
+    drafts_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    blocked_fn: Callable[..., bool],
+    residual_map: Mapping[str, str],
+    fire_t: float,
+    score_fn: Callable[..., Any],
+) -> list[Mapping[str, Any]]:
+    """Leftover un-blacklisted drafts, then remaining_cut. Does not compile."""
+
+    from jevops.outer import first_truthy, get_str, ignore_error, or_load, overlay_map
+
+    mem = overlay_map(memory)
+    warm = or_load(warmup, lambda: ignore_error(warmup_fn, default={}))
+    kept = or_load(keep, lambda: ignore_error(lambda: keep_fn(out), default={}))
+
+    def _drafts(rec: Mapping[str, Any]) -> list[Mapping[str, Any]]:
+        name = get_str(rec, "name")
+        body = start_fn(rec, out=out, from_best=from_best)
+        prior = prior_fn(mem, name)
+        return filter_unsafe_drafts(
+            drafts_fn(body, memory=mem, name=name),
+            is_blocked=lambda kind: blocked_fn(mem, name, kind),
+            unsafe=overlay_map(prior.get("unsafe")),
+            residual_map=residual_map,
+            fire_t=fire_t,
+        )
+
+    def _rf(drafts: list[Mapping[str, Any]], rec: Mapping[str, Any], cut: int) -> float:
+        name = get_str(rec, "name")
+        return float(first_truthy(score_fn(drafts, memory=mem, name=name, remaining_cut=cut), default=0.0))
+
+    return rank_leftover(records, drafts_fn=_drafts, rf_fn=_rf, memory=mem, warmup=warm, keep=kept)
 
 
 def rank_leftover(

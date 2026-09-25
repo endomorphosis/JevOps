@@ -1,0 +1,288 @@
+{
+  "schema": "jevops-arena-local/v1",
+  "status": "OBSERVED",
+  "ok": true,
+  "request_sha256": "dc0b421db7b35e0bae81eb276c34f98b118575e02d057baf9b553b3b926569e6",
+  "proof_admitted": false,
+  "whole_source_checked": false,
+  "evidence_mode": "local_lean",
+  "origin": {
+    "kind": "arena-project/v1",
+    "context_id": "0b0e07dc9f2ccbaabb3efd0f34195da841d5a4ded953de944eec51a8de04944f",
+    "record_sha256": "8531dba47f5c2ccb5526c9596f06804c66f4cf6971d1533baf6c1ffb61311625",
+    "target": "Core.InitsUpdatesComm",
+    "pin": {
+      "lean_tag": "v4.29.1",
+      "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+    },
+    "adapter_sha256": "a0fac2816168cb5e8ee8559e9a52b1685d672d41daeefde685b9d24dc8190186",
+    "projection": "closing-source-spans/v1",
+    "evidence_mode": "local_lean"
+  },
+  "trace_sha256": "3cb7e9b3ec9a2a689477bd36f3e64d20039088cf49dce19fa055b52e95b09b38",
+  "events": [
+    {
+      "id": "0",
+      "status": "captured",
+      "reason": null,
+      "start": "320",
+      "end": "2042"
+    },
+    {
+      "id": "1",
+      "status": "captured",
+      "reason": null,
+      "start": "320",
+      "end": "322"
+    },
+    {
+      "id": "2",
+      "status": "captured",
+      "reason": null,
+      "start": "325",
+      "end": "2042"
+    },
+    {
+      "id": "3",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "550",
+      "end": "569"
+    },
+    {
+      "id": "4",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "574",
+      "end": "763"
+    },
+    {
+      "id": "5",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "752",
+      "end": "763"
+    },
+    {
+      "id": "6",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "766",
+      "end": "2042"
+    },
+    {
+      "id": "7",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "766",
+      "end": "822"
+    },
+    {
+      "id": "8",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "827",
+      "end": "2042"
+    },
+    {
+      "id": "9",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "858",
+      "end": "1054"
+    },
+    {
+      "id": "10",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1027",
+      "end": "1054"
+    },
+    {
+      "id": "11",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1059",
+      "end": "2042"
+    },
+    {
+      "id": "12",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1061",
+      "end": "2042"
+    },
+    {
+      "id": "13",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1135",
+      "end": "1943"
+    },
+    {
+      "id": "14",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1225",
+      "end": "1708"
+    },
+    {
+      "id": "15",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1322",
+      "end": "1348"
+    },
+    {
+      "id": "16",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1340",
+      "end": "1348"
+    },
+    {
+      "id": "17",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1359",
+      "end": "1708"
+    },
+    {
+      "id": "18",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1372",
+      "end": "1374"
+    },
+    {
+      "id": "19",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1359",
+      "end": "1374"
+    },
+    {
+      "id": "20",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1385",
+      "end": "1708"
+    },
+    {
+      "id": "21",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1509",
+      "end": "1517"
+    },
+    {
+      "id": "22",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1530",
+      "end": "1668"
+    },
+    {
+      "id": "23",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1636",
+      "end": "1668"
+    },
+    {
+      "id": "24",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1679",
+      "end": "1708"
+    },
+    {
+      "id": "25",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1681",
+      "end": "1708"
+    },
+    {
+      "id": "26",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1717",
+      "end": "1943"
+    },
+    {
+      "id": "27",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1719",
+      "end": "1943"
+    },
+    {
+      "id": "28",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1719",
+      "end": "1751"
+    },
+    {
+      "id": "29",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1743",
+      "end": "1751"
+    },
+    {
+      "id": "30",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1935",
+      "end": "1943"
+    },
+    {
+      "id": "31",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1950",
+      "end": "2042"
+    },
+    {
+      "id": "32",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1952",
+      "end": "2042"
+    },
+    {
+      "id": "33",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "1989",
+      "end": "2023"
+    },
+    {
+      "id": "34",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "2015",
+      "end": "2023"
+    },
+    {
+      "id": "35",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "2032",
+      "end": "2042"
+    },
+    {
+      "id": "36",
+      "status": "unsupported",
+      "reason": "unbound variable in local context",
+      "start": "2034",
+      "end": "2042"
+    }
+  ],
+  "lean_version": "4.29.1",
+  "raw_path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-premise-pilot-20260924-vbLY69/run/capture.json",
+  "raw_sha256": "189deac17b6813ff3a26e772005e562095e87de3d176591d2c4a48fcbfcf364a",
+  "summary_only": true
+}

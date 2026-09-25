@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="15.386" timestamp="2026-09-25T07:49:49.966691+00:00" hostname="spark-b271"><testcase classname="tests.test_arena_profile" name="test_native_profile_is_instrumented_not_a_verification_receipt" time="12.713"><failure message="AssertionError: {'schema': 'jevops-arena-local/v1', 'status': 'ERROR', 'mode': 'profile', 'ok': False, ...}&#10;assert False">tmp_path = PosixPath('/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/pytest-of-barberb/pytest-9/test_native_profile_is_instrum0')
+
+    @pytest.mark.no_seal(reason='explicit opt-in installed Lean profiler control')
+    def test_native_profile_is_instrumented_not_a_verification_receipt(tmp_path):
+        if os.environ.get('JEVOPS_ARENA_NATIVE_TESTS') != '1':
+            pytest.skip('explicit opt-in; already installed toolchain only')
+        lean = native.pinned_lean(Path(os.environ.get('ELAN_HOME', str(Path.home()/'.elan'))), PIN.lean_tag)
+        statement = 'theorem profiled (a b : Prop) (h : a ∧ b) : b ∧ a'
+        record = dict(name='Suite.profiled', statement=statement, src=statement+' := by\n  constructor &lt;;&gt; simp_all',
+                      version_info=[{PIN.lean_tag: PIN.git_commit}])
+        binding = native.ProjectBinding(PIN, lean, tmp_path, PREFIX, project_backed=False)
+        guard = native.NativeLeanVerifier({PIN: binding}, max_processes=0, timeout=90)
+        rt = local.ArenaLocalRuntime(guard, record, max_processes=1)
+        result = rt.profile(PIN, threshold_raw=0)
+&gt;       assert result['ok'], result
+E       AssertionError: {'schema': 'jevops-arena-local/v1', 'status': 'ERROR', 'mode': 'profile', 'ok': False, ...}
+E       assert False
+
+tests/test_arena_profile.py:135: AssertionError</failure></testcase></testsuite></testsuites>

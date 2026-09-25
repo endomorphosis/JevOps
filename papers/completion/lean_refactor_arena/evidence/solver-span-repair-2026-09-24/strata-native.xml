@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="78.400" timestamp="2026-09-24T21:58:36.114646+00:00" hostname="spark-b271"><testcase classname="tests.test_arena_solver_native" name="test_native_archived_strata_multiline_repair" time="78.355" /></testsuite></testsuites>

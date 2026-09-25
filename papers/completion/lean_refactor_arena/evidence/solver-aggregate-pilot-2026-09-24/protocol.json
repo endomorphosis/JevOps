@@ -1,0 +1,220 @@
+{
+  "schema": "jevops-arena-pareto-selection/v1",
+  "policy": "matched-primary-pin-normalized-sum-with-range-margin/v1",
+  "selection_objective": "aggregate-local-v1",
+  "heartbeat_noise_floor_raw": 100,
+  "tokenizer_id": "lra-reference-lexical/v1",
+  "measurement": "command-elaboration-internal-heartbeats-div-1000/v1",
+  "implementation": {
+    "arena_pareto.py": "bc1e35df92f820366430909e42a45e996b8e0befd10c9ad7bd80fa9a6b737f66",
+    "arena_trial.py": "a9ff52d5485fc185fbd8703335af70cee57d3ce50185ed1fd7ffc742fc4fd810"
+  },
+  "screen": {
+    "schema": "jevops-arena-controlled-trial/v1",
+    "record": {
+      "name": "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema",
+      "source": "physlib",
+      "statement": "lemma time_deriv_time_deriv_electricField_of_isExtrema {A : ElectromagneticPotential d}\n    {\ud835\udcd5 : FreeSpace}\n    (hA : ContDiff \u211d \u221e A) (J : LorentzCurrentDensity d)\n    (hJ : ContDiff \u211d \u221e J) (h : IsExtrema \ud835\udcd5 A J)\n    (t : Time) (x : Space d) (i : Fin d) :\n    \u2202\u209c (\u2202\u209c (A.electricField \ud835\udcd5.c \u00b7 x i)) t =\n      \ud835\udcd5.c ^ 2 * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n      \ud835\udcd5.c ^ 2 / \ud835\udcd5.\u03b5\u2080 * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n      \ud835\udcd5.c ^ 2 * \ud835\udcd5.\u03bc\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t",
+      "src": "lemma time_deriv_time_deriv_electricField_of_isExtrema {A : ElectromagneticPotential d}\n    {\ud835\udcd5 : FreeSpace}\n    (hA : ContDiff \u211d \u221e A) (J : LorentzCurrentDensity d)\n    (hJ : ContDiff \u211d \u221e J) (h : IsExtrema \ud835\udcd5 A J)\n    (t : Time) (x : Space d) (i : Fin d) :\n    \u2202\u209c (\u2202\u209c (A.electricField \ud835\udcd5.c \u00b7 x i)) t =\n      \ud835\udcd5.c ^ 2 * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n      \ud835\udcd5.c ^ 2 / \ud835\udcd5.\u03b5\u2080 * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n      \ud835\udcd5.c ^ 2 * \ud835\udcd5.\u03bc\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n  have hEs : \u2200 j, ContDiff \u211d 2 (fun y => A.electricField \ud835\udcd5.c t y j) :=\n    fun j => electricField_apply_contDiff_space (i := j) (hA.of_le (right_eq_inf.mp rfl)) t\n  have hEd : \u2200 j k, Differentiable \u211d (\u2202[k] (fun y => A.electricField \ud835\udcd5.c t y j)) :=\n    fun j k => Space.deriv_differentiable (hEs j) k\n  have hBt : \u2200 j, Differentiable \u211d\n      (fun s => \u2202[j] (fun y => A.magneticFieldMatrix \ud835\udcd5.c s y (j, i)) x) :=\n    fun j => Space.space_deriv_differentiable_time (i := j)\n      (magneticFieldMatrix_contDiff _ (hA.of_le (right_eq_inf.mp rfl)) (j, i)) x\n  have hJt : Differentiable \u211d (fun s => J.currentDensity \ud835\udcd5.c s x i) :=\n    LorentzCurrentDensity.currentDensity_apply_differentiable_time (hJ.differentiable (by simp)) x i\n  calc _\n    _= \u2202\u209c (fun t =>\n      1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, Space.deriv j (fun x => magneticFieldMatrix \ud835\udcd5.c A t x (j, i)) x -\n      1 / \ud835\udcd5.\u03b5\u2080 * LorentzCurrentDensity.currentDensity \ud835\udcd5.c J t x i) t := by\n        conv_lhs =>\n          enter [1]\n          change fun t => \u2202\u209c (A.electricField \ud835\udcd5.c \u00b7 x i) t\n          enter [t]\n          rw [Time.deriv_euclid (electricField_differentiable_time\n            (hA.of_le (right_eq_inf.mp rfl)) _),\n            time_deriv_electricField_of_isExtrema hA J hJ h]\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2202\u209c (fun t => \u2211 j, \u2202[j] (A.magneticFieldMatrix \ud835\udcd5.c t \u00b7 (j, i)) x) t -\n      1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n      rw [Time.deriv_eq]\n      rw [fderiv_fun_sub]\n      simp only [one_div, mul_inv_rev, FunLike.coe_sub, Pi.sub_apply]\n      rw [fderiv_const_mul (Differentiable.fun_sum fun j _ => hBt j).differentiableAt]\n      rw [fderiv_const_mul hJt.differentiableAt]\n      simp [Time.deriv_eq]\n      \u00b7 exact ((Differentiable.fun_sum fun j _ => hBt j).const_mul _).differentiableAt\n      \u00b7 exact hJt.differentiableAt.const_mul _\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * ((\u2211 j, \u2202\u209c (fun t => \u2202[j] (A.magneticFieldMatrix \ud835\udcd5.c t \u00b7 (j, i)) x)) t) -\n      1 / \ud835\udcd5.\u03b5\u2080 * (\u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t) := by\n      congr\n      rw [Time.deriv_eq]\n      rw [fderiv_fun_sum fun i _ => (hBt i).differentiableAt]\n      simp only [FunLike.coe_sum, Finset.sum_apply]\n      rfl\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * (\u2211 j, \u2202[j] (fun x => \u2202\u209c (A.magneticFieldMatrix \ud835\udcd5.c \u00b7 x (j, i)) t)) x -\n        1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n      congr\n      simp only [Finset.sum_apply]\n      congr\n      funext k\n      rw [Space.time_deriv_comm_space_deriv]\n      apply magneticFieldMatrix_contDiff\n      apply hA.of_le (right_eq_inf.mp rfl)\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) *(\u2211 j, \u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x -\n        \u2202[i] (A.electricField \ud835\udcd5.c t \u00b7 j) x)) x -\n        1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        simp only [Finset.sum_apply]\n        congr\n        funext k\n        congr\n        funext x\n        rw [time_deriv_magneticFieldMatrix _ (hA.of_le (ENat.LEInfty.out))]\n    _ = (1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x -\n          \u2202[j] (fun x => \u2202[i] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x)) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        simp only [Finset.sum_apply]\n        congr\n        funext j\n        rw [Space.deriv_eq_fderiv_basis]\n        rw [fderiv_fun_sub (hEd _ _).differentiableAt (hEd _ _).differentiableAt]\n        simp [\u2190 Space.deriv_eq_fderiv_basis]\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[i] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by simp [mul_sub]\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n        1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[i] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x) -\n        1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        funext j\n        rw [Space.deriv_commute _ (hEs _), Space.deriv_eq_fderiv_basis]\n      _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * (\u2202[i] (fun x => \u2211 j, \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        rw [Space.deriv_eq_fderiv_basis]\n        rw [fderiv_fun_sum]\n        simp [\u2190 Space.deriv_eq_fderiv_basis]\n        intro j _\n        exact (hEd j j).differentiableAt\n      _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * (\u2202[i] (fun x => (\u2207 \u2b1d (A.electricField \ud835\udcd5.c t)) x) x) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        rfl\n      _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080 ^ 2) * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr 2\n        rw [isExtrema_iff_gauss_ampere_magneticFieldMatrix] at h\n\n        conv_lhs =>\n          enter [2, 2, x]\n          rw [(h t x).1]\n        trans 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * Space.deriv i\n            (fun x => (1/ \ud835\udcd5.\u03b5\u2080) * LorentzCurrentDensity.chargeDensity \ud835\udcd5.c J t x) x\n        \u00b7 congr\n          funext x\n          ring\n        \u00b7 rw [Space.deriv_eq_fderiv_basis]\n          rw [fderiv_const_mul]\n          simp [\u2190 Space.deriv_eq_fderiv_basis]\n          field_simp\n          apply Differentiable.differentiableAt\n          apply LorentzCurrentDensity.chargeDensity_differentiable_space\n          exact hJ.differentiable (by simp)\n        \u00b7 exact hA\n        \u00b7 exact hJ\n      _ = \ud835\udcd5.c ^ 2 * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n            \ud835\udcd5.c ^ 2 / \ud835\udcd5.\u03b5\u2080 * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n            \ud835\udcd5.c ^ 2 * \ud835\udcd5.\u03bc\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n          simp [FreeSpace.c_sq]\n          field_simp",
+      "proof_length": 1372,
+      "num_lines": 126,
+      "header": "",
+      "file_path": "Physlib/Electromagnetism/Dynamics/IsExtrema.lean",
+      "url": "https://github.com/leanprover-community/physlib",
+      "start_line": 376,
+      "end_line": 501,
+      "version_info": [
+        {
+          "v4.32.0": "c48433678e8fb6306ebcd48453300c8e16058a62"
+        }
+      ]
+    },
+    "arms": [
+      {
+        "label": "control",
+        "source": "lemma time_deriv_time_deriv_electricField_of_isExtrema {A : ElectromagneticPotential d}\n    {\ud835\udcd5 : FreeSpace}\n    (hA : ContDiff \u211d \u221e A) (J : LorentzCurrentDensity d)\n    (hJ : ContDiff \u211d \u221e J) (h : IsExtrema \ud835\udcd5 A J)\n    (t : Time) (x : Space d) (i : Fin d) :\n    \u2202\u209c (\u2202\u209c (A.electricField \ud835\udcd5.c \u00b7 x i)) t =\n      \ud835\udcd5.c ^ 2 * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n      \ud835\udcd5.c ^ 2 / \ud835\udcd5.\u03b5\u2080 * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n      \ud835\udcd5.c ^ 2 * \ud835\udcd5.\u03bc\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n  have hEs : \u2200 j, ContDiff \u211d 2 (fun y => A.electricField \ud835\udcd5.c t y j) :=\n    fun j => electricField_apply_contDiff_space (i := j) (hA.of_le (right_eq_inf.mp rfl)) t\n  have hEd : \u2200 j k, Differentiable \u211d (\u2202[k] (fun y => A.electricField \ud835\udcd5.c t y j)) :=\n    fun j k => Space.deriv_differentiable (hEs j) k\n  have hBt : \u2200 j, Differentiable \u211d\n      (fun s => \u2202[j] (fun y => A.magneticFieldMatrix \ud835\udcd5.c s y (j, i)) x) :=\n    fun j => Space.space_deriv_differentiable_time (i := j)\n      (magneticFieldMatrix_contDiff _ (hA.of_le (right_eq_inf.mp rfl)) (j, i)) x\n  have hJt : Differentiable \u211d (fun s => J.currentDensity \ud835\udcd5.c s x i) :=\n    LorentzCurrentDensity.currentDensity_apply_differentiable_time (hJ.differentiable (by simp)) x i\n  calc _\n    _= \u2202\u209c (fun t =>\n      1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, Space.deriv j (fun x => magneticFieldMatrix \ud835\udcd5.c A t x (j, i)) x -\n      1 / \ud835\udcd5.\u03b5\u2080 * LorentzCurrentDensity.currentDensity \ud835\udcd5.c J t x i) t := by\n        conv_lhs =>\n          enter [1]\n          change fun t => \u2202\u209c (A.electricField \ud835\udcd5.c \u00b7 x i) t\n          enter [t]\n          rw [Time.deriv_euclid (electricField_differentiable_time\n            (hA.of_le (right_eq_inf.mp rfl)) _),\n            time_deriv_electricField_of_isExtrema hA J hJ h]\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2202\u209c (fun t => \u2211 j, \u2202[j] (A.magneticFieldMatrix \ud835\udcd5.c t \u00b7 (j, i)) x) t -\n      1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n      rw [Time.deriv_eq]\n      rw [fderiv_fun_sub]\n      simp only [one_div, mul_inv_rev, FunLike.coe_sub, Pi.sub_apply]\n      rw [fderiv_const_mul (Differentiable.fun_sum fun j _ => hBt j).differentiableAt]\n      rw [fderiv_const_mul hJt.differentiableAt]\n      simp [Time.deriv_eq]\n      \u00b7 exact ((Differentiable.fun_sum fun j _ => hBt j).const_mul _).differentiableAt\n      \u00b7 exact hJt.differentiableAt.const_mul _\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * ((\u2211 j, \u2202\u209c (fun t => \u2202[j] (A.magneticFieldMatrix \ud835\udcd5.c t \u00b7 (j, i)) x)) t) -\n      1 / \ud835\udcd5.\u03b5\u2080 * (\u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t) := by\n      congr\n      rw [Time.deriv_eq]\n      rw [fderiv_fun_sum fun i _ => (hBt i).differentiableAt]\n      simp only [FunLike.coe_sum, Finset.sum_apply]\n      rfl\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * (\u2211 j, \u2202[j] (fun x => \u2202\u209c (A.magneticFieldMatrix \ud835\udcd5.c \u00b7 x (j, i)) t)) x -\n        1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n      congr\n      simp only [Finset.sum_apply]\n      congr\n      funext k\n      rw [Space.time_deriv_comm_space_deriv]\n      apply magneticFieldMatrix_contDiff\n      apply hA.of_le (right_eq_inf.mp rfl)\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) *(\u2211 j, \u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x -\n        \u2202[i] (A.electricField \ud835\udcd5.c t \u00b7 j) x)) x -\n        1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        simp only [Finset.sum_apply]\n        congr\n        funext k\n        congr\n        funext x\n        rw [time_deriv_magneticFieldMatrix _ (hA.of_le (ENat.LEInfty.out))]\n    _ = (1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x -\n          \u2202[j] (fun x => \u2202[i] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x)) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        simp only [Finset.sum_apply]\n        congr\n        funext j\n        rw [Space.deriv_eq_fderiv_basis]\n        rw [fderiv_fun_sub (hEd _ _).differentiableAt (hEd _ _).differentiableAt]\n        simp [\u2190 Space.deriv_eq_fderiv_basis]\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[i] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by simp [mul_sub]\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n        1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[i] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x) -\n        1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        funext j\n        rw [Space.deriv_commute _ (hEs _), Space.deriv_eq_fderiv_basis]\n      _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * (\u2202[i] (fun x => \u2211 j, \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        rw [Space.deriv_eq_fderiv_basis]\n        rw [fderiv_fun_sum]\n        simp [\u2190 Space.deriv_eq_fderiv_basis]\n        intro j _\n        exact (hEd j j).differentiableAt\n      _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * (\u2202[i] (fun x => (\u2207 \u2b1d (A.electricField \ud835\udcd5.c t)) x) x) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        rfl\n      _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080 ^ 2) * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr 2\n        rw [isExtrema_iff_gauss_ampere_magneticFieldMatrix] at h\n\n        conv_lhs =>\n          enter [2, 2, x]\n          rw [(h t x).1]\n        trans 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * Space.deriv i\n            (fun x => (1/ \ud835\udcd5.\u03b5\u2080) * LorentzCurrentDensity.chargeDensity \ud835\udcd5.c J t x) x\n        \u00b7 congr\n          funext x\n          ring\n        \u00b7 rw [Space.deriv_eq_fderiv_basis]\n          rw [fderiv_const_mul]\n          simp [\u2190 Space.deriv_eq_fderiv_basis]\n          field_simp\n          apply Differentiable.differentiableAt\n          apply LorentzCurrentDensity.chargeDensity_differentiable_space\n          exact hJ.differentiable (by simp)\n        \u00b7 exact hA\n        \u00b7 exact hJ\n      _ = \ud835\udcd5.c ^ 2 * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n            \ud835\udcd5.c ^ 2 / \ud835\udcd5.\u03b5\u2080 * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n            \ud835\udcd5.c ^ 2 * \ud835\udcd5.\u03bc\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n          simp [FreeSpace.c_sq]\n          field_simp",
+        "provenance": "unchanged-reference"
+      },
+      {
+        "label": "solver-0",
+        "source": "lemma time_deriv_time_deriv_electricField_of_isExtrema {A : ElectromagneticPotential d}\n    {\ud835\udcd5 : FreeSpace}\n    (hA : ContDiff \u211d \u221e A) (J : LorentzCurrentDensity d)\n    (hJ : ContDiff \u211d \u221e J) (h : IsExtrema \ud835\udcd5 A J)\n    (t : Time) (x : Space d) (i : Fin d) :\n    \u2202\u209c (\u2202\u209c (A.electricField \ud835\udcd5.c \u00b7 x i)) t =\n      \ud835\udcd5.c ^ 2 * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n      \ud835\udcd5.c ^ 2 / \ud835\udcd5.\u03b5\u2080 * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n      \ud835\udcd5.c ^ 2 * \ud835\udcd5.\u03bc\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n  have hEs : \u2200 j, ContDiff \u211d 2 (fun y => A.electricField \ud835\udcd5.c t y j) :=\n    fun j => electricField_apply_contDiff_space (i := j) (hA.of_le (right_eq_inf.mp rfl)) t\n  have hEd : \u2200 j k, Differentiable \u211d (\u2202[k] (fun y => A.electricField \ud835\udcd5.c t y j)) :=\n    fun j k => Space.deriv_differentiable (hEs j) k\n  have hBt : \u2200 j, Differentiable \u211d\n      (fun s => \u2202[j] (fun y => A.magneticFieldMatrix \ud835\udcd5.c s y (j, i)) x) :=\n    fun j => Space.space_deriv_differentiable_time (i := j)\n      (magneticFieldMatrix_contDiff _ (hA.of_le (right_eq_inf.mp rfl)) (j, i)) x\n  have hJt : Differentiable \u211d (fun s => J.currentDensity \ud835\udcd5.c s x i) :=\n    LorentzCurrentDensity.currentDensity_apply_differentiable_time (hJ.differentiable (by simp)) x i\n  calc _\n    _= \u2202\u209c (fun t =>\n      1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, Space.deriv j (fun x => magneticFieldMatrix \ud835\udcd5.c A t x (j, i)) x -\n      1 / \ud835\udcd5.\u03b5\u2080 * LorentzCurrentDensity.currentDensity \ud835\udcd5.c J t x i) t := by\n        conv_lhs =>\n          enter [1]\n          change fun t => \u2202\u209c (A.electricField \ud835\udcd5.c \u00b7 x i) t\n          enter [t]\n          rw [Time.deriv_euclid (electricField_differentiable_time\n            (hA.of_le (right_eq_inf.mp rfl)) _),\n            time_deriv_electricField_of_isExtrema hA J hJ h]\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2202\u209c (fun t => \u2211 j, \u2202[j] (A.magneticFieldMatrix \ud835\udcd5.c t \u00b7 (j, i)) x) t -\n      1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n      rw [Time.deriv_eq]\n      rw [fderiv_fun_sub]\n      simp only []\n      rw [fderiv_const_mul (Differentiable.fun_sum fun j _ => hBt j).differentiableAt]\n      rw [fderiv_const_mul hJt.differentiableAt]\n      simp [Time.deriv_eq]\n      \u00b7 exact ((Differentiable.fun_sum fun j _ => hBt j).const_mul _).differentiableAt\n      \u00b7 exact hJt.differentiableAt.const_mul _\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * ((\u2211 j, \u2202\u209c (fun t => \u2202[j] (A.magneticFieldMatrix \ud835\udcd5.c t \u00b7 (j, i)) x)) t) -\n      1 / \ud835\udcd5.\u03b5\u2080 * (\u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t) := by\n      congr\n      rw [Time.deriv_eq]\n      rw [fderiv_fun_sum fun i _ => (hBt i).differentiableAt]\n      simp only [FunLike.coe_sum, Finset.sum_apply]\n      rfl\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * (\u2211 j, \u2202[j] (fun x => \u2202\u209c (A.magneticFieldMatrix \ud835\udcd5.c \u00b7 x (j, i)) t)) x -\n        1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n      congr\n      simp only [Finset.sum_apply]\n      congr\n      funext k\n      rw [Space.time_deriv_comm_space_deriv]\n      apply magneticFieldMatrix_contDiff\n      apply hA.of_le (right_eq_inf.mp rfl)\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) *(\u2211 j, \u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x -\n        \u2202[i] (A.electricField \ud835\udcd5.c t \u00b7 j) x)) x -\n        1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        simp only [Finset.sum_apply]\n        congr\n        funext k\n        congr\n        funext x\n        rw [time_deriv_magneticFieldMatrix _ (hA.of_le (ENat.LEInfty.out))]\n    _ = (1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x -\n          \u2202[j] (fun x => \u2202[i] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x)) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        simp only [Finset.sum_apply]\n        congr\n        funext j\n        rw [Space.deriv_eq_fderiv_basis]\n        rw [fderiv_fun_sub (hEd _ _).differentiableAt (hEd _ _).differentiableAt]\n        simp [\u2190 Space.deriv_eq_fderiv_basis]\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[i] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by simp [mul_sub]\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n        1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[i] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x) -\n        1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        funext j\n        rw [Space.deriv_commute _ (hEs _), Space.deriv_eq_fderiv_basis]\n      _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * (\u2202[i] (fun x => \u2211 j, \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        rw [Space.deriv_eq_fderiv_basis]\n        rw [fderiv_fun_sum]\n        simp [\u2190 Space.deriv_eq_fderiv_basis]\n        intro j _\n        exact (hEd j j).differentiableAt\n      _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * (\u2202[i] (fun x => (\u2207 \u2b1d (A.electricField \ud835\udcd5.c t)) x) x) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        rfl\n      _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080 ^ 2) * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr 2\n        rw [isExtrema_iff_gauss_ampere_magneticFieldMatrix] at h\n\n        conv_lhs =>\n          enter [2, 2, x]\n          rw [(h t x).1]\n        trans 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * Space.deriv i\n            (fun x => (1/ \ud835\udcd5.\u03b5\u2080) * LorentzCurrentDensity.chargeDensity \ud835\udcd5.c J t x) x\n        \u00b7 congr\n          funext x\n          ring\n        \u00b7 rw [Space.deriv_eq_fderiv_basis]\n          rw [fderiv_const_mul]\n          simp [\u2190 Space.deriv_eq_fderiv_basis]\n          field_simp\n          apply Differentiable.differentiableAt\n          apply LorentzCurrentDensity.chargeDensity_differentiable_space\n          exact hJ.differentiable (by simp)\n        \u00b7 exact hA\n        \u00b7 exact hJ\n      _ = \ud835\udcd5.c ^ 2 * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n            \ud835\udcd5.c ^ 2 / \ud835\udcd5.\u03b5\u2080 * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n            \ud835\udcd5.c ^ 2 * \ud835\udcd5.\u03bc\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n          simp [FreeSpace.c_sq]\n          field_simp",
+        "provenance": "frontier-v1; single-pin discovery 7ba76e3bc011f5d5c9fd31a906469734168f60e0d7f768c5a40954d07759373a; fresh all-pin selection required"
+      },
+      {
+        "label": "longer-intermediate",
+        "source": "lemma time_deriv_time_deriv_electricField_of_isExtrema {A : ElectromagneticPotential d}\n    {\ud835\udcd5 : FreeSpace}\n    (hA : ContDiff \u211d \u221e A) (J : LorentzCurrentDensity d)\n    (hJ : ContDiff \u211d \u221e J) (h : IsExtrema \ud835\udcd5 A J)\n    (t : Time) (x : Space d) (i : Fin d) :\n    \u2202\u209c (\u2202\u209c (A.electricField \ud835\udcd5.c \u00b7 x i)) t =\n      \ud835\udcd5.c ^ 2 * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n      \ud835\udcd5.c ^ 2 / \ud835\udcd5.\u03b5\u2080 * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n      \ud835\udcd5.c ^ 2 * \ud835\udcd5.\u03bc\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n  have hEs : \u2200 j, ContDiff \u211d 2 (fun y => A.electricField \ud835\udcd5.c t y j) :=\n    fun j => electricField_apply_contDiff_space (i := j) (hA.of_le (right_eq_inf.mp rfl)) t\n  have hEd : \u2200 j k, Differentiable \u211d (\u2202[k] (fun y => A.electricField \ud835\udcd5.c t y j)) :=\n    fun j k => Space.deriv_differentiable (hEs j) k\n  have hBt : \u2200 j, Differentiable \u211d\n      (fun s => \u2202[j] (fun y => A.magneticFieldMatrix \ud835\udcd5.c s y (j, i)) x) :=\n    fun j => Space.space_deriv_differentiable_time (i := j)\n      (magneticFieldMatrix_contDiff _ (hA.of_le (right_eq_inf.mp rfl)) (j, i)) x\n  have hJt : Differentiable \u211d (fun s => J.currentDensity \ud835\udcd5.c s x i) :=\n    LorentzCurrentDensity.currentDensity_apply_differentiable_time (hJ.differentiable (by simp)) x i\n  calc _\n    _= \u2202\u209c (fun t =>\n      1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, Space.deriv j (fun x => magneticFieldMatrix \ud835\udcd5.c A t x (j, i)) x -\n      1 / \ud835\udcd5.\u03b5\u2080 * LorentzCurrentDensity.currentDensity \ud835\udcd5.c J t x i) t := by\n        conv_lhs =>\n          enter [1]\n          change fun t => \u2202\u209c (A.electricField \ud835\udcd5.c \u00b7 x i) t\n          enter [t]\n          rw [Time.deriv_euclid (electricField_differentiable_time\n            (hA.of_le (right_eq_inf.mp rfl)) _),\n            time_deriv_electricField_of_isExtrema hA J hJ h]\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2202\u209c (fun t => \u2211 j, \u2202[j] (A.magneticFieldMatrix \ud835\udcd5.c t \u00b7 (j, i)) x) t -\n      1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n      rw [Time.deriv_eq]\n      rw [fderiv_fun_sub]\n      simp only [one_div, mul_inv_rev, FunLike.coe_sub, Pi.sub_apply]\n      rw [fderiv_const_mul (Differentiable.fun_sum fun j _ => hBt j).differentiableAt]\n      rw [fderiv_const_mul hJt.differentiableAt]\n      simp only [_root_.smul_apply, smul_eq_mul, Time.deriv_eq]\n      \u00b7 exact ((Differentiable.fun_sum fun j _ => hBt j).const_mul _).differentiableAt\n      \u00b7 exact hJt.differentiableAt.const_mul _\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * ((\u2211 j, \u2202\u209c (fun t => \u2202[j] (A.magneticFieldMatrix \ud835\udcd5.c t \u00b7 (j, i)) x)) t) -\n      1 / \ud835\udcd5.\u03b5\u2080 * (\u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t) := by\n      congr\n      rw [Time.deriv_eq]\n      rw [fderiv_fun_sum fun i _ => (hBt i).differentiableAt]\n      simp only [FunLike.coe_sum, Finset.sum_apply]\n      rfl\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * (\u2211 j, \u2202[j] (fun x => \u2202\u209c (A.magneticFieldMatrix \ud835\udcd5.c \u00b7 x (j, i)) t)) x -\n        1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n      congr\n      simp only [Finset.sum_apply]\n      congr\n      funext k\n      rw [Space.time_deriv_comm_space_deriv]\n      apply magneticFieldMatrix_contDiff\n      apply hA.of_le (right_eq_inf.mp rfl)\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) *(\u2211 j, \u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x -\n        \u2202[i] (A.electricField \ud835\udcd5.c t \u00b7 j) x)) x -\n        1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        simp only [Finset.sum_apply]\n        congr\n        funext k\n        congr\n        funext x\n        rw [time_deriv_magneticFieldMatrix _ (hA.of_le (ENat.LEInfty.out))]\n    _ = (1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x -\n          \u2202[j] (fun x => \u2202[i] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x)) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        simp only [Finset.sum_apply]\n        congr\n        funext j\n        rw [Space.deriv_eq_fderiv_basis]\n        rw [fderiv_fun_sub (hEd _ _).differentiableAt (hEd _ _).differentiableAt]\n        simp [\u2190 Space.deriv_eq_fderiv_basis]\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[i] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by simp [mul_sub]\n    _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n        1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[i] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x) -\n        1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        funext j\n        rw [Space.deriv_commute _ (hEs _), Space.deriv_eq_fderiv_basis]\n      _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * (\u2202[i] (fun x => \u2211 j, \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 j) x) x) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr\n        rw [Space.deriv_eq_fderiv_basis]\n        rw [fderiv_fun_sum]\n        simp [\u2190 Space.deriv_eq_fderiv_basis]\n        intro j _\n        exact (hEd j j).differentiableAt\n      _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (fun x => \u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i) x) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * (\u2202[i] (fun x => (\u2207 \u2b1d (A.electricField \ud835\udcd5.c t)) x) x) -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        rfl\n      _ = 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n          1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080 ^ 2) * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n          1 / \ud835\udcd5.\u03b5\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n        congr 2\n        rw [isExtrema_iff_gauss_ampere_magneticFieldMatrix] at h\n\n        conv_lhs =>\n          enter [2, 2, x]\n          rw [(h t x).1]\n        trans 1 / (\ud835\udcd5.\u03bc\u2080 * \ud835\udcd5.\u03b5\u2080) * Space.deriv i\n            (fun x => (1/ \ud835\udcd5.\u03b5\u2080) * LorentzCurrentDensity.chargeDensity \ud835\udcd5.c J t x) x\n        \u00b7 congr\n          funext x\n          ring\n        \u00b7 rw [Space.deriv_eq_fderiv_basis]\n          rw [fderiv_const_mul]\n          simp [\u2190 Space.deriv_eq_fderiv_basis]\n          field_simp\n          apply Differentiable.differentiableAt\n          apply LorentzCurrentDensity.chargeDensity_differentiable_space\n          exact hJ.differentiable (by simp)\n        \u00b7 exact hA\n        \u00b7 exact hJ\n      _ = \ud835\udcd5.c ^ 2 * \u2211 j, (\u2202[j] (\u2202[j] (A.electricField \ud835\udcd5.c t \u00b7 i)) x) -\n            \ud835\udcd5.c ^ 2 / \ud835\udcd5.\u03b5\u2080 * \u2202[i] (J.chargeDensity \ud835\udcd5.c t \u00b7) x -\n            \ud835\udcd5.c ^ 2 * \ud835\udcd5.\u03bc\u2080 * \u2202\u209c (J.currentDensity \ud835\udcd5.c \u00b7 x i) t := by\n          simp [FreeSpace.c_sq]\n          field_simp",
+        "provenance": "Unpromoted balanced-frontier-v1 single-pin discovery node 2, plan 2ff0ec57df1ff92ef1c93b51bc9bfc62018ab755e7af8bd59ede0ef2448f473e; longer than reference, not screened or cost-confirmed; fresh verification required."
+      }
+    ],
+    "repetitions": 2,
+    "seed": 17,
+    "orders": [
+      "reference-first",
+      "candidate-first"
+    ],
+    "plan_id": "73d93a1b2c938a5f139b0b8b35b8d81649b081b3e43e683482784f8594b7c673",
+    "planned_requests": 12,
+    "schedule": [
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "9839fbd7f2dedf9c22190403722dc98210c990a14188a042ddf41ab5e050496c",
+        "sample_id": "a9e5986713d454309d833446dfee45498d2082f76095bdef5a784ad637cbad05"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+        },
+        "branch_order": "reference-first",
+        "label": "longer-intermediate",
+        "source_sha256": "6c63e10bf7734d16f8eaf2aad0bcf6b531ee27ea28c14a706e05ea439016fb37",
+        "sample_id": "96ab43f902b118a27c51188ba1e9e459e6753b3542925ff87859ebf9ff109922"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+        },
+        "branch_order": "reference-first",
+        "label": "solver-0",
+        "source_sha256": "2f89279db2c503d15d2513478675ec4b4276ca70be3cd2274ee148dae3bf78e7",
+        "sample_id": "527272826067f5ad056ed61b45b07900f70a74347a4ab99105a1bd29ac64839b"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+        },
+        "branch_order": "candidate-first",
+        "label": "longer-intermediate",
+        "source_sha256": "6c63e10bf7734d16f8eaf2aad0bcf6b531ee27ea28c14a706e05ea439016fb37",
+        "sample_id": "c83e75733d9e41d1c0710444a5505ed3210f6f08adbf6eecf5335cbb66e755c0"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "9839fbd7f2dedf9c22190403722dc98210c990a14188a042ddf41ab5e050496c",
+        "sample_id": "d5c6802452e3c4c64c2b79ba6e4d442835994e6c05b2097facb82543b94578aa"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+        },
+        "branch_order": "candidate-first",
+        "label": "solver-0",
+        "source_sha256": "2f89279db2c503d15d2513478675ec4b4276ca70be3cd2274ee148dae3bf78e7",
+        "sample_id": "30f41d472e24c78e9580f6d3f89e3fe969884a28c87c119d100d2ff849492ea9"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+        },
+        "branch_order": "reference-first",
+        "label": "solver-0",
+        "source_sha256": "2f89279db2c503d15d2513478675ec4b4276ca70be3cd2274ee148dae3bf78e7",
+        "sample_id": "ce1727a49b8d912483a64935e8c6117feefa83884cb5f1221e55dabae9d88d03"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+        },
+        "branch_order": "reference-first",
+        "label": "longer-intermediate",
+        "source_sha256": "6c63e10bf7734d16f8eaf2aad0bcf6b531ee27ea28c14a706e05ea439016fb37",
+        "sample_id": "e394c71215676d405dd27ae46f95268098e306e4c1e69fc6721f598093d48203"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "9839fbd7f2dedf9c22190403722dc98210c990a14188a042ddf41ab5e050496c",
+        "sample_id": "cfa2857049d600149a382a7b7a2113375fee5993681468c40ead9be4e2fad778"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+        },
+        "branch_order": "candidate-first",
+        "label": "longer-intermediate",
+        "source_sha256": "6c63e10bf7734d16f8eaf2aad0bcf6b531ee27ea28c14a706e05ea439016fb37",
+        "sample_id": "0aab576798abadc70d83457e517298df45caf2078f97fcbe6dc77937e83a90c1"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+        },
+        "branch_order": "candidate-first",
+        "label": "solver-0",
+        "source_sha256": "2f89279db2c503d15d2513478675ec4b4276ca70be3cd2274ee148dae3bf78e7",
+        "sample_id": "62cba37957a5a32f3e0ff37a0b9853e4ce0e82c1acd8c6ba6c75f651f977c1a1"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "9839fbd7f2dedf9c22190403722dc98210c990a14188a042ddf41ab5e050496c",
+        "sample_id": "8fa14f1950922fe5f1bf5743cc4f6ba220ac41f6598d4f89f3c52becd657e53a"
+      }
+    ]
+  },
+  "incumbent_label": "control",
+  "candidate_labels": [
+    "solver-0",
+    "longer-intermediate"
+  ],
+  "confirmation_repetitions": 3,
+  "confirmation_seed": 18,
+  "confirmation_request_reserve": 12,
+  "required_request_budget": 24,
+  "selection_order": [
+    "descending_worst_conservative_gain_to_incumbent",
+    "descending_mean_nominal_gain_to_incumbent",
+    "tokens",
+    "label"
+  ],
+  "unknown_comparison": "abstain",
+  "retries": 0,
+  "confirmation_alternatives": 0,
+  "score_scope": "matched-local-primary-pin",
+  "primary_pin": {
+    "lean_tag": "v4.32.0",
+    "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62"
+  },
+  "score_reference": "fresh-original-control-per-phase-and-order",
+  "compatibility_policy": "all-declared-pins-verified-no-axiom-growth",
+  "score_formula": "100/3 * ((comparator_tokens-candidate_tokens)/original_tokens + (comparator_raw-candidate_raw)/original_raw)",
+  "rounding": "none; exact rational deltas; not an official Arena score",
+  "plan_id": "86aa5b8f846e8379c7e5755eb09bf82b8517b8e48c0822226e204572dc13036a"
+}

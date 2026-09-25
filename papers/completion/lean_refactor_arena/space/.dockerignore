@@ -1,0 +1,10 @@
+.git
+.gitignore
+.gitattributes
+.claude
+CLAUDE.md
+__pycache__
+*.pyc
+.DS_Store
+README.md
+leaderboard.json

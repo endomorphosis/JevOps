@@ -86,6 +86,26 @@ RIDGE_L2 = 1.0
 SVD_RANK = 3
 
 
+def drive_amenable(
+    counts: Mapping[str, float],
+    model: Mapping[str, Any],
+    *,
+    feature_names: Sequence[str],
+    families: Mapping[str, Any],
+    top_k: int = 5,
+) -> list[dict[str, Any]]:
+    """Families present in this proof that load on minor components."""
+
+    scores = residual_feature_scores(
+        counts,
+        model["mean"],
+        model["std"],
+        model["minor"],
+        feature_names,
+    )
+    return rank_present_families(counts, scores, families, top_k=top_k)
+
+
 def residual_feature_scores(
     counts: Mapping[str, Any],
     mean: Sequence[Any],

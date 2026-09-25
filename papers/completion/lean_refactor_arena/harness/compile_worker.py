@@ -41,8 +41,6 @@ import splice as lra_splice  # noqa: E402
 
 DATASETS_ROOT = _jevops_path.IPFS_DATASETS_ROOT
 
-if str(DATASETS_ROOT) not in sys.path:
-    sys.path.insert(0, str(DATASETS_ROOT))
 from lean_toolchain import (  # noqa: E402
     KERNEL_COMMAND_TEMPLATE,
     LeanToolchainMissing,

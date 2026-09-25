@@ -1,0 +1,56 @@
+{
+  "slot": 1,
+  "arm": "after-forward",
+  "repetition": 0,
+  "prompt_sha256": "01462c132a3c923725e25bd8ff8b530746b0ac48e5f76cd48d0f41ed07aee231",
+  "native_verified": null,
+  "official_score": null,
+  "request_settings": {
+    "provider": "leanstral_local",
+    "model_name": "Leanstral",
+    "base_url": "http://172.17.0.1:8080/v1",
+    "max_new_tokens": 1024,
+    "timeout": 180,
+    "temperature": 0,
+    "stop": [
+      "<|im_end|>"
+    ]
+  },
+  "raw": "{\"request_id\": \"1628a79bfc096d60\", \"delete_lines\": [1, 14]}",
+  "raw_sha256": "ac765844e7ae67d27e413c9517f87115db89f5aef563cd2a750becc94f098890",
+  "trace": {
+    "router_module": "jevops.llm_router",
+    "effective_provider_name": "leanstral_local",
+    "effective_model_name": "Leanstral",
+    "fixture": false,
+    "external_dependency": false,
+    "provider": "leanstral_local",
+    "model": "Leanstral",
+    "reason": "generated",
+    "requested_model": "Leanstral",
+    "response_model": "leanstral_local",
+    "request_id": "chatcmpl-3U587DFEK2lt18x9JJ4Bv9F07Q1SF5Nq",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 2857,
+      "completion_tokens": 33,
+      "total_tokens": 2890
+    },
+    "endpoint": "http://172.17.0.1:8080/v1/chat/completions",
+    "wall_ms": 7278.06965704076,
+    "server_identity_attested": false,
+    "fallback_used": false
+  },
+  "status": "edit_rejected",
+  "strict_contract": true,
+  "edit": {
+    "request_id": "1628a79bfc096d60",
+    "delete_lines": [
+      1,
+      14
+    ]
+  },
+  "edit_error": "span is outside the declared deletion vocabulary",
+  "normalizations": [],
+  "wall_seconds": 7.2795
+}

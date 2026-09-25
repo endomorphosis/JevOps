@@ -1,0 +1,539 @@
+{
+  "schema": "jevops-arena-native-readiness/v1",
+  "required_version_checks": 36,
+  "completed_version_checks": 3,
+  "official_score": null,
+  "rows": [
+    {
+      "name": "CallElimCorrect.substOldPostSubset",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "CallElimCorrect.extractedOldExprInVars",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "lean_tag": "v4.29.1",
+      "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "lean_tag": "v4.27.0",
+      "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "fundamental_theorem_of_variational_calculus'",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "FieldSpecification.WickAlgebra.\u03b9_timeOrderF_superCommuteF_eq_time",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.30.0",
+      "git_commit": "c7944a9fb44c3298f1a960a5e574ab23a6ab8ed5",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.28.0",
+      "git_commit": "673fa440714eb1949b8b50a28f2a4f52b1837e9b",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_a4",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "30b65bbce9a71e3d1a555eb656a7d7d6ec72a6d3237c48f33a9f30309bfbc8d5",
+        "candidate_sha256": "27b46ee810644ab2f6c3950cda14346274705204b619350947ad97d90e62b669",
+        "target": "putnam_1964_a4",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'putnam_1964_a4' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "heartbeats": 140508,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"79959bd4c2c5001ea7e228e6a6db4adcd5441c9b13928cbcfc2965db26adce97\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"cdd38ac5115bdeec5f609e9126cce00f51ae88b3\",\"lean_version\":\"4.25.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"diagnostics\":[{\"message\":\"This simp argument is unused:\\n  Prod.ext_iff\\n\\nHint: Omit it from the simp argument list.\\n  simp_all \u0335[\u0335P\u0335r\u0335o\u0335d\u0335.\u0335e\u0335x\u0335t\u0335_\u0335i\u0335f\u0335f\u0335]\u0335\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  add_assoc\\n\\nHint: Omit it from the simp argument list.\\n  simp [\u0335a\u0335d\u0335d\u0335_\u0335a\u0335s\u0335s\u0335o\u0335c\u0335]\u0335 \u0335at h\u2081\u2085 \u22a2\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  add_assoc\\n\\nHint: Omit it from the simp argument list.\\n  simp [\u0335a\u0335d\u0335d\u0335_\u0335a\u0335s\u0335s\u0335o\u0335c\u0335]\u0335 \u0335at h\u2081\u2086 \u22a2\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  add_assoc\\n\\nHint: Omit it from the simp argument list.\\n  simp [\u0335a\u0335d\u0335d\u0335_\u0335a\u0335s\u0335s\u0335o\u0335c\u0335]\u0335 \u0335at h\u2081\u2087 \u22a2\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  add_assoc\\n\\nHint: Omit it from the simp argument list.\\n  simp [\u0335a\u0335d\u0335d\u0335_\u0335a\u0335s\u0335s\u0335o\u0335c\u0335]\u0335 \u0335at h\u2081\u2088 \u22a2\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  h\u2081\u2084\\n\\nHint: Omit it from the simp argument list.\\n  simp_all [h\u2081\u2084\u0335,\u0335 \u0335h\u0335\u2081\u0335\u2085, h\u2081\u2086, h\u2081\u2087]\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  h\u2081\u2085\\n\\nHint: Omit it from the simp argument list.\\n  simp_all [h\u2081\u2084, h\u2081\u2085\u0335,\u0335 \u0335h\u0335\u2081\u0335\u2086, h\u2081\u2087]\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  h\u2081\u2086\\n\\nHint: Omit it from the simp argument list.\\n  simp_all [h\u2081\u2084, h\u2081\u2085, h\u2081\u2086\u0335,\u0335 \u0335h\u0335\u2081\u0335\u2087]\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  h\u2081\u2087\\n\\nHint: Omit it from the simp argument list.\\n  simp_all [h\u2081\u2084, h\u2081\u2085, h\u2081\u2086,\u0335 \u0335h\u0335\u2081\u0335\u2087\u0335]\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  add_assoc\\n\\nHint: Omit it from the simp argument list.\\n  simp [\u0335a\u0335d\u0335d\u0335_\u0335a\u0335s\u0335s\u0335o\u0335c\u0335]\u0335 \u0335at h\u2086 \u22a2\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"'(try nlinarith)' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'(try aesop)' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'(try omega)' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'(try aesop)' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'ring_nf at *' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'omega' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'ring_nf at *' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'omega' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'ring_nf at *' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'omega' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'simp_all [add_assoc]' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'ring_nf at *' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'norm_num at *' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'linarith' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'simp_all [add_assoc]' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'ring_nf at *' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'norm_num at *' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'linarith' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'(try ring_nf at *)' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'(try field_simp at *)' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'(try norm_cast at *)' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'(try linarith)' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'(try simp_all)' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'(try linarith)' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"}],\"heartbeats\":140508,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":140508429,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"reference_heartbeats\":140535,\"reference_raw_heartbeats\":140535880,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":173509.845}"
+      },
+      "context": {
+        "problem": "putnam_1964_a4",
+        "statement": "theorem putnam_1964_a4\n(u : \u2115 \u2192 \u2124)\n(boundedu : \u2203 B T : \u2124, \u2200 n : \u2115, B \u2264 u n \u2227 u n \u2264 T)\n(hu : \u2200 n \u2265 4, u n = ((u (n - 1) + u (n - 2) + u (n - 3) * u (n - 4)) : \u211d) / (u (n - 1) * u (n - 2) + u (n - 3) + u (n - 4)) \u2227 (u (n - 1) * u (n - 2) + u (n - 3) + u (n - 4)) \u2260 0)\n: (\u2203 N c : \u2115, c > 0 \u2227 \u2200 n \u2265 N, u (n + c) = u n)",
+        "reference_source": "theorem putnam_1964_a4\n(u : \u2115 \u2192 \u2124)\n(boundedu : \u2203 B T : \u2124, \u2200 n : \u2115, B \u2264 u n \u2227 u n \u2264 T)\n(hu : \u2200 n \u2265 4, u n = ((u (n - 1) + u (n - 2) + u (n - 3) * u (n - 4)) : \u211d) / (u (n - 1) * u (n - 2) + u (n - 3) + u (n - 4)) \u2227 (u (n - 1) * u (n - 2) + u (n - 3) + u (n - 4)) \u2260 0)\n: (\u2203 N c : \u2115, c > 0 \u2227 \u2200 n \u2265 N, u (n + c) = u n) := by \n  have h_main : \u2203 (i j : \u2115), i < j \u2227 (u i = u j \u2227 u (i + 1) = u (j + 1) \u2227 u (i + 2) = u (j + 2) \u2227 u (i + 3) = u (j + 3)) := by\n    obtain \u27e8B, T, hB\u27e9 := boundedu\n    have h\u2081 : \u2203 (i j : \u2115), i < j \u2227 (u i = u j \u2227 u (i + 1) = u (j + 1) \u2227 u (i + 2) = u (j + 2) \u2227 u (i + 3) = u (j + 3)) := by\n      \n      classical\n      \n      let f : \u2115 \u2192 (\u2124 \u00d7 \u2124 \u00d7 \u2124 \u00d7 \u2124) := fun n => (u n, u (n + 1), u (n + 2), u (n + 3))\n      have h\u2082 : Set.Finite (Set.range f) := by\n        have h\u2083 : Set.range f \u2286 Set.Icc (B, B, B, B) (T, T, T, T) := by\n          intro x hx\n          rcases hx with \u27e8n, rfl\u27e9\n          have h\u2084 := hB n\n          have h\u2085 := hB (n + 1)\n          have h\u2086 := hB (n + 2)\n          have h\u2087 := hB (n + 3)\n          simp only [Set.mem_Icc, Prod.le_def] at h\u2084 h\u2085 h\u2086 h\u2087 \u22a2\n          constructor <;>\n          (try constructor) <;>\n          (try constructor) <;>\n          (try constructor) <;>\n          (try simp_all [f]) <;>\n          (try nlinarith)\n        \n        have h\u2084 : Set.Finite (Set.Icc (B, B, B, B) (T, T, T, T)) := by\n          apply Set.Finite.subset (Set.finite_mem_finset (Finset.Icc (B, B, B, B) (T, T, T, T)))\n          intro x hx\n          simp_all [Set.mem_Icc]\n          <;>\n          (try aesop)\n        exact Set.Finite.subset h\u2084 h\u2083\n      \n      have h\u2083 : \u2203 (i j : \u2115), i < j \u2227 f i = f j := by\n        by_contra! h\u2084\n        have h\u2085 : Function.Injective f := by\n          intro i j h\u2086\n          by_cases h\u2087 : i = j\n          \u00b7 exact h\u2087\n          \u00b7 have h\u2088 : i < j \u2228 j < i := by omega\n            cases h\u2088 with\n            | inl h\u2088 =>\n              have h\u2089 := h\u2084 i j h\u2088\n              simp_all\n            | inr h\u2088 =>\n              have h\u2089 := h\u2084 j i h\u2088\n              simp_all\n        have h\u2086 : Set.Infinite (Set.range f) := Set.infinite_range_of_injective h\u2085\n        exact Set.not_infinite.mpr h\u2082 h\u2086\n      \n      obtain \u27e8i, j, h\u2084, h\u2085\u27e9 := h\u2083\n      refine' \u27e8i, j, h\u2084, _\u27e9\n      simp [f] at h\u2085 \u22a2\n      <;>\n      (try simp_all [Prod.ext_iff]) <;>\n      (try omega) <;>\n      (try aesop)\n    exact h\u2081\n  \n  have h_periodic : \u2203 N c : \u2115, c > 0 \u2227 \u2200 n \u2265 N, u (n + c) = u n := by\n    obtain \u27e8i, j, hij, h_eq\u27e9 := h_main\n    have h\u2081 : \u2200 m : \u2115, u (i + m) = u (j + m) := by\n      intro m\n      have h\u2082 : \u2200 m : \u2115, u (i + m) = u (j + m) := by\n        intro m\n        induction m using Nat.strong_induction_on with\n        | h m ih =>\n          match m with\n          | 0 =>\n            have h\u2083 := h_eq.1\n            simp at h\u2083 \u22a2\n            <;> simp_all [add_assoc]\n          | 1 =>\n            have h\u2083 := h_eq.2.1\n            simp at h\u2083 \u22a2\n            <;> simp_all [add_assoc]\n            <;> ring_nf at *\n            <;> omega\n          | 2 =>\n            have h\u2083 := h_eq.2.2.1\n            simp at h\u2083 \u22a2\n            <;> simp_all [add_assoc]\n            <;> ring_nf at *\n            <;> omega\n          | 3 =>\n            have h\u2083 := h_eq.2.2.2\n            simp at h\u2083 \u22a2\n            <;> simp_all [add_assoc]\n            <;> ring_nf at *\n            <;> omega\n          | m + 4 =>\n            have h\u2083 : i + (m + 4) \u2265 4 := by\n              have h\u2084 : i \u2265 0 := by linarith\n              omega\n            have h\u2084 : u (i + (m + 4)) = ((u (i + (m + 4) - 1) + u (i + (m + 4) - 2) + u (i + (m + 4) - 3) * u (i + (m + 4) - 4)) : \u211d) / (u (i + (m + 4) - 1) * u (i + (m + 4) - 2) + u (i + (m + 4) - 3) + u (i + (m + 4) - 4)) := by\n              have h\u2085 := hu (i + (m + 4)) (by omega)\n              have h\u2086 := h\u2085.1\n              norm_cast at h\u2086 \u22a2\n              <;> simp_all [add_assoc]\n              <;> ring_nf at *\n              <;> norm_num at *\n              <;> linarith\n            have h\u2085 : u (j + (m + 4)) = ((u (j + (m + 4) - 1) + u (j + (m + 4) - 2) + u (j + (m + 4) - 3) * u (j + (m + 4) - 4)) : \u211d) / (u (j + (m + 4) - 1) * u (j + (m + 4) - 2) + u (j + (m + 4) - 3) + u (j + (m + 4) - 4)) := by\n              have h\u2086 := hu (j + (m + 4)) (by\n                have h\u2087 : j \u2265 i + 1 := by omega\n                omega\n              )\n              have h\u2087 := h\u2086.1\n              norm_cast at h\u2087 \u22a2\n              <;> simp_all [add_assoc]\n              <;> ring_nf at *\n              <;> norm_num at *\n              <;> linarith\n            have h\u2086 : (i + (m + 4) - 1 : \u2115) = i + (m + 3) := by\n              omega\n            have h\u2087 : (i + (m + 4) - 2 : \u2115) = i + (m + 2) := by\n              omega\n            have h\u2088 : (i + (m + 4) - 3 : \u2115) = i + (m + 1) := by\n              omega\n            have h\u2089 : (i + (m + 4) - 4 : \u2115) = i + m := by\n              omega\n            have h\u2081\u2080 : (j + (m + 4) - 1 : \u2115) = j + (m + 3) := by\n              omega\n            have h\u2081\u2081 : (j + (m + 4) - 2 : \u2115) = j + (m + 2) := by\n              omega\n            have h\u2081\u2082 : (j + (m + 4) - 3 : \u2115) = j + (m + 1) := by\n              omega\n            have h\u2081\u2083 : (j + (m + 4) - 4 : \u2115) = j + m := by\n              omega\n            have h\u2081\u2084 : u (i + (m + 3)) = u (j + (m + 3)) := by\n              have h\u2081\u2085 := ih (m + 3) (by omega)\n              simp [add_assoc] at h\u2081\u2085 \u22a2\n              <;> omega\n            have h\u2081\u2085 : u (i + (m + 2)) = u (j + (m + 2)) := by\n              have h\u2081\u2086 := ih (m + 2) (by omega)\n              simp [add_assoc] at h\u2081\u2086 \u22a2\n              <;> omega\n            have h\u2081\u2086 : u (i + (m + 1)) = u (j + (m + 1)) := by\n              have h\u2081\u2087 := ih (m + 1) (by omega)\n              simp [add_assoc] at h\u2081\u2087 \u22a2\n              <;> omega\n            have h\u2081\u2087 : u (i + m) = u (j + m) := by\n              have h\u2081\u2088 := ih m (by omega)\n              simp [add_assoc] at h\u2081\u2088 \u22a2\n              <;> omega\n            have h\u2081\u2088 : (u (i + (m + 4)) : \u211d) = (u (j + (m + 4)) : \u211d) := by\n              rw [h\u2084, h\u2085]\n              simp [h\u2086, h\u2087, h\u2088, h\u2089, h\u2081\u2080, h\u2081\u2081, h\u2081\u2082, h\u2081\u2083] at *\n              norm_cast at *\n              <;>\n              (try simp_all [h\u2081\u2084, h\u2081\u2085, h\u2081\u2086, h\u2081\u2087]) <;>\n              (try ring_nf at *) <;>\n              (try field_simp at *) <;>\n              (try norm_cast at *) <;>\n              (try linarith)\n            norm_cast at h\u2081\u2088 \u22a2\n            <;>\n            (try simp_all) <;>\n            (try linarith)\n      exact h\u2082 m\n    have h\u2082 : \u2203 N c : \u2115, c > 0 \u2227 \u2200 n \u2265 N, u (n + c) = u n := by\n      use i, (j - i)\n      have h\u2083 : j - i > 0 := by\n        omega\n      constructor\n      \u00b7 exact h\u2083\n      \u00b7 intro n hn\n        have h\u2084 : u (n + (j - i)) = u n := by\n          have h\u2085 : u (i + (n - i)) = u (j + (n - i)) := by\n            have h\u2086 := h\u2081 (n - i)\n            simp [add_assoc] at h\u2086 \u22a2\n            <;> omega\n          have h\u2086 : i + (n - i) = n := by\n            omega\n          have h\u2087 : j + (n - i) = n + (j - i) := by\n            omega\n          rw [h\u2086] at h\u2085\n          rw [h\u2087] at h\u2085\n          linarith\n        exact h\u2084\n    exact h\u2082\n  \n  exact h_periodic",
+        "reference_length": 1769,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.25.0",
+            "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33"
+          }
+        ],
+        "dependency_digests": [
+          "79959bd4c2c5001ea7e228e6a6db4adcd5441c9b13928cbcfc2965db26adce97"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "b8040b3fb9505e29a4c800b2077c3dce7b9bc8e28fd0bc9a6e1ced73e3ae74e7",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "import Mathlib\nimport Aesop\n\nset_option maxHeartbeats 0\n\nopen Set Function\n\n\n",
+        "repository": "",
+        "file_path": "",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":900.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "16042fb7e48a9d9c38ac0ba4cef813df787e96f2f29d3dd67355abd566f9b1d1"
+    },
+    {
+      "name": "putnam_1964_a4",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_a4",
+      "lean_tag": "v4.27.0",
+      "git_commit": "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_b2",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "24777a603efa8c5a2e0600a6d5020dedeb6bd87a22f86e6a9a36e9a70486386d",
+        "candidate_sha256": "16f0c2b3e008d0002b83f9550e553fb9acd22cbb4daf5ec813ecd68282738892",
+        "target": "putnam_1964_b2",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'putnam_1964_b2' depends on axioms: [propext, Quot.sound, Classical.choice]",
+        "heartbeats": 120777,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"9f7a3c312c076f62da8de3fb9bc196aa4d6f933553c394bfc576606d9c220a11\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"cdd38ac5115bdeec5f609e9126cce00f51ae88b3\",\"lean_version\":\"4.25.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"diagnostics\":[{\"message\":\"`Set.eq_empty_of_forall_not_mem` has been deprecated: Use `Set.eq_empty_of_forall_notMem` instead\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  Set.ext_iff\\n\\nHint: Omit it from the simp argument list.\\n  simp \u0335[\u0335S\u0335e\u0335t\u0335.\u0335e\u0335x\u0335t\u0335_\u0335i\u0335f\u0335f\u0335]\u0335\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  Set.mem_inter_iff\\n\\nHint: Omit it from the simp argument list.\\n  simp \u0335[\u0335S\u0335e\u0335t\u0335.\u0335m\u0335e\u0335m\u0335_\u0335i\u0335n\u0335t\u0335e\u0335r\u0335_\u0335i\u0335f\u0335f\u0335]\u0335\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  h_subset_or_compl\\n\\nHint: Omit it from the simp argument list.\\n  simp_all \u0335[\u0335h\u0335_\u0335s\u0335u\u0335b\u0335s\u0335e\u0335t\u0335_\u0335o\u0335r\u0335_\u0335c\u0335o\u0335m\u0335p\u0335l\u0335]\u0335\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  Fintype.card_fun\\n\\nHint: Omit it from the simp argument list.\\n  simp \u0335[\u0335F\u0335i\u0335n\u0335t\u0335y\u0335p\u0335e\u0335.\u0335c\u0335a\u0335r\u0335d\u0335_\u0335f\u0335u\u0335n\u0335]\u0335\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"'aesop' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'aesop' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'aesop' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'aesop' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'aesop' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'aesop' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'aesop' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'aesop' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'tauto' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'(try { aesop\\n  })' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'(try { tauto\\n  })' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'(try { intros <;> simp_all [Set.ext_iff] <;> tauto\\n  })' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'(try { intros <;> simp_all [Set.ext_iff] <;> tauto\\n  })' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'(try tauto)' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'(try {\\n    have h\u2087 := h_subset_or_compl A\\n    cases h\u2087 with\\n    | inl h\u2088 => tauto\\n    | inr h\u2088 =>\\n      have h\u2089 : A\u1d9c \u2208 P := h\u2088\\n      have h\u2081\u2080 : A \u2208 P \u2228 A\u1d9c \u2208 P := by tauto\\n      tauto\\n  })' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'simp_all [Fintype.card_fun]' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'ring_nf' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'simp_all [Fintype.card_fun]' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'norm_num' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'aesop' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'simp [add_comm]' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"}],\"heartbeats\":120777,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":120777934,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"reference_heartbeats\":120810,\"reference_raw_heartbeats\":120810752,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":166075.667}"
+      },
+      "context": {
+        "problem": "putnam_1964_b2",
+        "statement": "theorem putnam_1964_b2\n(S : Type*) [Fintype S] [Nonempty S]\n(P : Finset (Set S))\n(hPP : \u2200 T \u2208 P, \u2200 U \u2208 P, T \u2229 U \u2260 \u2205)\n(hPS : \u00ac\u2203 T : Set S, T \u2209 P \u2227 (\u2200 U \u2208 P, T \u2229 U \u2260 \u2205))\n: (P.card = 2 ^ (Fintype.card S - 1))",
+        "reference_source": "theorem putnam_1964_b2\n(S : Type*) [Fintype S] [Nonempty S]\n(P : Finset (Set S))\n(hPP : \u2200 T \u2208 P, \u2200 U \u2208 P, T \u2229 U \u2260 \u2205)\n(hPS : \u00ac\u2203 T : Set S, T \u2209 P \u2227 (\u2200 U \u2208 P, T \u2229 U \u2260 \u2205))\n: (P.card = 2 ^ (Fintype.card S - 1)) := by \n  have h_no_empty : \u2200 (T : Set S), T \u2208 P \u2192 T.Nonempty := by\n    intro T hT\n    have h\u2081 : T \u2229 T \u2260 \u2205 := hPP T hT T hT\n    have h\u2082 : T \u2229 T = T := by simp [Set.ext_iff]\n    rw [h\u2082] at h\u2081\n    exact Set.nonempty_iff_ne_empty.mpr h\u2081\n  \n  have h_subset_or_compl : \u2200 (A : Set S), A \u2208 P \u2228 A\u1d9c \u2208 P := by\n    intro A\n    by_contra! h\n    have h\u2081 : A \u2209 P := h.1\n    have h\u2082 : A\u1d9c \u2209 P := h.2\n    \n    have h\u2083 : \u2203 (U : Set S), U \u2208 P \u2227 A \u2229 U = \u2205 := by\n      have h\u2084 : \u00ac(A \u2209 P \u2227 \u2200 (U : Set S), U \u2208 P \u2192 A \u2229 U \u2260 \u2205) := by\n        intro h\u2085\n        have h\u2086 : \u2203 (T : Set S), T \u2209 P \u2227 (\u2200 U \u2208 P, T \u2229 U \u2260 \u2205) := by\n          refine' \u27e8A, _\u27e9\n          constructor\n          \u00b7 exact h\u2085.1\n          \u00b7 intro U hU\n            have h\u2087 := h\u2085.2 U hU\n            have h\u2088 : A \u2229 U \u2260 \u2205 := h\u2087\n            have h\u2089 : A \u2229 U = U \u2229 A := by\n              ext x\n              simp [Set.mem_inter_iff]\n              <;> tauto\n            have h\u2081\u2080 : U \u2229 A \u2260 \u2205 := by\n              intro h\u2081\u2081\n              apply h\u2088\n              simp_all [Set.ext_iff]\n              <;> aesop\n            simpa [Set.inter_comm] using h\u2081\u2080\n        exact hPS h\u2086\n      by_cases h\u2085 : A \u2209 P\n      \u00b7 have h\u2086 : \u00ac(\u2200 (U : Set S), U \u2208 P \u2192 A \u2229 U \u2260 \u2205) := by\n          intro h\u2087\n          exact h\u2084 \u27e8h\u2085, h\u2087\u27e9\n        push_neg at h\u2086\n        obtain \u27e8U, hU, h\u2088\u27e9 := h\u2086\n        refine' \u27e8U, hU, _\u27e9\n        have h\u2089 : A \u2229 U = \u2205 := by\n          by_contra h\u2081\u2080\n          have h\u2081\u2081 : A \u2229 U \u2260 \u2205 := h\u2081\u2080\n          simp_all [Set.ext_iff]\n          <;> aesop\n        exact h\u2089\n      \u00b7 exfalso\n        simp_all\n    \n    have h\u2084 : \u2203 (V : Set S), V \u2208 P \u2227 A\u1d9c \u2229 V = \u2205 := by\n      have h\u2085 : \u00ac(A\u1d9c \u2209 P \u2227 \u2200 (U : Set S), U \u2208 P \u2192 A\u1d9c \u2229 U \u2260 \u2205) := by\n        intro h\u2086\n        have h\u2087 : \u2203 (T : Set S), T \u2209 P \u2227 (\u2200 U \u2208 P, T \u2229 U \u2260 \u2205) := by\n          refine' \u27e8A\u1d9c, _\u27e9\n          constructor\n          \u00b7 exact h\u2086.1\n          \u00b7 intro U hU\n            have h\u2088 := h\u2086.2 U hU\n            have h\u2089 : A\u1d9c \u2229 U \u2260 \u2205 := h\u2088\n            have h\u2081\u2080 : A\u1d9c \u2229 U = U \u2229 A\u1d9c := by\n              ext x\n              simp [Set.mem_inter_iff]\n              <;> tauto\n            have h\u2081\u2081 : U \u2229 A\u1d9c \u2260 \u2205 := by\n              intro h\u2081\u2082\n              apply h\u2089\n              simp_all [Set.ext_iff]\n              <;> aesop\n            simpa [Set.inter_comm] using h\u2081\u2081\n        exact hPS h\u2087\n      by_cases h\u2086 : A\u1d9c \u2209 P\n      \u00b7 have h\u2087 : \u00ac(\u2200 (U : Set S), U \u2208 P \u2192 A\u1d9c \u2229 U \u2260 \u2205) := by\n          intro h\u2088\n          exact h\u2085 \u27e8h\u2086, h\u2088\u27e9\n        push_neg at h\u2087\n        obtain \u27e8V, hV, h\u2088\u27e9 := h\u2087\n        refine' \u27e8V, hV, _\u27e9\n        have h\u2089 : A\u1d9c \u2229 V = \u2205 := by\n          by_contra h\u2081\u2080\n          have h\u2081\u2081 : A\u1d9c \u2229 V \u2260 \u2205 := h\u2081\u2080\n          simp_all [Set.ext_iff]\n          <;> aesop\n        exact h\u2089\n      \u00b7 exfalso\n        simp_all\n    \n    obtain \u27e8U, hU, hU'\u27e9 := h\u2083\n    obtain \u27e8V, hV, hV'\u27e9 := h\u2084\n    \n    have h\u2085 : U \u2286 A\u1d9c := by\n      intro x hx\n      by_contra h\u2086\n      have h\u2087 : x \u2208 A := by simp_all [Set.mem_compl_iff]\n      have h\u2088 : x \u2208 A \u2229 U := Set.mem_inter h\u2087 hx\n      rw [hU'] at h\u2088\n      simp at h\u2088\n      <;> aesop\n    have h\u2086 : V \u2286 A := by\n      intro x hx\n      by_contra h\u2087\n      have h\u2088 : x \u2208 A\u1d9c := by simp_all [Set.mem_compl_iff]\n      have h\u2089 : x \u2208 A\u1d9c \u2229 V := Set.mem_inter h\u2088 hx\n      rw [hV'] at h\u2089\n      simp at h\u2089\n      <;> aesop\n    \n    have h\u2087 : U \u2229 V = \u2205 := by\n      apply Set.eq_empty_of_forall_not_mem\n      intro x hx\n      have h\u2088 : x \u2208 U := Set.mem_of_mem_inter_left hx\n      have h\u2089 : x \u2208 V := Set.mem_of_mem_inter_right hx\n      have h\u2081\u2080 : x \u2208 A\u1d9c := h\u2085 h\u2088\n      have h\u2081\u2081 : x \u2208 A := h\u2086 h\u2089\n      simp_all [Set.mem_compl_iff]\n      <;> aesop\n    \n    have h\u2088 : U \u2229 V \u2260 \u2205 := hPP U hU V hV\n    simp_all [Set.ext_iff]\n    <;> aesop\n  \n  have h_not_both : \u2200 (A : Set S), A \u2208 P \u2192 A\u1d9c \u2209 P := by\n    intro A hA\n    by_contra h\n    have h\u2081 : A\u1d9c \u2208 P := h\n    have h\u2082 : A \u2229 A\u1d9c = \u2205 := by\n      ext x\n      simp [Set.mem_inter_iff]\n      <;> tauto\n    have h\u2083 : A \u2229 A\u1d9c \u2260 \u2205 := hPP A hA A\u1d9c h\u2081\n    rw [h\u2082] at h\u2083\n    contradiction\n  \n  have h_card : P.card = 2 ^ (Fintype.card S - 1) := by\n    classical\n    \n    let Q : Finset (Set S) := (Finset.univ : Finset (Set S)) \\ P\n    \n    have h\u2081 : P.card = Q.card := by\n      \n      have h\u2082 : \u2200 (A : Set S), A \u2208 P \u2192 A\u1d9c \u2208 Q := by\n        intro A hA\n        have h\u2083 : A\u1d9c \u2208 (Finset.univ : Finset (Set S)) := Finset.mem_univ _\n        have h\u2084 : A\u1d9c \u2209 P := h_not_both A hA\n        simp only [Q, Finset.mem_sdiff] at *\n        tauto\n      have h\u2083 : \u2200 (A : Set S), A \u2208 Q \u2192 A\u1d9c \u2208 P := by\n        intro A hA\n        have h\u2084 : A \u2208 (Finset.univ : Finset (Set S)) := by\n          simp only [Q, Finset.mem_sdiff] at hA\n          tauto\n        have h\u2085 : A \u2209 P := by\n          simp only [Q, Finset.mem_sdiff] at hA\n          tauto\n        have h\u2086 : A \u2208 (Finset.univ : Finset (Set S)) := by tauto\n        have h\u2087 : A \u2208 P \u2228 A\u1d9c \u2208 P := h_subset_or_compl A\n        cases h\u2087 with\n        | inl h\u2088 =>\n          exfalso\n          tauto\n        | inr h\u2088 =>\n          exact h\u2088\n      \n      have h\u2084 : P.card = Q.card := by\n        \n        have h\u2085 : P.card = Q.card := by\n          \n          have h\u2086 : \u2200 (A : Set S), A \u2208 P \u2192 A\u1d9c \u2208 Q := h\u2082\n          have h\u2087 : \u2200 (A : Set S), A \u2208 Q \u2192 A\u1d9c \u2208 P := h\u2083\n          \n          have h\u2088 : P.card = Q.card := by\n            \n            apply Finset.card_bij' (fun A _ => A\u1d9c) (fun A _ => A\u1d9c)\n            <;> simp_all [Set.ext_iff]\n            <;>\n            (try\n              {\n                aesop\n              })\n            <;>\n            (try\n              {\n                tauto\n              })\n            <;>\n            (try\n              {\n                intros\n                <;>\n                simp_all [Set.ext_iff]\n                <;>\n                tauto\n              })\n            <;>\n            (try\n              {\n                intros\n                <;>\n                simp_all [Set.ext_iff]\n                <;>\n                tauto\n              })\n          exact h\u2088\n        exact h\u2085\n      exact h\u2084\n    \n    have h\u2082 : P.card + Q.card = 2 ^ Fintype.card S := by\n      have h\u2083 : P.card + Q.card = (Finset.univ : Finset (Set S)).card := by\n        have h\u2084 : Disjoint P Q := by\n          rw [Finset.disjoint_left]\n          intro A hA hA'\n          simp only [Q, Finset.mem_sdiff] at hA'\n          tauto\n        have h\u2085 : P \u222a Q = (Finset.univ : Finset (Set S)) := by\n          apply Finset.ext\n          intro A\n          simp only [Q, Finset.mem_union, Finset.mem_sdiff, Finset.mem_univ, true_and]\n          <;>\n          by_cases h\u2086 : A \u2208 P <;> simp_all [h_subset_or_compl]\n          <;>\n          (try tauto)\n          <;>\n          (try\n            {\n              have h\u2087 := h_subset_or_compl A\n              cases h\u2087 with\n              | inl h\u2088 => tauto\n              | inr h\u2088 =>\n                have h\u2089 : A\u1d9c \u2208 P := h\u2088\n                have h\u2081\u2080 : A \u2208 P \u2228 A\u1d9c \u2208 P := by tauto\n                tauto\n            })\n        have h\u2086 : P.card + Q.card = (P \u222a Q).card := by\n          rw [\u2190 Finset.card_union_add_card_inter P Q]\n          have h\u2087 : P \u2229 Q = \u2205 := Finset.disjoint_iff_inter_eq_empty.mp h\u2084\n          rw [h\u2087]\n          simp\n        rw [h\u2085] at h\u2086\n        exact h\u2086\n      have h\u2084 : (Finset.univ : Finset (Set S)).card = 2 ^ Fintype.card S := by\n        simp [Fintype.card_fun]\n        <;>\n        simp_all [Fintype.card_fun]\n        <;>\n        ring_nf\n        <;>\n        simp_all [Fintype.card_fun]\n        <;>\n        norm_num\n        <;>\n        aesop\n      linarith\n    \n    have h\u2083 : P.card * 2 = 2 ^ Fintype.card S := by\n      have h\u2084 : P.card + Q.card = 2 ^ Fintype.card S := h\u2082\n      have h\u2085 : P.card = Q.card := h\u2081\n      linarith\n    \n    have h\u2084 : Fintype.card S \u2265 1 := by\n      have h\u2085 : Nonempty S := inferInstance\n      have h\u2086 : 0 < Fintype.card S := by\n        apply Fintype.card_pos_iff.mpr\n        exact \u27e8Classical.choice h\u2085\u27e9\n      omega\n    have h\u2085 : P.card = 2 ^ (Fintype.card S - 1) := by\n      have h\u2086 : P.card * 2 = 2 ^ Fintype.card S := h\u2083\n      have h\u2087 : Fintype.card S \u2265 1 := h\u2084\n      have h\u2088 : 2 ^ (Fintype.card S - 1) * 2 = 2 ^ Fintype.card S := by\n        have h\u2089 : Fintype.card S - 1 + 1 = Fintype.card S := by\n          have h\u2081\u2080 : Fintype.card S \u2265 1 := h\u2084\n          omega\n        calc\n          2 ^ (Fintype.card S - 1) * 2 = 2 ^ (Fintype.card S - 1) * 2 ^ 1 := by norm_num\n          _ = 2 ^ ((Fintype.card S - 1) + 1) := by\n            rw [\u2190 pow_add]\n          _ = 2 ^ Fintype.card S := by\n            rw [h\u2089]\n            <;> simp [add_comm]\n      have h\u2089 : P.card = 2 ^ (Fintype.card S - 1) := by\n        have h\u2081\u2080 : P.card * 2 = 2 ^ Fintype.card S := h\u2083\n        have h\u2081\u2081 : 2 ^ (Fintype.card S - 1) * 2 = 2 ^ Fintype.card S := h\u2088\n        have h\u2081\u2082 : P.card = 2 ^ (Fintype.card S - 1) := by\n          nlinarith\n        exact h\u2081\u2082\n      exact h\u2089\n    exact h\u2085\n  \n  exact h_card",
+        "reference_length": 1754,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.25.0",
+            "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33"
+          }
+        ],
+        "dependency_digests": [
+          "9f7a3c312c076f62da8de3fb9bc196aa4d6f933553c394bfc576606d9c220a11"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "b8040b3fb9505e29a4c800b2077c3dce7b9bc8e28fd0bc9a6e1ced73e3ae74e7",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "import Mathlib\nimport Aesop\n\nset_option maxHeartbeats 0\n\nopen Set Function Filter Topology\n\n\n",
+        "repository": "",
+        "file_path": "",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":900.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "646575b562f574c47e10e9dc82ac8be408388ca7010468b49106a3dd9b270910"
+    },
+    {
+      "name": "putnam_1964_b2",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1995_a3",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "83773b3cee03e3f9edcfcb83049b738538e61fefcf75cb50d52f60c8b0b2351c",
+        "candidate_sha256": "56dcc03e9f1d22a0655aeb46aa929c75efddb21f2fa73d7504b648792b6e8329",
+        "target": "putnam_1995_a3",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'putnam_1995_a3' depends on axioms: [propext, Quot.sound, Classical.choice]",
+        "heartbeats": 19628,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"a8615b2cecd30c04e9ac1fe03f7aa246c389f0d9980ebd12c8838b8ef93989be\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"cdd38ac5115bdeec5f609e9126cce00f51ae88b3\",\"lean_version\":\"4.25.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"diagnostics\":[{\"message\":\"This simp argument is unused:\\n  i.is_lt\\n\\nHint: Omit it from the simp argument list.\\n  simp [Finset.sum_ite_eq', Finset.mem_univ,\u0335 \u0335i\u0335.\u0335i\u0335s\u0335_\u0335l\u0335t\u0335]\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  i.is_lt\\n\\nHint: Omit it from the simp argument list.\\n  simp [Finset.sum_ite_eq', Finset.mem_univ,\u0335 \u0335i\u0335.\u0335i\u0335s\u0335_\u0335l\u0335t\u0335]\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"This simp argument is unused:\\n  Finset.card_fin\\n\\nHint: Omit it from the simp argument list.\\n  simp [Finset.sum_const,\u0335 \u0335F\u0335i\u0335n\u0335s\u0335e\u0335t\u0335.\u0335c\u0335a\u0335r\u0335d\u0335_\u0335f\u0335i\u0335n\u0335]\\n\\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"this tactic is never executed\\n\\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\\n\\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\",\"severity\":\"warning\"},{\"message\":\"'rfl' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'ring' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'simp [hdigits_to_num]' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'rfl' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'rfl' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'rfl' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'ring' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'simp [hdigits_to_num]' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'rfl' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'rfl' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'rfl' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'ring' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'norm_num' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'ring' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'simpa [Int.coe_nat_dvd_left] using h' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"},{\"message\":\"'contradiction' tactic does nothing\\n\\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\",\"severity\":\"warning\"}],\"heartbeats\":19628,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":19628468,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\",\"Classical.choice\"],\"reference_heartbeats\":19655,\"reference_raw_heartbeats\":19655183,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":160722.065}"
+      },
+      "context": {
+        "problem": "putnam_1995_a3",
+        "statement": "theorem putnam_1995_a3\n(relation : (Fin 9 \u2192 \u2124) \u2192 (Fin 9 \u2192 \u2124) \u2192 Prop)\n(digits_to_num : (Fin 9 \u2192 \u2124) \u2192 \u2124)\n(hdigits_to_num : digits_to_num = fun dig => \u2211 i : Fin 9, (dig i) * 10^i.1)\n(hrelation : \u2200 d e : (Fin 9 \u2192 \u2124), relation d e \u2194 (\u2200 i : Fin 9, d i < 10 \u2227 d i \u2265 0 \u2227 e i < 10 \u2227 e i \u2265 0) \u2227 (\u2200 i : Fin 9, 7 \u2223 (digits_to_num (fun j : Fin 9 => if j = i then e j else d j))))\n: \u2200 d e f : (Fin 9 \u2192 \u2124), ((relation d e) \u2227 (relation e f)) \u2192 (\u2200 i : Fin 9, 7 \u2223 d i - f i)",
+        "reference_source": "theorem putnam_1995_a3\n(relation : (Fin 9 \u2192 \u2124) \u2192 (Fin 9 \u2192 \u2124) \u2192 Prop)\n(digits_to_num : (Fin 9 \u2192 \u2124) \u2192 \u2124)\n(hdigits_to_num : digits_to_num = fun dig => \u2211 i : Fin 9, (dig i) * 10^i.1)\n(hrelation : \u2200 d e : (Fin 9 \u2192 \u2124), relation d e \u2194 (\u2200 i : Fin 9, d i < 10 \u2227 d i \u2265 0 \u2227 e i < 10 \u2227 e i \u2265 0) \u2227 (\u2200 i : Fin 9, 7 \u2223 (digits_to_num (fun j : Fin 9 => if j = i then e j else d j))))\n: \u2200 d e f : (Fin 9 \u2192 \u2124), ((relation d e) \u2227 (relation e f)) \u2192 (\u2200 i : Fin 9, 7 \u2223 d i - f i) := by \n  have h_main : \u2200 (d e f : (Fin 9 \u2192 \u2124)), ((relation d e) \u2227 (relation e f)) \u2192 (\u2200 i : Fin 9, 7 \u2223 d i - f i) := by\n    intro d e f h\n    have h\u2081 : relation d e := h.1\n    have h\u2082 : relation e f := h.2\n    have h\u2083 : \u2200 (i : Fin 9), 7 \u2223 (digits_to_num (fun j : Fin 9 => if j = i then e j else d j)) := by\n      have h\u2084 : (\u2200 i : Fin 9, 7 \u2223 (digits_to_num (fun j : Fin 9 => if j = i then e j else d j))) := (hrelation d e).mp h\u2081 |>.2\n      exact h\u2084\n    have h\u2084 : \u2200 (i : Fin 9), 7 \u2223 (digits_to_num (fun j : Fin 9 => if j = i then f j else e j)) := by\n      have h\u2085 : (\u2200 i : Fin 9, 7 \u2223 (digits_to_num (fun j : Fin 9 => if j = i then f j else e j))) := (hrelation e f).mp h\u2082 |>.2\n      exact h\u2085\n    \n    have h\u2085 : \u2200 (i : Fin 9), 7 \u2223 (e i - d i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num d := by\n      intro i\n      have h\u2086 : 7 \u2223 (digits_to_num (fun j : Fin 9 => if j = i then e j else d j)) := h\u2083 i\n      have h\u2087 : (digits_to_num (fun j : Fin 9 => if j = i then e j else d j)) = digits_to_num d + (e i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n        calc\n          (digits_to_num (fun j : Fin 9 => if j = i then e j else d j)) = \u2211 j : Fin 9, (if j = i then e j else d j) * (10 : \u2124) ^ (j : \u2115) := by\n            simp [hdigits_to_num]\n            <;>\n            rfl\n          _ = \u2211 j : Fin 9, (if j = i then e j else d j) * (10 : \u2124) ^ (j : \u2115) := rfl\n          _ = (\u2211 j : Fin 9, d j * (10 : \u2124) ^ (j : \u2115)) + (e i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n            calc\n              (\u2211 j : Fin 9, (if j = i then e j else d j) * (10 : \u2124) ^ (j : \u2115)) = \u2211 j : Fin 9, (d j * (10 : \u2124) ^ (j : \u2115) + (if j = i then (e j - d j) else 0) * (10 : \u2124) ^ (j : \u2115)) := by\n                apply Finset.sum_congr rfl\n                intro j _\n                by_cases h : j = i\n                \u00b7 simp [h]\n                  <;> ring\n                \u00b7 simp [h]\n                  <;> ring\n              _ = (\u2211 j : Fin 9, d j * (10 : \u2124) ^ (j : \u2115)) + \u2211 j : Fin 9, (if j = i then (e j - d j) else 0) * (10 : \u2124) ^ (j : \u2115) := by\n                rw [Finset.sum_add_distrib]\n              _ = (\u2211 j : Fin 9, d j * (10 : \u2124) ^ (j : \u2115)) + (e i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n                have h\u2088 : \u2211 j : Fin 9, (if j = i then (e j - d j) else 0) * (10 : \u2124) ^ (j : \u2115) = (e i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n                  calc\n                    _ = \u2211 j : Fin 9, (if j = i then (e j - d j) else 0) * (10 : \u2124) ^ (j : \u2115) := rfl\n                    _ = (if i = i then (e i - d i) else 0) * (10 : \u2124) ^ (i : \u2115) := by\n                      \n                      simp [Finset.sum_ite_eq', Finset.mem_univ, i.is_lt]\n                    _ = (e i - d i) * (10 : \u2124) ^ (i : \u2115) := by simp\n                rw [h\u2088]\n                <;> simp [hdigits_to_num]\n                <;>\n                rfl\n          _ = digits_to_num d + (e i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n            simp [hdigits_to_num]\n            <;>\n            rfl\n      have h\u2088 : 7 \u2223 digits_to_num d + (e i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n        rw [h\u2087] at h\u2086\n        exact h\u2086\n      \n      have h\u2089 : 7 \u2223 (e i - d i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num d := by\n        \n        have h\u2081\u2080 : (e i - d i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num d = digits_to_num d + (e i - d i) * (10 : \u2124) ^ (i : \u2115) := by ring\n        rw [h\u2081\u2080]\n        exact h\u2088\n      exact h\u2089\n    \n    have h\u2086 : \u2200 (i : Fin 9), 7 \u2223 (f i - e i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num e := by\n      intro i\n      have h\u2087 : 7 \u2223 (digits_to_num (fun j : Fin 9 => if j = i then f j else e j)) := h\u2084 i\n      have h\u2088 : (digits_to_num (fun j : Fin 9 => if j = i then f j else e j)) = digits_to_num e + (f i - e i) * (10 : \u2124) ^ (i : \u2115) := by\n        calc\n          (digits_to_num (fun j : Fin 9 => if j = i then f j else e j)) = \u2211 j : Fin 9, (if j = i then f j else e j) * (10 : \u2124) ^ (j : \u2115) := by\n            simp [hdigits_to_num]\n            <;>\n            rfl\n          _ = \u2211 j : Fin 9, (if j = i then f j else e j) * (10 : \u2124) ^ (j : \u2115) := rfl\n          _ = (\u2211 j : Fin 9, e j * (10 : \u2124) ^ (j : \u2115)) + (f i - e i) * (10 : \u2124) ^ (i : \u2115) := by\n            calc\n              (\u2211 j : Fin 9, (if j = i then f j else e j) * (10 : \u2124) ^ (j : \u2115)) = \u2211 j : Fin 9, (e j * (10 : \u2124) ^ (j : \u2115) + (if j = i then (f j - e j) else 0) * (10 : \u2124) ^ (j : \u2115)) := by\n                apply Finset.sum_congr rfl\n                intro j _\n                by_cases h : j = i\n                \u00b7 simp [h]\n                  <;> ring\n                \u00b7 simp [h]\n                  <;> ring\n              _ = (\u2211 j : Fin 9, e j * (10 : \u2124) ^ (j : \u2115)) + \u2211 j : Fin 9, (if j = i then (f j - e j) else 0) * (10 : \u2124) ^ (j : \u2115) := by\n                rw [Finset.sum_add_distrib]\n              _ = (\u2211 j : Fin 9, e j * (10 : \u2124) ^ (j : \u2115)) + (f i - e i) * (10 : \u2124) ^ (i : \u2115) := by\n                have h\u2089 : \u2211 j : Fin 9, (if j = i then (f j - e j) else 0) * (10 : \u2124) ^ (j : \u2115) = (f i - e i) * (10 : \u2124) ^ (i : \u2115) := by\n                  calc\n                    _ = \u2211 j : Fin 9, (if j = i then (f j - e j) else 0) * (10 : \u2124) ^ (j : \u2115) := rfl\n                    _ = (if i = i then (f i - e i) else 0) * (10 : \u2124) ^ (i : \u2115) := by\n                      \n                      simp [Finset.sum_ite_eq', Finset.mem_univ, i.is_lt]\n                    _ = (f i - e i) * (10 : \u2124) ^ (i : \u2115) := by simp\n                rw [h\u2089]\n                <;> simp [hdigits_to_num]\n                <;>\n                rfl\n          _ = digits_to_num e + (f i - e i) * (10 : \u2124) ^ (i : \u2115) := by\n            simp [hdigits_to_num]\n            <;>\n            rfl\n      have h\u2089 : 7 \u2223 digits_to_num e + (f i - e i) * (10 : \u2124) ^ (i : \u2115) := by\n        rw [h\u2088] at h\u2087\n        exact h\u2087\n      \n      have h\u2081\u2080 : 7 \u2223 (f i - e i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num e := by\n        \n        have h\u2081\u2081 : (f i - e i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num e = digits_to_num e + (f i - e i) * (10 : \u2124) ^ (i : \u2115) := by ring\n        rw [h\u2081\u2081]\n        exact h\u2089\n      exact h\u2081\u2080\n    \n    have h\u2087 : 7 \u2223 digits_to_num e + digits_to_num d := by\n      have h\u2088 : digits_to_num e = digits_to_num d + \u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n        calc\n          digits_to_num e = \u2211 i : Fin 9, e i * (10 : \u2124) ^ (i : \u2115) := by simp [hdigits_to_num]\n          _ = \u2211 i : Fin 9, (d i + (e i - d i)) * (10 : \u2124) ^ (i : \u2115) := by\n            apply Finset.sum_congr rfl\n            intro i _\n            ring\n          _ = \u2211 i : Fin 9, (d i * (10 : \u2124) ^ (i : \u2115) + (e i - d i) * (10 : \u2124) ^ (i : \u2115)) := by\n            apply Finset.sum_congr rfl\n            intro i _\n            ring\n          _ = (\u2211 i : Fin 9, d i * (10 : \u2124) ^ (i : \u2115)) + \u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n            rw [Finset.sum_add_distrib]\n          _ = digits_to_num d + \u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n            simp [hdigits_to_num]\n            <;>\n            rfl\n      have h\u2089 : \u2200 i : Fin 9, 7 \u2223 (e i - d i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num d := h\u2085\n      have h\u2081\u2080 : 7 \u2223 \u2211 i : Fin 9, ((e i - d i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num d) := by\n        apply Finset.dvd_sum\n        intro i _\n        exact h\u2089 i\n      have h\u2081\u2081 : \u2211 i : Fin 9, ((e i - d i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num d) = \u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115) + 9 * digits_to_num d := by\n        calc\n          \u2211 i : Fin 9, ((e i - d i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num d) = \u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115) + \u2211 i : Fin 9, digits_to_num d := by\n            rw [Finset.sum_add_distrib]\n          _ = \u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115) + 9 * digits_to_num d := by\n            simp [Finset.sum_const, Finset.card_fin]\n            <;> ring\n            <;> norm_num\n      have h\u2081\u2082 : 7 \u2223 \u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115) + 9 * digits_to_num d := by\n        rw [h\u2081\u2081] at h\u2081\u2080\n        exact h\u2081\u2080\n      have h\u2081\u2083 : 7 \u2223 digits_to_num e + digits_to_num d := by\n        have h\u2081\u2084 : digits_to_num e + digits_to_num d = 2 * digits_to_num d + \u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n          linarith\n        rw [h\u2081\u2084]\n        have h\u2081\u2085 : 7 \u2223 2 * digits_to_num d + \u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n          have h\u2081\u2086 : 7 \u2223 \u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115) + 9 * digits_to_num d := h\u2081\u2082\n          have h\u2081\u2087 : 7 \u2223 2 * digits_to_num d + \u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n            \n            have h\u2081\u2088 : (\u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115) + 9 * digits_to_num d) = (\u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115)) + 9 * digits_to_num d := by ring\n            rw [h\u2081\u2088] at h\u2081\u2086\n            \n            \n            \n            \n            \n            \n            have h\u2081\u2089 : 7 \u2223 (\u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115)) + 2 * digits_to_num d := by\n              \n              \n              \n              have h\u2082\u2080 : 7 \u2223 (\u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115)) + 9 * digits_to_num d := h\u2081\u2086\n              have h\u2082\u2081 : 7 \u2223 7 * digits_to_num d := by\n                use digits_to_num d\n                <;> ring\n              have h\u2082\u2082 : 7 \u2223 (\u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115)) + 2 * digits_to_num d := by\n                \n                have h\u2082\u2083 : (\u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115)) + 2 * digits_to_num d = ((\u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115)) + 9 * digits_to_num d) - 7 * digits_to_num d := by ring\n                rw [h\u2082\u2083]\n                exact dvd_sub h\u2082\u2080 h\u2082\u2081\n              exact h\u2082\u2082\n            \n            have h\u2082\u2080 : 7 \u2223 2 * digits_to_num d + \u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n              \n              have h\u2082\u2081 : 2 * digits_to_num d + \u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115) = (\u2211 i : Fin 9, (e i - d i) * (10 : \u2124) ^ (i : \u2115)) + 2 * digits_to_num d := by ring\n              rw [h\u2082\u2081]\n              exact h\u2081\u2089\n            exact h\u2082\u2080\n          exact h\u2081\u2087\n        exact h\u2081\u2085\n      exact h\u2081\u2083\n    \n    have h\u2088 : \u2200 (i : Fin 9), 7 \u2223 (f i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n      intro i\n      have h\u2089 : 7 \u2223 (f i - e i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num e := h\u2086 i\n      have h\u2081\u2080 : 7 \u2223 (e i - d i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num d := h\u2085 i\n      have h\u2081\u2081 : 7 \u2223 digits_to_num e + digits_to_num d := h\u2087\n      \n      have h\u2081\u2082 : 7 \u2223 (f i - e i) * (10 : \u2124) ^ (i : \u2115) - digits_to_num d := by\n        \n        \n        have h\u2081\u2083 : 7 \u2223 (f i - e i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num e := h\u2086 i\n        have h\u2081\u2084 : 7 \u2223 digits_to_num e + digits_to_num d := h\u2087\n        \n        have h\u2081\u2085 : 7 \u2223 ((f i - e i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num e) - (digits_to_num e + digits_to_num d) := by\n          exact dvd_sub h\u2081\u2083 h\u2081\u2084\n        \n        have h\u2081\u2086 : ((f i - e i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num e) - (digits_to_num e + digits_to_num d) = (f i - e i) * (10 : \u2124) ^ (i : \u2115) - digits_to_num d := by\n          ring\n        rw [h\u2081\u2086] at h\u2081\u2085\n        exact h\u2081\u2085\n      \n      have h\u2081\u2083 : 7 \u2223 (f i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n        have h\u2081\u2084 : 7 \u2223 (f i - e i) * (10 : \u2124) ^ (i : \u2115) - digits_to_num d := h\u2081\u2082\n        have h\u2081\u2085 : 7 \u2223 (e i - d i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num d := h\u2085 i\n        \n        have h\u2081\u2086 : 7 \u2223 ((f i - e i) * (10 : \u2124) ^ (i : \u2115) - digits_to_num d) + ((e i - d i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num d) := by\n          exact dvd_add h\u2081\u2084 h\u2081\u2085\n        \n        have h\u2081\u2087 : ((f i - e i) * (10 : \u2124) ^ (i : \u2115) - digits_to_num d) + ((e i - d i) * (10 : \u2124) ^ (i : \u2115) + digits_to_num d) = (f i - d i) * (10 : \u2124) ^ (i : \u2115) := by\n          ring\n        rw [h\u2081\u2087] at h\u2081\u2086\n        exact h\u2081\u2086\n      exact h\u2081\u2083\n    \n    have h\u2089 : \u2200 (i : Fin 9), 7 \u2223 d i - f i := by\n      intro i\n      have h\u2081\u2080 : 7 \u2223 (f i - d i) * (10 : \u2124) ^ (i : \u2115) := h\u2088 i\n      have h\u2081\u2081 : 7 \u2223 (f i - d i) := by\n        \n        have h\u2081\u2082 : (7 : \u2124) \u2223 (f i - d i) * (10 : \u2124) ^ (i : \u2115) := h\u2081\u2080\n        \n        have h\u2081\u2083 : (7 : \u2115).Prime := by decide\n        have h\u2081\u2084 : \u00ac(7 : \u2124) \u2223 (10 : \u2124) ^ (i : \u2115) := by\n          \n          intro h\n          have h\u2081\u2085 : (7 : \u2115) \u2223 (10 : \u2115) ^ (i : \u2115) := by\n            norm_cast at h \u22a2\n            <;> simpa [Int.coe_nat_dvd_left] using h\n          have h\u2081\u2086 : (7 : \u2115) \u2223 10 := by\n            \n            exact Nat.Prime.dvd_of_dvd_pow h\u2081\u2083 h\u2081\u2085\n          norm_num at h\u2081\u2086\n          <;> contradiction\n        \n        have h\u2081\u2085 : (7 : \u2124) \u2223 (f i - d i) := by\n          \n          have h\u2081\u2086 : (7 : \u2124) \u2223 (f i - d i) * (10 : \u2124) ^ (i : \u2115) := h\u2081\u2082\n          have h\u2081\u2087 : \u00ac(7 : \u2124) \u2223 (10 : \u2124) ^ (i : \u2115) := h\u2081\u2084\n          \n          have h\u2081\u2088 : (7 : \u2124) \u2223 (f i - d i) := by\n            \n            have h\u2081\u2089 : (7 : \u2124) \u2223 (f i - d i) * (10 : \u2124) ^ (i : \u2115) := h\u2081\u2082\n            have h\u2082\u2080 : (7 : \u2115).Prime := by decide\n            have h\u2082\u2081 : (7 : \u2124) \u2223 (f i - d i) \u2228 (7 : \u2124) \u2223 (10 : \u2124) ^ (i : \u2115) := by\n              \n              have h\u2082\u2082 : (7 : \u2124) \u2223 (f i - d i) * (10 : \u2124) ^ (i : \u2115) := h\u2081\u2082\n              have h\u2082\u2083 : (7 : \u2124) \u2223 (f i - d i) \u2228 (7 : \u2124) \u2223 (10 : \u2124) ^ (i : \u2115) := by\n                \n                apply (Int.prime_iff_natAbs_prime.mpr (by decide)).dvd_mul.mp\n                exact h\u2082\u2082\n              exact h\u2082\u2083\n            cases h\u2082\u2081 with\n            | inl h\u2082\u2081 =>\n              exact h\u2082\u2081\n            | inr h\u2082\u2081 =>\n              exfalso\n              exact h\u2081\u2084 h\u2082\u2081\n          exact h\u2081\u2088\n        exact h\u2081\u2085\n      \n      have h\u2081\u2082 : 7 \u2223 d i - f i := by\n        have h\u2081\u2083 : 7 \u2223 (f i - d i) := h\u2081\u2081\n        have h\u2081\u2084 : 7 \u2223 -(f i - d i) := by\n          exact dvd_neg.mpr h\u2081\u2083\n        have h\u2081\u2085 : -(f i - d i) = d i - f i := by ring\n        rw [h\u2081\u2085] at h\u2081\u2084\n        exact h\u2081\u2084\n      exact h\u2081\u2082\n    \n    intro i\n    have h\u2081\u2080 : 7 \u2223 d i - f i := h\u2089 i\n    exact h\u2081\u2080\n  exact h_main",
+        "reference_length": 4085,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.25.0",
+            "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33"
+          }
+        ],
+        "dependency_digests": [
+          "a8615b2cecd30c04e9ac1fe03f7aa246c389f0d9980ebd12c8838b8ef93989be"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "b8040b3fb9505e29a4c800b2077c3dce7b9bc8e28fd0bc9a6e1ced73e3ae74e7",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "import Mathlib\nimport Aesop\n\nset_option maxHeartbeats 0\n\nopen Filter Topology Real\n\n\n",
+        "repository": "",
+        "file_path": "",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":900.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "f2d33eea3e8dd7f2c5ce9ad71f53a0b6925053a3c64686be97d183b6f15d2508"
+    },
+    {
+      "name": "putnam_1995_a3",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1995_a3",
+      "lean_tag": "v4.27.0",
+      "git_commit": "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    }
+  ],
+  "projects": [
+    {
+      "repository": "",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0",
+      "kind": "putnam",
+      "resolve_lake_manifest": true
+    }
+  ],
+  "corpus_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+  "processes": 3,
+  "measurement": "command-elaboration-internal-heartbeats-div-1000/v1",
+  "local_combined_pct": null,
+  "worker_metric_parity": "UNCONFIRMED",
+  "fingerprint_file_reads": 222795,
+  "fingerprint_stat_hits": 0,
+  "live_model_calls": 0
+}

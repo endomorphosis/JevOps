@@ -1,0 +1,665 @@
+{
+  "all_graph_training_gates_passed": false,
+  "best_graph": {
+    "arm": "ce_cosine",
+    "freeze_sha256": "ed4fea75901830f5427a2bd59c5b370469ac3acca547d7cff1a298e65a895cde",
+    "learning_rate": 0.25,
+    "metrics": {
+      "acceptable_count": 8,
+      "correct_count": 6,
+      "cross_entropy": 0.6934025734358688,
+      "expected_cosine_loss": 0.24910299365977062,
+      "rejected_probability_mass": 0.016294302063322944,
+      "sample_count": 8,
+      "supervised_total": 0.7805886212167884,
+      "verified_saved_tokens": 72
+    }
+  },
+  "best_trained_control": {
+    "arm": "fixed_graph",
+    "freeze_sha256": "ed4fea75901830f5427a2bd59c5b370469ac3acca547d7cff1a298e65a895cde",
+    "learning_rate": 0.25,
+    "metrics": {
+      "acceptable_count": 8,
+      "correct_count": 8,
+      "cross_entropy": 0.09987917727282482,
+      "expected_cosine_loss": 0.045412838318703526,
+      "rejected_probability_mass": 0.019929255952164132,
+      "sample_count": 8,
+      "supervised_total": 0.11577367068437106,
+      "verified_saved_tokens": 74
+    }
+  },
+  "checkpoint_promoted": false,
+  "comparison_sha256": "4ffed42e5cb0639e006c592a5fc9707d2c6bb987de70cf296a7d09146cabc36c",
+  "evaluation_accessed": false,
+  "evidence_kind": "saved_native_training_observations_not_fresh_verification",
+  "matched_binding_sha256": "8bcf5bca4095c14872604a1095ee9d71e687ec7153fdc0bdc521ca82baf1e663",
+  "official_score": null,
+  "runs": [
+    {
+      "experiment_sha256": "d667b6c3a7d97931500cf619e73fa2af2414979ffdb30436aeafb3e6649c0fec",
+      "learning_rate": 0.05,
+      "measurement": {
+        "admitted_pairs": 8,
+        "audit_statuses": {
+          "accepted": 10,
+          "elaborator_rejected": 3,
+          "identity": 8
+        },
+        "checkpoint_promoted": false,
+        "evaluation_accessed": false,
+        "experiment_sha256": "d667b6c3a7d97931500cf619e73fa2af2414979ffdb30436aeafb3e6649c0fec",
+        "freeze_sha256": "4ab610aaa97cec7ad9a4c3882be1de92b5fc14824adf90925d940fd7187cd912",
+        "gates": {
+          "all_raw_training_choices_acceptable": true,
+          "all_training_labels_selected": false,
+          "cross_entropy_nonregression": true,
+          "expected_cosine_loss_nonregression": true
+        },
+        "headroom": [
+          {
+            "choice_count": 3,
+            "competing_edits": 2,
+            "id": "copy",
+            "proof_checked": false,
+            "source_tokens": 12,
+            "syntactic_minimum_tokens": 1,
+            "syntactic_saved_tokens_upper_bound": 11
+          },
+          {
+            "choice_count": 2,
+            "competing_edits": 1,
+            "id": "application",
+            "proof_checked": false,
+            "source_tokens": 4,
+            "syntactic_minimum_tokens": 3,
+            "syntactic_saved_tokens_upper_bound": 1
+          },
+          {
+            "choice_count": 2,
+            "competing_edits": 1,
+            "id": "dependent",
+            "proof_checked": false,
+            "source_tokens": 13,
+            "syntactic_minimum_tokens": 3,
+            "syntactic_saved_tokens_upper_bound": 10
+          },
+          {
+            "choice_count": 2,
+            "competing_edits": 1,
+            "id": "implicit",
+            "proof_checked": false,
+            "source_tokens": 15,
+            "syntactic_minimum_tokens": 4,
+            "syntactic_saved_tokens_upper_bound": 11
+          },
+          {
+            "choice_count": 3,
+            "competing_edits": 2,
+            "id": "nat_refl",
+            "proof_checked": false,
+            "source_tokens": 12,
+            "syntactic_minimum_tokens": 1,
+            "syntactic_saved_tokens_upper_bound": 11
+          },
+          {
+            "choice_count": 3,
+            "competing_edits": 2,
+            "id": "nat_nonrefl",
+            "proof_checked": false,
+            "source_tokens": 12,
+            "syntactic_minimum_tokens": 1,
+            "syntactic_saved_tokens_upper_bound": 11
+          },
+          {
+            "choice_count": 3,
+            "competing_edits": 2,
+            "id": "bool_refl",
+            "proof_checked": false,
+            "source_tokens": 12,
+            "syntactic_minimum_tokens": 1,
+            "syntactic_saved_tokens_upper_bound": 11
+          },
+          {
+            "choice_count": 3,
+            "competing_edits": 2,
+            "id": "bool_nonrefl",
+            "proof_checked": false,
+            "source_tokens": 12,
+            "syntactic_minimum_tokens": 1,
+            "syntactic_saved_tokens_upper_bound": 11
+          }
+        ],
+        "model_trained": true,
+        "native_compile_calls": 21,
+        "official_score": null,
+        "ok": false,
+        "protocol": {
+          "cosine_weight": 0.35,
+          "epochs": 80,
+          "initial_weights_matched": true,
+          "label_smoothing": 0.02,
+          "learning_rate": 0.05,
+          "rejection_weights": {
+            "ce_cosine": 0.0,
+            "ce_cosine_rejection": 0.25
+          },
+          "seed": 17,
+          "teacher_fallback_at_prediction": false,
+          "training_only": true,
+          "unknown_failures_are_negatives": false
+        },
+        "schema": "jevops-native-rejection-training/v1",
+        "scope": "training_discrimination_control_not_generalization",
+        "selected": "ce_cosine",
+        "statistics": {
+          "ce_cosine": {
+            "after": {
+              "acceptable_count": 8,
+              "correct_count": 6,
+              "cross_entropy": 0.7102566141929735,
+              "expected_cosine_loss": 0.25535315237621553,
+              "rejected_probability_mass": 0.0203197368229421,
+              "sample_count": 8,
+              "supervised_total": 0.7996302175246489,
+              "verified_saved_tokens": 72
+            },
+            "before": {
+              "acceptable_count": 8,
+              "correct_count": 0,
+              "cross_entropy": 0.946562873127548,
+              "expected_cosine_loss": 0.448169093967518,
+              "rejected_probability_mass": 0.125,
+              "sample_count": 8,
+              "supervised_total": 1.1034220560161794,
+              "verified_saved_tokens": 0
+            },
+            "encoder_changed": true,
+            "examples_seen": 640,
+            "rejection_weight": 0.0,
+            "updates": 640
+          },
+          "ce_cosine_rejection": {
+            "after": {
+              "acceptable_count": 8,
+              "correct_count": 6,
+              "cross_entropy": 0.7480756251266965,
+              "expected_cosine_loss": 0.25511351911582997,
+              "rejected_probability_mass": 0.017194392033187806,
+              "sample_count": 8,
+              "supervised_total": 0.837365356817237,
+              "verified_saved_tokens": 72
+            },
+            "before": {
+              "acceptable_count": 8,
+              "correct_count": 0,
+              "cross_entropy": 0.946562873127548,
+              "expected_cosine_loss": 0.448169093967518,
+              "rejected_probability_mass": 0.125,
+              "sample_count": 8,
+              "supervised_total": 1.1034220560161794,
+              "verified_saved_tokens": 0
+            },
+            "encoder_changed": true,
+            "examples_seen": 640,
+            "rejection_weight": 0.25,
+            "updates": 640
+          },
+          "fixed_graph": {
+            "after": {
+              "acceptable_count": 8,
+              "correct_count": 6,
+              "cross_entropy": 0.3523764091199887,
+              "expected_cosine_loss": 0.21630792413683902,
+              "rejected_probability_mass": 0.04712803839277034,
+              "sample_count": 8,
+              "supervised_total": 0.42808418256788233,
+              "verified_saved_tokens": 72
+            },
+            "before": {
+              "acceptable_count": 8,
+              "correct_count": 0,
+              "cross_entropy": 0.946562873127548,
+              "expected_cosine_loss": 0.448169093967518,
+              "rejected_probability_mass": 0.125,
+              "sample_count": 8,
+              "supervised_total": 1.1034220560161794,
+              "verified_saved_tokens": 0
+            },
+            "examples_seen": 640,
+            "rejection_weight": 0.0,
+            "updates": 640
+          }
+        },
+        "token_length": {
+          "acceptable_count": 5,
+          "correct_count": 5,
+          "cross_entropy": 0.6799616593506715,
+          "expected_cosine_loss": 0.35123441837258995,
+          "rejected_probability_mass": 0.27414361971413687,
+          "sample_count": 8,
+          "supervised_total": 0.802893705781078,
+          "verified_saved_tokens": 44
+        }
+      }
+    },
+    {
+      "experiment_sha256": "44dda06c3338f6dafe30c3f7f1eadb80886f5b3e1b44aae8708cd053f442ab2c",
+      "learning_rate": 0.15,
+      "measurement": {
+        "admitted_pairs": 8,
+        "audit_statuses": {
+          "accepted": 10,
+          "elaborator_rejected": 3,
+          "identity": 8
+        },
+        "checkpoint_promoted": false,
+        "evaluation_accessed": false,
+        "experiment_sha256": "44dda06c3338f6dafe30c3f7f1eadb80886f5b3e1b44aae8708cd053f442ab2c",
+        "freeze_sha256": "ec7b6456aac16ca7963a7d99b336fd428c68bc55f4e0e23d5da3d1ae15851080",
+        "gates": {
+          "all_raw_training_choices_acceptable": true,
+          "all_training_labels_selected": false,
+          "cross_entropy_nonregression": true,
+          "expected_cosine_loss_nonregression": true
+        },
+        "headroom": [
+          {
+            "choice_count": 3,
+            "competing_edits": 2,
+            "id": "copy",
+            "proof_checked": false,
+            "source_tokens": 12,
+            "syntactic_minimum_tokens": 1,
+            "syntactic_saved_tokens_upper_bound": 11
+          },
+          {
+            "choice_count": 2,
+            "competing_edits": 1,
+            "id": "application",
+            "proof_checked": false,
+            "source_tokens": 4,
+            "syntactic_minimum_tokens": 3,
+            "syntactic_saved_tokens_upper_bound": 1
+          },
+          {
+            "choice_count": 2,
+            "competing_edits": 1,
+            "id": "dependent",
+            "proof_checked": false,
+            "source_tokens": 13,
+            "syntactic_minimum_tokens": 3,
+            "syntactic_saved_tokens_upper_bound": 10
+          },
+          {
+            "choice_count": 2,
+            "competing_edits": 1,
+            "id": "implicit",
+            "proof_checked": false,
+            "source_tokens": 15,
+            "syntactic_minimum_tokens": 4,
+            "syntactic_saved_tokens_upper_bound": 11
+          },
+          {
+            "choice_count": 3,
+            "competing_edits": 2,
+            "id": "nat_refl",
+            "proof_checked": false,
+            "source_tokens": 12,
+            "syntactic_minimum_tokens": 1,
+            "syntactic_saved_tokens_upper_bound": 11
+          },
+          {
+            "choice_count": 3,
+            "competing_edits": 2,
+            "id": "nat_nonrefl",
+            "proof_checked": false,
+            "source_tokens": 12,
+            "syntactic_minimum_tokens": 1,
+            "syntactic_saved_tokens_upper_bound": 11
+          },
+          {
+            "choice_count": 3,
+            "competing_edits": 2,
+            "id": "bool_refl",
+            "proof_checked": false,
+            "source_tokens": 12,
+            "syntactic_minimum_tokens": 1,
+            "syntactic_saved_tokens_upper_bound": 11
+          },
+          {
+            "choice_count": 3,
+            "competing_edits": 2,
+            "id": "bool_nonrefl",
+            "proof_checked": false,
+            "source_tokens": 12,
+            "syntactic_minimum_tokens": 1,
+            "syntactic_saved_tokens_upper_bound": 11
+          }
+        ],
+        "model_trained": true,
+        "native_compile_calls": 21,
+        "official_score": null,
+        "ok": false,
+        "protocol": {
+          "cosine_weight": 0.35,
+          "epochs": 80,
+          "initial_weights_matched": true,
+          "label_smoothing": 0.02,
+          "learning_rate": 0.15,
+          "rejection_weights": {
+            "ce_cosine": 0.0,
+            "ce_cosine_rejection": 0.25
+          },
+          "seed": 17,
+          "teacher_fallback_at_prediction": false,
+          "training_only": true,
+          "unknown_failures_are_negatives": false
+        },
+        "schema": "jevops-native-rejection-training/v1",
+        "scope": "training_discrimination_control_not_generalization",
+        "selected": "ce_cosine",
+        "statistics": {
+          "ce_cosine": {
+            "after": {
+              "acceptable_count": 8,
+              "correct_count": 6,
+              "cross_entropy": 0.7070499295912492,
+              "expected_cosine_loss": 0.2516229282378229,
+              "rejected_probability_mass": 0.017799569545512484,
+              "sample_count": 8,
+              "supervised_total": 0.7951179544744873,
+              "verified_saved_tokens": 72
+            },
+            "before": {
+              "acceptable_count": 8,
+              "correct_count": 0,
+              "cross_entropy": 0.946562873127548,
+              "expected_cosine_loss": 0.448169093967518,
+              "rejected_probability_mass": 0.125,
+              "sample_count": 8,
+              "supervised_total": 1.1034220560161794,
+              "verified_saved_tokens": 0
+            },
+            "encoder_changed": true,
+            "examples_seen": 640,
+            "rejection_weight": 0.0,
+            "updates": 640
+          },
+          "ce_cosine_rejection": {
+            "after": {
+              "acceptable_count": 8,
+              "correct_count": 6,
+              "cross_entropy": 0.7454454711057671,
+              "expected_cosine_loss": 0.25176611691758005,
+              "rejected_probability_mass": 0.015037365352574467,
+              "sample_count": 8,
+              "supervised_total": 0.8335636120269201,
+              "verified_saved_tokens": 72
+            },
+            "before": {
+              "acceptable_count": 8,
+              "correct_count": 0,
+              "cross_entropy": 0.946562873127548,
+              "expected_cosine_loss": 0.448169093967518,
+              "rejected_probability_mass": 0.125,
+              "sample_count": 8,
+              "supervised_total": 1.1034220560161794,
+              "verified_saved_tokens": 0
+            },
+            "encoder_changed": true,
+            "examples_seen": 640,
+            "rejection_weight": 0.25,
+            "updates": 640
+          },
+          "fixed_graph": {
+            "after": {
+              "acceptable_count": 8,
+              "correct_count": 8,
+              "cross_entropy": 0.140185198972953,
+              "expected_cosine_loss": 0.08532637205712128,
+              "rejected_probability_mass": 0.037684523576533235,
+              "sample_count": 8,
+              "supervised_total": 0.17004942919294544,
+              "verified_saved_tokens": 74
+            },
+            "before": {
+              "acceptable_count": 8,
+              "correct_count": 0,
+              "cross_entropy": 0.946562873127548,
+              "expected_cosine_loss": 0.448169093967518,
+              "rejected_probability_mass": 0.125,
+              "sample_count": 8,
+              "supervised_total": 1.1034220560161794,
+              "verified_saved_tokens": 0
+            },
+            "examples_seen": 640,
+            "rejection_weight": 0.0,
+            "updates": 640
+          }
+        },
+        "token_length": {
+          "acceptable_count": 5,
+          "correct_count": 5,
+          "cross_entropy": 0.6799616593506715,
+          "expected_cosine_loss": 0.35123441837258995,
+          "rejected_probability_mass": 0.27414361971413687,
+          "sample_count": 8,
+          "supervised_total": 0.802893705781078,
+          "verified_saved_tokens": 44
+        }
+      }
+    },
+    {
+      "experiment_sha256": "faf34885fd47abab3f15f0e6e1f7253c19b5ae8671e4b5cf4b0410f4cc2068e6",
+      "learning_rate": 0.25,
+      "measurement": {
+        "admitted_pairs": 8,
+        "audit_statuses": {
+          "accepted": 10,
+          "elaborator_rejected": 3,
+          "identity": 8
+        },
+        "checkpoint_promoted": false,
+        "evaluation_accessed": false,
+        "experiment_sha256": "faf34885fd47abab3f15f0e6e1f7253c19b5ae8671e4b5cf4b0410f4cc2068e6",
+        "freeze_sha256": "ed4fea75901830f5427a2bd59c5b370469ac3acca547d7cff1a298e65a895cde",
+        "gates": {
+          "all_raw_training_choices_acceptable": true,
+          "all_training_labels_selected": false,
+          "cross_entropy_nonregression": true,
+          "expected_cosine_loss_nonregression": true
+        },
+        "headroom": [
+          {
+            "choice_count": 3,
+            "competing_edits": 2,
+            "id": "copy",
+            "proof_checked": false,
+            "source_tokens": 12,
+            "syntactic_minimum_tokens": 1,
+            "syntactic_saved_tokens_upper_bound": 11
+          },
+          {
+            "choice_count": 2,
+            "competing_edits": 1,
+            "id": "application",
+            "proof_checked": false,
+            "source_tokens": 4,
+            "syntactic_minimum_tokens": 3,
+            "syntactic_saved_tokens_upper_bound": 1
+          },
+          {
+            "choice_count": 2,
+            "competing_edits": 1,
+            "id": "dependent",
+            "proof_checked": false,
+            "source_tokens": 13,
+            "syntactic_minimum_tokens": 3,
+            "syntactic_saved_tokens_upper_bound": 10
+          },
+          {
+            "choice_count": 2,
+            "competing_edits": 1,
+            "id": "implicit",
+            "proof_checked": false,
+            "source_tokens": 15,
+            "syntactic_minimum_tokens": 4,
+            "syntactic_saved_tokens_upper_bound": 11
+          },
+          {
+            "choice_count": 3,
+            "competing_edits": 2,
+            "id": "nat_refl",
+            "proof_checked": false,
+            "source_tokens": 12,
+            "syntactic_minimum_tokens": 1,
+            "syntactic_saved_tokens_upper_bound": 11
+          },
+          {
+            "choice_count": 3,
+            "competing_edits": 2,
+            "id": "nat_nonrefl",
+            "proof_checked": false,
+            "source_tokens": 12,
+            "syntactic_minimum_tokens": 1,
+            "syntactic_saved_tokens_upper_bound": 11
+          },
+          {
+            "choice_count": 3,
+            "competing_edits": 2,
+            "id": "bool_refl",
+            "proof_checked": false,
+            "source_tokens": 12,
+            "syntactic_minimum_tokens": 1,
+            "syntactic_saved_tokens_upper_bound": 11
+          },
+          {
+            "choice_count": 3,
+            "competing_edits": 2,
+            "id": "bool_nonrefl",
+            "proof_checked": false,
+            "source_tokens": 12,
+            "syntactic_minimum_tokens": 1,
+            "syntactic_saved_tokens_upper_bound": 11
+          }
+        ],
+        "model_trained": true,
+        "native_compile_calls": 21,
+        "official_score": null,
+        "ok": false,
+        "protocol": {
+          "cosine_weight": 0.35,
+          "epochs": 80,
+          "initial_weights_matched": true,
+          "label_smoothing": 0.02,
+          "learning_rate": 0.25,
+          "rejection_weights": {
+            "ce_cosine": 0.0,
+            "ce_cosine_rejection": 0.25
+          },
+          "seed": 17,
+          "teacher_fallback_at_prediction": false,
+          "training_only": true,
+          "unknown_failures_are_negatives": false
+        },
+        "schema": "jevops-native-rejection-training/v1",
+        "scope": "training_discrimination_control_not_generalization",
+        "selected": "ce_cosine",
+        "statistics": {
+          "ce_cosine": {
+            "after": {
+              "acceptable_count": 8,
+              "correct_count": 6,
+              "cross_entropy": 0.6934025734358688,
+              "expected_cosine_loss": 0.24910299365977062,
+              "rejected_probability_mass": 0.016294302063322944,
+              "sample_count": 8,
+              "supervised_total": 0.7805886212167884,
+              "verified_saved_tokens": 72
+            },
+            "before": {
+              "acceptable_count": 8,
+              "correct_count": 0,
+              "cross_entropy": 0.946562873127548,
+              "expected_cosine_loss": 0.448169093967518,
+              "rejected_probability_mass": 0.125,
+              "sample_count": 8,
+              "supervised_total": 1.1034220560161794,
+              "verified_saved_tokens": 0
+            },
+            "encoder_changed": true,
+            "examples_seen": 640,
+            "rejection_weight": 0.0,
+            "updates": 640
+          },
+          "ce_cosine_rejection": {
+            "after": {
+              "acceptable_count": 8,
+              "correct_count": 6,
+              "cross_entropy": 0.7320819007281759,
+              "expected_cosine_loss": 0.24960514491973873,
+              "rejected_probability_mass": 0.013742374083192066,
+              "sample_count": 8,
+              "supervised_total": 0.8194437014500845,
+              "verified_saved_tokens": 72
+            },
+            "before": {
+              "acceptable_count": 8,
+              "correct_count": 0,
+              "cross_entropy": 0.946562873127548,
+              "expected_cosine_loss": 0.448169093967518,
+              "rejected_probability_mass": 0.125,
+              "sample_count": 8,
+              "supervised_total": 1.1034220560161794,
+              "verified_saved_tokens": 0
+            },
+            "encoder_changed": true,
+            "examples_seen": 640,
+            "rejection_weight": 0.25,
+            "updates": 640
+          },
+          "fixed_graph": {
+            "after": {
+              "acceptable_count": 8,
+              "correct_count": 8,
+              "cross_entropy": 0.09987917727282482,
+              "expected_cosine_loss": 0.045412838318703526,
+              "rejected_probability_mass": 0.019929255952164132,
+              "sample_count": 8,
+              "supervised_total": 0.11577367068437106,
+              "verified_saved_tokens": 74
+            },
+            "before": {
+              "acceptable_count": 8,
+              "correct_count": 0,
+              "cross_entropy": 0.946562873127548,
+              "expected_cosine_loss": 0.448169093967518,
+              "rejected_probability_mass": 0.125,
+              "sample_count": 8,
+              "supervised_total": 1.1034220560161794,
+              "verified_saved_tokens": 0
+            },
+            "examples_seen": 640,
+            "rejection_weight": 0.0,
+            "updates": 640
+          }
+        },
+        "token_length": {
+          "acceptable_count": 5,
+          "correct_count": 5,
+          "cross_entropy": 0.6799616593506715,
+          "expected_cosine_loss": 0.35123441837258995,
+          "rejected_probability_mass": 0.27414361971413687,
+          "sample_count": 8,
+          "supervised_total": 0.802893705781078,
+          "verified_saved_tokens": 44
+        }
+      }
+    }
+  ],
+  "schema": "jevops-native-rejection-training/v1/comparison",
+  "selection_scope": "training_only_sequential_development",
+  "training_cases": 8
+}

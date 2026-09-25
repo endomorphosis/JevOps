@@ -1,0 +1,251 @@
+{
+  "by_split": {
+    "canary": {
+      "fixed_graph": {
+        "cross_entropy": 0.10493788152035967,
+        "expected_cosine_loss": 0.034884525014344796,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "raw_prediction_tokens": 9,
+        "sample_count": 2,
+        "source_tokens": 30,
+        "valid_count": 2,
+        "verified_saved_tokens": 21
+      },
+      "learned": {
+        "cross_entropy": 0.056218725029936356,
+        "expected_cosine_loss": 0.005672378579893897,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "raw_prediction_tokens": 9,
+        "sample_count": 2,
+        "source_tokens": 30,
+        "valid_count": 2,
+        "verified_saved_tokens": 21
+      },
+      "token_length": {
+        "cross_entropy": 0.1050310502302676,
+        "expected_cosine_loss": 1.6077088030115805e-05,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "raw_prediction_tokens": 9,
+        "sample_count": 2,
+        "source_tokens": 30,
+        "valid_count": 2,
+        "verified_saved_tokens": 21
+      }
+    },
+    "holdout": {
+      "fixed_graph": {
+        "cross_entropy": 0.0469327838752294,
+        "expected_cosine_loss": 0.013735001318862685,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "raw_prediction_tokens": 11,
+        "sample_count": 2,
+        "source_tokens": 21,
+        "valid_count": 2,
+        "verified_saved_tokens": 10
+      },
+      "learned": {
+        "cross_entropy": 0.0280313881166739,
+        "expected_cosine_loss": 0.0023544782389636858,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "raw_prediction_tokens": 11,
+        "sample_count": 2,
+        "source_tokens": 21,
+        "valid_count": 2,
+        "verified_saved_tokens": 10
+      },
+      "token_length": {
+        "cross_entropy": 0.050022699449608445,
+        "expected_cosine_loss": 9.593698493224294e-06,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "raw_prediction_tokens": 11,
+        "sample_count": 2,
+        "source_tokens": 21,
+        "valid_count": 2,
+        "verified_saved_tokens": 10
+      }
+    },
+    "validation": {
+      "fixed_graph": {
+        "cross_entropy": 0.09060354849243148,
+        "expected_cosine_loss": 0.02309104060465178,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "raw_prediction_tokens": 7,
+        "sample_count": 2,
+        "source_tokens": 18,
+        "valid_count": 2,
+        "verified_saved_tokens": 11
+      },
+      "learned": {
+        "cross_entropy": 0.05608010304524261,
+        "expected_cosine_loss": 0.003959769939551815,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "raw_prediction_tokens": 7,
+        "sample_count": 2,
+        "source_tokens": 18,
+        "valid_count": 2,
+        "verified_saved_tokens": 11
+      },
+      "token_length": {
+        "cross_entropy": 0.21165354320871987,
+        "expected_cosine_loss": 0.03939515298715468,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "raw_prediction_tokens": 7,
+        "sample_count": 2,
+        "source_tokens": 18,
+        "valid_count": 2,
+        "verified_saved_tokens": 11
+      }
+    }
+  },
+  "checkpoint_promoted": false,
+  "comparisons": {
+    "fixed_graph": {
+      "baseline_complete_loss_coverage": true,
+      "baseline_savings_nonregression": true,
+      "complete_cost_and_loss_coverage": true,
+      "complete_validity": true,
+      "cross_entropy_nonregression": true,
+      "expected_cosine_loss_nonregression": true
+    },
+    "token_length": {
+      "baseline_complete_loss_coverage": true,
+      "baseline_savings_nonregression": true,
+      "complete_cost_and_loss_coverage": true,
+      "complete_validity": true,
+      "cross_entropy_nonregression": true,
+      "expected_cosine_loss_nonregression": true
+    }
+  },
+  "freeze_sha256": "7f5163f0449a701a316ea7c36d128f6a38242cf409662ef2d9e190f6309d8825",
+  "gates": {
+    "all_arms_complete_validity_cost_and_loss": true,
+    "all_comparisons_pass": true,
+    "all_splits_pass": false
+  },
+  "manifest_sha256": "625b548c805f58841d5f02a8053d3668a0b98d1f8dd1d59f701bd84a3058f3be",
+  "models_unchanged": true,
+  "native_compile_calls": 11,
+  "official_score": null,
+  "ok": false,
+  "protocol": {
+    "alternate_candidate_search": false,
+    "compiler_cache": "per_run_identical_source_deduplication",
+    "compute_matched": false,
+    "grammar": "identical_training_mined_templates",
+    "loss_label_smoothing": 0.02,
+    "loss_scope": "edit_choice_CE_and_expected_IR_operation_cosine",
+    "max_edits": 1,
+    "raw_candidate_checks_per_arm_per_source": 1,
+    "reference_checks": "separate_not_inference",
+    "source_checks": "shared_fresh_native_DAG",
+    "symbolic_logits": "negative_proof_source_tokens",
+    "symbolic_temperature": 1.0,
+    "verification_budget_matched": true
+  },
+  "receipt_sha256": "12707e179ffbe1cd0b11f156be10d39f37ba8aebf820150af1553a3ea03c5a62",
+  "schema": "jevops-scoped-frozen-evaluation/v1",
+  "scope": "hand_designed_layout_transfer_shared_rewrite_motifs",
+  "selected": "multiscale_online_0.25",
+  "semantic_family_decontamination": false,
+  "source_type_shapes_disjoint": true,
+  "split_gates": {
+    "canary": {
+      "fixed_graph": {
+        "baseline_complete_loss_coverage": true,
+        "baseline_savings_nonregression": true,
+        "complete_cost_and_loss_coverage": true,
+        "complete_validity": true,
+        "cross_entropy_nonregression": true,
+        "expected_cosine_loss_nonregression": true
+      },
+      "token_length": {
+        "baseline_complete_loss_coverage": true,
+        "baseline_savings_nonregression": true,
+        "complete_cost_and_loss_coverage": true,
+        "complete_validity": true,
+        "cross_entropy_nonregression": true,
+        "expected_cosine_loss_nonregression": false
+      }
+    },
+    "holdout": {
+      "fixed_graph": {
+        "baseline_complete_loss_coverage": true,
+        "baseline_savings_nonregression": true,
+        "complete_cost_and_loss_coverage": true,
+        "complete_validity": true,
+        "cross_entropy_nonregression": true,
+        "expected_cosine_loss_nonregression": true
+      },
+      "token_length": {
+        "baseline_complete_loss_coverage": true,
+        "baseline_savings_nonregression": true,
+        "complete_cost_and_loss_coverage": true,
+        "complete_validity": true,
+        "cross_entropy_nonregression": true,
+        "expected_cosine_loss_nonregression": false
+      }
+    },
+    "validation": {
+      "fixed_graph": {
+        "baseline_complete_loss_coverage": true,
+        "baseline_savings_nonregression": true,
+        "complete_cost_and_loss_coverage": true,
+        "complete_validity": true,
+        "cross_entropy_nonregression": true,
+        "expected_cosine_loss_nonregression": true
+      },
+      "token_length": {
+        "baseline_complete_loss_coverage": true,
+        "baseline_savings_nonregression": true,
+        "complete_cost_and_loss_coverage": true,
+        "complete_validity": true,
+        "cross_entropy_nonregression": true,
+        "expected_cosine_loss_nonregression": true
+      }
+    }
+  },
+  "summary": {
+    "fixed_graph": {
+      "cross_entropy": 0.08082473796267352,
+      "expected_cosine_loss": 0.02390352231261975,
+      "loss_sample_count": 6,
+      "nonregressing_count": 6,
+      "raw_prediction_tokens": 27,
+      "sample_count": 6,
+      "source_tokens": 69,
+      "valid_count": 6,
+      "verified_saved_tokens": 42
+    },
+    "learned": {
+      "cross_entropy": 0.04677673873061763,
+      "expected_cosine_loss": 0.003995542252803133,
+      "loss_sample_count": 6,
+      "nonregressing_count": 6,
+      "raw_prediction_tokens": 27,
+      "sample_count": 6,
+      "source_tokens": 69,
+      "valid_count": 6,
+      "verified_saved_tokens": 42
+    },
+    "token_length": {
+      "cross_entropy": 0.12223576429619865,
+      "expected_cosine_loss": 0.013140274591226006,
+      "loss_sample_count": 6,
+      "nonregressing_count": 6,
+      "raw_prediction_tokens": 27,
+      "sample_count": 6,
+      "source_tokens": 69,
+      "valid_count": 6,
+      "verified_saved_tokens": 42
+    }
+  }
+}

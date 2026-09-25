@@ -1,0 +1,39 @@
+{
+  "job": {
+    "name": "putnam-v4.25.0",
+    "binding": {
+      "repository": "",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0",
+      "kind": "putnam",
+      "resolve_lake_manifest": true
+    },
+    "command": [
+      "/usr/bin/env",
+      "PATH=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan/toolchains/leanprover--lean4---v4.25.0/bin:/usr/bin:/bin",
+      "/usr/bin/python3",
+      "-B",
+      "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_exact.py",
+      "--destination",
+      "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0",
+      "--tag",
+      "v4.25.0",
+      "--commit",
+      "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "--putnam",
+      "--cache",
+      "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0",
+      "--cache",
+      "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/Verified-zkEVM/ArkLib"
+    ],
+    "minimum_free_bytes": 12000000000
+  },
+  "timeout_seconds": 3600,
+  "free_bytes_before": 14860623872,
+  "minimum_free_bytes": 12000000000,
+  "allowance_bytes": 50000000000,
+  "payload_sha256": "37c4a25aa915b4caa3fec78515ecae443e848e47f4c3e49fa78d2c8575fd6ce8",
+  "reason": "Prioritize all three previously unmeasured problems before more historical-version coverage.",
+  "proofs_verified": 0
+}

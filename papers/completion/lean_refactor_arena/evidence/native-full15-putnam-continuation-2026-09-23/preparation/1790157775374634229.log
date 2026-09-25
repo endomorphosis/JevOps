@@ -1,0 +1,8 @@
+✔ [0/2] Ran job computation
+✖ [1/2] (Optional) Fetching proofwidgets:optRelease
+error: no release tag found for revision 'e8ef4bdd7a23c3a37170fbd3fa7ee07ef2a54c2d'
+✖ [2/2] Running proofwidgets:release
+error: failed to fetch GitHub release (see 'proofwidgets:optRelease' for details)
+error: build failed
+Some required targets logged failures:
+- proofwidgets:release

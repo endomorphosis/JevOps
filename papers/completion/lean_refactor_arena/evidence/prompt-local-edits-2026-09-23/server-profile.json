@@ -1,0 +1,15 @@
+{
+  "endpoint": "http://172.17.0.1:8080/v1/chat/completions",
+  "server_identity_attested": false,
+  "metadata_errors": [],
+  "declared_context_per_slot": 8192,
+  "declared_slots": 4,
+  "server_reported_model_filename": "Leanstral-1.5-119B-A6B-NVFP4.gguf",
+  "chat_template_sha256": "cc145ac597328b60dbce2631dce17c0c84bb6a87b2380cc0473e2e1291965db7",
+  "models": [
+    {
+      "id": "leanstral_local",
+      "declared_training_context": 1048576
+    }
+  ]
+}

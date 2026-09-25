@@ -1,0 +1,10 @@
+[
+  {
+    "repository": "https://github.com/leanprover/cslib",
+    "lean_tag": "v4.30.0",
+    "git_commit": "c7944a9fb44c3298f1a960a5e574ab23a6ab8ed5",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/cslib-v4.30.0",
+    "kind": "repo",
+    "resolve_lake_manifest": true
+  }
+]

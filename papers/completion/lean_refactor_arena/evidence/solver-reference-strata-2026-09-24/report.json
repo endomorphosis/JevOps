@@ -1,0 +1,2352 @@
+{
+  "schema": "jevops-arena-pareto-selection/v1",
+  "plan": {
+    "schema": "jevops-arena-pareto-selection/v1",
+    "policy": "matched-primary-pin-normalized-sum-with-range-margin/v1",
+    "selection_objective": "aggregate-local-v1",
+    "heartbeat_noise_floor_raw": 100,
+    "tokenizer_id": "lra-reference-lexical/v1",
+    "measurement": "command-elaboration-internal-heartbeats-div-1000/v1",
+    "implementation": {
+      "arena_pareto.py": "bc1e35df92f820366430909e42a45e996b8e0befd10c9ad7bd80fa9a6b737f66",
+      "arena_trial.py": "a9ff52d5485fc185fbd8703335af70cee57d3ce50185ed1fd7ffc742fc4fd810"
+    },
+    "screen": {
+      "schema": "jevops-arena-controlled-trial/v1",
+      "record": {
+        "name": "CallElimCorrect.extractedOldExprInVars",
+        "source": "strata",
+        "statement": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post)",
+        "src": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+        "proof_length": 222,
+        "num_lines": 82,
+        "header": "",
+        "file_path": "Strata/Transform/CallElimCorrect.lean",
+        "url": "https://github.com/strata-org/Strata",
+        "start_line": 2733,
+        "end_line": 2814,
+        "version_info": [
+          {
+            "v4.26.0": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ]
+      },
+      "arms": [
+        {
+          "label": "control",
+          "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+          "provenance": "unchanged-reference"
+        },
+        {
+          "label": "historical-260",
+          "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+          "provenance": "historical git 680c83db61c747d409f066750e3d753099008a52; filename uses legacy counter; new native verification required"
+        },
+        {
+          "label": "merged-simp-only",
+          "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars, List.Subset.empty, List.append_assoc] at *\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+          "provenance": "Fixed parser-bound merged simp-only source from solver-span-repair-2026-09-24/strata-span-replay.json; historical hints only, requires entirely fresh checks"
+        }
+      ],
+      "repetitions": 2,
+      "seed": 17,
+      "orders": [
+        "reference-first",
+        "candidate-first"
+      ],
+      "plan_id": "ed0ba10836c270afb22d18bfe7c04ca618cd959e064e6dc3341dc632bc8ca044",
+      "planned_requests": 12,
+      "schedule": [
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "sample_id": "cf04ae191544db68545ba587e18296468d7bdbfeb85d241f759f4ff4de958708"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "merged-simp-only",
+          "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "sample_id": "8412a5e193c6720f781d535254e187627a6133c4254fe99c3c87885b304b0cc6"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "historical-260",
+          "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "sample_id": "118548d768676f6c48f33c1eb512476f8f8902dc2a4f2af04491755574cf296e"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "merged-simp-only",
+          "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "sample_id": "bc705b66c3205595adfc4412430be90c9a21d61d71c8f504831ad22c3e1c6a25"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "sample_id": "0f7e19e0f804fe6a06b1acec5fa68b5611ae280e835090e16800df7976bf343c"
+        },
+        {
+          "repetition": 0,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "historical-260",
+          "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "sample_id": "22eb71b67fce87a0d89550ee96a77f22f745019f6ed8dfad4a1a81e6140c1174"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "historical-260",
+          "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "sample_id": "74baabdc4f6528715206aa06a17529840ff89f5bc8989df3dc7e47293b7941be"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "merged-simp-only",
+          "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "sample_id": "c902b8503509bf3728a6b7ef724ea05ec5376c54a89ab4dee730ce01eb9b0ac5"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "sample_id": "fb1941c447ca7ebb3d5cac2afb1b0a5cf803943fd81bfc953a0c379f7bf9ac49"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "merged-simp-only",
+          "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "sample_id": "511bb1dc7162f46d5d1d341800c230ef1bc0da1e1bfab5d2f5e8b82c0abb2650"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "historical-260",
+          "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "sample_id": "f9d13f41b996b08f46753f7a8c62b8a22f8e2a0f7c9376f89650b8084c55b0da"
+        },
+        {
+          "repetition": 1,
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "sample_id": "37d6fc9f5597d7ed5dbcc83c1e912834f35845379cbcf1613ca340c596a2da66"
+        }
+      ]
+    },
+    "incumbent_label": "historical-260",
+    "candidate_labels": [
+      "merged-simp-only"
+    ],
+    "confirmation_repetitions": 3,
+    "confirmation_seed": 18,
+    "confirmation_request_reserve": 18,
+    "required_request_budget": 30,
+    "selection_order": [
+      "descending_worst_conservative_gain_to_incumbent",
+      "descending_mean_nominal_gain_to_incumbent",
+      "tokens",
+      "label"
+    ],
+    "unknown_comparison": "abstain",
+    "retries": 0,
+    "confirmation_alternatives": 0,
+    "score_scope": "matched-local-primary-pin",
+    "primary_pin": {
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+    },
+    "score_reference": "fresh-original-control-per-phase-and-order",
+    "compatibility_policy": "all-declared-pins-verified-no-axiom-growth",
+    "score_formula": "100/3 * ((comparator_tokens-candidate_tokens)/original_tokens + (comparator_raw-candidate_raw)/original_raw)",
+    "rounding": "none; exact rational deltas; not an official Arena score",
+    "plan_id": "34be12d1703b20bc13f98a1f1f8a8d1a317e59a5f9b6c0f2ee7f9574d548676f"
+  },
+  "evidence_mode": "local_lean",
+  "screen": {
+    "schema": "jevops-arena-controlled-trial/v1",
+    "record": {
+      "name": "CallElimCorrect.extractedOldExprInVars",
+      "source": "strata",
+      "statement": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post)",
+      "src": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+      "proof_length": 222,
+      "num_lines": 82,
+      "header": "",
+      "file_path": "Strata/Transform/CallElimCorrect.lean",
+      "url": "https://github.com/strata-org/Strata",
+      "start_line": 2733,
+      "end_line": 2814,
+      "version_info": [
+        {
+          "v4.26.0": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ]
+    },
+    "arms": [
+      {
+        "label": "control",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+        "provenance": "unchanged-reference"
+      },
+      {
+        "label": "historical-260",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+        "provenance": "historical git 680c83db61c747d409f066750e3d753099008a52; filename uses legacy counter; new native verification required"
+      },
+      {
+        "label": "merged-simp-only",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars, List.Subset.empty, List.append_assoc] at *\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+        "provenance": "Fixed parser-bound merged simp-only source from solver-span-repair-2026-09-24/strata-span-replay.json; historical hints only, requires entirely fresh checks"
+      }
+    ],
+    "repetitions": 2,
+    "seed": 17,
+    "orders": [
+      "reference-first",
+      "candidate-first"
+    ],
+    "plan_id": "ed0ba10836c270afb22d18bfe7c04ca618cd959e064e6dc3341dc632bc8ca044",
+    "planned_requests": 12,
+    "schedule": [
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "cf04ae191544db68545ba587e18296468d7bdbfeb85d241f759f4ff4de958708"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "8412a5e193c6720f781d535254e187627a6133c4254fe99c3c87885b304b0cc6"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "118548d768676f6c48f33c1eb512476f8f8902dc2a4f2af04491755574cf296e"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "bc705b66c3205595adfc4412430be90c9a21d61d71c8f504831ad22c3e1c6a25"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "0f7e19e0f804fe6a06b1acec5fa68b5611ae280e835090e16800df7976bf343c"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "22eb71b67fce87a0d89550ee96a77f22f745019f6ed8dfad4a1a81e6140c1174"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "74baabdc4f6528715206aa06a17529840ff89f5bc8989df3dc7e47293b7941be"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "c902b8503509bf3728a6b7ef724ea05ec5376c54a89ab4dee730ce01eb9b0ac5"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "fb1941c447ca7ebb3d5cac2afb1b0a5cf803943fd81bfc953a0c379f7bf9ac49"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "511bb1dc7162f46d5d1d341800c230ef1bc0da1e1bfab5d2f5e8b82c0abb2650"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "f9d13f41b996b08f46753f7a8c62b8a22f8e2a0f7c9376f89650b8084c55b0da"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "37d6fc9f5597d7ed5dbcc83c1e912834f35845379cbcf1613ca340c596a2da66"
+      }
+    ],
+    "evidence_mode": "local_lean",
+    "max_calls": 12,
+    "requests_reserved": 12,
+    "verifier_invocations": 12,
+    "native_processes": 12,
+    "samples": [
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "cf04ae191544db68545ba587e18296468d7bdbfeb85d241f759f4ff4de958708",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "0195ab68d68588d1315253b2eba3c31ae693bf7617de3684b1844bb24c18eb47",
+          "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2607,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607572,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607586,\"solver_spans\":{\"nodes_visited\":756,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1954,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":327,\"start_utf8\":319,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":437,\"start_utf8\":404,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":821,\"start_utf8\":813,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":927,\"start_utf8\":919,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1227,\"start_utf8\":1219,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1322,\"start_utf8\":1314,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1485,\"start_utf8\":1477,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1606,\"start_utf8\":1598,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1701,\"start_utf8\":1693,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1859,\"start_utf8\":1851,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1954,\"start_utf8\":1946,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":19162.108}"
+        },
+        "context_id": "3e70c0263b757061ca55df098961acc160359a5d0c9f8eba09ddf4bf6a9f9680",
+        "raw_heartbeats": 2607572
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "8412a5e193c6720f781d535254e187627a6133c4254fe99c3c87885b304b0cc6",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "b5e0c83056247cbedd1796f3c52c4644ae865628986147e00b0284b1a30726e4",
+          "candidate_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2049,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2049,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2049150,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":683,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1775,\"spans\":[{\"end_utf8\":339,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":788,\"start_utf8\":780,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":889,\"start_utf8\":881,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1102,\"start_utf8\":1094,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1188,\"start_utf8\":1180,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1342,\"start_utf8\":1334,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1454,\"start_utf8\":1446,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1540,\"start_utf8\":1532,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1689,\"start_utf8\":1681,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1775,\"start_utf8\":1767,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16667.09}"
+        },
+        "context_id": "3e70c0263b757061ca55df098961acc160359a5d0c9f8eba09ddf4bf6a9f9680",
+        "raw_heartbeats": 2049150
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "118548d768676f6c48f33c1eb512476f8f8902dc2a4f2af04491755574cf296e",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "006bc863953e17f580370598f29bbc8fc0cf7bd47f582551a3c1a21212efaad9",
+          "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2324,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324397,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":672,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1743,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":756,\"start_utf8\":748,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":857,\"start_utf8\":849,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1070,\"start_utf8\":1062,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1156,\"start_utf8\":1148,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1310,\"start_utf8\":1302,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1422,\"start_utf8\":1414,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1508,\"start_utf8\":1500,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1657,\"start_utf8\":1649,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1743,\"start_utf8\":1735,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16437.821}"
+        },
+        "context_id": "3e70c0263b757061ca55df098961acc160359a5d0c9f8eba09ddf4bf6a9f9680",
+        "raw_heartbeats": 2324397
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "bc705b66c3205595adfc4412430be90c9a21d61d71c8f504831ad22c3e1c6a25",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "bcda352e3d8030f796d569f346a55830c59d839054b098a40e737514cd1c1e50",
+          "candidate_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2049,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2049,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2049163,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607572,\"solver_spans\":{\"nodes_visited\":683,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1775,\"spans\":[{\"end_utf8\":339,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":788,\"start_utf8\":780,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":889,\"start_utf8\":881,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1102,\"start_utf8\":1094,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1188,\"start_utf8\":1180,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1342,\"start_utf8\":1334,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1454,\"start_utf8\":1446,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1540,\"start_utf8\":1532,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1689,\"start_utf8\":1681,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1775,\"start_utf8\":1767,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17949.327}"
+        },
+        "context_id": "3f7fd968a51e1b7c00d44d3893bf278fd683cedbec605a6edef510befb04b277",
+        "raw_heartbeats": 2049163
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "0f7e19e0f804fe6a06b1acec5fa68b5611ae280e835090e16800df7976bf343c",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "a10ccb7d9d88e6af0c6a5f63fc14bc9700e15852dcad323d9f0c886c562430e7",
+          "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2607,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607585,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607572,\"solver_spans\":{\"nodes_visited\":756,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1954,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":327,\"start_utf8\":319,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":437,\"start_utf8\":404,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":821,\"start_utf8\":813,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":927,\"start_utf8\":919,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1227,\"start_utf8\":1219,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1322,\"start_utf8\":1314,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1485,\"start_utf8\":1477,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1606,\"start_utf8\":1598,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1701,\"start_utf8\":1693,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1859,\"start_utf8\":1851,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1954,\"start_utf8\":1946,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17465.654}"
+        },
+        "context_id": "3f7fd968a51e1b7c00d44d3893bf278fd683cedbec605a6edef510befb04b277",
+        "raw_heartbeats": 2607585
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "22eb71b67fce87a0d89550ee96a77f22f745019f6ed8dfad4a1a81e6140c1174",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "4ef210c0f14696d0b9031d5b27f73feb2e7b831d16bdff01e46efea15938951c",
+          "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2324,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324410,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607572,\"solver_spans\":{\"nodes_visited\":672,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1743,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":756,\"start_utf8\":748,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":857,\"start_utf8\":849,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1070,\"start_utf8\":1062,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1156,\"start_utf8\":1148,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1310,\"start_utf8\":1302,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1422,\"start_utf8\":1414,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1508,\"start_utf8\":1500,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1657,\"start_utf8\":1649,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1743,\"start_utf8\":1735,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16567.997}"
+        },
+        "context_id": "3f7fd968a51e1b7c00d44d3893bf278fd683cedbec605a6edef510befb04b277",
+        "raw_heartbeats": 2324410
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "74baabdc4f6528715206aa06a17529840ff89f5bc8989df3dc7e47293b7941be",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "006bc863953e17f580370598f29bbc8fc0cf7bd47f582551a3c1a21212efaad9",
+          "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2324,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324397,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":672,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1743,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":756,\"start_utf8\":748,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":857,\"start_utf8\":849,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1070,\"start_utf8\":1062,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1156,\"start_utf8\":1148,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1310,\"start_utf8\":1302,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1422,\"start_utf8\":1414,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1508,\"start_utf8\":1500,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1657,\"start_utf8\":1649,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1743,\"start_utf8\":1735,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16227.134}"
+        },
+        "context_id": "3e70c0263b757061ca55df098961acc160359a5d0c9f8eba09ddf4bf6a9f9680",
+        "raw_heartbeats": 2324397
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "c902b8503509bf3728a6b7ef724ea05ec5376c54a89ab4dee730ce01eb9b0ac5",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "b5e0c83056247cbedd1796f3c52c4644ae865628986147e00b0284b1a30726e4",
+          "candidate_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2049,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2049,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2049154,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":683,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1775,\"spans\":[{\"end_utf8\":339,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":788,\"start_utf8\":780,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":889,\"start_utf8\":881,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1102,\"start_utf8\":1094,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1188,\"start_utf8\":1180,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1342,\"start_utf8\":1334,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1454,\"start_utf8\":1446,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1540,\"start_utf8\":1532,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1689,\"start_utf8\":1681,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1775,\"start_utf8\":1767,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16889.73}"
+        },
+        "context_id": "3e70c0263b757061ca55df098961acc160359a5d0c9f8eba09ddf4bf6a9f9680",
+        "raw_heartbeats": 2049154
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "fb1941c447ca7ebb3d5cac2afb1b0a5cf803943fd81bfc953a0c379f7bf9ac49",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "0195ab68d68588d1315253b2eba3c31ae693bf7617de3684b1844bb24c18eb47",
+          "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2607,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607574,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607589,\"solver_spans\":{\"nodes_visited\":756,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1954,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":327,\"start_utf8\":319,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":437,\"start_utf8\":404,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":821,\"start_utf8\":813,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":927,\"start_utf8\":919,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1227,\"start_utf8\":1219,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1322,\"start_utf8\":1314,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1485,\"start_utf8\":1477,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1606,\"start_utf8\":1598,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1701,\"start_utf8\":1693,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1859,\"start_utf8\":1851,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1954,\"start_utf8\":1946,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17589.653}"
+        },
+        "context_id": "3e70c0263b757061ca55df098961acc160359a5d0c9f8eba09ddf4bf6a9f9680",
+        "raw_heartbeats": 2607574
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "511bb1dc7162f46d5d1d341800c230ef1bc0da1e1bfab5d2f5e8b82c0abb2650",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "bcda352e3d8030f796d569f346a55830c59d839054b098a40e737514cd1c1e50",
+          "candidate_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2049,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2049,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2049163,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607572,\"solver_spans\":{\"nodes_visited\":683,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1775,\"spans\":[{\"end_utf8\":339,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":788,\"start_utf8\":780,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":889,\"start_utf8\":881,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1102,\"start_utf8\":1094,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1188,\"start_utf8\":1180,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1342,\"start_utf8\":1334,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1454,\"start_utf8\":1446,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1540,\"start_utf8\":1532,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1689,\"start_utf8\":1681,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1775,\"start_utf8\":1767,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15437.182}"
+        },
+        "context_id": "3f7fd968a51e1b7c00d44d3893bf278fd683cedbec605a6edef510befb04b277",
+        "raw_heartbeats": 2049163
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "f9d13f41b996b08f46753f7a8c62b8a22f8e2a0f7c9376f89650b8084c55b0da",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "4ef210c0f14696d0b9031d5b27f73feb2e7b831d16bdff01e46efea15938951c",
+          "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2324,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324410,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607573,\"solver_spans\":{\"nodes_visited\":672,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1743,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":756,\"start_utf8\":748,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":857,\"start_utf8\":849,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1070,\"start_utf8\":1062,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1156,\"start_utf8\":1148,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1310,\"start_utf8\":1302,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1422,\"start_utf8\":1414,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1508,\"start_utf8\":1500,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1657,\"start_utf8\":1649,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1743,\"start_utf8\":1735,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17891.69}"
+        },
+        "context_id": "3f7fd968a51e1b7c00d44d3893bf278fd683cedbec605a6edef510befb04b277",
+        "raw_heartbeats": 2324410
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "37d6fc9f5597d7ed5dbcc83c1e912834f35845379cbcf1613ca340c596a2da66",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "a10ccb7d9d88e6af0c6a5f63fc14bc9700e15852dcad323d9f0c886c562430e7",
+          "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2607,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607585,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607573,\"solver_spans\":{\"nodes_visited\":756,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1954,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":327,\"start_utf8\":319,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":437,\"start_utf8\":404,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":821,\"start_utf8\":813,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":927,\"start_utf8\":919,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1227,\"start_utf8\":1219,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1322,\"start_utf8\":1314,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1485,\"start_utf8\":1477,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1606,\"start_utf8\":1598,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1701,\"start_utf8\":1693,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1859,\"start_utf8\":1851,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1954,\"start_utf8\":1946,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16395.744}"
+        },
+        "context_id": "3f7fd968a51e1b7c00d44d3893bf278fd683cedbec605a6edef510befb04b277",
+        "raw_heartbeats": 2607585
+      }
+    ],
+    "contexts": [
+      {
+        "problem": "CallElimCorrect.extractedOldExprInVars",
+        "statement": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post)",
+        "reference_source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+        "reference_length": 222,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "dependency_digests": [
+          "7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "4a993e6d27055909e13d825aaa8248819dfbf22daf3d8de485e49ce1731a5192",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/strata-org/Strata",
+        "file_path": "Strata/Transform/CallElimCorrect.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      {
+        "problem": "CallElimCorrect.extractedOldExprInVars",
+        "statement": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post)",
+        "reference_source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+        "reference_length": 222,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "dependency_digests": [
+          "7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "4a993e6d27055909e13d825aaa8248819dfbf22daf3d8de485e49ce1731a5192",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/strata-org/Strata",
+        "file_path": "Strata/Transform/CallElimCorrect.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"candidate-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      }
+    ],
+    "observations": [
+      {
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "provenance": "historical git 680c83db61c747d409f066750e3d753099008a52; filename uses legacy counter; new native verification required",
+        "status": "MEASURED",
+        "reference_tokens": 222,
+        "candidate_tokens": 185,
+        "length_reduction_pct": 16.666666666666664,
+        "verified_pins": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "required_pins": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "heartbeat_result": "LOWER_IN_BOTH_ORDERS",
+        "strata": [
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "reference-first",
+            "status": "MEASURED",
+            "control_raw": [
+              2607572,
+              2607574
+            ],
+            "candidate_raw": [
+              2324397,
+              2324397
+            ],
+            "control_median_raw": 2607573.0,
+            "candidate_median_raw": 2324397.0,
+            "paired_savings_raw": [
+              283175,
+              283177
+            ],
+            "observed_range_raw": 2,
+            "comparison": "LOWER"
+          },
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "candidate-first",
+            "status": "MEASURED",
+            "control_raw": [
+              2607585,
+              2607585
+            ],
+            "candidate_raw": [
+              2324410,
+              2324410
+            ],
+            "control_median_raw": 2607585.0,
+            "candidate_median_raw": 2324410.0,
+            "paired_savings_raw": [
+              283175,
+              283175
+            ],
+            "observed_range_raw": 0,
+            "comparison": "LOWER"
+          }
+        ],
+        "observed_pareto_improvement": true,
+        "statistical_significance_claimed": false,
+        "promoted": false,
+        "official_score": null
+      },
+      {
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "provenance": "Fixed parser-bound merged simp-only source from solver-span-repair-2026-09-24/strata-span-replay.json; historical hints only, requires entirely fresh checks",
+        "status": "MEASURED",
+        "reference_tokens": 222,
+        "candidate_tokens": 190,
+        "length_reduction_pct": 14.414414414414411,
+        "verified_pins": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "required_pins": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "heartbeat_result": "LOWER_IN_BOTH_ORDERS",
+        "strata": [
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "reference-first",
+            "status": "MEASURED",
+            "control_raw": [
+              2607572,
+              2607574
+            ],
+            "candidate_raw": [
+              2049150,
+              2049154
+            ],
+            "control_median_raw": 2607573.0,
+            "candidate_median_raw": 2049152.0,
+            "paired_savings_raw": [
+              558422,
+              558420
+            ],
+            "observed_range_raw": 4,
+            "comparison": "LOWER"
+          },
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "candidate-first",
+            "status": "MEASURED",
+            "control_raw": [
+              2607585,
+              2607585
+            ],
+            "candidate_raw": [
+              2049163,
+              2049163
+            ],
+            "control_median_raw": 2607585.0,
+            "candidate_median_raw": 2049163.0,
+            "paired_savings_raw": [
+              558422,
+              558422
+            ],
+            "observed_range_raw": 0,
+            "comparison": "LOWER"
+          }
+        ],
+        "observed_pareto_improvement": true,
+        "statistical_significance_claimed": false,
+        "promoted": false,
+        "official_score": null
+      }
+    ],
+    "status": "COMPLETE",
+    "receipt_cache_enabled": false,
+    "live_model_calls": 0,
+    "training_enabled": false,
+    "production_memory_used": false,
+    "official_score": null,
+    "local_combined_pct": null,
+    "worker_metric_parity": "UNCONFIRMED",
+    "runner_sha256": "a9ff52d5485fc185fbd8703335af70cee57d3ce50185ed1fd7ffc742fc4fd810"
+  },
+  "screen_analysis": {
+    "rows": {
+      "control": {
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "tokens": 222,
+        "admissible": true,
+        "reason": "",
+        "raw_heartbeats_by_stratum": [
+          [
+            2607572,
+            2607574
+          ],
+          [
+            2607585,
+            2607585
+          ]
+        ],
+        "axioms_by_version": {
+          "v4.26.0": [
+            "Quot.sound",
+            "propext"
+          ]
+        }
+      },
+      "historical-260": {
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "tokens": 185,
+        "admissible": true,
+        "reason": "",
+        "raw_heartbeats_by_stratum": [
+          [
+            2324397,
+            2324397
+          ],
+          [
+            2324410,
+            2324410
+          ]
+        ],
+        "axioms_by_version": {
+          "v4.26.0": [
+            "Quot.sound",
+            "propext"
+          ]
+        }
+      },
+      "merged-simp-only": {
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "tokens": 190,
+        "admissible": true,
+        "reason": "",
+        "raw_heartbeats_by_stratum": [
+          [
+            2049150,
+            2049154
+          ],
+          [
+            2049163,
+            2049163
+          ]
+        ],
+        "axioms_by_version": {
+          "v4.26.0": [
+            "Quot.sound",
+            "propext"
+          ]
+        }
+      }
+    },
+    "frontier": [
+      "historical-260",
+      "merged-simp-only"
+    ],
+    "eligible": [
+      "merged-simp-only"
+    ],
+    "selection_objective": "aggregate-local-v1",
+    "heartbeat_noise_floor_raw": 100,
+    "aggregate_comparisons": {
+      "merged-simp-only": {
+        "original": {
+          "applicable": true,
+          "improves": true,
+          "reason": "",
+          "strata": [
+            {
+              "branch_order": "reference-first",
+              "token_gain": {
+                "numerator": 16,
+                "denominator": 111
+              },
+              "margin_raw": 100,
+              "adjusted_heartbeat_delta_raw": 558318,
+              "conservative_reference_raw": 2607574,
+              "conservative_gain_pp": {
+                "numerator": 5184724100,
+                "denominator": 434161071
+              },
+              "nominal_gain_pp": {
+                "numerator": 3456863300,
+                "denominator": 289440603
+              }
+            },
+            {
+              "branch_order": "candidate-first",
+              "token_gain": {
+                "numerator": 16,
+                "denominator": 111
+              },
+              "margin_raw": 100,
+              "adjusted_heartbeat_delta_raw": 558322,
+              "conservative_reference_raw": 2607585,
+              "conservative_gain_pp": {
+                "numerator": 230433560,
+                "denominator": 19296129
+              },
+              "nominal_gain_pp": {
+                "numerator": 691374680,
+                "denominator": 57888387
+              }
+            }
+          ]
+        },
+        "incumbent": {
+          "applicable": true,
+          "improves": true,
+          "reason": "",
+          "strata": [
+            {
+              "branch_order": "reference-first",
+              "token_gain": {
+                "numerator": -5,
+                "denominator": 222
+              },
+              "margin_raw": 100,
+              "adjusted_heartbeat_delta_raw": 275143,
+              "conservative_reference_raw": 2607574,
+              "conservative_gain_pp": {
+                "numerator": 1201096900,
+                "denominator": 434161071
+              },
+              "nominal_gain_pp": {
+                "numerator": 267036250,
+                "denominator": 96480201
+              }
+            },
+            {
+              "branch_order": "candidate-first",
+              "token_gain": {
+                "numerator": -5,
+                "denominator": 222
+              },
+              "margin_raw": 100,
+              "adjusted_heartbeat_delta_raw": 275147,
+              "conservative_reference_raw": 2607585,
+              "conservative_gain_pp": {
+                "numerator": 53383010,
+                "denominator": 19296129
+              },
+              "nominal_gain_pp": {
+                "numerator": 160223030,
+                "denominator": 57888387
+              }
+            }
+          ]
+        }
+      }
+    },
+    "score_scope": "matched-local-primary-pin",
+    "selected": "merged-simp-only"
+  },
+  "confirmation": {
+    "schema": "jevops-arena-controlled-trial/v1",
+    "record": {
+      "name": "CallElimCorrect.extractedOldExprInVars",
+      "source": "strata",
+      "statement": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post)",
+      "src": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+      "proof_length": 222,
+      "num_lines": 82,
+      "header": "",
+      "file_path": "Strata/Transform/CallElimCorrect.lean",
+      "url": "https://github.com/strata-org/Strata",
+      "start_line": 2733,
+      "end_line": 2814,
+      "version_info": [
+        {
+          "v4.26.0": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        }
+      ]
+    },
+    "arms": [
+      {
+        "label": "control",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+        "provenance": "unchanged-reference"
+      },
+      {
+        "label": "historical-260",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+        "provenance": "historical git 680c83db61c747d409f066750e3d753099008a52; filename uses legacy counter; new native verification required"
+      },
+      {
+        "label": "merged-simp-only",
+        "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars, List.Subset.empty, List.append_assoc] at *\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+        "provenance": "Fixed parser-bound merged simp-only source from solver-span-repair-2026-09-24/strata-span-replay.json; historical hints only, requires entirely fresh checks"
+      }
+    ],
+    "repetitions": 3,
+    "seed": 18,
+    "orders": [
+      "reference-first",
+      "candidate-first"
+    ],
+    "plan_id": "15f3f7e27d946e5150baa6a5a63a5b605b88e85d4997b01e44a6126bcf2a4548",
+    "planned_requests": 18,
+    "schedule": [
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "4bedb18d5f8a86a9ced37e72d068bec6443543b624fc674cb9dae51343c232ce"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "1b2d129b7ec11b83e1f89827d1871e7de3bac1c7ee483f9266676b1df45632a8"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "8ba4bd99459ef10ba4a4d7f4820ab804a898501d5c132314d8a573f7d2480fe0"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "15fa34bad57c9a541ef06c726ec7eef3e51eb8b1ef1c95ef84685dcb6f8b98eb"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "1ee981b316ce5fddf6f77fd0e8e41e567b67849c6f875bbe6063bb1d6b1165a2"
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "f15f416377f583bfdaf8af07c10ad93aa4ee9a1969a60fb39d5888646cf4346e"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "f214d71a88db44620416aeddb5e9b4f20f1fcfafa9c54a47e2fe46a9249946f1"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "8ccede551bcc48ecf49dbbe21106dec6735617ed3b5ff5960f83e6a88e750889"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "544cf772d541a2eec46e641f3972e7859e671a2c7e9aa41ac8ef25d7b33642fd"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "dd1999e34d80b81b39098150b56675df299b026954f94ab3471cb03c0b601793"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "5f5e802797ae84482d785ee58e0d95b8e767e4452aa0282f9d8dff0ce3c09326"
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "e8d4a366553ca2ca75744b6616ff346043db205f3e2b1e2958a8e182abe0034e"
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "3e1b084d7e5bfceb188942d386a9338ab2fb1a0b4f2ea606b24ac875172178a6"
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "7fdd7876fbe43ba5f9c84732dd621e1da4e40ead9fb949ff709714cce409a33a"
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "f50186c83aa815068f1a8c6d2c87d02c5033b83e2f9e6ae7cec43eaf2a9480e3"
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "dd9333187025db82041c315f7848cbfc454519dbc6e0272de455002308bda8ea"
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "d8f6049a3ea7837ad8c272e80c9fe814e82544e1b4ad2a7ca72d6f98a4b9a515"
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "9fb767386f1f162cd44227818943366e179aca3844526a064df395fca3639699"
+      }
+    ],
+    "evidence_mode": "local_lean",
+    "max_calls": 18,
+    "requests_reserved": 18,
+    "verifier_invocations": 18,
+    "native_processes": 18,
+    "samples": [
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "4bedb18d5f8a86a9ced37e72d068bec6443543b624fc674cb9dae51343c232ce",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "bcda352e3d8030f796d569f346a55830c59d839054b098a40e737514cd1c1e50",
+          "candidate_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2049,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2049,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2049163,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607572,\"solver_spans\":{\"nodes_visited\":683,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1775,\"spans\":[{\"end_utf8\":339,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":788,\"start_utf8\":780,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":889,\"start_utf8\":881,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1102,\"start_utf8\":1094,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1188,\"start_utf8\":1180,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1342,\"start_utf8\":1334,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1454,\"start_utf8\":1446,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1540,\"start_utf8\":1532,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1689,\"start_utf8\":1681,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1775,\"start_utf8\":1767,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17985.602}"
+        },
+        "context_id": "3f7fd968a51e1b7c00d44d3893bf278fd683cedbec605a6edef510befb04b277",
+        "raw_heartbeats": 2049163
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "1b2d129b7ec11b83e1f89827d1871e7de3bac1c7ee483f9266676b1df45632a8",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "4ef210c0f14696d0b9031d5b27f73feb2e7b831d16bdff01e46efea15938951c",
+          "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2324,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324413,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607572,\"solver_spans\":{\"nodes_visited\":672,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1743,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":756,\"start_utf8\":748,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":857,\"start_utf8\":849,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1070,\"start_utf8\":1062,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1156,\"start_utf8\":1148,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1310,\"start_utf8\":1302,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1422,\"start_utf8\":1414,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1508,\"start_utf8\":1500,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1657,\"start_utf8\":1649,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1743,\"start_utf8\":1735,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17923.369}"
+        },
+        "context_id": "3f7fd968a51e1b7c00d44d3893bf278fd683cedbec605a6edef510befb04b277",
+        "raw_heartbeats": 2324413
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "8ba4bd99459ef10ba4a4d7f4820ab804a898501d5c132314d8a573f7d2480fe0",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "a10ccb7d9d88e6af0c6a5f63fc14bc9700e15852dcad323d9f0c886c562430e7",
+          "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2607,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607589,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607574,\"solver_spans\":{\"nodes_visited\":756,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1954,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":327,\"start_utf8\":319,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":437,\"start_utf8\":404,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":821,\"start_utf8\":813,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":927,\"start_utf8\":919,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1227,\"start_utf8\":1219,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1322,\"start_utf8\":1314,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1485,\"start_utf8\":1477,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1606,\"start_utf8\":1598,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1701,\"start_utf8\":1693,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1859,\"start_utf8\":1851,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1954,\"start_utf8\":1946,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15537.914}"
+        },
+        "context_id": "3f7fd968a51e1b7c00d44d3893bf278fd683cedbec605a6edef510befb04b277",
+        "raw_heartbeats": 2607589
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "15fa34bad57c9a541ef06c726ec7eef3e51eb8b1ef1c95ef84685dcb6f8b98eb",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "b5e0c83056247cbedd1796f3c52c4644ae865628986147e00b0284b1a30726e4",
+          "candidate_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2049,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2049,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2049154,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":683,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1775,\"spans\":[{\"end_utf8\":339,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":788,\"start_utf8\":780,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":889,\"start_utf8\":881,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1102,\"start_utf8\":1094,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1188,\"start_utf8\":1180,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1342,\"start_utf8\":1334,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1454,\"start_utf8\":1446,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1540,\"start_utf8\":1532,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1689,\"start_utf8\":1681,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1775,\"start_utf8\":1767,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16584.766}"
+        },
+        "context_id": "3e70c0263b757061ca55df098961acc160359a5d0c9f8eba09ddf4bf6a9f9680",
+        "raw_heartbeats": 2049154
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "1ee981b316ce5fddf6f77fd0e8e41e567b67849c6f875bbe6063bb1d6b1165a2",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "0195ab68d68588d1315253b2eba3c31ae693bf7617de3684b1844bb24c18eb47",
+          "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2607,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607572,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607589,\"solver_spans\":{\"nodes_visited\":756,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1954,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":327,\"start_utf8\":319,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":437,\"start_utf8\":404,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":821,\"start_utf8\":813,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":927,\"start_utf8\":919,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1227,\"start_utf8\":1219,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1322,\"start_utf8\":1314,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1485,\"start_utf8\":1477,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1606,\"start_utf8\":1598,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1701,\"start_utf8\":1693,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1859,\"start_utf8\":1851,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1954,\"start_utf8\":1946,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17068.073}"
+        },
+        "context_id": "3e70c0263b757061ca55df098961acc160359a5d0c9f8eba09ddf4bf6a9f9680",
+        "raw_heartbeats": 2607572
+      },
+      {
+        "repetition": 0,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "f15f416377f583bfdaf8af07c10ad93aa4ee9a1969a60fb39d5888646cf4346e",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "006bc863953e17f580370598f29bbc8fc0cf7bd47f582551a3c1a21212efaad9",
+          "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2324,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324397,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":672,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1743,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":756,\"start_utf8\":748,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":857,\"start_utf8\":849,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1070,\"start_utf8\":1062,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1156,\"start_utf8\":1148,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1310,\"start_utf8\":1302,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1422,\"start_utf8\":1414,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1508,\"start_utf8\":1500,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1657,\"start_utf8\":1649,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1743,\"start_utf8\":1735,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17510.503}"
+        },
+        "context_id": "3e70c0263b757061ca55df098961acc160359a5d0c9f8eba09ddf4bf6a9f9680",
+        "raw_heartbeats": 2324397
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "f214d71a88db44620416aeddb5e9b4f20f1fcfafa9c54a47e2fe46a9249946f1",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "a10ccb7d9d88e6af0c6a5f63fc14bc9700e15852dcad323d9f0c886c562430e7",
+          "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2607,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607585,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607572,\"solver_spans\":{\"nodes_visited\":756,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1954,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":327,\"start_utf8\":319,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":437,\"start_utf8\":404,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":821,\"start_utf8\":813,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":927,\"start_utf8\":919,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1227,\"start_utf8\":1219,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1322,\"start_utf8\":1314,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1485,\"start_utf8\":1477,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1606,\"start_utf8\":1598,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1701,\"start_utf8\":1693,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1859,\"start_utf8\":1851,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1954,\"start_utf8\":1946,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16043.032}"
+        },
+        "context_id": "3f7fd968a51e1b7c00d44d3893bf278fd683cedbec605a6edef510befb04b277",
+        "raw_heartbeats": 2607585
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "8ccede551bcc48ecf49dbbe21106dec6735617ed3b5ff5960f83e6a88e750889",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "bcda352e3d8030f796d569f346a55830c59d839054b098a40e737514cd1c1e50",
+          "candidate_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2049,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2049,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2049164,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607572,\"solver_spans\":{\"nodes_visited\":683,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1775,\"spans\":[{\"end_utf8\":339,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":788,\"start_utf8\":780,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":889,\"start_utf8\":881,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1102,\"start_utf8\":1094,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1188,\"start_utf8\":1180,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1342,\"start_utf8\":1334,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1454,\"start_utf8\":1446,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1540,\"start_utf8\":1532,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1689,\"start_utf8\":1681,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1775,\"start_utf8\":1767,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16711.499}"
+        },
+        "context_id": "3f7fd968a51e1b7c00d44d3893bf278fd683cedbec605a6edef510befb04b277",
+        "raw_heartbeats": 2049164
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "544cf772d541a2eec46e641f3972e7859e671a2c7e9aa41ac8ef25d7b33642fd",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "4ef210c0f14696d0b9031d5b27f73feb2e7b831d16bdff01e46efea15938951c",
+          "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2324,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324410,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607578,\"solver_spans\":{\"nodes_visited\":672,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1743,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":756,\"start_utf8\":748,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":857,\"start_utf8\":849,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1070,\"start_utf8\":1062,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1156,\"start_utf8\":1148,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1310,\"start_utf8\":1302,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1422,\"start_utf8\":1414,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1508,\"start_utf8\":1500,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1657,\"start_utf8\":1649,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1743,\"start_utf8\":1735,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17589.048}"
+        },
+        "context_id": "3f7fd968a51e1b7c00d44d3893bf278fd683cedbec605a6edef510befb04b277",
+        "raw_heartbeats": 2324410
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "dd1999e34d80b81b39098150b56675df299b026954f94ab3471cb03c0b601793",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "b5e0c83056247cbedd1796f3c52c4644ae865628986147e00b0284b1a30726e4",
+          "candidate_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2049,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2049,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2049151,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":683,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1775,\"spans\":[{\"end_utf8\":339,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":788,\"start_utf8\":780,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":889,\"start_utf8\":881,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1102,\"start_utf8\":1094,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1188,\"start_utf8\":1180,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1342,\"start_utf8\":1334,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1454,\"start_utf8\":1446,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1540,\"start_utf8\":1532,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1689,\"start_utf8\":1681,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1775,\"start_utf8\":1767,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16776.417}"
+        },
+        "context_id": "3e70c0263b757061ca55df098961acc160359a5d0c9f8eba09ddf4bf6a9f9680",
+        "raw_heartbeats": 2049151
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "5f5e802797ae84482d785ee58e0d95b8e767e4452aa0282f9d8dff0ce3c09326",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "006bc863953e17f580370598f29bbc8fc0cf7bd47f582551a3c1a21212efaad9",
+          "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2324,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324397,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":672,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1743,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":756,\"start_utf8\":748,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":857,\"start_utf8\":849,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1070,\"start_utf8\":1062,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1156,\"start_utf8\":1148,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1310,\"start_utf8\":1302,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1422,\"start_utf8\":1414,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1508,\"start_utf8\":1500,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1657,\"start_utf8\":1649,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1743,\"start_utf8\":1735,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17731.988}"
+        },
+        "context_id": "3e70c0263b757061ca55df098961acc160359a5d0c9f8eba09ddf4bf6a9f9680",
+        "raw_heartbeats": 2324397
+      },
+      {
+        "repetition": 1,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "e8d4a366553ca2ca75744b6616ff346043db205f3e2b1e2958a8e182abe0034e",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "0195ab68d68588d1315253b2eba3c31ae693bf7617de3684b1844bb24c18eb47",
+          "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2607,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607578,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":756,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1954,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":327,\"start_utf8\":319,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":437,\"start_utf8\":404,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":821,\"start_utf8\":813,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":927,\"start_utf8\":919,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1227,\"start_utf8\":1219,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1322,\"start_utf8\":1314,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1485,\"start_utf8\":1477,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1606,\"start_utf8\":1598,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1701,\"start_utf8\":1693,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1859,\"start_utf8\":1851,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1954,\"start_utf8\":1946,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":18016.278}"
+        },
+        "context_id": "3e70c0263b757061ca55df098961acc160359a5d0c9f8eba09ddf4bf6a9f9680",
+        "raw_heartbeats": 2607578
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "3e1b084d7e5bfceb188942d386a9338ab2fb1a0b4f2ea606b24ac875172178a6",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "0195ab68d68588d1315253b2eba3c31ae693bf7617de3684b1844bb24c18eb47",
+          "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2607,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607572,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":756,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1954,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":327,\"start_utf8\":319,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":437,\"start_utf8\":404,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":821,\"start_utf8\":813,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":927,\"start_utf8\":919,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1227,\"start_utf8\":1219,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1322,\"start_utf8\":1314,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1485,\"start_utf8\":1477,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1606,\"start_utf8\":1598,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1701,\"start_utf8\":1693,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1859,\"start_utf8\":1851,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1954,\"start_utf8\":1946,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17910.335}"
+        },
+        "context_id": "3e70c0263b757061ca55df098961acc160359a5d0c9f8eba09ddf4bf6a9f9680",
+        "raw_heartbeats": 2607572
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "7fdd7876fbe43ba5f9c84732dd621e1da4e40ead9fb949ff709714cce409a33a",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "b5e0c83056247cbedd1796f3c52c4644ae865628986147e00b0284b1a30726e4",
+          "candidate_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2049,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2049,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2049150,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":683,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1775,\"spans\":[{\"end_utf8\":339,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":788,\"start_utf8\":780,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":889,\"start_utf8\":881,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1102,\"start_utf8\":1094,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1188,\"start_utf8\":1180,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1342,\"start_utf8\":1334,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1454,\"start_utf8\":1446,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1540,\"start_utf8\":1532,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1689,\"start_utf8\":1681,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1775,\"start_utf8\":1767,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16339.07}"
+        },
+        "context_id": "3e70c0263b757061ca55df098961acc160359a5d0c9f8eba09ddf4bf6a9f9680",
+        "raw_heartbeats": 2049150
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "reference-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "f50186c83aa815068f1a8c6d2c87d02c5033b83e2f9e6ae7cec43eaf2a9480e3",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "006bc863953e17f580370598f29bbc8fc0cf7bd47f582551a3c1a21212efaad9",
+          "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2324,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324397,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":672,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1743,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":756,\"start_utf8\":748,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":857,\"start_utf8\":849,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1070,\"start_utf8\":1062,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1156,\"start_utf8\":1148,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1310,\"start_utf8\":1302,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1422,\"start_utf8\":1414,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1508,\"start_utf8\":1500,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1657,\"start_utf8\":1649,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1743,\"start_utf8\":1735,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17817.036}"
+        },
+        "context_id": "3e70c0263b757061ca55df098961acc160359a5d0c9f8eba09ddf4bf6a9f9680",
+        "raw_heartbeats": 2324397
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "sample_id": "dd9333187025db82041c315f7848cbfc454519dbc6e0272de455002308bda8ea",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "bcda352e3d8030f796d569f346a55830c59d839054b098a40e737514cd1c1e50",
+          "candidate_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2049,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2049,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2049163,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607572,\"solver_spans\":{\"nodes_visited\":683,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1775,\"spans\":[{\"end_utf8\":339,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":788,\"start_utf8\":780,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":889,\"start_utf8\":881,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1102,\"start_utf8\":1094,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1188,\"start_utf8\":1180,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1342,\"start_utf8\":1334,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1454,\"start_utf8\":1446,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1540,\"start_utf8\":1532,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1689,\"start_utf8\":1681,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1775,\"start_utf8\":1767,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17722.629}"
+        },
+        "context_id": "3f7fd968a51e1b7c00d44d3893bf278fd683cedbec605a6edef510befb04b277",
+        "raw_heartbeats": 2049163
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "sample_id": "d8f6049a3ea7837ad8c272e80c9fe814e82544e1b4ad2a7ca72d6f98a4b9a515",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "4ef210c0f14696d0b9031d5b27f73feb2e7b831d16bdff01e46efea15938951c",
+          "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2324,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324410,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607572,\"solver_spans\":{\"nodes_visited\":672,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1743,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":756,\"start_utf8\":748,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":857,\"start_utf8\":849,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1070,\"start_utf8\":1062,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1156,\"start_utf8\":1148,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1310,\"start_utf8\":1302,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1422,\"start_utf8\":1414,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1508,\"start_utf8\":1500,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1657,\"start_utf8\":1649,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1743,\"start_utf8\":1735,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17440.09}"
+        },
+        "context_id": "3f7fd968a51e1b7c00d44d3893bf278fd683cedbec605a6edef510befb04b277",
+        "raw_heartbeats": 2324410
+      },
+      {
+        "repetition": 2,
+        "version": {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+        },
+        "branch_order": "candidate-first",
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "sample_id": "9fb767386f1f162cd44227818943366e179aca3844526a064df395fca3639699",
+        "status": "VERIFIED",
+        "reason": "",
+        "verifier_invocations": 1,
+        "receipt": {
+          "request_id": "a10ccb7d9d88e6af0c6a5f63fc14bc9700e15852dcad323d9f0c886c562430e7",
+          "candidate_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "target": "CallElimCorrect.extractedOldExprInVars",
+          "outcome": "VERIFIED",
+          "type_preserved": true,
+          "exit_code": 0,
+          "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+          "heartbeats": 2607,
+          "reason": "",
+          "observations_json": "{\"branch_order\":\"candidate-first\",\"dependency_digest\":\"7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2607,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2607585,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607572,\"solver_spans\":{\"nodes_visited\":756,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1954,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":327,\"start_utf8\":319,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":437,\"start_utf8\":404,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":821,\"start_utf8\":813,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":927,\"start_utf8\":919,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1227,\"start_utf8\":1219,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1322,\"start_utf8\":1314,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1485,\"start_utf8\":1477,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1606,\"start_utf8\":1598,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1701,\"start_utf8\":1693,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1859,\"start_utf8\":1851,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1954,\"start_utf8\":1946,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15416.58}"
+        },
+        "context_id": "3f7fd968a51e1b7c00d44d3893bf278fd683cedbec605a6edef510befb04b277",
+        "raw_heartbeats": 2607585
+      }
+    ],
+    "contexts": [
+      {
+        "problem": "CallElimCorrect.extractedOldExprInVars",
+        "statement": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post)",
+        "reference_source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+        "reference_length": 222,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "dependency_digests": [
+          "7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "4a993e6d27055909e13d825aaa8248819dfbf22daf3d8de485e49ce1731a5192",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/strata-org/Strata",
+        "file_path": "Strata/Transform/CallElimCorrect.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      {
+        "problem": "CallElimCorrect.extractedOldExprInVars",
+        "statement": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post)",
+        "reference_source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * <;>\n    try simp_all\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . simp [Lambda.LExpr.LExpr.getVars]\n      intros x Hin\n      exact Hin\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn ?_\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        exact H1\n        intros x Hin\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        exact H2\n        intros x Hin\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih <;> assumption\n  case quant trih eih =>\n    cases Hnorm\n    rename_i e_normalized\n    rename_i tr_normalized\n    rename_i tr e ty k\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih <;> assumption\n      intros x Hin\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply eih <;> assumption\n      intros x Hin\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 <;> assumption\n      intros x Hin\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 <;> assumption\n      intros x Hin\n      simp_all",
+        "reference_length": 222,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "dependency_digests": [
+          "7a089c81a4548125b938a5e4eed4d515db9cd18b3565e5f5b10fa57a1b2e9572"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "4a993e6d27055909e13d825aaa8248819dfbf22daf3d8de485e49ce1731a5192",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/strata-org/Strata",
+        "file_path": "Strata/Transform/CallElimCorrect.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"candidate-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":90.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      }
+    ],
+    "observations": [
+      {
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "provenance": "historical git 680c83db61c747d409f066750e3d753099008a52; filename uses legacy counter; new native verification required",
+        "status": "MEASURED",
+        "reference_tokens": 222,
+        "candidate_tokens": 185,
+        "length_reduction_pct": 16.666666666666664,
+        "verified_pins": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "required_pins": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "heartbeat_result": "LOWER_IN_BOTH_ORDERS",
+        "strata": [
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "reference-first",
+            "status": "MEASURED",
+            "control_raw": [
+              2607572,
+              2607578,
+              2607572
+            ],
+            "candidate_raw": [
+              2324397,
+              2324397,
+              2324397
+            ],
+            "control_median_raw": 2607572,
+            "candidate_median_raw": 2324397,
+            "paired_savings_raw": [
+              283175,
+              283181,
+              283175
+            ],
+            "observed_range_raw": 6,
+            "comparison": "LOWER"
+          },
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "candidate-first",
+            "status": "MEASURED",
+            "control_raw": [
+              2607589,
+              2607585,
+              2607585
+            ],
+            "candidate_raw": [
+              2324413,
+              2324410,
+              2324410
+            ],
+            "control_median_raw": 2607585,
+            "candidate_median_raw": 2324410,
+            "paired_savings_raw": [
+              283176,
+              283175,
+              283175
+            ],
+            "observed_range_raw": 4,
+            "comparison": "LOWER"
+          }
+        ],
+        "observed_pareto_improvement": true,
+        "statistical_significance_claimed": false,
+        "promoted": false,
+        "official_score": null
+      },
+      {
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "provenance": "Fixed parser-bound merged simp-only source from solver-span-repair-2026-09-24/strata-span-replay.json; historical hints only, requires entirely fresh checks",
+        "status": "MEASURED",
+        "reference_tokens": 222,
+        "candidate_tokens": 190,
+        "length_reduction_pct": 14.414414414414411,
+        "verified_pins": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "required_pins": [
+          {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          }
+        ],
+        "heartbeat_result": "LOWER_IN_BOTH_ORDERS",
+        "strata": [
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "reference-first",
+            "status": "MEASURED",
+            "control_raw": [
+              2607572,
+              2607578,
+              2607572
+            ],
+            "candidate_raw": [
+              2049154,
+              2049151,
+              2049150
+            ],
+            "control_median_raw": 2607572,
+            "candidate_median_raw": 2049151,
+            "paired_savings_raw": [
+              558418,
+              558427,
+              558422
+            ],
+            "observed_range_raw": 6,
+            "comparison": "LOWER"
+          },
+          {
+            "version": {
+              "lean_tag": "v4.26.0",
+              "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+            },
+            "branch_order": "candidate-first",
+            "status": "MEASURED",
+            "control_raw": [
+              2607589,
+              2607585,
+              2607585
+            ],
+            "candidate_raw": [
+              2049163,
+              2049164,
+              2049163
+            ],
+            "control_median_raw": 2607585,
+            "candidate_median_raw": 2049163,
+            "paired_savings_raw": [
+              558426,
+              558421,
+              558422
+            ],
+            "observed_range_raw": 4,
+            "comparison": "LOWER"
+          }
+        ],
+        "observed_pareto_improvement": true,
+        "statistical_significance_claimed": false,
+        "promoted": false,
+        "official_score": null
+      }
+    ],
+    "status": "COMPLETE",
+    "receipt_cache_enabled": false,
+    "live_model_calls": 0,
+    "training_enabled": false,
+    "production_memory_used": false,
+    "official_score": null,
+    "local_combined_pct": null,
+    "worker_metric_parity": "UNCONFIRMED",
+    "runner_sha256": "a9ff52d5485fc185fbd8703335af70cee57d3ce50185ed1fd7ffc742fc4fd810"
+  },
+  "confirmation_analysis": {
+    "rows": {
+      "control": {
+        "label": "control",
+        "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+        "tokens": 222,
+        "admissible": true,
+        "reason": "",
+        "raw_heartbeats_by_stratum": [
+          [
+            2607572,
+            2607578,
+            2607572
+          ],
+          [
+            2607589,
+            2607585,
+            2607585
+          ]
+        ],
+        "axioms_by_version": {
+          "v4.26.0": [
+            "Quot.sound",
+            "propext"
+          ]
+        }
+      },
+      "historical-260": {
+        "label": "historical-260",
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "tokens": 185,
+        "admissible": true,
+        "reason": "",
+        "raw_heartbeats_by_stratum": [
+          [
+            2324397,
+            2324397,
+            2324397
+          ],
+          [
+            2324413,
+            2324410,
+            2324410
+          ]
+        ],
+        "axioms_by_version": {
+          "v4.26.0": [
+            "Quot.sound",
+            "propext"
+          ]
+        }
+      },
+      "merged-simp-only": {
+        "label": "merged-simp-only",
+        "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "tokens": 190,
+        "admissible": true,
+        "reason": "",
+        "raw_heartbeats_by_stratum": [
+          [
+            2049154,
+            2049151,
+            2049150
+          ],
+          [
+            2049163,
+            2049164,
+            2049163
+          ]
+        ],
+        "axioms_by_version": {
+          "v4.26.0": [
+            "Quot.sound",
+            "propext"
+          ]
+        }
+      }
+    },
+    "frontier": [
+      "historical-260",
+      "merged-simp-only"
+    ],
+    "eligible": [
+      "merged-simp-only"
+    ],
+    "selection_objective": "aggregate-local-v1",
+    "heartbeat_noise_floor_raw": 100,
+    "aggregate_comparisons": {
+      "merged-simp-only": {
+        "original": {
+          "applicable": true,
+          "improves": true,
+          "reason": "",
+          "strata": [
+            {
+              "branch_order": "reference-first",
+              "token_gain": {
+                "numerator": 16,
+                "denominator": 111
+              },
+              "margin_raw": 100,
+              "adjusted_heartbeat_delta_raw": 558318,
+              "conservative_reference_raw": 2607578,
+              "conservative_gain_pp": {
+                "numerator": 5184727300,
+                "denominator": 434161737
+              },
+              "nominal_gain_pp": {
+                "numerator": 5185303150,
+                "denominator": 434161071
+              }
+            },
+            {
+              "branch_order": "candidate-first",
+              "token_gain": {
+                "numerator": 16,
+                "denominator": 111
+              },
+              "margin_raw": 100,
+              "adjusted_heartbeat_delta_raw": 558321,
+              "conservative_reference_raw": 2607589,
+              "conservative_gain_pp": {
+                "numerator": 10369505500,
+                "denominator": 868327137
+              },
+              "nominal_gain_pp": {
+                "numerator": 31111900300,
+                "denominator": 2604978747
+              }
+            }
+          ]
+        },
+        "incumbent": {
+          "applicable": true,
+          "improves": true,
+          "reason": "",
+          "strata": [
+            {
+              "branch_order": "reference-first",
+              "token_gain": {
+                "numerator": -5,
+                "denominator": 222
+              },
+              "margin_raw": 100,
+              "adjusted_heartbeat_delta_raw": 275143,
+              "conservative_reference_raw": 2607578,
+              "conservative_gain_pp": {
+                "numerator": 1201096400,
+                "denominator": 434161737
+              },
+              "nominal_gain_pp": {
+                "numerator": 400554950,
+                "denominator": 144720357
+              }
+            },
+            {
+              "branch_order": "candidate-first",
+              "token_gain": {
+                "numerator": -5,
+                "denominator": 222
+              },
+              "margin_raw": 100,
+              "adjusted_heartbeat_delta_raw": 275146,
+              "conservative_reference_raw": 2607589,
+              "conservative_gain_pp": {
+                "numerator": 2402223350,
+                "denominator": 868327137
+              },
+              "nominal_gain_pp": {
+                "numerator": 7210057550,
+                "denominator": 2604978747
+              }
+            }
+          ]
+        }
+      }
+    },
+    "score_scope": "matched-local-primary-pin",
+    "selected": "merged-simp-only"
+  },
+  "selection_commitment": "65e6a8ed81ad0a3781862c303c60b08c406fc0a6f8d083b2e62b6aec48f2ebb5",
+  "selected_for_confirmation": "merged-simp-only",
+  "recommended": {
+    "label": "merged-simp-only",
+    "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars, List.Subset.empty, List.append_assoc] at *\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+    "provenance": "Fixed parser-bound merged simp-only source from solver-span-repair-2026-09-24/strata-span-replay.json; historical hints only, requires entirely fresh checks"
+  },
+  "retained_incumbent": null,
+  "retained_incumbent_verified": false,
+  "status": "CONFIRMED_LOCAL_IMPROVEMENT",
+  "reason": "",
+  "promoted": false,
+  "training_enabled": false,
+  "live_model_calls": 0,
+  "official_score": null,
+  "worker_metric_parity": "UNCONFIRMED",
+  "statistical_significance_claimed": false,
+  "max_calls": 30,
+  "requests_reserved": 30,
+  "verifier_invocations": 30,
+  "native_processes": 30,
+  "implementation_unchanged": true,
+  "runner_sha256": "bc1e35df92f820366430909e42a45e996b8e0befd10c9ad7bd80fa9a6b737f66",
+  "readiness": {
+    "schema": "jevops-arena-native-readiness/v1",
+    "required_version_checks": 1,
+    "completed_version_checks": 0,
+    "official_score": null,
+    "rows": [
+      {
+        "name": "CallElimCorrect.extractedOldExprInVars",
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+        "status": "UNMEASURED",
+        "capability_gaps": [],
+        "dependencies_verified": false,
+        "baseline_compiles": null
+      }
+    ]
+  },
+  "input_kind": "caller_supplied_corpus"
+}

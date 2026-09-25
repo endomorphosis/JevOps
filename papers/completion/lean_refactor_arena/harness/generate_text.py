@@ -2,7 +2,8 @@
 """Thin fail-closed Leanstral generate_text client for Lean Refactor Arena.
 
 HTTP client of the live docker0 owner at 172.17.0.1:8080. Probe /health, then
-call ipfs_accelerate_py.llm_router.generate_text with fail-closed kwargs.
+call jevops.llm_router.generate_text with fail-closed kwargs. The external
+accelerator router is available only through explicit legacy opt-in.
 Never flocks the owner GPU lock. Never starts llama-server. Does not compile.
 Does not claim Arena scores. Does not import LeanstralProofProvider.
 """
@@ -131,9 +132,9 @@ def _ensure_accel_path() -> None:
 
 
 def _http_get(url: str, *, timeout: float) -> tuple[Optional[int], str]:
-    from jevops.outer import http_get
+    from jevops.leanstral import health_status
 
-    return http_get(url, timeout=timeout)
+    return health_status(url, timeout=timeout)
 
 
 def probe_docker0_health(*, timeout: float = HEALTH_TIMEOUT_SECONDS) -> HealthProbe:
@@ -152,7 +153,7 @@ def probe_docker0_health(*, timeout: float = HEALTH_TIMEOUT_SECONDS) -> HealthPr
         alias_ok=alias_ok,
         alias_url=DOCKER0_HEALTH_ALIAS_URL,
         status_code=status,
-        error=error or alias_error,
+        error="" if ok else error or alias_error,
         autostart=env_str("IPFS_ACCELERATE_LLAMA_CPP_AUTOSTART"),
     )
 
@@ -186,16 +187,10 @@ def render_prompt(
 
 
 def _load_router():
-    from jevops.outer import import_names
+    from jevops.outer import load_ipfs_accelerate_router
 
-    attrs, err = import_names(
-        "ipfs_accelerate_py.llm_router",
-        ("generate_text", "get_last_generation_trace"),
-        setup=(_ensure_accel_path,),
-    )
-    if err is not None:
-        raise err
-    return attrs["generate_text"], attrs["get_last_generation_trace"]
+    router = load_ipfs_accelerate_router()
+    return router.generate_text, router.get_last_generation_trace
 
 
 def _identity_from_trace(
@@ -254,6 +249,7 @@ def generate_lra(
     base_url: Optional[str] = None,
     temperature: Optional[float] = None,
     stop: Optional[list[str]] = None,
+    health: Optional[HealthProbe] = None,
 ) -> LraGeneration:
     """Probe docker0, then call the router with fail-closed kwargs. Record resolved identity."""
 
@@ -270,7 +266,7 @@ def generate_lra(
     )
 
     pinned_base = _pin_client_env(base_url=base_url)
-    health = probe_docker0_health() if base_url is None else HealthProbe(
+    health = (health if health is not None else probe_docker0_health()) if base_url is None else HealthProbe(
         ok=False,
         url=DOCKER0_HEALTH_URL,
         alias_ok=False,
@@ -328,6 +324,7 @@ def generate_lra(
             prompt,
             max_new_tokens=int(max_new_tokens),
             timeout=float(timeout),
+            base_url=pinned_base,
             **call_kwargs,
         ),
         catch_trace_fn=lambda: catch_trace(router_trace),

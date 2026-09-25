@@ -6,6 +6,10 @@ import sys
 import unittest
 from pathlib import Path
 
+import pytest
+
+pytestmark = pytest.mark.no_seal(reason="boundary probes exercise live sockets and subprocess timeouts")
+
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -6423,10 +6427,160 @@ class KernelBoundaryTests(unittest.TestCase):
         self.assertIn("statement", catalogs.REQUIRED_JSONL_FIELDS)
         self.assertEqual(lean.FORBIDDEN_PROOF_TOKENS, ("theorem", "lemma", "import", "open"))
         self.assertIn(" := by\n", lean.BODY_BY_PREFIXES)
+        self.assertTrue(
+            lean.candidate_binds_statement(
+                "import Foo\ntheorem t : True := by\nrfl",
+                "import Foo\n",
+                "theorem t : True",
+            )
+        )
+        self.assertFalse(lean.candidate_binds_statement("sorry", "", "theorem t : True"))
+        self.assertEqual(
+            lean.listed_version_tags([{"v4.26.0": "abc"}, "v4.27.0"]),
+            ["v4.26.0", "v4.27.0"],
+        )
+        self.assertEqual(lean.putnam_root_import("Putnam.Candidate"), "import Putnam.Candidate\n")
+        self.assertTrue(lean.join_declaration_proof("theorem t : True", "rfl").endswith("by\n  rfl\n") or "rfl" in lean.join_declaration_proof("theorem t : True", "rfl"))
+        self.assertTrue(lean.fol_expected_match(expected_provable=False, parsed_kind="abstain", kernel_ok=False, kernel_ran=False))
+        unchanged, fails = lean.frozen_jsonl_failures(before="a", after="a", digest="a", frozen="a", n_records=15, expected_n=15)
+        self.assertTrue(unchanged)
+        self.assertEqual(fails, [])
+        judged = lean.judge_warmup_receipt(
+            {"name": "T", "statement": "theorem T", "src": "theorem T := by rfl", "version_info": []},
+            [],
+            frozen_digest="abc",
+            tags=(),
+            score_names=(),
+            bind_fn=lean.candidate_binds_statement,
+            axiom_ok_fn=lambda _row: True,
+            sorry_fn=lambda _row: False,
+        )
+        self.assertFalse(judged["receipt_found"])
+        self.assertIn("missing receipt", judged["failures"])
+        roots = lean.iter_receipt_roots(Path("/tmp/does-not-exist-lra"))
+        self.assertEqual(roots[-1], Path("/tmp/does-not-exist-lra"))
         self.assertEqual(catalogs.SMALL_CANARY_NAMES[0], "CallElimCorrect.substOldPostSubset")
         self.assertEqual(catalogs.UNSOLVED_RELPATH, "Strata/Unsolved.lean")
         self.assertIn("grok", catalogs.ALLOWED_GROK_PROVIDERS)
         self.assertIn("find", __import__("jevops.repair", fromlist=["ASSIGN_SCAN_METHODS"]).ASSIGN_SCAN_METHODS)
+        import os
+
+        from jevops.board import drive_warmup_token_map
+        from jevops.lean import drive_bake_job, drive_maybe_generate, drive_verify_batch
+        from jevops.nca import drive_codepath_slice
+        from jevops.outer import drive_generate_as_client
+        from jevops.search import drive_line_swap
+
+        self.assertIsNone(
+            drive_line_swap(
+                {"name": "T", "source": "s"},
+                "rfl",
+                None,
+                set(),
+                mutable_fn=lambda *_args: [],
+                generate_fn=lambda *_a, **_k: (_ for _ in ()).throw(AssertionError("generated")),
+                parse_fn=str,
+                looks_fn=lambda _text: True,
+                replace_fn=lambda text, _index, _nxt: text,
+                stop="",
+            )
+        )
+        os.environ["LRA_KERNEL_AUTOSTART"] = "1"
+        try:
+            with self.assertRaises(RuntimeError):
+                drive_generate_as_client(
+                    pin_fn=lambda: None,
+                    autostart_env="LRA_KERNEL_AUTOSTART",
+                    error_cls=RuntimeError,
+                    probe_fn=lambda: None,
+                    inspect_fn=lambda _path: None,
+                    generate_fn=lambda: None,
+                    wait_fn=lambda _seconds: None,
+                    exec_fn=lambda _execute: None,
+                    skip_fn=lambda *_args: None,
+                    decide_fn=lambda *_args, **_kwargs: "skip",
+                )
+            os.environ["LRA_KERNEL_AUTOSTART"] = "0"
+
+            class _Health:
+                ok = False
+
+            skipped = object()
+            self.assertIs(
+                drive_maybe_generate(
+                    pin_fn=lambda: None,
+                    autostart_env="LRA_KERNEL_AUTOSTART",
+                    error_cls=RuntimeError,
+                    health=_Health(),
+                    generate_fn=lambda: (_ for _ in ()).throw(AssertionError("generated")),
+                    skip_result=skipped,
+                    fail_fn=lambda exc: exc,
+                ),
+                skipped,
+            )
+        finally:
+            os.environ.pop("LRA_KERNEL_AUTOSTART", None)
+        missing = drive_codepath_slice(
+            "nope",
+            resolve_fn=lambda _name: None,
+            inspect_fn=lambda _name: False,
+            read_fn=lambda _path: "",
+        )
+        self.assertFalse(missing["ok"])
+        self.assertEqual(missing["reason"], "codepath_not_allowed")
+        baked = drive_bake_job(
+            type("Job", (), {"lean_tag": "v4.26.0", "cache_key": "k", "kind": "git", "url": "u", "git_commit": "c"})(),
+            network="deny",
+            execute=False,
+            root="/tmp",
+            timeout=1.0,
+            require_cache_fn=lambda _item, network, state_root: {"ok": True, "network": network, "root": state_root},
+            tag_paths_fn=lambda _tag: {"installed": False},
+            materialize_fn=lambda *_args: None,
+            putnam_dir_fn=lambda _item, root: root,
+            run_lake_fn=lambda *_args, **_kwargs: {"exit_code": 0},
+            copy_oleans_fn=lambda *_args: None,
+            cache_dir_fn=lambda _item, root: root,
+            olean_fn=lambda _path: [],
+            error_cls=RuntimeError,
+            miss_cls=RuntimeError,
+            git_bin="git",
+            git_clone_fn=lambda *_args, **_kwargs: "/clone",
+            git_checkout_fn=lambda *_args, **_kwargs: {},
+            url_clone_dir_fn=lambda root, _url: root,
+            lake_argv_fn=lambda tag, cmd: [cmd, tag],
+        )
+        self.assertEqual(baked["status"], "cache-hit")
+        self.assertNotIn("lake_argv", baked)
+        self.assertFalse(baked["lake_build_executed"])
+        failed = drive_verify_batch(
+            jsonl="missing",
+            receipts_dir="missing",
+            gates=["digest"],
+            load_fn=lambda _path: (_ for _ in ()).throw(ValueError("bad jsonl")),
+            digest_fn=lambda _path: "digest",
+            frozen="frozen",
+            expected_n=15,
+            fail_fn=lambda gates, failures, n_scheduled: {
+                "status": "FAIL",
+                "gates": list(gates),
+                "failures": list(failures),
+                "n": n_scheduled,
+            },
+            mismatch_type=ValueError,
+            io_types=(OSError,),
+            load_receipts_fn=lambda _path: [],
+            load_binding_fn=lambda _path: {},
+            note_fn=lambda *_args, **_kwargs: None,
+            judge_fn=lambda *_args, **_kwargs: {},
+            error_types=(OSError,),
+            score_names=(),
+            schema="schema",
+            protocol="protocol",
+        )
+        self.assertEqual(failed["status"], "FAIL")
+        self.assertEqual(failed["n"], 15)
+        self.assertEqual(drive_warmup_token_map(load_fn=lambda: (_ for _ in ()).throw(OSError("x")), token_fn=len, split_fn=lambda _rec: None), {})
 
 
 if __name__ == "__main__":

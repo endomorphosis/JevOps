@@ -1,0 +1,33 @@
+{
+    "repo": "https://github.com/quangvdao/ZKLib",
+    "commit": "016d71a4676b2c21add326e6852147c81ed64394",
+    "lean": "leanprover/lean4:v4.13.0-rc4",
+    "name": "\u00abZklib\u00bb",
+    "imports": [
+        "\u00abZKLib\u00bb"
+    ],
+    "metadata": {
+        "name": "Zklib",
+        "owner": "quangvdao",
+        "fullName": "quangvdao/Zklib",
+        "description": "A Library for Formally Verified Cryptographic Proof Systems",
+        "keywords": [],
+        "homepage": null,
+        "license": "Apache-2.0",
+        "createdAt": "2024-05-31T20:26:01Z",
+        "updatedAt": "2024-10-27T18:44:50Z",
+        "stars": 8,
+        "sources": [
+            {
+                "type": "git",
+                "host": "github",
+                "id": "R_kgDOMDUiyg",
+                "fullName": "quangvdao/ZKLib",
+                "repoUrl": "https://github.com/quangvdao/ZKLib",
+                "gitUrl": "https://github.com/quangvdao/ZKLib",
+                "defaultBranch": "main"
+            }
+        ],
+        "schemaVersion": "1.2.0"
+    }
+}

@@ -7,9 +7,12 @@ code applies it; lake is the oracle. Jev does not write Lean.
 from __future__ import annotations
 
 import re
-from typing import Any, Mapping, Optional
+from typing import Any, Callable, Mapping, Optional
 
-_EXACT_HYP = re.compile(r"\bexact ([A-Za-z][A-Za-z0-9']{0,6})\b")
+_EXACT_HYP = re.compile(
+    r"\bexact ([A-Za-z][A-Za-z0-9']{0,6})(?![A-Za-z0-9_'.])(?=[ \t]*(?:$|;|<;>))",
+    re.MULTILINE,
+)
 _USE_EXACT = re.compile(r"use ([^;\n]+); exact ⟨")
 _USE_EXACT_NL = re.compile(
     r"(?m)^(?P<indent>[ \t]*)use (?P<term>[^;\n]+)\n"
@@ -73,7 +76,7 @@ def fold_use_exact(tactics: str) -> str:
     return subn_changed(nxt, _USE_EXACT_NL, r"\g<indent>exact ⟨\g<term>, ")
 
 
-def fold_use_exact_reuse(tactics: str) -> str:
+def fold_use_exact_reuse(tactics: str, *, token_fn: Optional[Callable[[str], int]] = None) -> str:
     """``use t`` / ``exact ⟨.refl t, p⟩`` → ``exact ⟨t, .refl _, p⟩`` when t repeats."""
 
     def repl(match: re.Match[str]) -> str:
@@ -94,7 +97,7 @@ def fold_use_exact_reuse(tactics: str) -> str:
     nxt = subn_changed(tactics, _USE_EXACT_BLOCK, repl)
     if nxt == tactics:
         return tactics
-    return keep_shorter(tactics, nxt, token_fn=_token_count)
+    return keep_shorter(tactics, nxt, token_fn=token_fn if token_fn is not None else _token_count)
 
 
 def fold_ctor_pair_exacts(tactics: str) -> str:
@@ -152,21 +155,23 @@ SHORTEN_IDENTS: tuple[tuple[str, str, str], ...] = (
 # Bump when a portable fold is repaired or its compiler-probe policy changes.
 # Live memories use this marker to revalidate stale fuzzy-prior bans; fixture
 # callers without the marker retain the historical filtering behavior.
-PORTABLE_PROBE_REVISION = "folds-20260921-indent-probes-v2"
+PORTABLE_PROBE_REVISION = "folds-20260923-explicit-counter-try-simp-v3"
 
 
-def fold_shorten_ident(tactics: str, old: str, new: str) -> str:
+def fold_shorten_ident(tactics: str, old: str, new: str, *,
+                       token_fn: Optional[Callable[[str], int]] = None) -> str:
     if old not in tactics:
         return tactics
     from jevops.pick import keep_shorter
 
-    return keep_shorter(tactics, tactics.replace(old, new), token_fn=_token_count)
+    return keep_shorter(tactics, tactics.replace(old, new),
+                        token_fn=token_fn if token_fn is not None else _token_count)
 
 
 _GRIND_ONLY = re.compile(r"grind only \[[^\]]+\]")
 
 
-def fold_grind_only_to_grind(tactics: str) -> str:
+def fold_grind_only_to_grind(tactics: str, *, token_fn: Optional[Callable[[str], int]] = None) -> str:
     """``grind only [...]`` → ``grind`` (Fsub/SKI). AutoResearch gates this residual."""
 
     if "grind only [" not in tactics:
@@ -177,7 +182,7 @@ def fold_grind_only_to_grind(tactics: str) -> str:
     nxt = subn_changed(tactics, _GRIND_ONLY, "grind")
     if nxt == tactics:
         return tactics
-    return keep_shorter(tactics, nxt, token_fn=_token_count)
+    return keep_shorter(tactics, nxt, token_fn=token_fn if token_fn is not None else _token_count)
 
 
 def fold_drop_unfold_before_split(tactics: str) -> str:
@@ -193,7 +198,7 @@ def fold_drop_unfold_before_split(tactics: str) -> str:
 
 
 def fold_drop_try_simp_all(tactics: str) -> str:
-    """Drop ``try simp_all`` hanging off ``induction … simp at * ;``.
+    """Propose dropping a standalone ``try simp_all`` after ``at * ;``/``<;>``.
 
     extractedOldExprInVars still has that tail. Memory said keep ``intro``;
     this is a different residual (optional simp after a closing ``at *``).
@@ -203,7 +208,7 @@ def fold_drop_try_simp_all(tactics: str) -> str:
 
     return subn_changed(
         tactics,
-        r"(at \* )\s*;\n([ \t]*)try simp_all",
+        r"(at \*)[ \t]+(?:<;>|;)[ \t]*\n[ \t]*try simp_all[ \t]*(?=\n|$)",
         r"\1",
         count=1,
     )
@@ -392,7 +397,7 @@ def fold_redundant_inner_simp(tactics: str) -> str:
     return nxt if nxt.strip() else tactics
 
 
-def fold_hoist_repeated_simp(tactics: str) -> str:
+def fold_hoist_repeated_simp(tactics: str, *, token_fn: Optional[Callable[[str], int]] = None) -> str:
     """Merge a repeated case-local ``simp [lemmas] at *`` into the induction parent.
 
     Keeps intro/constructor/qualified names. substOldPostSubset repeats the same
@@ -449,7 +454,8 @@ def fold_hoist_repeated_simp(tactics: str) -> str:
     from jevops.mask import drop_spans
 
     nxt = drop_spans(nxt, drop)
-    if _token_count(nxt) >= _token_count(tactics):
+    count = token_fn if token_fn is not None else _token_count
+    if count(nxt) >= count(tactics):
         return tactics
     return nxt
 

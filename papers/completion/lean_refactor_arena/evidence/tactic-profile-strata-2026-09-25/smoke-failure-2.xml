@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="13.288" timestamp="2026-09-25T07:51:50.144174+00:00" hostname="spark-b271"><testcase classname="tests.test_arena_profile" name="test_native_profile_is_instrumented_not_a_verification_receipt" time="10.510"><failure message="AssertionError: ValueError: local driver failed: /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/jevops-arena-local-qwfdk93e/ArenaLocal.lean:1271:27: error: failed to synthesize&#10;    ToJson Prop&#10;  &#10;  Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.&#10;  /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/jevops-arena-local-qwfdk93e/ArenaLocal.lean:1266:45: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.withContext` could not be determined&#10;  /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/jevops-arena-local-qwfdk93e/ArenaLocal.lean:1267:46: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.withNamingContext` could not be determined&#10;  /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/jevops-arena-local-qwfdk93e/ArenaLocal.lean:1270:74: error: Invalid field `toString`: The environment does not contain `String.toString`&#10;    text.take 512&#10;  has type&#10;    String&#10;  /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/jevops-arena-local-qwfdk93e/ArenaLocal.lean:1330:22: error: unexpected token; expected '}'&#10;  &#10;assert False">tmp_path = PosixPath('/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/pytest-of-barberb/pytest-10/test_native_profile_is_instrum0')
+
+    @pytest.mark.no_seal(reason='explicit opt-in installed Lean profiler control')
+    def test_native_profile_is_instrumented_not_a_verification_receipt(tmp_path):
+        if os.environ.get('JEVOPS_ARENA_NATIVE_TESTS') != '1':
+            pytest.skip('explicit opt-in; already installed toolchain only')
+        lean = native.pinned_lean(Path(os.environ.get('ELAN_HOME', str(Path.home()/'.elan'))), PIN.lean_tag)
+        statement = 'theorem profiled (a b : Prop) (h : a ∧ b) : b ∧ a'
+        record = dict(name='Suite.profiled', statement=statement, src=statement+' := by\n  constructor &lt;;&gt; simp_all',
+                      version_info=[{PIN.lean_tag: PIN.git_commit}])
+        binding = native.ProjectBinding(PIN, lean, tmp_path, PREFIX, project_backed=False)
+        guard = native.NativeLeanVerifier({PIN: binding}, max_processes=0, timeout=90)
+        rt = local.ArenaLocalRuntime(guard, record, max_processes=1)
+        result = rt.profile(PIN, threshold_raw=0)
+&gt;       assert result['ok'], result.get('reason', result)
+E       AssertionError: ValueError: local driver failed: /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/jevops-arena-local-qwfdk93e/ArenaLocal.lean:1271:27: error: failed to synthesize
+E           ToJson Prop
+E         
+E         Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+E         /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/jevops-arena-local-qwfdk93e/ArenaLocal.lean:1266:45: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.withContext` could not be determined
+E         /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/jevops-arena-local-qwfdk93e/ArenaLocal.lean:1267:46: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.withNamingContext` could not be determined
+E         /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/jevops-arena-local-qwfdk93e/ArenaLocal.lean:1270:74: error: Invalid field `toString`: The environment does not contain `String.toString`
+E           text.take 512
+E         has type
+E           String
+E         /home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/tmp/jevops-arena-local-qwfdk93e/ArenaLocal.lean:1330:22: error: unexpected token; expected '}'
+E         
+E       assert False
+
+tests/test_arena_profile.py:135: AssertionError</failure></testcase></testsuite></testsuites>

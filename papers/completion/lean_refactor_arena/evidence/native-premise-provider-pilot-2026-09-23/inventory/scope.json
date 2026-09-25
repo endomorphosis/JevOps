@@ -1,0 +1,29 @@
+{
+  "schema": "jevops-premise-scope/v1",
+  "record_sha256": "f67209bc43e57d3b8336d92b3f776e6b8ca34c968e3a9d9cebb05f160a3a4fc3",
+  "environment_sha256": "9d58b293589edfa5b65145b8e5b18f69f5a672aadb5b0372d8d94c21716b162b",
+  "available_names": [
+    "CallElimCorrect.List.Subset.app",
+    "CallElimCorrect.List.Subset.trans",
+    "List.Subset.empty",
+    "List.Subset.refl"
+  ],
+  "excluded_names": [
+    "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+    "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+    "CallElimCorrect.extractedOldExprInVars",
+    "CallElimCorrect.substOldPostSubset",
+    "Core.InitsUpdatesComm",
+    "Cslib.CCS.bisimilarity_congr_choice",
+    "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+    "Cslib.SKI.parallelReduction_diamond",
+    "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema",
+    "FieldSpecification.WickAlgebra.ι_timeOrderF_superCommuteF_eq_time",
+    "fundamental_theorem_of_variational_calculus'",
+    "interleaved_affine_gaps_imply_tensor_gaps",
+    "putnam_1964_a4",
+    "putnam_1964_b2",
+    "putnam_1995_a3"
+  ],
+  "excluded_origins": []
+}

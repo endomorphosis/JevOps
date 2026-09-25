@@ -1,0 +1,24 @@
+{
+  "pin": {
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+  },
+  "label": "edit-61",
+  "source_sha256": "154de5dc1dc4414f51ee5bd6b9cfbc98eebbf46a09f339d9a3f888156e9bd8b0",
+  "status": "REJECTED",
+  "context_id": "c05f2041328cf7cd0931ca56ae2c91af99ef4663915803d6dd2c39f6a0d3554e",
+  "receipt": {
+    "request_id": "b5dac1bb3d6223c87580fe08638a2d0fd8e4c45ca7bbc3862738b3a23b050a43",
+    "candidate_sha256": "154de5dc1dc4414f51ee5bd6b9cfbc98eebbf46a09f339d9a3f888156e9bd8b0",
+    "target": "Core.InitsUpdatesComm",
+    "outcome": "REJECTED",
+    "type_preserved": false,
+    "exit_code": 0,
+    "axiom_output": "",
+    "heartbeats": null,
+    "reason": "candidate_errors",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"a07f22759ef3aa7cde70314cc088c5ee99a642ed1a58290a81058642231a79ae\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Type mismatch\\n  updatedStatesInit Hlen1 ?m.69 ?m.70\\nhas type\\n  InitStates ?m.66 ks' vs' (updatedStates ?m.66 ks' vs')\\nbut is expected to have type\\n  InitStates σ✝ ks' vs' (updatedStates σ✝ ks' vs') ∧ UpdateStates (updatedStates σ✝ ks' vs') [] [] σ''\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":5897.158}"
+  },
+  "native_processes": 1,
+  "wall_seconds": 11.606
+}

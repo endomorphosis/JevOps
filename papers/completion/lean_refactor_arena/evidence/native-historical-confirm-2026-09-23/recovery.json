@@ -1,0 +1,216 @@
+{
+  "schema": "jevops-historical-token-inventory/v1",
+  "git_commit": "680c83db61c747d409f066750e3d753099008a52",
+  "problem": "CallElimCorrect.extractedOldExprInVars",
+  "tokenizer_id": "lra-reference-lexical/v1",
+  "legacy_tokenizer_id": "lra-local-ws-punct/v1",
+  "legacy_scope": "tactic body excluding by",
+  "reference_scope": "proof suffix including by, excluding statement and assignment",
+  "rows": [
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-260.lean",
+      "filename_count": 260,
+      "legacy_body_tokens": 260,
+      "reference_tokens": 185,
+      "body_sha256": "98a59d0328d094b6493c83037b0ca193139fa2382b1594e98a495f0ba2ba41e6",
+      "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-270.lean",
+      "filename_count": 270,
+      "legacy_body_tokens": 270,
+      "reference_tokens": 189,
+      "body_sha256": "b9eaf6c42579d6fc53f30a7eb93699cae415878d164eb0f687babf007a7b6ffb",
+      "source_sha256": "d52c0394b7c2f9e02446b8db82f49ee9f45a07fd377b22786c85bfa1d2bfc8f3"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-273.lean",
+      "filename_count": 273,
+      "legacy_body_tokens": 273,
+      "reference_tokens": 192,
+      "body_sha256": "a5c22ca5951e7474fdf86c30fbb1dca396cd5953e2fb368aaadb7cd10239f31d",
+      "source_sha256": "7047b32be3ae051ba23ee31cc43f15ebd25891f16bce99ab53a093798264cd46"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-275.lean",
+      "filename_count": 275,
+      "legacy_body_tokens": 275,
+      "reference_tokens": 192,
+      "body_sha256": "e628c8414a0be7127362afb1fbc5309dbb4591af7f71562e9b3d2bb1a8ff6e6e",
+      "source_sha256": "10ec011fcfd89c1b211a5f78fa3754c5b1af84f2e1c8de868063e039fffca22d"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-276.lean",
+      "filename_count": 276,
+      "legacy_body_tokens": 276,
+      "reference_tokens": 193,
+      "body_sha256": "d11934e97b8db4ccfd79b947ea698c229f8558be701a12a98892aa163811a139",
+      "source_sha256": "033da3e2fc4344e1bf1983f6689b6a369007634008fb2cd9644189e0c1ad9cd1"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-277.lean",
+      "filename_count": 277,
+      "legacy_body_tokens": 277,
+      "reference_tokens": 194,
+      "body_sha256": "4f09a664592ab95de0b24beb1a960537d14b474b6ecdc70520668fac13a09c83",
+      "source_sha256": "6bc0f03b77aa8700b14d736f735713e11f39521603e1a27ac99a94681a587883"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-279.lean",
+      "filename_count": 279,
+      "legacy_body_tokens": 279,
+      "reference_tokens": 194,
+      "body_sha256": "8284aebf7ae4377bf13f18cd544bf80ecc11d752429d8a8892124d942f318362",
+      "source_sha256": "b1ff35fa0c34384e5a122229f490de8fe78cf39ea5ba95a58ecdfaf78e1b2200"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-281.lean",
+      "filename_count": 281,
+      "legacy_body_tokens": 281,
+      "reference_tokens": 194,
+      "body_sha256": "34398c8ca81c494a90cf27d4fbafeb9822dd10974f245a27941d94e27917e3ff",
+      "source_sha256": "3cfbcc5b11de8db22aed776d5d6418a655e857b6a1e2a144dc18deab6f8eed9b"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-283.lean",
+      "filename_count": 283,
+      "legacy_body_tokens": 283,
+      "reference_tokens": 194,
+      "body_sha256": "bce1ea346ae9fe550e590c28f62bafd27b21f0839ade617dd35fe187a5eef9df",
+      "source_sha256": "1308839918c65a5338f039977b1610d4f1493c4936b921bb024eb7b27053bd1d"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-278.lean",
+      "filename_count": 278,
+      "legacy_body_tokens": 278,
+      "reference_tokens": 195,
+      "body_sha256": "94989fd3c7b216a304ff94b8fd5949ed3a5529ceb70a46fbe6f216cc42747677",
+      "source_sha256": "42c055aedc3c3966f74dd9b585943d0e3140b38dae11a2b309cbd51b2dec2f12"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-280.lean",
+      "filename_count": 280,
+      "legacy_body_tokens": 280,
+      "reference_tokens": 195,
+      "body_sha256": "d30d88b4079d6f142747af55170d4085fb261ea8c2fdcb5e7e6ae8d0eba79bc2",
+      "source_sha256": "dccbdf0847ff6301536540ae5a74568b1b813f1592c5512a0dfb36c4acd46a56"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-282.lean",
+      "filename_count": 282,
+      "legacy_body_tokens": 282,
+      "reference_tokens": 195,
+      "body_sha256": "2d1e30beab1cb501a5f7054784090e5c1036c9ccbb06c862e753a69c790fb30d",
+      "source_sha256": "985a6fd8d10fde04ec3a65ef25b8ad5e7b2ad13b54759aaae312936d93aabb1f"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-284.lean",
+      "filename_count": 284,
+      "legacy_body_tokens": 284,
+      "reference_tokens": 195,
+      "body_sha256": "2c3c7360c5d76cd44ddf5bcac19dcd9743d001bfdd669b1a5db27337bdb1b658",
+      "source_sha256": "53bff94e6d33fe962f8d45e8e18f9fd68d3ad26a704a6c2149ef06e5d3224a6d"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-286.lean",
+      "filename_count": 286,
+      "legacy_body_tokens": 286,
+      "reference_tokens": 197,
+      "body_sha256": "177faca2714500ceb43e6c82748cb04818ade0353f1dc984a42aaaa31d2d66bf",
+      "source_sha256": "e379de4692aababd55c8312b73a24fbe0f11f10a4ed57008adf3bfd7afa0ab4e"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-294.lean",
+      "filename_count": 294,
+      "legacy_body_tokens": 294,
+      "reference_tokens": 205,
+      "body_sha256": "c060c489cdbcf5769483858e0ed9dd417d00de65a2abbefc6512d5c05bbed95b",
+      "source_sha256": "32bcf5735d98e42094a913b3a63e6dc60162ef8d608b7c3255fc0574f6074391"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-303.lean",
+      "filename_count": 303,
+      "legacy_body_tokens": 303,
+      "reference_tokens": 212,
+      "body_sha256": "d9c943b241b9c531fcecbfad413771538a200f0ab0730161bb8c6bfda6627179",
+      "source_sha256": "ea0f4fd7534bd1f2dfa00ec6c5e79146150890161b66680b8eb41c29a7ea69db"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-302.lean",
+      "filename_count": 302,
+      "legacy_body_tokens": 302,
+      "reference_tokens": 213,
+      "body_sha256": "db0c66e4f8b55ae5623eb9792473c1e60ed01ee00b6b133506dfa3a0adbeca21",
+      "source_sha256": "160fd21fec3ab006a42e08b67b9fcfca098f00fac3998eccf41c63aee0fd1903"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-304.lean",
+      "filename_count": 304,
+      "legacy_body_tokens": 304,
+      "reference_tokens": 213,
+      "body_sha256": "811ab90dd826d1bd3db63a0c4269a197573596668b2d68f604b08ed08a98e899",
+      "source_sha256": "b0d48f94aa76ed8cacb97d6d66935f30e7b3f14e712f30d60289a83733d9234e"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-306.lean",
+      "filename_count": 306,
+      "legacy_body_tokens": 306,
+      "reference_tokens": 213,
+      "body_sha256": "dbe48eabef91e4606cbba0245268fbb093fc260b010e17f9d61967c73d8c72e0",
+      "source_sha256": "583e206e6632674771f3d5c15d2c0d50db3d56218f1c19c8a13dfb82bf2726e3"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-308.lean",
+      "filename_count": 308,
+      "legacy_body_tokens": 308,
+      "reference_tokens": 213,
+      "body_sha256": "64a0fb38ec516a62a21974a18139208a644722cc3b7628e03f6942d9d79caa8b",
+      "source_sha256": "b2320a776ab1e914913eeab962f0b7f02d4e9c3feaa598f933a72a9cc169dbf6"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-310.lean",
+      "filename_count": 310,
+      "legacy_body_tokens": 310,
+      "reference_tokens": 213,
+      "body_sha256": "a9b834ad85662d59429db3c8eceeacbd84a86111e697a10a79d0a5879a3c6f20",
+      "source_sha256": "ea58b4c4719a760a61463da5fd8cc35f7a3930fc2e6d3197d374c90845f02bf3"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-312.lean",
+      "filename_count": 312,
+      "legacy_body_tokens": 312,
+      "reference_tokens": 213,
+      "body_sha256": "b7be135f5441ebf8abd19f09c7e67df9257c34a6ec580feb8f38c91e15a9f16e",
+      "source_sha256": "748661ebf1fad6aed45750555040a5ba17148f6dff2183ef6e98fa681e298968"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-313.lean",
+      "filename_count": 313,
+      "legacy_body_tokens": 313,
+      "reference_tokens": 213,
+      "body_sha256": "3966919837d91452608efe5f4a8a2232a023261512b953d50da5c48c7d3a8093",
+      "source_sha256": "a5762086b70f580cedd8b91f1ffcc1ca3b485afce2d747af667979ecdeae6583"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-317.lean",
+      "filename_count": 317,
+      "legacy_body_tokens": 317,
+      "reference_tokens": 217,
+      "body_sha256": "506ca8b37d188127a5ae2188843434a1e6a58a5661574e266e84d739f171a93b",
+      "source_sha256": "7e554e4db3a6e7e6eb78f3169e4674263f341f2428d37ef95ef6f857eabf95d0"
+    },
+    {
+      "path": "papers/completion/lean_refactor_arena/evidence/canaries/random-best-CallElimCorrect.extractedOldExprInVars-320.lean",
+      "filename_count": 320,
+      "legacy_body_tokens": 320,
+      "reference_tokens": 222,
+      "body_sha256": "2c499df6f32bf30551db3f62dc192b90ea0d659c15621ba09385d9d9ae9ea7f0",
+      "source_sha256": "aa2d5096db4adeb07d03f19297ca429dec0d4a10224663a03fd7f131ed34fdc2"
+    }
+  ],
+  "proof_verified": false,
+  "native_processes": 0,
+  "training_enabled": false,
+  "promoted": false,
+  "note": "Inventory counts are not proof authority. Only the linked selected seed was checked by the separate native experiment."
+}

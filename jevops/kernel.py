@@ -17,7 +17,7 @@ import json
 import os
 import time
 from pathlib import Path
-from typing import Any, Mapping, Optional
+from typing import Any, Callable, Mapping, Optional, Sequence
 
 def cas_dir() -> Path:
     override = os.environ.get("JEVOPS_CAS_DIR")
@@ -477,6 +477,83 @@ def flight_begin(memory: dict[str, Any], key: str) -> dict[str, Any]:
     _stat(k, "flights")
     k["in_flight"] = inflight[-64:]
     return {"ok": True, "kind": "port_singleflight", "key": key, "begun": True, "admit": False}
+
+
+def drive_guarded_compile(
+    record: Mapping[str, Any],
+    tactics: str,
+    *,
+    state_root: Any,
+    timeout: float,
+    restore: bytes,
+    memory: Optional[dict[str, Any]],
+    compile_fn: Callable[..., dict[str, Any]],
+    guard_fn: Callable[..., dict[str, Any]],
+    kind: str,
+) -> dict[str, Any]:
+    """Run one lake compile behind the single-flight guard. The guard never admits Lean."""
+
+    from jevops.outer import dict_call, get_str
+
+    def _run() -> dict[str, Any]:
+        return dict_call(
+            compile_fn,
+            record,
+            tactics,
+            state_root=state_root,
+            timeout=timeout,
+            restore=restore,
+        )
+
+    return guard_fn(
+        memory,
+        name=get_str(record, "name"),
+        kind=kind,
+        tactics=tactics,
+        compile_fn=_run,
+    )
+
+
+def drive_variant_evals(
+    record: Mapping[str, Any],
+    tactics: str,
+    *,
+    state_root: Any,
+    timeout: float,
+    restore: bytes,
+    reference: str,
+    memory: Optional[dict[str, Any]],
+    variants_fn: Callable[[str, str], Sequence[tuple[str, str]]],
+    compile_fn: Callable[..., dict[str, Any]],
+    guard_fn: Callable[..., dict[str, Any]],
+    kind_prefix: str = "sgd",
+) -> list[dict[str, Any]]:
+    """Evaluate tactic variants one file at a time. Lake stays in ``compile_fn``."""
+
+    from jevops.outer import dict_call, get_str
+    from jevops.search import compile_variant_evals
+
+    def _compile(label: str, body: str) -> dict[str, Any]:
+        def _run() -> dict[str, Any]:
+            return dict_call(
+                compile_fn,
+                record,
+                body,
+                state_root=state_root,
+                timeout=timeout,
+                restore=restore,
+            )
+
+        return dict_call(
+            guard_fn,
+            memory,
+            name=get_str(record, "name"),
+            kind=f"{kind_prefix}:{label}",
+            tactics=body,
+            compile_fn=_run,
+        )
+
+    return compile_variant_evals(variants_fn(tactics, reference), _compile)
 
 
 def guarded_compile(

@@ -1084,6 +1084,83 @@ RECEIPT_STORE_SCHEMA = "lra-receipt-store/v1"
 LAKE_NATIVE_SCHEMA = "lra-lake-native-try/v1"
 TRACK1_LEDGER_SCHEMA = "lra-track1-ledger/v1"
 DEFAULT_TRACK1_RECEIPTS_RELATIVE = "papers/completion/lean_refactor_arena/submissions/track1"
+USD_RATES = {
+    "jev": (JEV_INPUT_USD_PER_MTOK, JEV_OUTPUT_USD_PER_MTOK),
+    "grok": (GROK_INPUT_USD_PER_MTOK, GROK_OUTPUT_USD_PER_MTOK),
+    "mistral": (MISTRAL_INPUT_USD_PER_MTOK, MISTRAL_OUTPUT_USD_PER_MTOK),
+}
+FORBIDDEN_CALLS_LAKE_NATIVE = FORBIDDEN_CALLS_CORE | frozenset(
+    {"snapshot_goal", "attempt_native_automation"}
+)
+FORBIDDEN_ATTRS_LAKE_NATIVE = frozenset(
+    {
+        "snapshot_goal",
+        "GoalSnapshot",
+        "LeanFrontend",
+        "attempt_native_automation",
+        "LOCK_EX",
+        "find_executable",
+    }
+)
+MISTRAL_KEYFILES = (
+    Path.home() / ".config/ipfs_accelerate_py/mistral.env",
+    Path.home() / ".config/ipfs_accelerate_py/typesafe.env",
+    Path.home() / ".vibe" / ".env",
+)
+DEFAULT_GROK_LEADER_SOCKET = str(Path.home() / ".grok" / "leader-lra-track1.sock")
+UNSCORED_HARDWARE = "unscored-dev"
+WARMUP_JSONL_RELATIVE = "data/benchmark_data_warmup.jsonl"
+CANARIES_RELATIVE = "evidence/canaries"
+JSON_OBJECT = re.compile(r"\{.*\}", re.DOTALL)
+FOL_CANARIES = (
+    {
+        "goal_id": "h.fol_identity",
+        "declaration": "theorem recovery_goal (U : Type) (P : U → Prop) : ∀ x, P x → P x",
+        "expected_provable": True,
+        "expected_solver_status": "unsat",
+    },
+    {
+        "goal_id": "h.fol_protected_write",
+        "declaration": (
+            "theorem recovery_goal (Protected Approved Write : Prop) : "
+            "(Protected ∧ ¬ Approved) → ¬ Write"
+        ),
+        "expected_provable": False,
+        "expected_solver_status": "sat",
+    },
+)
+WARMUP_DISPLAY_NAMES = {
+    "CallElimCorrect.substOldPostSubset": "substOldPostSubset",
+    "CallElimCorrect.extractedOldExprInVars": "extractedOldExprInVars",
+    "Core.InitsUpdatesComm": "InitsUpdatesComm",
+    "fundamental_theorem_of_variational_calculus'": "var. calculus FT",
+    "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema": "time-deriv E extrema",
+    "FieldSpecification.WickAlgebra.\u03b9_timeOrderF_superCommuteF_eq_time": "iota time-order",
+    "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress": "Fsub.Typing.progress",
+    "Cslib.SKI.parallelReduction_diamond": "parallelReduction diamond",
+    "Cslib.CCS.bisimilarity_congr_choice": "bisimilarity congr choice",
+    "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius": "fiberwise unique-dec.",
+    "Binius.BinaryBasefold.fold_advances_evaluation_poly": "fold advances eval poly",
+    "interleaved_affine_gaps_imply_tensor_gaps": "interleaved affine gaps",
+    "putnam_1964_a4": "putnam_1964_a4",
+    "putnam_1964_b2": "putnam_1964_b2",
+    "putnam_1995_a3": "putnam_1995_a3",
+}
+SOURCE_LABEL = {
+    "strata": "Strata",
+    "physlib": "PhysLib",
+    "cslib": "CSLib",
+    "arklib": "ArkLib",
+    "putnambench": "Putnam",
+}
+WARMUP_SOURCE_URL = (
+    "https://delta-lab-ai-lean-refactor-arena.hf.space/gradio_api/file="
+    "/tmp/gradio/3389f2fbc0397df3689218ee1bc68f1c47c0721bae28e0e7aaa5a5ea503b4e94/"
+    "benchmark_data_warmup.jsonl"
+)
+ARENA_SPACE = "https://huggingface.co/spaces/delta-lab-ai/lean-refactor-arena"
+WORKSHOP = "https://vericodegen.github.io/"
+ARENA_SITE = "https://leanrefactor.github.io/"
 PROOF_AUTHORITY_DIMENSION_SET = frozenset(PROOF_AUTHORITY_DIMENSIONS)
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 ALLOWED_SQL_HEAD = re.compile(

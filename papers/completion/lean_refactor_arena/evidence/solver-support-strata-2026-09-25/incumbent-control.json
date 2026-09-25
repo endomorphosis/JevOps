@@ -1,0 +1,16 @@
+{
+  "label": "incumbent",
+  "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+  "receipt": {
+    "request_id": "bb24d24690314d93e18357f6f6d73a1353e1f136bc112196af28c5ee63cd73a4",
+    "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+    "target": "CallElimCorrect.extractedOldExprInVars",
+    "outcome": "VERIFIED",
+    "type_preserved": true,
+    "exit_code": 0,
+    "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+    "heartbeats": 2324,
+    "reason": "",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"1dfe9066101631fb9deac7012e9e74f6bbddca0fda5e2cb227911f4679e949d7\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324397,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":672,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1743,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":756,\"start_utf8\":748,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":857,\"start_utf8\":849,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1070,\"start_utf8\":1062,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1156,\"start_utf8\":1148,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1310,\"start_utf8\":1302,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1422,\"start_utf8\":1414,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1508,\"start_utf8\":1500,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1657,\"start_utf8\":1649,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1743,\"start_utf8\":1735,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":18135.064}"
+  }
+}

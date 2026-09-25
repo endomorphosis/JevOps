@@ -1,0 +1,213 @@
+{
+  "schema": "jevops-local-premise-pilot/v1",
+  "plan_id": "068b18513e164ae99c89b74bc8680a64978c4aa32cbc14caa332214154bb7904",
+  "status": "COMPLETE",
+  "controls": [
+    {
+      "request_id": "b02684990c91267a771bec3590df18e84c734979b5e2f0a91673ce375b8f1a0c",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4227,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"5efbb5410e9d51b35c28f1c851420b27552112740878f865805c3218f76dc2fc\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227570,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227600,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":15837.566}"
+    },
+    {
+      "request_id": "e7848126b1059c3809088a86ded593fad4301598323297c9c55b82d14885e126",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4657,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"28379d2e16cff3f914b524b79507bcc65926ccec4c4cafae6462cc21ac284a89\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657774,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657791,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":14580.312}"
+    },
+    {
+      "request_id": "5dacb10807f7dca966e8b99a854c1843dc0dbf077a5d3444dc294e05e5f7d0d8",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4689,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"f1da8e22a0ad5c8794f20ce5de093aa452f4b8b0a70d84f98cb7f01f40e8b281\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689118,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689132,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":5847.572}"
+    }
+  ],
+  "screen": [
+    {
+      "family": "whole",
+      "candidate": {
+        "label": "whole-0",
+        "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := _root_.Core.UpdateStatesNotDefMonotone'",
+        "provenance": "unverified premise-baseline; request ba8ad1774bf65d1608639c81e6d056082d74ef236137ae8e7a1f400a4384d0bb"
+      },
+      "receipts": [
+        {
+          "request_id": "845bf591a812995518eade40ba7e55e2e2aa84ea31686d185203096f0f82b5a2",
+          "candidate_sha256": "6556b26eb4615d9b222236f3fcb2599a64af074358ef0fb27b885fac236faefc",
+          "target": "Core.InitsUpdatesComm",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"5efbb5410e9d51b35c28f1c851420b27552112740878f865805c3218f76dc2fc\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Type mismatch\\n  UpdateStatesNotDefMonotone'\\nhas type\\n  isNotDefined ?m.11 ?m.12 → UpdateStates ?m.10 ?m.14 ?m.13 ?m.11 → isNotDefined ?m.10 ?m.12\\nbut is expected to have type\\n  UpdateStates σ ks vs σ' →\\n    InitStates σ' ks' vs' σ'' → ∃ σ₁, σ₁ = updatedStates σ ks' vs' ∧ InitStates σ ks' vs' σ₁ ∧ UpdateStates σ₁ ks vs σ''\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":12490.186}"
+        }
+      ],
+      "tokens": 1,
+      "status": "REJECTED"
+    },
+    {
+      "family": "local",
+      "candidate": {
+        "label": "local-0",
+        "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [← updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          exact _root_.Core.updatedStatesInit\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+        "provenance": "unverified local premise; request 930b89d2c5e89f3775fe60bba0b0d5fa3c22b1990fd1aaf2526251cb92fd9347; event 15"
+      },
+      "receipts": [
+        {
+          "request_id": "13c54a4bfa2b7a0f60895e6b843450d13929769618ef3a431bd123465f9a557b",
+          "candidate_sha256": "22d02b7af5f90da91b46519a1737f08c36e9884cab9eb021adbaee1e563b9a9e",
+          "target": "Core.InitsUpdatesComm",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"5efbb5410e9d51b35c28f1c851420b27552112740878f865805c3218f76dc2fc\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Type mismatch\\n  updatedStatesInit\\nhas type\\n  List.length ?m.159 = List.length ?m.160 →\\n    isNotDefined ?m.158 ?m.159 →\\n      List.Nodup ?m.159 → InitStates ?m.158 ?m.159 ?m.160 (updatedStates ?m.158 ?m.159 ?m.160)\\nbut is expected to have type\\n  UpdateState P (updatedStates' σ (ks'.zip vs')) x v (updatedState (updatedStates' σ (ks'.zip vs')) x v)\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":12847.791}"
+        }
+      ],
+      "tokens": 221,
+      "status": "REJECTED"
+    },
+    {
+      "family": "whole",
+      "candidate": {
+        "label": "whole-1",
+        "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := _root_.Core.InitStatesSomeMonotone",
+        "provenance": "unverified premise-baseline; request ba8ad1774bf65d1608639c81e6d056082d74ef236137ae8e7a1f400a4384d0bb"
+      },
+      "receipts": [
+        {
+          "request_id": "e1e0a20799272ff965dcbdd30b0deb3046183edee0319012fb7a43671865925f",
+          "candidate_sha256": "cd3bca96e95089cdba7c89a2331db2e41797a2647bf7416fefeb9c36a3cdfbde",
+          "target": "Core.InitsUpdatesComm",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"5efbb5410e9d51b35c28f1c851420b27552112740878f865805c3218f76dc2fc\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Type mismatch\\n  InitStatesSomeMonotone\\nhas type\\n  ?m.10 ?m.12 = some ?m.13 → InitStates ?m.10 ?m.14 ?m.15 ?m.11 → ?m.11 ?m.12 = some ?m.13\\nbut is expected to have type\\n  UpdateStates σ ks vs σ' →\\n    InitStates σ' ks' vs' σ'' → ∃ σ₁, σ₁ = updatedStates σ ks' vs' ∧ InitStates σ ks' vs' σ₁ ∧ UpdateStates σ₁ ks vs σ''\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":13700.722}"
+        }
+      ],
+      "tokens": 1,
+      "status": "REJECTED"
+    },
+    {
+      "family": "local",
+      "candidate": {
+        "label": "local-1",
+        "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [← updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          exact _root_.Core.UpdateStateDefined'\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+        "provenance": "unverified local premise; request 930b89d2c5e89f3775fe60bba0b0d5fa3c22b1990fd1aaf2526251cb92fd9347; event 15"
+      },
+      "receipts": [
+        {
+          "request_id": "3d9e029495c8eb8716cf3e0be1ac1141e1275b1dbabe0c1e3f4daafbe59a31b4",
+          "candidate_sha256": "5f85f4e004eb71e968aa190bf8b50edfff6678b91a883136d3d5a0b8f1107060",
+          "target": "Core.InitsUpdatesComm",
+          "outcome": "REJECTED",
+          "type_preserved": false,
+          "exit_code": 0,
+          "axiom_output": "",
+          "heartbeats": null,
+          "reason": "candidate_errors",
+          "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"5efbb5410e9d51b35c28f1c851420b27552112740878f865805c3218f76dc2fc\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Type mismatch\\n  UpdateStateDefined'\\nhas type\\n  UpdateState ?m.157 ?m.158 ?m.161 ?m.160 ?m.159 → isDefined ?m.158 [?m.161]\\nbut is expected to have type\\n  UpdateState P (updatedStates' σ (ks'.zip vs')) x v (updatedState (updatedStates' σ (ks'.zip vs')) x v)\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":11148.25}"
+        }
+      ],
+      "tokens": 221,
+      "status": "REJECTED"
+    }
+  ],
+  "families": {
+    "whole": {
+      "drafts": 2,
+      "cap": 2,
+      "verified": 0
+    },
+    "local": {
+      "drafts": 2,
+      "cap": 2,
+      "verified": 0
+    }
+  },
+  "all_pin_verified": [],
+  "measurement": null,
+  "evidence_mode": "trusted_local_native",
+  "os_sandbox": false,
+  "training": false,
+  "promoted": false,
+  "official_score": null,
+  "model_calls": 0,
+  "api_cost": null,
+  "electricity_cost": null,
+  "reason": "screened_fixed_candidates_no_promotion",
+  "reserved_processes": 13,
+  "native_processes": 13,
+  "charges": [
+    {
+      "label": "control-v4.29.1",
+      "units": 1
+    },
+    {
+      "label": "control-v4.27.0",
+      "units": 1
+    },
+    {
+      "label": "control-v4.26.0",
+      "units": 1
+    },
+    {
+      "label": "all-pin-inventory",
+      "units": 3
+    },
+    {
+      "label": "project-capture",
+      "units": 1
+    },
+    {
+      "label": "local-replay-0",
+      "units": 1
+    },
+    {
+      "label": "local-replay-1",
+      "units": 1
+    },
+    {
+      "label": "screen-whole-0-v4.29.1",
+      "units": 1
+    },
+    {
+      "label": "screen-local-0-v4.29.1",
+      "units": 1
+    },
+    {
+      "label": "screen-whole-1-v4.29.1",
+      "units": 1
+    },
+    {
+      "label": "screen-local-1-v4.29.1",
+      "units": 1
+    }
+  ],
+  "wall_seconds": 341.9962
+}

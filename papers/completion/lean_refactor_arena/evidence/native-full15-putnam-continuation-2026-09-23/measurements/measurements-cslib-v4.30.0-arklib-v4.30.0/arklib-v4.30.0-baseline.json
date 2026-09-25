@@ -1,0 +1,500 @@
+{
+  "schema": "jevops-arena-native-readiness/v1",
+  "required_version_checks": 36,
+  "completed_version_checks": 2,
+  "official_score": null,
+  "rows": [
+    {
+      "name": "CallElimCorrect.substOldPostSubset",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "CallElimCorrect.extractedOldExprInVars",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "lean_tag": "v4.29.1",
+      "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "lean_tag": "v4.27.0",
+      "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "fundamental_theorem_of_variational_calculus'",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "FieldSpecification.WickAlgebra.\u03b9_timeOrderF_superCommuteF_eq_time",
+      "lean_tag": "v4.32.0",
+      "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "lean_tag": "v4.30.0",
+      "git_commit": "c7944a9fb44c3298f1a960a5e574ab23a6ab8ed5",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "lean_tag": "v4.33.0-rc2",
+      "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "lean_tag": "v4.32.0",
+      "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "lean_tag": "v4.31.0",
+      "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "reference_source_not_uniquely_located"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "lean_tag": "v4.28.0",
+      "git_commit": "673fa440714eb1949b8b50a28f2a4f52b1837e9b",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "d6872817e023059ff0a48db21596bdec840c1fdb1bcb4ef0e5b90892935df27b",
+        "candidate_sha256": "67401740132ca27612c5a143c6dd3a90205f5d84a7c0850182c9391592a0752f",
+        "target": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'Binius.BinaryBasefold.fold_advances_evaluation_poly' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "heartbeats": 48413,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"3503b38e8628c6ec04aeaa5e7c4a605b49ff5462c5567c5490365249b01ffe8e\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d024af099ca4bf2c86f649261ebf59565dc8c622\",\"lean_version\":\"4.30.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"diagnostics\":[{\"message\":\"`Subtype.eq_iff` has been deprecated: Use `Subtype.ext_iff` instead\\n\\nNote: The updated constant has a different type:\\n  \u2200 {\u03b1 : Sort u} {p : \u03b1 \u2192 Prop} {a1 a2 : { x // p x }}, a1 = a2 \u2194 \u2191a1 = \u2191a2\\ninstead of\\n  \u2200 {\u03b1 : Sort u_1} {p : \u03b1 \u2192 Prop} {a1 a2 : { x // p x }}, a1 = a2 \u2194 \u2191a1 = \u2191a2\",\"severity\":\"warning\"},{\"message\":\"`Subtype.eq_iff` has been deprecated: Use `Subtype.ext_iff` instead\\n\\nNote: The updated constant has a different type:\\n  \u2200 {\u03b1 : Sort u} {p : \u03b1 \u2192 Prop} {a1 a2 : { x // p x }}, a1 = a2 \u2194 \u2191a1 = \u2191a2\\ninstead of\\n  \u2200 {\u03b1 : Sort u_1} {p : \u03b1 \u2192 Prop} {a1 a2 : { x // p x }}, a1 = a2 \u2194 \u2191a1 = \u2191a2\",\"severity\":\"warning\"},{\"message\":\"`AddSubmonoidClass.coe_finset_sum` has been deprecated: Use `AddSubmonoidClass.coe_finsetSum` instead\",\"severity\":\"warning\"},{\"message\":\"`Nat.add_eq_zero` has been deprecated: Use `Nat.add_eq_zero_iff` instead\",\"severity\":\"warning\"},{\"message\":\"automatically included section variable(s) unused in theorem `Binius.BinaryBasefold.fold_advances_evaluation_poly`:\\n  [CharP L 2]\\n  [NeZero \u2113]\\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\\n  omit [CharP L 2] [NeZero \u2113] in theorem ...\\n\\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\",\"severity\":\"warning\"}],\"heartbeats\":48413,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":48413229,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"reference_heartbeats\":48422,\"reference_raw_heartbeats\":48422541,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":159929.693}"
+      },
+      "context": {
+        "problem": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+        "statement": "theorem fold_advances_evaluation_poly\n  (i : Fin (\u2113)) (h_i_succ_lt : i + 1 < \u2113 + \ud835\udce1)\n  (coeffs : Fin (2 ^ (\u2113 - \u2191i)) \u2192 L) (r_chal : L) :\n  let P_i : L[X] := intermediateEvaluationPoly \ud835\udd3dq \u03b2 h_\u2113_add_R_rate (i := \u27e8i, by\n    exact Nat.lt_trans (n := i) (k := \u2113+1) (m := \u2113) (h\u2081 := i.isLt) (by exact Nat.lt_add_one \u2113)\n  \u27e9) coeffs\n  let f_i := fun (x : (sDomain \ud835\udd3dq \u03b2 h_\u2113_add_R_rate)\n      \u27e8i, by exact Nat.lt_trans (n := i) (k := r) (m := \u2113) (h\u2081 := by omega) (by omega)\u27e9) =>\n    P_i.eval (x.val : L)\n  let f_i_plus_1 := fold (i := \u27e8i, by omega\u27e9) (h_i := by omega) (f := f_i) (r_chal := r_chal)\n  let new_coeffs := fun j : Fin (2^(\u2113 - (i + 1))) =>\n    (1 - r_chal) * (coeffs \u27e8j.val * 2, by\n      rw [\u2190Nat.add_zero (j.val * 2)]\n      apply mul_two_add_bit_lt_two_pow (c := \u2113 - i) (a := j) (b := \u2113 - (\u2191i + 1))\n        (i := 0) (by omega) (by omega)\n    \u27e9) +\n    r_chal * (coeffs \u27e8j.val * 2 + 1, by\n      apply mul_two_add_bit_lt_two_pow (c := \u2113 - i) (a := j) (b := \u2113 - (\u2191i + 1))\n        (i := 1) (by omega) (by omega)\n    \u27e9)\n  let P_i_plus_1 :=\n    intermediateEvaluationPoly \ud835\udd3dq \u03b2 h_\u2113_add_R_rate (i := \u27e8i+1, by omega\u27e9) new_coeffs\n  \u2200 (y : (sDomain \ud835\udd3dq \u03b2 h_\u2113_add_R_rate)\n    \u27e8i+1, by omega\u27e9), f_i_plus_1 y = P_i_plus_1.eval y.val",
+        "reference_source": "theorem fold_advances_evaluation_poly\n  (i : Fin (\u2113)) (h_i_succ_lt : i + 1 < \u2113 + \ud835\udce1)\n  (coeffs : Fin (2 ^ (\u2113 - \u2191i)) \u2192 L) (r_chal : L) :\n  let P_i : L[X] := intermediateEvaluationPoly \ud835\udd3dq \u03b2 h_\u2113_add_R_rate (i := \u27e8i, by\n    exact Nat.lt_trans (n := i) (k := \u2113+1) (m := \u2113) (h\u2081 := i.isLt) (by exact Nat.lt_add_one \u2113)\n  \u27e9) coeffs\n  let f_i := fun (x : (sDomain \ud835\udd3dq \u03b2 h_\u2113_add_R_rate)\n      \u27e8i, by exact Nat.lt_trans (n := i) (k := r) (m := \u2113) (h\u2081 := by omega) (by omega)\u27e9) =>\n    P_i.eval (x.val : L)\n  let f_i_plus_1 := fold (i := \u27e8i, by omega\u27e9) (h_i := by omega) (f := f_i) (r_chal := r_chal)\n  let new_coeffs := fun j : Fin (2^(\u2113 - (i + 1))) =>\n    (1 - r_chal) * (coeffs \u27e8j.val * 2, by\n      rw [\u2190Nat.add_zero (j.val * 2)]\n      apply mul_two_add_bit_lt_two_pow (c := \u2113 - i) (a := j) (b := \u2113 - (\u2191i + 1))\n        (i := 0) (by omega) (by omega)\n    \u27e9) +\n    r_chal * (coeffs \u27e8j.val * 2 + 1, by\n      apply mul_two_add_bit_lt_two_pow (c := \u2113 - i) (a := j) (b := \u2113 - (\u2191i + 1))\n        (i := 1) (by omega) (by omega)\n    \u27e9)\n  let P_i_plus_1 :=\n    intermediateEvaluationPoly \ud835\udd3dq \u03b2 h_\u2113_add_R_rate (i := \u27e8i+1, by omega\u27e9) new_coeffs\n  \u2200 (y : (sDomain \ud835\udd3dq \u03b2 h_\u2113_add_R_rate)\n    \u27e8i+1, by omega\u27e9), f_i_plus_1 y = P_i_plus_1.eval y.val := by\n  simp only\n  intro y\n  set fiberMap := qMap_total_fiber \ud835\udd3dq \u03b2 (i := \u27e8i, by omega\u27e9) (steps := 1)\n    (h_i_add_steps := by simp only; omega) (y := y)\n  set x\u2080 := fiberMap 0\n  set x\u2081 := fiberMap 1\n  set P_i := intermediateEvaluationPoly \ud835\udd3dq \u03b2 h_\u2113_add_R_rate (i := \u27e8i, by omega\u27e9) coeffs\n  set new_coeffs := fun j : Fin (2^(\u2113 - (i + 1))) =>\n    (1 - r_chal) * (coeffs \u27e8j.val * 2, by\n      have h : j.val * 2 < 2^(\u2113 - (i + 1)) * 2 := by omega\n      have h2 : 2^(\u2113 - i) = 2^(\u2113 - (i + 1)) * 2 := by\n        conv_rhs => enter[2]; rw [\u2190Nat.pow_one 2]\n        rw [\u2190pow_add]; congr\n        rw [Nat.sub_add_eq_sub_sub_rev (h1 := by omega) (h2 := by omega)]\n        -- \u22a2 \u2113 - \u2191i = \u2113 - (\u2191i + 1 - 1)\n        rw [Nat.add_sub_cancel (n := i) (m := 1)]\n      omega\n    \u27e9) +\n    r_chal * (coeffs \u27e8j.val * 2 + 1, by\n      apply mul_two_add_bit_lt_two_pow (c := \u2113 - i) (a := j) (b := \u2113 - (\u2191i + 1)) (i := 1)\n      \u00b7 omega\n      \u00b7 omega\n    \u27e9)\n  have h_eval_qMap_x\u2080 : (AdditiveNTT.qMap \ud835\udd3dq \u03b2 \u27e8i, by omega\u27e9).eval x\u2080.val = y := by\n    have h := iteratedQuotientMap_k_eq_1_is_qMap \ud835\udd3dq \u03b2 h_\u2113_add_R_rate i (by omega) x\u2080\n    simp only [Subtype.eq_iff] at h\n    rw [h.symm]\n    have h_res := is_fiber_iff_generates_quotient_point \ud835\udd3dq \u03b2 i (steps := 1) (by omega)\n      (x := x\u2080) (y := y).mpr (by rw [pointToIterateQuotientIndex_qMap_total_fiber_eq_self])\n    rw [h_res]\n    -- exact qMap_eval_fiber_eq_self \u27e6L\u27e7 \u27e8i + 1, by omega\u27e9 (by simp only; omega) h_i_succ_lt y 0\n  have h_eval_qMap_x\u2081 : (AdditiveNTT.qMap \ud835\udd3dq \u03b2 \u27e8i, by omega\u27e9).eval x\u2081.val = y := by\n    have h := iteratedQuotientMap_k_eq_1_is_qMap \ud835\udd3dq \u03b2 h_\u2113_add_R_rate i (by omega) x\u2081\n    simp only [Subtype.eq_iff] at h\n    rw [h.symm]\n    have h_res := is_fiber_iff_generates_quotient_point \ud835\udd3dq \u03b2 i (steps := 1) (by omega)\n      (x := x\u2081) (y := y).mpr (by rw [pointToIterateQuotientIndex_qMap_total_fiber_eq_self])\n    rw [h_res]\n  have hx\u2080 := qMap_total_fiber_basis_sum_repr \ud835\udd3dq \u03b2 i (steps := 1)\n    (h_i_add_steps := by omega) y 0\n  have hx\u2081 := qMap_total_fiber_basis_sum_repr \ud835\udd3dq \u03b2 i (steps := 1)\n    (h_i_add_steps := by omega) y 1\n  simp only [Fin.isValue] at hx\u2080 hx\u2081\n\n  have h_fiber_diff : x\u2081.val - x\u2080.val = 1 := by\n    simp only [Fin.isValue, x\u2081, x\u2080, fiberMap]\n    rw [hx\u2081, hx\u2080]\n    simp only [Fin.isValue, AddSubmonoidClass.coe_finset_sum, SetLike.val_smul]\n    have h_index : \u2113 + \ud835\udce1 - i = (\u2113 + \ud835\udce1 - (i.val + 1)) + 1 := by omega\n    rw! (castMode := .all) [h_index]\n    rw [Fin.sum_univ_succ, Fin.sum_univ_succ] -- (free_term + y_repr) - (free_term + y_repr) = 1\n    -- First, simplify the free terms\n    simp only [fiber_coeff, eqRec_eq_cast, lt_one_iff, reducePow, Fin.isValue,\n      Fin.coe_ofNat_eq_mod, mod_succ, dite_smul, ite_smul, zero_smul, one_smul, zero_mod]\n    have h_cast_0 :\n        (cast (Eq.symm h_index \u25b8 rfl : Fin (\u2113 + \ud835\udce1 - (\u2191i + 1) + 1) = Fin (\u2113 + \ud835\udce1 - \u2191i)) 0).val =\n        0 := by\n      rw [\u2190Fin.cast_eq_cast (h := by omega)]\n      rw [Fin.cast_val_eq_val (h_eq := by omega)]\n      simp only [Fin.coe_ofNat_eq_mod, mod_succ_eq_iff_lt, succ_eq_add_one, lt_add_iff_pos_left]\n      omega\n    have h_cast_1 :\n        (cast (Eq.symm h_index \u25b8 rfl : Fin (\u2113 + \ud835\udce1 - (\u2191i + 1) + 1) = Fin (\u2113 + \ud835\udce1 - \u2191i)) 1).val =\n        1 := by\n      rw [\u2190Fin.cast_eq_cast (h := by omega)]\n      rw [Fin.cast_val_eq_val (h_eq := by omega)]\n      simp only [Fin.coe_ofNat_eq_mod, mod_succ_eq_iff_lt, succ_eq_add_one,\n        lt_add_iff_pos_left, tsub_pos_iff_lt]\n      omega\n    simp only [h_cast_0, \u2193reduceDIte]\n    have h_getBit_0_of_0 : Nat.getBit (k := 0) (n := 0) = 0 := by\n      simp only [getBit, shiftRight_zero, and_one_is_mod, zero_mod]\n    have h_getBit_0_of_1 : Nat.getBit (k := 0) (n := 1) = 1 := by\n      simp only [getBit, shiftRight_zero, Nat.and_self]\n    simp only [h_getBit_0_of_1, one_ne_zero, \u2193reduceIte, h_getBit_0_of_0, zero_add]\n    rw! (castMode := .all) [\u2190h_index]\n    rw [cast_eq]\n    simp only [get_sDomain_basis, Fin.coe_ofNat_eq_mod, zero_mod, add_zero, cast_eq]\n    rw [normalizedW\u1d62_eval_\u03b2\u1d62_eq_1 \ud835\udd3dq \u03b2]\n    ring_nf\n    conv_rhs => rw [\u2190add_zero (a := 1)]\n    rw [add_sub_assoc]\n    congr 1\n    rw [sub_eq_zero]\n    apply Finset.sum_congr (h := by rfl)\n    simp only [mem_univ, congr_eqRec, Fin.val_succ, Nat.add_eq_zero, one_ne_zero, and_false,\n      \u2193reduceDIte, add_tsub_cancel_right, Fin.eta, imp_self, implies_true]\n  set P_i_plus_1 :=\n    intermediateEvaluationPoly \ud835\udd3dq \u03b2 h_\u2113_add_R_rate (i := \u27e8i+1, by omega\u27e9) new_coeffs\n  -- Set up the even and odd refinement polynomials\n  set P\u2080_coeffs := fun j : Fin (2^(\u2113 - (i + 1))) => coeffs \u27e8j.val * 2, by\n    have h1 : \u2113 - (i + 1) + 1 = \u2113 - i := by omega\n    have h2 : 2^(\u2113 - (i + 1) + 1) = 2^(\u2113 - i) := by rw [h1]\n    have h3 : 2^(\u2113 - (i + 1)) * 2 = 2^(\u2113 - (i + 1) + 1) := by rw [pow_succ]\n    rw [\u2190 h2, \u2190 h3]; omega\u27e9\n  set P\u2081_coeffs := fun j : Fin (2^(\u2113 - (i + 1))) => coeffs \u27e8j.val * 2 + 1, by\n    have h1 : \u2113 - (i + 1) + 1 = \u2113 - i := by omega\n    have h2 : 2^(\u2113 - (i + 1) + 1) = 2^(\u2113 - i) := by rw [h1]\n    have h3 : 2^(\u2113 - (i + 1)) * 2 = 2^(\u2113 - (i + 1) + 1) := by rw [pow_succ]\n    rw [\u2190 h2, \u2190 h3]; omega\u27e9\n  set P\u2080 := evenRefinement \ud835\udd3dq \u03b2 h_\u2113_add_R_rate i coeffs\n  set P\u2081 := oddRefinement \ud835\udd3dq \u03b2 h_\u2113_add_R_rate i coeffs\n  have h_P_i_eval := evaluation_poly_split_identity \ud835\udd3dq \u03b2 h_\u2113_add_R_rate \u27e8i, by omega\u27e9 coeffs\n  -- Equation 39 : P^(i)(X) = P\u2080^(i+1)(q^(i)(X)) + X \u00b7 P\u2081^(i+1)(q^(i)(X))\n  have h_equation_39_x\u2080 : P_i.eval x\u2080.val = P\u2080.eval y.val + x\u2080.val * P\u2081.eval y.val := by\n    simp only [h_P_i_eval, Fin.eta, Polynomial.eval_add, eval_comp,\n      h_eval_qMap_x\u2080, Polynomial.eval_mul, Polynomial.eval_X, P_i, P\u2080, P\u2081]\n  have h_equation_39_x\u2081 : P_i.eval x\u2081.val = P\u2080.eval y.val + x\u2081.val * P\u2081.eval y.val := by\n    simp only [h_P_i_eval, Fin.eta, Polynomial.eval_add, eval_comp,\n      h_eval_qMap_x\u2081, Polynomial.eval_mul, Polynomial.eval_X, P_i, P\u2080, P\u2081]\n  set f_i := fun (x : (sDomain \ud835\udd3dq \u03b2 h_\u2113_add_R_rate) \u27e8i, by omega\u27e9) => P_i.eval (x.val : L)\n  set f_i_plus_1 := fold (i := \u27e8i, by omega\u27e9) (h_i := by omega) (f := f_i) (r_chal := r_chal)\n  -- Unfold the definition of f_i_plus_1 using the fold function\n  have h_fold_def : f_i_plus_1 y =\n      f_i x\u2080 * ((1 - r_chal) * x\u2081.val - r_chal) +\n      f_i x\u2081 * (r_chal - (1 - r_chal) * x\u2080.val) := rfl\n  -- Main calculation following the outline\n  calc f_i_plus_1 y\n    = f_i x\u2080 * ((1 - r_chal) * x\u2081.val - r_chal) +\n        f_i x\u2081 * (r_chal - (1 - r_chal) * x\u2080.val) := h_fold_def\n    _ = P_i.eval x\u2080.val * ((1 - r_chal) * x\u2081.val - r_chal) +\n        P_i.eval x\u2081.val * (r_chal - (1 - r_chal) * x\u2080.val) := by simp only [f_i]\n    _ = (P\u2080.eval y.val + x\u2080.val * P\u2081.eval y.val) * ((1 - r_chal) * x\u2081.val - r_chal) +\n        (P\u2080.eval y.val + x\u2081.val * P\u2081.eval y.val) * (r_chal - (1 - r_chal) * x\u2080.val) := by\n      rw [h_equation_39_x\u2080, h_equation_39_x\u2081]\n    _ = P\u2080.eval y.val * ((1 - r_chal) * x\u2081.val - r_chal + r_chal - (1 - r_chal) * x\u2080.val) +\n        P\u2081.eval y.val * (x\u2080.val * ((1 - r_chal) * x\u2081.val - r_chal) +\n          x\u2081.val * (r_chal - (1 - r_chal) * x\u2080.val)) := by ring\n    _ = P\u2080.eval y.val * ((1 - r_chal) * (x\u2081.val - x\u2080.val)) +\n        P\u2081.eval y.val * ((x\u2081.val - x\u2080.val) * r_chal) := by ring\n    _ = P\u2080.eval y.val * (1 - r_chal) + P\u2081.eval y.val * r_chal := by rw [h_fiber_diff]; ring\n    _ = P_i_plus_1.eval y.val := by\n      simp only [P_i_plus_1, P\u2080, P\u2081, new_coeffs, evenRefinement, oddRefinement,\n        intermediateEvaluationPoly]\n      conv_lhs => enter [1]; rw [mul_comm, \u2190Polynomial.eval_C_mul]\n      conv_lhs => enter [2]; rw [mul_comm, \u2190Polynomial.eval_C_mul]\n      -- \u22a2 eval y (C (1-r) * \u2211...) + eval y (C r * \u2211...) = eval y (\u2211...)\n      rw [\u2190Polynomial.eval_add]\n      -- \u22a2 poly_left.eval y = poly_right.eval y\n      congr\n      simp_rw [mul_sum, \u2190Finset.sum_add_distrib]\n      -- We now prove that the terms inside the sums are equal for each index.\n      apply Finset.sum_congr rfl\n      intro j hj\n      have h_j_lt : j.val < 2 ^ (\u2113 - (\u2191i + 1)) := by\n        rw [Nat.sub_add_eq]\n        omega\n      conv_lhs => enter [1]; rw [mul_comm (a := Polynomial.C (coeffs \u27e8j.val * 2, by\n        rw [\u2190Nat.add_zero (j.val * 2)]\n        apply mul_two_add_bit_lt_two_pow (c := \u2113 - i) (a := j) (b := \u2113 - (\u2191i + 1))\n          (i := 0) (by omega) (by omega)\u27e9)), \u2190mul_assoc,\n        mul_comm (a := Polynomial.C (1 - r_chal))]; rw [mul_assoc]\n      conv_lhs => enter [2]; rw [mul_comm (a := Polynomial.C (coeffs \u27e8j.val * 2 + 1, by\n        apply mul_two_add_bit_lt_two_pow (c := \u2113 - i) (a := j) (b := \u2113 - (\u2191i + 1))\n          (i := 1) (by omega) (by omega)\u27e9)), \u2190mul_assoc,\n        mul_comm (a := Polynomial.C r_chal)]; rw [mul_assoc]\n      conv_rhs => rw [mul_comm]\n      rw [\u2190mul_add]\n      congr\n      simp only [\u2190Polynomial.C_mul, \u2190Polynomial.C_add]",
+        "reference_length": 1906,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.30.0",
+            "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4"
+          }
+        ],
+        "dependency_digests": [
+          "3503b38e8628c6ec04aeaa5e7c4a605b49ff5462c5567c5490365249b01ffe8e"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "b8040b3fb9505e29a4c800b2077c3dce7b9bc8e28fd0bc9a6e1ced73e3ae74e7",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/Verified-zkEVM/ArkLib",
+        "file_path": "ArkLib/ProofSystem/Binius/BinaryBasefold/Prelude.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":900.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "6b4e593808d17f54f2c88f8d1ea256ae65f0b1520bd4f5e19becd26f0cdefee5"
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "lean_tag": "v4.31.0",
+      "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "status": "VERIFIED",
+      "capability_gaps": [],
+      "dependencies_verified": true,
+      "baseline_compiles": true,
+      "receipt": {
+        "request_id": "7168104faaec5dd291332908d7db1ca11244a11eae442bdaeb0a945d15abff94",
+        "candidate_sha256": "5e8c33db1f147ea33ed9adae552f5f17c7559384f868799a83392817c2e56979",
+        "target": "interleaved_affine_gaps_imply_tensor_gaps",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'interleaved_affine_gaps_imply_tensor_gaps' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "heartbeats": 9972,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"fbc4f6349f04c91494cd7c5de2ea5d82996fe9ab2b875c82f5f241d21ae46a83\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"lean_githash\":\"d024af099ca4bf2c86f649261ebf59565dc8c622\",\"lean_version\":\"4.30.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"diagnostics\":[{\"message\":\"automatically included section variable(s) unused in theorem `interleaved_affine_gaps_imply_tensor_gaps`:\\n  [NoZeroDivisors F]\\n  [Fintype A]\\n  [Module.Free F A]\\n  [Nontrivial \u21a5MC]\\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\\n  omit [NoZeroDivisors F] [Fintype A] [Module.Free F A] [Nontrivial \u21a5MC] in theorem ...\\n\\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\",\"severity\":\"warning\"}],\"heartbeats\":9972,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":9972291,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Classical.choice\",\"Quot.sound\"],\"reference_heartbeats\":9972,\"reference_raw_heartbeats\":9972452,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":156330.295}"
+      },
+      "context": {
+        "problem": "interleaved_affine_gaps_imply_tensor_gaps",
+        "statement": "theorem interleaved_affine_gaps_imply_tensor_gaps\n    (hC_proximityGapAffineLines : e_\u03b5_correlatedAgreementAffineLinesNat\n      (F := F) (A := A) (\u03b9 := \u03b9) (C := MC) (e := e) (\u03b5 := \u03b5))\n    (h_interleaved_gaps : \u2200 m : \u2115, m \u2265 1 \u2192\n      e_\u03b5_correlatedAgreementAffineLinesNat (F := F)\n        (A := InterleavedSymbol A (Fin m)) (\u03b9 := \u03b9) (C := MC ^\u22c8 (Fin m)) e \u03b5) :\n    \u2200 (\u03d1 : \u2115), (h\u03d1_gt_0 : \u03d1 > 0) \u2192 \u03b4_\u03b5_multilinearCorrelatedAgreement_Nat (F := F) (A := A)\n      (\u03b9 := \u03b9) (C := MC) (\u03d1 := \u03d1) (e := e) (\u03b5 := \u03b5)",
+        "reference_source": "theorem interleaved_affine_gaps_imply_tensor_gaps\n    (hC_proximityGapAffineLines : e_\u03b5_correlatedAgreementAffineLinesNat\n      (F := F) (A := A) (\u03b9 := \u03b9) (C := MC) (e := e) (\u03b5 := \u03b5))\n    (h_interleaved_gaps : \u2200 m : \u2115, m \u2265 1 \u2192\n      e_\u03b5_correlatedAgreementAffineLinesNat (F := F)\n        (A := InterleavedSymbol A (Fin m)) (\u03b9 := \u03b9) (C := MC ^\u22c8 (Fin m)) e \u03b5) :\n    \u2200 (\u03d1 : \u2115), (h\u03d1_gt_0 : \u03d1 > 0) \u2192 \u03b4_\u03b5_multilinearCorrelatedAgreement_Nat (F := F) (A := A)\n      (\u03b9 := \u03b9) (C := MC) (\u03d1 := \u03d1) (e := e) (\u03b5 := \u03b5) := by\n    classical\n    intro \u03d1\n    induction \u03d1 with\n    | zero =>\n      intro u\n      contradiction\n    | succ \u03d1_sub_1 ih =>\n      cases \u03d1_sub_1 with\n      | zero =>\n        -- `\u03d1 = 1`\n        simp only [zero_add, gt_iff_lt, zero_lt_one, ModuleCode, forall_const]\n        intro u\n        let toAffineLineEval := multilinearCombine\u2081_eq_affineLineEvaluation (F := F) (u := u)\n        intro hprob_gt\n        simp_rw [toAffineLineEval] at hprob_gt\n        let prob_eq := prob_uniform_singleton_finFun_eq (F := F)\n          (P := fun r => \u0394\u2080(affineLineEvaluation (u 0) (u 1) r, MC) \u2264 e)\n        -- Convert sampling (r \u2190 (Fin 1 \u2192 F)) into sampling (r \u2190 F)\n        simp_rw [prob_eq, Nat.cast_one, ENNReal.coe_one, one_mul] at hprob_gt\n        have h_correlated_agreement := hC_proximityGapAffineLines (u 0) (u 1) hprob_gt\n        simp only [jointProximityNat\u2082, Fin.isValue] at h_correlated_agreement\n        have h_u_eq: u = finMapTwoWords (u 0) (u 1) := by\n          funext rowIdx\n          match rowIdx with\n          | 0 => rfl\n          | 1 => rfl\n        rw [h_u_eq.symm] at h_correlated_agreement\n        exact h_correlated_agreement\n      | succ \u03d1_sub_2 =>\n        intro h\u03d1_gt_0 u hP_multilinearCombine_close_gt\n        -- `\u03d1 \u2265 2`\n        -- set \u03d1_sub_1 := \u03d1_sub_2 + 1\n        let \u03d1 := \u03d1_sub_2 + 1 + 1\n        have h\u03d1 : \u03d1 = \u03d1_sub_2 + 1 + 1 := by rfl\n        -- have hfin\u03d1 : Fin \u03d1 = Fin (\u03d1_sub_2 + 1 + 1) := by rfl\n        set U\u2080 : Fin (2 ^ (\u03d1_sub_2 + 1)) \u2192 Word A \u03b9 :=\n          (splitHalfRowWiseInterleavedWords (\u03d1 := \u03d1_sub_2 + 1) u).1\n        set U\u2081 : Fin (2 ^ (\u03d1_sub_2 + 1)) \u2192 Word A \u03b9 :=\n          (splitHalfRowWiseInterleavedWords (\u03d1 := \u03d1_sub_2 + 1) u).2\n        unfold jointProximityNat\n        simp only\n        -- intro hP_multilinearCombine_close_gt\n        have h_finsnoc_eq_r: \u2200 r: Fin (\u03d1_sub_2 + 1 + 1) \u2192 F,\n          Fin.snoc (fun (i : Fin (\u03d1_sub_2 + 1)) \u21a6 r i.castSucc)\n            (r (Fin.last (\u03d1_sub_2 + 1))) = r := fun r => by\n          funext i\n          have hi_le_lt := i.isLt\n          by_cases h : i = Fin.last (\u03d1_sub_2 + 1)\n          \u00b7 simp only [h, Fin.snoc_last]\n          \u00b7 have h_i_ne_last: i \u2260 Fin.last (\u03d1_sub_2 + 1) := by omega\n            have h_i_ne_last_val: i.val \u2260 Fin.last (\u03d1_sub_2 + 1) := by omega\n            rw [Fin.val_last] at h_i_ne_last_val\n            have h_i_lt: i.val < (\u03d1_sub_2 + 1) := by omega\n            simp only [Fin.snoc, Fin.castSucc_castLT, cast_eq, dite_eq_ite, ite_eq_left_iff, not_lt]\n            simp only [isEmpty_Prop, not_le, h_i_lt, IsEmpty.forall_iff]\n        let P : F \u2192 (Fin (\u03d1_sub_2 + 1) \u2192 F) \u2192 Prop := fun r_last r_init =>\n          \u0394\u2080(multilinearCombine (u:=u) (r:=Fin.snoc r_init r_last), MC) \u2264 e\n        let hP_split_r_last := prob_split_last_uniform_sampling_of_finFun\n          (\u03d1 := \u03d1_sub_2 + 1) (F := F) (P := P)\n        unfold P at hP_split_r_last\n        simp_rw [h_finsnoc_eq_r] at hP_split_r_last\n        rw [hP_split_r_last] at hP_multilinearCombine_close_gt\n        -- Now we have two randomness sampling in hP_multilinearCombine_close_gt :\n        -- `((\u03d1_sub_2 + 1 + 1) * \u03b5) / |\ud835\udd3d|\n          -- < Pr_{ r_last; r_init }[  \u0394\u2080((Fin.snoc r_init r_last)|\u2a02|u, \u2191MC) \u2264 \u2191e)) ]` (0)\n        -- We need to achieve the upperbound for hP_multilinearCombine_close_gt probability by:\n        -- i.e. `Pr_{ r_last; r_init }[  \u0394\u2080((Fin.snoc r_init r_last)|\u2a02|u, \u2191MC) \u2264 \u2191e)) ]`\n        -- `= Pr_{ r_last; r_init }[ \u0394\u2080((r_init)|\u2a02|affineCombine(U\u2080, U\u2081, r_last), \u2191MC) \u2264 \u2191e)) ]`\n        -- `= PR_{ r_last }[ r_init; \u0394\u2080((r_init)|\u2a02|affineCombine(U\u2080, U\u2081, r_last), \u2191MC) \u2264 \u2191e)) ]`\n        -- Divide into two cases: r_last \u2208 R* and r_last \u2209 R*\n        -- `= Pr_{ r_last }[ r_last \u2208 R* \u2227\n          -- Pr_{ r_init }[ \u0394\u2080((r_init)|\u2a02|affineCombine(U\u2080, U\u2081, r_last), \u2191MC) \u2264 \u2191e)) ]` (1)\n        -- `+ Pr_{ r_last }[ r_last \u2209 R* \u2227\n          -- Pr_{ r_init }[ \u0394\u2080((r_init)|\u2a02|affineCombine(U\u2080, U\u2081, r_last), \u2191MC) \u2264 \u2191e)) ]` (2)\n        -- `(1) = Pr_{ r_last }[ r_last \u2208 R* ]` (3)\n        -- `(2): \u2200 r \u2209 R*, it's trivial that the probability\n          -- \u2264 ((\u03d1_sub_2 + 1) * \u03b5) / |\ud835\udd3d|, due to definition of membership of R*` (4)\n\n        -- Combine (0), (3), (4): we have `Pr_{ r_last }[ r_last \u2208 R* ] > \u03b5/|\ud835\udd3d|` (5)\n\n        -- Applying `correlatedAgreement_of_mem_R_star_tensor` to (5), we get\n          -- `\u0394\u2080((r_last)|\u2a02|affineCombine(U\u2080, U\u2081, r_last), \u2191MC) \u2264 \u2191e)) ] > \u03b5/|\ud835\udd3d|` (6)\n        -- This is premise for affineProxmityGaps of interleaved code (`h_interleaved_gaps`)\n          -- for `m = 2^{\u03d1_sub_2 + 1}`, which directly leads to Q.E.D.\n        let  \u03d1_pred := \u03d1_sub_2 + 1\n        have h_\u03d1_pred : \u03d1_pred = \u03d1_sub_2 + 1 := by rfl\n        have h_\u03d1 : \u03d1 = \u03d1_pred + 1 := by rfl\n        -- Step 1: Apply multilinearCombine recursive form\n        -- We need the lemma `multilinearCombine u r = multilinearCombine`\n          -- `(affineLineEvaluation U\u2080 U\u2081 r_last) r_init` where `r = Fin.snoc r_init r_last`\n        have multilinearCombine_snoc_eq_multilinearCombine_affine\n          (r_init : Fin \u03d1_pred \u2192 F) (r_last : F) : multilinearCombine u (Fin.snoc r_init r_last) =\n            multilinearCombine (affineLineEvaluation U\u2080 U\u2081 r_last) r_init := by\n          rw [multilinearCombine_recursive_form]\n          simp only [Fin.snoc_last, Fin.init_snoc]\n          rfl\n        -- Rewrite the probability using this identity\n        simp_rw [multilinearCombine_snoc_eq_multilinearCombine_affine]\n          at hP_multilinearCombine_close_gt\n        -- hP_multilinearCombine_close_gt now looks like:\n        -- Pr_{ r_last \u2190 $\u1d56 F; r_init \u2190 $\u1d56 (Fin \u03d1_pred \u2192 F) }[ \u0394\u2080(multilinearCombine\n            -- (affineLineEvaluation U\u2080 U\u2081 r_last) r_init, \u2191MC) \u2264 \u2191e ] > \u2191(\u2191\u03d1 * \u2191\u03b5) / q\n        -- Step 2 & 3: Define R* and apply Law of Total Probability\n        let R_star_set := R_star_tensor MC (m:=\u03d1_pred) (e:=e) (\u03b5:=\u03b5) U\u2080 U\u2081\n        -- Step 5: Show Pr[R*] > \u03b5 / q\n        have h_prob_Rstar_gt_eps_div_q : Pr_{ let r \u2190 $\u1d56 F }[ r \u2208 R_star_set ]\n          > (\u2191\u03b5 : ENNReal) / (Fintype.card F : ENNReal) := by\n          let res := prob_R_star_gt_threshold (MC := MC) (\u03b5 := \u03b5) (\u03d1 := \u03d1_sub_2 + 1) (u := u)\n            (e := e) (hP_multilinearCombine_close_gt)\n          exact res\n        -- Convert Pr_{}[] to cardinality\n        have h_R_star_card_gt_eps : R_star_set.card > \u03b5 := by\n          rw [prob_uniform_eq_card_filter_div_card] at h_prob_Rstar_gt_eps_div_q -- Needs NNReal\n          simp only [ENNReal.coe_natCast] at h_prob_Rstar_gt_eps_div_q\n          rw [gt_iff_lt] at h_prob_Rstar_gt_eps_div_q\n          have h_cancel_q_denom := ENNReal.div_lt_div_iff_left\n            (a := (\u03b5 : ENNReal))\n            (b := (#(filter (fun r => r \u2208 R_star_set) Finset.univ)))\n            (c := (Fintype.card F : ENNReal)) (hc\u2080 := by simp only [ne_eq,\n            Nat.cast_eq_zero, Fintype.card_ne_zero, not_false_eq_true]) (hc := by simp only [ne_eq,\n              ENNReal.natCast_ne_top, not_false_eq_true])\n          rw [h_cancel_q_denom] at h_prob_Rstar_gt_eps_div_q\n          simp only [filter_univ_mem, Nat.cast_lt] at h_prob_Rstar_gt_eps_div_q\n          exact h_prob_Rstar_gt_eps_div_q\n        -- Step 6: Apply Inductive Hypothesis for r_last \u2208 R*\n        have h_line_close_to_C_m : \u2200 (r : R_star_set),\n          jointProximityNat (u := affineLineEvaluation U\u2080 U\u2081 r.val) (e := e) (C := MC) := by\n          intro r_in_Rstar\n          -- Use the lemma proven earlier\n          apply correlatedAgreement_of_mem_R_star_tensor\n            (ih := fun u_prev => ih (by omega) u_prev ) (u := u)\n        -- Step 7: Apply Affine Gap of Interleaved Code C^(m = 2^(\u03d1_sub_2 + 1))\n        have h_C_m_gap := h_interleaved_gaps (2^(\u03d1_sub_2 + 1)) (Nat.one_le_two_pow)\n        -- Need the hypothesis Pr[...] > \u03b5/q for h_C_m_gap\n        have h_prob_line_gt_eps_div_q :\n          Pr_{ let r \u2190 $\u1d56 F }[\n            \u0394\u2080(affineLineEvaluation (u\u2080 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2080))\n              (u\u2081 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2081)) (r := r),\n              ((MC ^\u22c8 (Fin (2 ^ (\u03d1_sub_2 + 1)))))) \u2264 e\n          ] > (\u2191\u03b5 : ENNReal) / (Fintype.card F : ENNReal) := by\n            -- This is implied by h_prob_Rstar_gt_eps_div_q becuz R* is a subset of the success set\n            apply lt_of_le_of_lt' _ h_prob_Rstar_gt_eps_div_q\n            have h_r_implies: \u2200 (r : F), r \u2208 R_star_set \u2192\n              \u0394\u2080(affineLineEvaluation\n                (u\u2080 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2080))\n                (u\u2081 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2081)) (r := r),\n                ((MC ^\u22c8 (Fin (2 ^ (\u03d1_sub_2 + 1)))))) \u2264 e := by\n              intro r hr_in_Rstar\n              specialize h_line_close_to_C_m \u27e8r, hr_in_Rstar\u27e9\n              unfold jointProximityNat at h_line_close_to_C_m\n              exact h_line_close_to_C_m\n            let Pr_le := Pr_le_Pr_of_implies (D := $\u1d56 F)\n              (g := fun r => \u0394\u2080(affineLineEvaluation\n                (u\u2080 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2080))\n                (u\u2081 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2081)) (r := r),\n                ((MC ^\u22c8 (Fin (2 ^ (\u03d1_sub_2 + 1)))))) \u2264 e)\n              (f := fun r => r \u2208 R_star_set) (h_imp := h_r_implies)\n            simp only at Pr_le\n            exact Pr_le\n        -- Apply the gap property of C^m\n        have h_final_gap : jointProximityNat\u2082\n          (u\u2080 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2080))\n          (u\u2081 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2081)) (e := e)\n          (C := (MC ^\u22c8 (Fin (2^(\u03d1_sub_2 + 1))))) := by\n          apply h_C_m_gap (u\u2080 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2080))\n            (u\u2081 := \u22c8|(show WordStack A (Fin (2 ^ (\u03d1_sub_2 + 1))) \u03b9 from U\u2081))\n            (h_prob_line_gt_eps_div_q)\n        apply CA_split_rowwise_implies_CA (u := u) (e := e)\n        exact h_final_gap",
+        "reference_length": 1353,
+        "reference_heartbeats": null,
+        "versions": [
+          {
+            "lean_tag": "v4.30.0",
+            "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4"
+          }
+        ],
+        "dependency_digests": [
+          "fbc4f6349f04c91494cd7c5de2ea5d82996fe9ab2b875c82f5f241d21ae46a83"
+        ],
+        "verifier_id": "jevops-native-arena",
+        "verifier_version": "b8040b3fb9505e29a4c800b2077c3dce7b9bc8e28fd0bc9a6e1ced73e3ae74e7",
+        "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+        "header": "",
+        "repository": "https://github.com/Verified-zkEVM/ArkLib",
+        "file_path": "ArkLib/Data/CodingTheory/ProximityGap/DG25/MainResults.lean",
+        "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":false,\"reference_branch\":\"independent\",\"timeout\":900.0}",
+        "allowed_axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "context_id": "de6dc0ddb616dd5420888eabbb13ed865fa7bd1da713daa70d84442a1f8d52be"
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "lean_tag": "v4.29.0",
+      "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_a4",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_a4",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_a4",
+      "lean_tag": "v4.27.0",
+      "git_commit": "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_b2",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1964_b2",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1995_a3",
+      "lean_tag": "v4.25.0",
+      "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1995_a3",
+      "lean_tag": "v4.26.0",
+      "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    },
+    {
+      "name": "putnam_1995_a3",
+      "lean_tag": "v4.27.0",
+      "git_commit": "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+      "status": "UNAVAILABLE",
+      "capability_gaps": [
+        "prepared_project_binding_missing_or_ambiguous"
+      ],
+      "dependencies_verified": false,
+      "baseline_compiles": null
+    }
+  ],
+  "projects": [
+    {
+      "repository": "https://github.com/Verified-zkEVM/ArkLib",
+      "lean_tag": "v4.30.0",
+      "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+      "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0",
+      "kind": "repo",
+      "resolve_lake_manifest": true
+    }
+  ],
+  "corpus_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+  "processes": 2,
+  "measurement": "command-elaboration-internal-heartbeats-div-1000/v1",
+  "local_combined_pct": null,
+  "worker_metric_parity": "UNCONFIRMED",
+  "fingerprint_file_reads": 156250,
+  "fingerprint_stat_hits": 46160,
+  "live_model_calls": 0
+}

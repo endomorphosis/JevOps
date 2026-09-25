@@ -1,0 +1,911 @@
+{
+  "schema": "jevops-arena-full-benchmark-report/v1",
+  "status": "INCOMPLETE",
+  "reported_problem_count": 15,
+  "required_version_checks": 36,
+  "verified_baseline_version_checks": 23,
+  "fully_verified_problems": 9,
+  "reference_token_total": 17595,
+  "declared_candidate_token_total": 17474,
+  "accepted_full_set_token_total": null,
+  "full_set_heartbeat_reduction_pct": null,
+  "reported_native_processes": 63,
+  "baseline_status_counts": {
+    "VERIFIED": 23,
+    "UNAVAILABLE": 13
+  },
+  "tokenizer_id": "lra-reference-lexical/v1",
+  "measurement": "command-elaboration-internal-heartbeats-div-1000/v1",
+  "corpus_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+  "tokenizer_calibration_matches": 15,
+  "rows": [
+    {
+      "name": "CallElimCorrect.substOldPostSubset",
+      "reference_tokens": 313,
+      "declared_candidate_tokens": 237,
+      "candidate_kind": "saved_refactor",
+      "verified_version_checks": 1,
+      "required_version_checks": 1,
+      "checks": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 5205992,
+          "capability_gaps": [],
+          "reason": ""
+        }
+      ],
+      "candidate_status": "VERIFIED",
+      "accepted_tokens": 237,
+      "heartbeat_reduction_pct_by_stratum": [
+        1.681484842279879,
+        1.6815088102997922
+      ],
+      "heartbeat_result": "LOWER_IN_BOTH_ORDERS",
+      "strata": [
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "status": "MEASURED",
+          "control_raw": [
+            5205992,
+            5205996
+          ],
+          "candidate_raw": [
+            5118457,
+            5118455
+          ],
+          "control_median_raw": 5205994.0,
+          "candidate_median_raw": 5118456.0,
+          "paired_savings_raw": [
+            87535,
+            87541
+          ],
+          "observed_range_raw": 4,
+          "comparison": "LOWER"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "status": "MEASURED",
+          "control_raw": [
+            5206013,
+            5206005
+          ],
+          "candidate_raw": [
+            5118468,
+            5118471
+          ],
+          "control_median_raw": 5206009.0,
+          "candidate_median_raw": 5118469.5,
+          "paired_savings_raw": [
+            87545,
+            87534
+          ],
+          "observed_range_raw": 8,
+          "comparison": "LOWER"
+        }
+      ],
+      "all_pins_verified": true,
+      "candidate_label": "seed-0",
+      "candidate_sha256": "27a825564250da11ed157185323a2a65e8ad098fdb9ff72009d83551d8dacb33",
+      "trial_content_sha256": "e1a883249f6839b082aca4920ab13031763008aee352dd6c8900eaf3ccc079a2"
+    },
+    {
+      "name": "CallElimCorrect.extractedOldExprInVars",
+      "reference_tokens": 222,
+      "declared_candidate_tokens": 185,
+      "candidate_kind": "saved_refactor",
+      "verified_version_checks": 1,
+      "required_version_checks": 1,
+      "checks": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 2607584,
+          "capability_gaps": [],
+          "reason": ""
+        }
+      ],
+      "candidate_status": "VERIFIED",
+      "accepted_tokens": 185,
+      "heartbeat_reduction_pct_by_stratum": [
+        10.859546735430502,
+        10.859645994282063
+      ],
+      "heartbeat_result": "LOWER_IN_BOTH_ORDERS",
+      "strata": [
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "status": "MEASURED",
+          "control_raw": [
+            2607572,
+            2607572
+          ],
+          "candidate_raw": [
+            2324400,
+            2324403
+          ],
+          "control_median_raw": 2607572.0,
+          "candidate_median_raw": 2324401.5,
+          "paired_savings_raw": [
+            283172,
+            283169
+          ],
+          "observed_range_raw": 3,
+          "comparison": "LOWER"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "status": "MEASURED",
+          "control_raw": [
+            2607585,
+            2607585
+          ],
+          "candidate_raw": [
+            2324410,
+            2324411
+          ],
+          "control_median_raw": 2607585.0,
+          "candidate_median_raw": 2324410.5,
+          "paired_savings_raw": [
+            283175,
+            283174
+          ],
+          "observed_range_raw": 1,
+          "comparison": "LOWER"
+        }
+      ],
+      "all_pins_verified": true,
+      "candidate_label": "historical-260",
+      "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+      "trial_content_sha256": "e6fc780950b133afc99c7d4a0d6820337d864e5cb1ad12ff8175fafb9f4eb30a"
+    },
+    {
+      "name": "Core.InitsUpdatesComm",
+      "reference_tokens": 224,
+      "declared_candidate_tokens": 216,
+      "candidate_kind": "saved_refactor",
+      "verified_version_checks": 3,
+      "required_version_checks": 3,
+      "checks": [
+        {
+          "lean_tag": "v4.29.1",
+          "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 4227568,
+          "capability_gaps": [],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 4657776,
+          "capability_gaps": [],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 4689118,
+          "capability_gaps": [],
+          "reason": ""
+        }
+      ],
+      "candidate_status": "VERIFIED",
+      "accepted_tokens": 216,
+      "heartbeat_reduction_pct_by_stratum": [
+        37.88690379743063,
+        37.88660232756173,
+        41.324752698445074,
+        41.324546335376574,
+        42.39825058785043,
+        42.398145328389134
+      ],
+      "heartbeat_result": "LOWER_IN_BOTH_ORDERS",
+      "strata": [
+        {
+          "version": {
+            "lean_tag": "v4.29.1",
+            "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+          },
+          "branch_order": "reference-first",
+          "status": "MEASURED",
+          "control_raw": [
+            4227570,
+            4227568
+          ],
+          "candidate_raw": [
+            2625874,
+            2625874
+          ],
+          "control_median_raw": 4227569.0,
+          "candidate_median_raw": 2625874.0,
+          "paired_savings_raw": [
+            1601696,
+            1601694
+          ],
+          "observed_range_raw": 2,
+          "comparison": "LOWER"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.29.1",
+            "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+          },
+          "branch_order": "candidate-first",
+          "status": "MEASURED",
+          "control_raw": [
+            4227600,
+            4227600
+          ],
+          "candidate_raw": [
+            2625906,
+            2625906
+          ],
+          "control_median_raw": 4227600.0,
+          "candidate_median_raw": 2625906.0,
+          "paired_savings_raw": [
+            1601694,
+            1601694
+          ],
+          "observed_range_raw": 0,
+          "comparison": "LOWER"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.27.0",
+            "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+          },
+          "branch_order": "reference-first",
+          "status": "MEASURED",
+          "control_raw": [
+            4657776,
+            4657774
+          ],
+          "candidate_raw": [
+            2732961,
+            2732961
+          ],
+          "control_median_raw": 4657775.0,
+          "candidate_median_raw": 2732961.0,
+          "paired_savings_raw": [
+            1924815,
+            1924813
+          ],
+          "observed_range_raw": 2,
+          "comparison": "LOWER"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.27.0",
+            "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+          },
+          "branch_order": "candidate-first",
+          "status": "MEASURED",
+          "control_raw": [
+            4657791,
+            4657791
+          ],
+          "candidate_raw": [
+            2732980,
+            2732980
+          ],
+          "control_median_raw": 4657791.0,
+          "candidate_median_raw": 2732980.0,
+          "paired_savings_raw": [
+            1924811,
+            1924811
+          ],
+          "observed_range_raw": 0,
+          "comparison": "LOWER"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "reference-first",
+          "status": "MEASURED",
+          "control_raw": [
+            4689118,
+            4689118
+          ],
+          "candidate_raw": [
+            2701014,
+            2701014
+          ],
+          "control_median_raw": 4689118.0,
+          "candidate_median_raw": 2701014.0,
+          "paired_savings_raw": [
+            1988104,
+            1988104
+          ],
+          "observed_range_raw": 0,
+          "comparison": "LOWER"
+        },
+        {
+          "version": {
+            "lean_tag": "v4.26.0",
+            "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+          },
+          "branch_order": "candidate-first",
+          "status": "MEASURED",
+          "control_raw": [
+            4689133,
+            4689131
+          ],
+          "candidate_raw": [
+            2701027,
+            2701027
+          ],
+          "control_median_raw": 4689132.0,
+          "candidate_median_raw": 2701027.0,
+          "paired_savings_raw": [
+            1988106,
+            1988104
+          ],
+          "observed_range_raw": 2,
+          "comparison": "LOWER"
+        }
+      ],
+      "all_pins_verified": true,
+      "candidate_label": "repair-Hlen2-induction-arity",
+      "candidate_sha256": "3f74af1d98e2cde080156c83f59ecaa01276d6edd43747448d3da86529709105",
+      "trial_content_sha256": "9cc0a316dff6bd004bacd8fe282f334b91016def3697af6806a7b5d3b2cc9e1a"
+    },
+    {
+      "name": "fundamental_theorem_of_variational_calculus'",
+      "reference_tokens": 851,
+      "declared_candidate_tokens": 851,
+      "candidate_kind": "unchanged_reference",
+      "verified_version_checks": 1,
+      "required_version_checks": 1,
+      "checks": [
+        {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 12454940,
+          "capability_gaps": [],
+          "reason": ""
+        }
+      ],
+      "candidate_status": "UNCHANGED",
+      "accepted_tokens": 851,
+      "heartbeat_reduction_pct_by_stratum": [],
+      "heartbeat_result": "UNCHANGED",
+      "strata": [],
+      "all_pins_verified": true
+    },
+    {
+      "name": "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema",
+      "reference_tokens": 1372,
+      "declared_candidate_tokens": 1372,
+      "candidate_kind": "unchanged_reference",
+      "verified_version_checks": 1,
+      "required_version_checks": 1,
+      "checks": [
+        {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 27475681,
+          "capability_gaps": [],
+          "reason": ""
+        }
+      ],
+      "candidate_status": "UNCHANGED",
+      "accepted_tokens": 1372,
+      "heartbeat_reduction_pct_by_stratum": [],
+      "heartbeat_result": "UNCHANGED",
+      "strata": [],
+      "all_pins_verified": true
+    },
+    {
+      "name": "FieldSpecification.WickAlgebra.\u03b9_timeOrderF_superCommuteF_eq_time",
+      "reference_tokens": 1217,
+      "declared_candidate_tokens": 1217,
+      "candidate_kind": "unchanged_reference",
+      "verified_version_checks": 1,
+      "required_version_checks": 1,
+      "checks": [
+        {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 42721989,
+          "capability_gaps": [],
+          "reason": ""
+        }
+      ],
+      "candidate_status": "UNCHANGED",
+      "accepted_tokens": 1217,
+      "heartbeat_reduction_pct_by_stratum": [],
+      "heartbeat_result": "UNCHANGED",
+      "strata": [],
+      "all_pins_verified": true
+    },
+    {
+      "name": "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress",
+      "reference_tokens": 408,
+      "declared_candidate_tokens": 408,
+      "candidate_kind": "unchanged_reference",
+      "verified_version_checks": 3,
+      "required_version_checks": 3,
+      "checks": [
+        {
+          "lean_tag": "v4.33.0-rc2",
+          "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 60078237,
+          "capability_gaps": [],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.32.0",
+          "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 62227633,
+          "capability_gaps": [],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.31.0",
+          "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 62192946,
+          "capability_gaps": [],
+          "reason": ""
+        }
+      ],
+      "candidate_status": "UNCHANGED",
+      "accepted_tokens": 408,
+      "heartbeat_reduction_pct_by_stratum": [],
+      "heartbeat_result": "UNCHANGED",
+      "strata": [],
+      "all_pins_verified": true
+    },
+    {
+      "name": "Cslib.SKI.parallelReduction_diamond",
+      "reference_tokens": 407,
+      "declared_candidate_tokens": 407,
+      "candidate_kind": "unchanged_reference",
+      "verified_version_checks": 4,
+      "required_version_checks": 4,
+      "checks": [
+        {
+          "lean_tag": "v4.33.0-rc2",
+          "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 1647232,
+          "capability_gaps": [],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.32.0",
+          "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 1657055,
+          "capability_gaps": [],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.31.0",
+          "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 1643029,
+          "capability_gaps": [],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.30.0",
+          "git_commit": "c7944a9fb44c3298f1a960a5e574ab23a6ab8ed5",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 1634260,
+          "capability_gaps": [],
+          "reason": ""
+        }
+      ],
+      "candidate_status": "UNCHANGED",
+      "accepted_tokens": 407,
+      "heartbeat_reduction_pct_by_stratum": [],
+      "heartbeat_result": "UNCHANGED",
+      "strata": [],
+      "all_pins_verified": true
+    },
+    {
+      "name": "Cslib.CCS.bisimilarity_congr_choice",
+      "reference_tokens": 251,
+      "declared_candidate_tokens": 251,
+      "candidate_kind": "unchanged_reference",
+      "verified_version_checks": 3,
+      "required_version_checks": 3,
+      "checks": [
+        {
+          "lean_tag": "v4.33.0-rc2",
+          "git_commit": "3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 4023993,
+          "capability_gaps": [],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.32.0",
+          "git_commit": "197a7be621263b84c67ca4f803f69205b36d06df",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 4024952,
+          "capability_gaps": [],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.31.0",
+          "git_commit": "8ea71c8df91acd63285515a04da952b23b78d266",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 4020386,
+          "capability_gaps": [],
+          "reason": ""
+        }
+      ],
+      "candidate_status": "UNCHANGED",
+      "accepted_tokens": 251,
+      "heartbeat_reduction_pct_by_stratum": [],
+      "heartbeat_result": "UNCHANGED",
+      "strata": [],
+      "all_pins_verified": true
+    },
+    {
+      "name": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+      "reference_tokens": 1463,
+      "declared_candidate_tokens": 1463,
+      "candidate_kind": "unchanged_reference",
+      "verified_version_checks": 1,
+      "required_version_checks": 4,
+      "checks": [
+        {
+          "lean_tag": "v4.31.0",
+          "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 16664188,
+          "capability_gaps": [],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.30.0",
+          "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+          "status": "UNAVAILABLE",
+          "baseline_raw_heartbeats": null,
+          "capability_gaps": [
+            "reference_source_not_uniquely_located"
+          ],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.29.0",
+          "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+          "status": "UNAVAILABLE",
+          "baseline_raw_heartbeats": null,
+          "capability_gaps": [
+            "project_commit_mismatch"
+          ],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.28.0",
+          "git_commit": "673fa440714eb1949b8b50a28f2a4f52b1837e9b",
+          "status": "UNAVAILABLE",
+          "baseline_raw_heartbeats": null,
+          "capability_gaps": [
+            "project_commit_mismatch"
+          ],
+          "reason": ""
+        }
+      ],
+      "candidate_status": "INCOMPLETE",
+      "accepted_tokens": null,
+      "heartbeat_reduction_pct_by_stratum": [],
+      "heartbeat_result": "INCOMPLETE",
+      "strata": [],
+      "all_pins_verified": false
+    },
+    {
+      "name": "Binius.BinaryBasefold.fold_advances_evaluation_poly",
+      "reference_tokens": 1906,
+      "declared_candidate_tokens": 1906,
+      "candidate_kind": "unchanged_reference",
+      "verified_version_checks": 2,
+      "required_version_checks": 3,
+      "checks": [
+        {
+          "lean_tag": "v4.31.0",
+          "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 47012062,
+          "capability_gaps": [],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.30.0",
+          "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 48413229,
+          "capability_gaps": [],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.29.0",
+          "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+          "status": "UNAVAILABLE",
+          "baseline_raw_heartbeats": null,
+          "capability_gaps": [
+            "project_commit_mismatch"
+          ],
+          "reason": ""
+        }
+      ],
+      "candidate_status": "INCOMPLETE",
+      "accepted_tokens": null,
+      "heartbeat_reduction_pct_by_stratum": [],
+      "heartbeat_result": "INCOMPLETE",
+      "strata": [],
+      "all_pins_verified": false
+    },
+    {
+      "name": "interleaved_affine_gaps_imply_tensor_gaps",
+      "reference_tokens": 1353,
+      "declared_candidate_tokens": 1353,
+      "candidate_kind": "unchanged_reference",
+      "verified_version_checks": 2,
+      "required_version_checks": 3,
+      "checks": [
+        {
+          "lean_tag": "v4.31.0",
+          "git_commit": "c1712f6c496d0aef04f09bae42aec13811b3273f",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 9976769,
+          "capability_gaps": [],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.30.0",
+          "git_commit": "e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4",
+          "status": "VERIFIED",
+          "baseline_raw_heartbeats": 9972291,
+          "capability_gaps": [],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.29.0",
+          "git_commit": "de71a9dfd2f5a343e8895517b7efe857d9f1ce5c",
+          "status": "UNAVAILABLE",
+          "baseline_raw_heartbeats": null,
+          "capability_gaps": [
+            "project_commit_mismatch"
+          ],
+          "reason": ""
+        }
+      ],
+      "candidate_status": "INCOMPLETE",
+      "accepted_tokens": null,
+      "heartbeat_reduction_pct_by_stratum": [],
+      "heartbeat_result": "INCOMPLETE",
+      "strata": [],
+      "all_pins_verified": false
+    },
+    {
+      "name": "putnam_1964_a4",
+      "reference_tokens": 1769,
+      "declared_candidate_tokens": 1769,
+      "candidate_kind": "unchanged_reference",
+      "verified_version_checks": 0,
+      "required_version_checks": 3,
+      "checks": [
+        {
+          "lean_tag": "v4.25.0",
+          "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+          "status": "UNAVAILABLE",
+          "baseline_raw_heartbeats": null,
+          "capability_gaps": [
+            "[Errno 2] No such file or directory: '/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/putnam_lake/v4.25.0'"
+          ],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+          "status": "UNAVAILABLE",
+          "baseline_raw_heartbeats": null,
+          "capability_gaps": [
+            "putnam_compiled_import_missing: Mathlib"
+          ],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+          "status": "UNAVAILABLE",
+          "baseline_raw_heartbeats": null,
+          "capability_gaps": [
+            "[Errno 2] No such file or directory: '/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/putnam_lake/v4.27.0'"
+          ],
+          "reason": ""
+        }
+      ],
+      "candidate_status": "INCOMPLETE",
+      "accepted_tokens": null,
+      "heartbeat_reduction_pct_by_stratum": [],
+      "heartbeat_result": "INCOMPLETE",
+      "strata": [],
+      "all_pins_verified": false
+    },
+    {
+      "name": "putnam_1964_b2",
+      "reference_tokens": 1754,
+      "declared_candidate_tokens": 1754,
+      "candidate_kind": "unchanged_reference",
+      "verified_version_checks": 0,
+      "required_version_checks": 2,
+      "checks": [
+        {
+          "lean_tag": "v4.25.0",
+          "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+          "status": "UNAVAILABLE",
+          "baseline_raw_heartbeats": null,
+          "capability_gaps": [
+            "[Errno 2] No such file or directory: '/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/putnam_lake/v4.25.0'"
+          ],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+          "status": "UNAVAILABLE",
+          "baseline_raw_heartbeats": null,
+          "capability_gaps": [
+            "putnam_compiled_import_missing: Mathlib"
+          ],
+          "reason": ""
+        }
+      ],
+      "candidate_status": "INCOMPLETE",
+      "accepted_tokens": null,
+      "heartbeat_reduction_pct_by_stratum": [],
+      "heartbeat_result": "INCOMPLETE",
+      "strata": [],
+      "all_pins_verified": false
+    },
+    {
+      "name": "putnam_1995_a3",
+      "reference_tokens": 4085,
+      "declared_candidate_tokens": 4085,
+      "candidate_kind": "unchanged_reference",
+      "verified_version_checks": 0,
+      "required_version_checks": 3,
+      "checks": [
+        {
+          "lean_tag": "v4.25.0",
+          "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+          "status": "UNAVAILABLE",
+          "baseline_raw_heartbeats": null,
+          "capability_gaps": [
+            "[Errno 2] No such file or directory: '/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/putnam_lake/v4.25.0'"
+          ],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "2df2f0150c275ad53cb3c90f7c98ec15a56a1a67",
+          "status": "UNAVAILABLE",
+          "baseline_raw_heartbeats": null,
+          "capability_gaps": [
+            "putnam_compiled_import_missing: Mathlib"
+          ],
+          "reason": ""
+        },
+        {
+          "lean_tag": "v4.27.0",
+          "git_commit": "a3a10db0e9d66acbebf76c5e6a135066525ac900",
+          "status": "UNAVAILABLE",
+          "baseline_raw_heartbeats": null,
+          "capability_gaps": [
+            "[Errno 2] No such file or directory: '/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/putnam_lake/v4.27.0'"
+          ],
+          "reason": ""
+        }
+      ],
+      "candidate_status": "INCOMPLETE",
+      "accepted_tokens": null,
+      "heartbeat_reduction_pct_by_stratum": [],
+      "heartbeat_result": "INCOMPLETE",
+      "strata": [],
+      "all_pins_verified": false
+    }
+  ],
+  "proof_verified": false,
+  "fresh_native_processes": 0,
+  "official_score": null,
+  "worker_metric_parity": "UNCONFIRMED",
+  "training_enabled": false,
+  "notes": [
+    "Offline summary of recorded native observations; not receipt authentication or a new proof check.",
+    "Source-token totals count each problem once; declared lengths are not an accepted full-set score.",
+    "One fresh baseline process per available pin; refactors use at least two repeats in each branch order.",
+    "Raw heartbeats / 1000 are Lean display units, not milliseconds; failed/missing measurements are not zero.",
+    "Unchanged rows are baseline-only, not compression wins. No full-set heartbeat aggregate is inferred.",
+    "Cumulative coverage from disjoint native runs; earlier checks were not rerun. Per-row source hashes identify the originating reports."
+  ],
+  "baseline_continuation": {
+    "reports": [
+      "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "bbecc5fac83dc3a28440d3b14793330e921aa3183ab1526ac5e0ef07d0874d26",
+      "8b0c079ab25978c1fa10c931412f5d4fd4d0f1df4dddede24217f494e4110cca"
+    ],
+    "row_sources": {
+      "CallElimCorrect.substOldPostSubset|v4.26.0|451e5f047bafa010d178856db76c00029bfa4d7f": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "CallElimCorrect.extractedOldExprInVars|v4.26.0|451e5f047bafa010d178856db76c00029bfa4d7f": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Core.InitsUpdatesComm|v4.29.1|384e22374e0872095ad9c6f74c5998c09cfd93a9": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Core.InitsUpdatesComm|v4.27.0|4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Core.InitsUpdatesComm|v4.26.0|451e5f047bafa010d178856db76c00029bfa4d7f": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "fundamental_theorem_of_variational_calculus'|v4.32.0|c48433678e8fb6306ebcd48453300c8e16058a62": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema|v4.32.0|c48433678e8fb6306ebcd48453300c8e16058a62": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "FieldSpecification.WickAlgebra.\u03b9_timeOrderF_superCommuteF_eq_time|v4.32.0|c48433678e8fb6306ebcd48453300c8e16058a62": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress|v4.33.0-rc2|3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress|v4.32.0|197a7be621263b84c67ca4f803f69205b36d06df": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Cslib.LambdaCalculus.LocallyNameless.Fsub.Typing.progress|v4.31.0|8ea71c8df91acd63285515a04da952b23b78d266": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Cslib.SKI.parallelReduction_diamond|v4.33.0-rc2|3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Cslib.SKI.parallelReduction_diamond|v4.32.0|197a7be621263b84c67ca4f803f69205b36d06df": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Cslib.SKI.parallelReduction_diamond|v4.31.0|8ea71c8df91acd63285515a04da952b23b78d266": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Cslib.SKI.parallelReduction_diamond|v4.30.0|c7944a9fb44c3298f1a960a5e574ab23a6ab8ed5": "bbecc5fac83dc3a28440d3b14793330e921aa3183ab1526ac5e0ef07d0874d26",
+      "Cslib.CCS.bisimilarity_congr_choice|v4.33.0-rc2|3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Cslib.CCS.bisimilarity_congr_choice|v4.32.0|197a7be621263b84c67ca4f803f69205b36d06df": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Cslib.CCS.bisimilarity_congr_choice|v4.31.0|8ea71c8df91acd63285515a04da952b23b78d266": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius|v4.31.0|c1712f6c496d0aef04f09bae42aec13811b3273f": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius|v4.30.0|e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4": "8b0c079ab25978c1fa10c931412f5d4fd4d0f1df4dddede24217f494e4110cca",
+      "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius|v4.29.0|de71a9dfd2f5a343e8895517b7efe857d9f1ce5c": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius|v4.28.0|673fa440714eb1949b8b50a28f2a4f52b1837e9b": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Binius.BinaryBasefold.fold_advances_evaluation_poly|v4.31.0|c1712f6c496d0aef04f09bae42aec13811b3273f": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "Binius.BinaryBasefold.fold_advances_evaluation_poly|v4.30.0|e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4": "8b0c079ab25978c1fa10c931412f5d4fd4d0f1df4dddede24217f494e4110cca",
+      "Binius.BinaryBasefold.fold_advances_evaluation_poly|v4.29.0|de71a9dfd2f5a343e8895517b7efe857d9f1ce5c": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "interleaved_affine_gaps_imply_tensor_gaps|v4.31.0|c1712f6c496d0aef04f09bae42aec13811b3273f": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "interleaved_affine_gaps_imply_tensor_gaps|v4.30.0|e6d77b18ca1334a91faf4d1ccf9f96d854d58ba4": "8b0c079ab25978c1fa10c931412f5d4fd4d0f1df4dddede24217f494e4110cca",
+      "interleaved_affine_gaps_imply_tensor_gaps|v4.29.0|de71a9dfd2f5a343e8895517b7efe857d9f1ce5c": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "putnam_1964_a4|v4.25.0|1ccd71f89cbbd82ae7d097723ce1722ca7b01c33": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "putnam_1964_a4|v4.26.0|2df2f0150c275ad53cb3c90f7c98ec15a56a1a67": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "putnam_1964_a4|v4.27.0|a3a10db0e9d66acbebf76c5e6a135066525ac900": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "putnam_1964_b2|v4.25.0|1ccd71f89cbbd82ae7d097723ce1722ca7b01c33": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "putnam_1964_b2|v4.26.0|2df2f0150c275ad53cb3c90f7c98ec15a56a1a67": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "putnam_1995_a3|v4.25.0|1ccd71f89cbbd82ae7d097723ce1722ca7b01c33": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "putnam_1995_a3|v4.26.0|2df2f0150c275ad53cb3c90f7c98ec15a56a1a67": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4",
+      "putnam_1995_a3|v4.27.0|a3a10db0e9d66acbebf76c5e6a135066525ac900": "a6132e0551c3a7a25a79c721f00eb75cc425e8a8c1e91c95cc1a2dbd996386c4"
+    },
+    "semantics": "disjoint historical observations, not a fresh full-matrix run"
+  },
+  "input_sha256": {
+    "/home/barberb/lift_coding/JevOps/papers/completion/lean_refactor_arena/evidence/native-full15-continuation-2026-09-23/inputs/corpus.jsonl": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+    "/home/barberb/lift_coding/JevOps/papers/completion/lean_refactor_arena/evidence/native-full15-continuation-2026-09-23/inputs/previous-baseline.json": "c78db0d35abd1b2073f66113930506eb6916f45a90cb367eebc24125fd42e8a4",
+    "/home/barberb/lift_coding/JevOps/papers/completion/lean_refactor_arena/evidence/native-full15-continuation-2026-09-23/inputs/cslib-v4.30.0-baseline.json": "ccaa254b98c95faee61fb8f86caa1d98188124f00158b07b0a81e3f71d5abda3",
+    "/home/barberb/lift_coding/JevOps/papers/completion/lean_refactor_arena/evidence/native-full15-continuation-2026-09-23/inputs/arklib-v4.30.0-baseline.json": "d1b0b6f4415018f02894340f894a64e2a77be8b632604bd0477d1302e54f0e1a",
+    "/home/barberb/lift_coding/JevOps/papers/completion/lean_refactor_arena/evidence/native-full15-continuation-2026-09-23/inputs/trial-subst.json": "9ff039941596ccc7bd6188166065d27b740a11a2a5f6a6abbc4e9da9bbb644b4",
+    "/home/barberb/lift_coding/JevOps/papers/completion/lean_refactor_arena/evidence/native-full15-continuation-2026-09-23/inputs/trial-extracted.json": "72eb9cdfd7fadde08e942dd31a0b66fe54a6109a737052efdc0615bb14da6d65",
+    "/home/barberb/lift_coding/JevOps/papers/completion/lean_refactor_arena/evidence/native-full15-continuation-2026-09-23/inputs/trial-core.json": "b1b0b5022f6abda5fcb6362ff3c872ef0a952d33939180c07e71f83e614fda68"
+  },
+  "report_generator_sha256": "a8deca39d3db4c552750529187bad6f94cba23255dca8c3742167e433e76fb8d"
+}

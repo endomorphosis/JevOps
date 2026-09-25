@@ -5,9 +5,17 @@ description = "TypeSafe/Jev kernel (cache, tape, JSON-LD, plan, milles rankers).
 requires-python = ">=3.11"
 readme = "README.md"
 
+[project.optional-dependencies]
+graph = ["torch>=2.2"]
+knowledge = ["duckdb>=1.5.5,<2"]
+knowledge-corpus = ["duckdb>=1.5.5,<2", "pyarrow>=17,<24"]
+
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 include = ["jevops*"]
+
+[tool.setuptools.package-data]
+jevops = ["lean/*.lean", "prompts/*.txt"]

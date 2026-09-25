@@ -21,6 +21,7 @@ HAVE = re.compile(r"^( *)have ")
 RW_BRACKET = re.compile(r"^(?P<indent> *)rw \[([^\]]+)\]\s*$")
 HAVE_NAME = re.compile(r"have\s+([A-Za-z0-9_']+)")
 MCA_HOLE = re.compile(r"<<<MCA_(\d+) family=([a-z_]+)>>>")
+SYM_HOLE = re.compile(r"<<<SYM_(\d+)(?: kind=([a-z_]+))?>>>")
 
 FEATURE_NAMES = (
     "n_cases",
@@ -628,6 +629,7 @@ IDENT = re.compile(
     r"(?:[^\W\d])(?:[\w'])*(?:\.(?:[^\W\d])(?:[\w'])*)*",
     re.UNICODE,
 )
+SEARCH_IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_.']*")
 SIMP_RW_OPEN = re.compile(
     r"\b(?P<tactic>simp(?:_all|_rw)?(?:\s+only)?|rw!?|erw)\s*\[",
     re.UNICODE,
@@ -872,6 +874,49 @@ def closer_variants(tactics: str) -> list[tuple[str, str]]:
     ]
 
 
+def drive_hammer_variants(
+    tactics: str,
+    reference: str,
+    *,
+    replay_fn: Callable[[str], str],
+    propose_fn: Callable[[str], Sequence[Any]],
+    closed_fn: Callable[..., Sequence[Any]],
+    propose_cap: int = 8,
+    closed_cap: int = 6,
+) -> list[tuple[str, str]]:
+    """Hammer branches plus injected replay and closed candidates. Not a lake admit."""
+
+    from jevops.outer import head_seq, map_pairs
+
+    extras: list[tuple[str, str]] = [
+        ("inits_replay", replay_fn(reference)),
+        ("inits_step", replay_fn(tactics)),
+    ]
+    extras.extend(map_pairs(head_seq(propose_fn(tactics), propose_cap)))
+    extras.extend(map_pairs(closed_fn(tactics, max_candidates=closed_cap)))
+    return hammer_variants(tactics, reference, extras)
+
+
+def drive_prefix_shorten(
+    tactics: str,
+    *,
+    replay_fn: Callable[[str], str],
+    propose_fn: Callable[[str], Sequence[Any]],
+    span_fn: Callable[[str], Sequence[Any]],
+) -> list[tuple[str, str]]:
+    """Shortenings that keep prefix haves, plus injected span drafts."""
+
+    from jevops.outer import map_pairs
+
+    extras: list[tuple[str, str]] = [("inits_replay", replay_fn(tactics))]
+    extras.extend(map_pairs(propose_fn(tactics), default_kind="inits_step"))
+    keep_extras = [
+        (f"span_{getattr(draft, 'family', '')}_{getattr(draft, 'draft_id', '')}", getattr(draft, "tactics", ""))
+        for draft in span_fn(tactics)
+    ]
+    return shorten_keeping_prefix_haves(tactics, extras, keep_extras)
+
+
 def hammer_variants(
     tactics: str,
     reference: str,
@@ -1018,6 +1063,68 @@ def hypothesis_refactor_variants(
     for kind, body in shortcut_variants(str(tactics or ""), cap=budget):
         push(str(kind), body, "shortcut", str(kind))
     return rows[:budget]
+
+
+def drive_random_drafts(
+    tactics: str,
+    rng: Any,
+    *,
+    n: int,
+    families: Sequence[Mapping[str, Any]],
+    counts: Optional[Mapping[str, float]],
+    name: str,
+    memory: Optional[Mapping[str, Any]],
+    allow_families: Optional[set[str]],
+    token_fn: Callable[[str], int],
+    pipeline: Sequence[Any],
+    blacklist_fn: Callable[..., bool],
+    failed_fn: Callable[..., Sequence[str]],
+    portable_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    spans: Sequence[Any],
+    prefer_fn: Callable[..., Sequence[Any]],
+    phrase_alts: Mapping[str, Sequence[str]],
+    operators: Sequence[str],
+    closed_fn: Callable[..., Sequence[Any]],
+    guided_fn: Callable[..., Sequence[Any]],
+    safe_drop_fn: Callable[..., bool],
+) -> list[dict[str, Any]]:
+    """Seeded random drops and closed fills. No LLM. Binder drops stay gated."""
+
+    from jevops.binders import blocked_port_stems
+    from jevops.outer import allow_pred, any_pred, maybe_set, or_list, overlay_map
+
+    body = tactics.strip("\n")
+    allow = maybe_set(allow_families)
+    wanted = allow_pred(allow)
+    portable_items: list[Mapping[str, Any]] = []
+    if any_pred(wanted, ("search_space", "algebraic_simplification", "dead_code")):
+        blocked = blocked_port_stems(memory, name, pipeline, blacklist_fn=blacklist_fn, failed_fn=failed_fn)
+        portable_items = list(portable_fn(body, skip=blocked, memory=overlay_map(memory), name=name))
+    early, late = collect_random_draft_extras(
+        body,
+        rng,
+        wanted_fn=wanted,
+        portable_items=portable_items,
+        symbol_spans=list(spans),
+        prefer_fn=prefer_fn,
+        phrase_alts=phrase_alts,
+        operators=operators,
+        closed_fn=closed_fn,
+        pca_drafts=guided_fn(body, or_list(families, [{"family": "dead_code"}]), counts),
+    )
+    return random_mca_drafts(
+        tactics,
+        rng,
+        n=n,
+        token_fn=token_fn,
+        allow_families=allow,
+        name=name,
+        memory=memory,
+        safe_drop_fn=safe_drop_fn,
+        blacklist_fn=lambda mem, problem, kind, nxt="": blacklist_fn(mem, problem, kind, tactics=nxt),
+        early_extras=early,
+        late_extras=late,
+    )
 
 
 def random_mca_drafts(
@@ -1491,6 +1598,172 @@ def span_preserving_edits(tactics: str) -> list[tuple[str, str, tuple[str, ...]]
     return rows
 
 
+def drive_hole_fills(
+    hole: Any,
+    tactics: str,
+    *,
+    as_row: Callable[[Any], Mapping[str, Any]],
+    phrase_alts: Sequence[Any],
+    operator_alts: Mapping[str, Any],
+    token_re: Any,
+) -> list[str]:
+    """Closed fills for one hole row. No model."""
+
+    return closed_fills(
+        as_row(hole),
+        tactics,
+        phrase_alts=phrase_alts,
+        operator_alts=operator_alts,
+        token_re=token_re,
+    )
+
+
+def drive_symbol_ops(
+    tactics: str,
+    *,
+    closed_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    rows_fn: Callable[[str], Sequence[Mapping[str, Any]]],
+    family: str,
+    cap: int,
+) -> list[tuple[str, str, tuple[str, ...]]]:
+    """Closed fills plus kernel rows. Does not write Lean."""
+
+    return collect_symbol_ops(closed_fn(tactics), rows_fn(tactics), family=family, kernel_cap=cap)
+
+
+def drive_guided_ops(
+    tactics: str,
+    families: Sequence[Any],
+    counts: Optional[Mapping[str, float]],
+    *,
+    portable_fn: Callable[..., Any],
+    op_fns: Sequence[Callable[[str], Any]],
+    push_fn: Callable[..., Any],
+) -> Any:
+    """Guided drafts plus injected extra op lists. Does not write Lean."""
+
+    return drive_guided_drafts(
+        tactics,
+        families,
+        counts,
+        portable_fn=portable_fn,
+        extra_ops=tuple(fn(tactics) for fn in op_fns),
+        push_fn=push_fn,
+    )
+
+
+def drive_few_shot_block(
+    target: Mapping[str, Any],
+    shots: Sequence[Any],
+    *,
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    holes_fn: Callable[[str], Sequence[Any]],
+    skeleton_fn: Callable[[str, Sequence[Any]], str],
+    token_fn: Callable[[str], int],
+    prompt_fn: Callable[..., str],
+) -> str:
+    """Few-shot prompt from the target tactic block. Not a generation."""
+
+    tactics = tactic_fn(target)
+    holes = holes_fn(tactics)
+    return prompt_fn(
+        target,
+        shots,
+        tactics=tactics,
+        skeleton=skeleton_fn(tactics, holes),
+        token_count=token_fn(tactics),
+    )
+
+
+def drive_compile_head(
+    item: Mapping[str, Any],
+    compiled: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Head row for one compile. Arena score stays out."""
+
+    from jevops.outer import get_list, get_str
+    from jevops.search import compile_head_row
+
+    return compile_head_row(
+        get_str(item, "kind"),
+        get_str(item, "tactics"),
+        compiled,
+        extra={"generator": item.get("generator"), "n_holes": len(list(get_list(item, "holes") or ()))},
+    )
+
+
+def drive_assemble_candidates(
+    tactics: str,
+    holes: Sequence[Any],
+    *,
+    leanstral_text: Optional[str],
+    replay_fn: Callable[..., Any],
+    parse_fn: Callable[..., Any],
+    indent_fn: Callable[..., str],
+    flatten_fn: Callable[..., str],
+) -> list[dict[str, Any]]:
+    """Closed MCA candidates. The parser is skipped when there is no Leanstral text."""
+
+    from jevops.outer import optional_fn
+
+    return assemble_mca_candidates(
+        tactics,
+        holes,
+        leanstral_text=leanstral_text,
+        replay_fn=replay_fn,
+        parse_fills_fn=optional_fn(leanstral_text, parse_fn),
+        indent_fn=indent_fn,
+        flatten_fn=flatten_fn,
+    )
+
+
+def drive_propose_edits(
+    tactics: str,
+    reference: str,
+    rng: Any,
+    extra: Optional[Sequence[Mapping[str, str]]] = None,
+    *,
+    limit: Optional[int],
+    propose_fn: Callable[..., Any],
+    replay_fn: Callable[..., Any],
+    extras_fn: Callable[..., Any],
+    replay_note: str,
+    closers: Sequence[str],
+    skip_prefix: Sequence[str],
+) -> list[dict[str, str]]:
+    """Closed MCMC edits plus injected extras. Does not compile."""
+
+    from jevops.outer import first_truthy
+
+    extras = collect_mcmc_proposal_extras(
+        tactics,
+        first_truthy(extra, default=()),
+        propose_fn=propose_fn,
+        replay_fn=replay_fn,
+        extras_fn=extras_fn,
+        replay_note=replay_note,
+    )
+    return propose_closed_edits(
+        tactics,
+        reference,
+        rng,
+        extras,
+        closers=closers,
+        skip_prefix=skip_prefix,
+        limit=limit,
+    )
+
+
+def collect_span_drafts(tactics: str, *, cap: int = 48, head_chars: int = 220) -> list[Any]:
+    """Push one-case edits into Draft rows. Does not compile."""
+
+    drafts: list[Any] = []
+    seen: set[str] = set()
+    for family, body, ops in span_preserving_edits(tactics):
+        push_draft(drafts, seen, family, body, ops, cap=cap, head_chars=head_chars)
+    return drafts
+
+
 def closed_tree_edits(tactics: str, *, case_replace_cap: int = 8) -> list[tuple[str, str, tuple[str, ...]]]:
     """Deterministic closed-vocab drafts from a tactic tree. Not a Lean parser."""
 
@@ -1823,6 +2096,63 @@ def guided_mca_edits(
     return rows
 
 
+def drive_guided_drafts(
+    tactics: str,
+    families: Sequence[Mapping[str, Any]],
+    counts: Optional[Mapping[str, float]],
+    *,
+    portable_fn: Callable[[str], Sequence[Mapping[str, Any]]],
+    extra_ops: Sequence[Sequence[Any]],
+    push_fn: Callable[..., Any],
+) -> list[Any]:
+    """Collect guided drafts plus injected portable rows. Not a Lean parser."""
+
+    from jevops.outer import get_str
+
+    portable = [
+        (
+            get_str(item, "family", default="search_space"),
+            get_str(item, "tactics"),
+            ("portable", get_str(item, "kind")),
+        )
+        for item in portable_fn(tactics)
+    ]
+    return collect_guided_drafts(
+        tactics,
+        families,
+        counts,
+        extras=(portable, *extra_ops),
+        push_fn=push_fn,
+    )
+
+
+def drive_tree_drafts(
+    record: Mapping[str, Any],
+    records: Sequence[Mapping[str, Any]],
+    *,
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    retrieve_fn: Callable[..., Any],
+    neighbors_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    neighbor_cap: int,
+    case_cap: int,
+    head_fn: Callable[..., str],
+    push_fn: Callable[..., Any],
+    draft_cap: int,
+) -> list[Any]:
+    """Deterministic drafts from the reference tactic tree. Not a Lean parser."""
+
+    reference = tactic_fn(record)
+    retrieval = retrieve_fn(record, records)
+    neighbors = neighbors_fn(retrieval, k=neighbor_cap)
+    by_name = {item.get("name"): item for item in records}
+    return collect_tree_drafts(
+        closed_edits=closed_tree_edits(reference, case_replace_cap=case_cap),
+        neighbor_ops=neighbor_style_ops(neighbors, by_name, head_fn=head_fn),
+        push_fn=push_fn,
+        cap=draft_cap,
+    )
+
+
 def collect_guided_drafts(
     tactics: str,
     families: Sequence[Mapping[str, Any]],
@@ -1918,6 +2248,23 @@ def feature_row(
         source=str(record.get("source") or ""),
         vector=tuple(float(counts[name]) for name in names),
         counts=counts,
+    )
+
+
+def drive_feature_row(
+    record: Mapping[str, Any],
+    *,
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    feature_names: Sequence[str],
+    token_fn: Callable[[str], int],
+) -> FeatureRow:
+    """Feature row from an injected tactic block. Does not write Lean."""
+
+    return feature_row(
+        record,
+        tactics=tactic_fn(record),
+        feature_names=feature_names,
+        token_fn=token_fn,
     )
 
 

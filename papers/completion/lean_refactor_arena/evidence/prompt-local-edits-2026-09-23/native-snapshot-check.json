@@ -1,0 +1,10 @@
+{
+  "schema": "jevops-arena-source-snapshot/v1",
+  "status": "UNCHANGED",
+  "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/prompt-local-edits-20260923-MavU32/snapshot",
+  "manifest_sha256": "ac6cecdd3a85ecaba140e401be77c0928d08f6a6339dbe81b81b9049f32fab7f",
+  "content_root": "7b692617ba5a47fea3dcf0564ad490e077251736e6489df4b92b79b1db064f0b",
+  "file_count": 219,
+  "bytes": 4654778,
+  "proof_verified": false
+}

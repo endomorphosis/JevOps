@@ -162,3 +162,62 @@ def test_saved_edit_adapter_passes_arena_metrics_without_relabeling_old_failure(
     assert result["metric_gates_accepted"] and evidence["metric_gates_accepted"]
     old = json.loads((ROOT / "tests/fixtures/rewrite_distillation_evidence.json").read_text())["arena"]
     assert not old["metric_gates_accepted"]  # Retain the earlier failure.
+
+
+def test_saved_trajectory_checkpoint_reproduces_all_holdouts_and_step_losses(monkeypatch):
+    from jevops.proof_tokens import proof_source_tokens, TOKENIZER_ID
+    from jevops.rewrite_trajectories import trajectory_metrics, verified_edges
+
+    module = harness(monkeypatch)
+    cp = json.loads((ROOT / "tests/fixtures/trajectory_edit_checkpoint.json").read_text())
+    evidence = json.loads((ROOT / "tests/fixtures/trajectory_edit_evidence.json").read_text())["synthetic"]
+    assert module.state_digest(cp["state"]) == cp["state_sha256"] == evidence["state_sha256"]
+    assert cp["tokenizer_id"] == evidence["tokenizer_id"] == TOKENIZER_ID
+    model = LeanIRAutoencoder.from_dict(cp["state"], config=AutoencoderConfig(**cp["config"]))
+    zero = model.copy()
+    zero.state["rewrite_weights"] = {}
+    sources = {r["id"]: r for r in evidence["teachers"]}
+    tokens, steps = 0, 0
+    for saved in evidence["holdout_predictions"]:
+        teacher = sources[saved["id"]]
+        assert teacher["split"] == "holdout" and saved["id"] not in cp["train_parent_ids"]
+        source = teacher["source"]
+        prefix, _, theorem = module._source_parts(source)
+        predicted = model.predict_ir(source)
+        rendered = module._render_source(prefix, module._ir_body(predicted), has_theorem=theorem)
+        assert rendered == saved["prediction"]
+        assert not predicted["rewrite_policy"]["teacher_used"] and not predicted["rewrite_policy"]["solver_used"]
+        assert saved["kernel_audit"]["accepted"]  # Saved real audit; no recompilation in this test.
+        tokens += proof_source_tokens(rendered)
+        edges = verified_edges(teacher, parent_id=saved["id"], split="holdout", compile_fn=fake_compile)
+        metric = trajectory_metrics(model, edges)
+        assert metric["complete"] and metric["cross_entropy"] == pytest.approx(saved["trajectory"]["cross_entropy"], abs=1e-12)
+        steps += metric["labeled_step_count"]
+        assert zero.predict_ir(source)["ops"] == ae.encode_lean_ir(source)["ops"]
+    assert tokens == 63 and steps == 18
+    metrics = evidence["holdout"]["holdout"]
+    assert metrics["verified"] == metrics["sample_count"] == 14 and metrics["verified_shortening"] == 12
+    assert metrics["source_tokens"] == 111 and metrics["rewrite_sample_count"] == 10
+    assert evidence["holdout_gate"]["accepted"] and not cp["checkpoint_promoted"]
+
+
+def test_saved_trajectory_arena_gate_matches_best_without_changing_old_failure(monkeypatch):
+    module = harness(monkeypatch)
+    cp = json.loads((ROOT / "tests/fixtures/trajectory_edit_checkpoint.json").read_text())
+    evidence = json.loads((ROOT / "tests/fixtures/trajectory_edit_evidence.json").read_text())["arena"]
+    reference = json.loads((ROOT / "tests/fixtures/kernel_refactor_local_best.json").read_text())
+    _, digest, records = module.bridge.load_records()
+    record = next(r for r in records if r["name"] == reference["name"])
+    result = module.evaluate_checkpoint(record, cp, compiler=fake_compile, include_history=False,
+                                        reference_source=reference["best_source"])
+    assert result["metric_gates_accepted"] and evidence["metric_gates_accepted"]
+    assert digest == evidence["frozen_sha256"]
+    row = result["evaluations"][0]
+    assert row["trained"]["body_tokens"] == 481
+    assert row["trained"]["loss"]["cross_entropy"] == row["untrained"]["loss"]["cross_entropy"]
+    model = LeanIRAutoencoder.from_dict(cp["state"], config=AutoencoderConfig(**cp["config"]))
+    assert model.predict_ir(reference["previous_best_source"])["ops"] == ae.encode_lean_ir(reference["best_source"])["ops"]
+    assert evidence["evaluations"][1]["trained"]["body_tokens"] == 391
+    assert evidence["evaluations"][1]["trained"]["kernel_audit"]["accepted"]
+    old = json.loads((ROOT / "tests/fixtures/rewrite_distillation_evidence.json").read_text())["arena"]
+    assert not old["metric_gates_accepted"]

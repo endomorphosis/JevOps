@@ -1,0 +1,23 @@
+{
+  "pin": {
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+  },
+  "label": "draft-1",
+  "source_sha256": "baabfe7660cbfa6494a1a09cf14341c04d611df70be17cedc3739dba2d8e939b",
+  "status": "REJECTED",
+  "receipt": {
+    "request_id": "770c90947fa7f65b8ce958acaf567a6a1af39034fdbe38fe88b216cb64c11d34",
+    "candidate_sha256": "baabfe7660cbfa6494a1a09cf14341c04d611df70be17cedc3739dba2d8e939b",
+    "target": "Core.InitsUpdatesComm",
+    "outcome": "REJECTED",
+    "type_preserved": false,
+    "exit_code": 0,
+    "axiom_output": "",
+    "heartbeats": null,
+    "reason": "candidate_errors",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"78072873448f3aced20d46550f5fd37aade8a548c9c7ae9f428d342e2475d738\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Case tag `update_some` not found.\\n\\nNote: There are no cases to select.\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase update_some\\nP : PureExpr\\nσ σ' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHlen1 : ks'.length = vs'.length\\nσ✝ : SemanticStore P\\nx✝ : P.Ident\\nv✝ : P.Expr\\nσ'✝ : SemanticStore P\\nxs✝ : List P.Ident\\nvs✝ : List P.Expr\\nσ''✝ : SemanticStore P\\na✝¹ : UpdateState P σ✝ x✝ v✝ σ'✝\\na✝ : UpdateStates σ'✝ xs✝ vs✝ σ''✝\\na_ih✝ :\\n  ∀ {σ'' : SemanticStore P},\\n    InitStates σ''✝ ks' vs' σ'' →\\n      isDefined σ''✝ xs✝ →\\n        xs✝.length = vs✝.length →\\n          updatedStates σ'✝ ks' vs' = updatedStates σ'✝ ks' vs' ∧\\n            InitStates σ'✝ ks' vs' (updatedStates σ'✝ ks' vs') ∧ UpdateStates (updatedStates σ'✝ ks' vs') xs✝ vs✝ σ''\\nσ'' : SemanticStore P\\nHinit : InitStates σ''✝ ks' vs' σ''\\nHk : isDefined σ''✝ (x✝ :: xs✝)\\nHlen2 : (x✝ :: xs✝).length = (v✝ :: vs✝).length\\n⊢ updatedStates σ✝ ks' vs' = updatedStates σ✝ ks' vs' ∧\\n    InitStates σ✝ ks' vs' (updatedStates σ✝ ks' vs') ∧\\n      UpdateStates (updatedStates σ✝ ks' vs') (x✝ :: xs✝) (v✝ :: vs✝) σ''\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6361.082}"
+  },
+  "context_id": "5a844f81016de3e29a3a18cd992684f2a47f1ec3cccbe567a360caa40b009a39",
+  "wall_seconds": 10.1397
+}

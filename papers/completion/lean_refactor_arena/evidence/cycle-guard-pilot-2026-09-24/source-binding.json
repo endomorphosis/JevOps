@@ -1,0 +1,22 @@
+{
+  "before": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/cycle-guard-20260924-oLwVoo/snapshot",
+    "manifest_sha256": "0bd35b21a184e4be8260f4318c73b9a5408b1e9824beecdf92d1421b88eea703",
+    "content_root": "8581a9ef8ab7cf90d81c83c119fb3ab6dd09d022ea7b09683786233b1a165233",
+    "file_count": 415,
+    "bytes": 8598739,
+    "proof_verified": false
+  },
+  "after": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/cycle-guard-20260924-oLwVoo/snapshot",
+    "manifest_sha256": "0bd35b21a184e4be8260f4318c73b9a5408b1e9824beecdf92d1421b88eea703",
+    "content_root": "8581a9ef8ab7cf90d81c83c119fb3ab6dd09d022ea7b09683786233b1a165233",
+    "file_count": 415,
+    "bytes": 8598739,
+    "proof_verified": false
+  }
+}

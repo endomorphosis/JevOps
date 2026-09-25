@@ -1,0 +1,285 @@
+{
+  "schema": "jevops-arena-report-audit/v1",
+  "status": "CONSISTENT",
+  "checks": {
+    "supported_status": true,
+    "supported_schema": true,
+    "protocol_matches_report": true,
+    "plan_identity": true,
+    "implementation_reported_unchanged": true,
+    "supported_evidence_mode": true,
+    "no_promotion_or_training_claim": true,
+    "selected_matches_screen_analysis": true,
+    "screen.design": true,
+    "screen.record": true,
+    "screen.cache_disabled": true,
+    "screen.runner_identity": true,
+    "screen.mode": true,
+    "screen.receipt_claims": true,
+    "screen.sample_ids_unique": true,
+    "screen.cost_analysis": true,
+    "screen.precommitted_design": true,
+    "screen.invocation_accounting": true,
+    "screen.native_accounting": true,
+    "confirmation.design": true,
+    "confirmation.record": true,
+    "confirmation.cache_disabled": true,
+    "confirmation.runner_identity": true,
+    "confirmation.mode": true,
+    "confirmation.receipt_claims": true,
+    "confirmation.sample_ids_unique": true,
+    "confirmation.cost_analysis": true,
+    "confirmation.fixed_winner": true,
+    "confirmation.design_parameters": true,
+    "confirmation.contexts_match": true,
+    "confirmation.invocation_accounting": true,
+    "confirmation.native_accounting": true,
+    "total_accounting": true,
+    "budget": true,
+    "selection_commitment": true,
+    "confirmation_present": true,
+    "confirmed_gates": true,
+    "recommendation_binding": true,
+    "confirmation_mode": true
+  },
+  "phases": {
+    "screen": {
+      "scheduled": 16,
+      "observed": 16,
+      "statuses": {
+        "REJECTED": 4,
+        "VERIFIED": 12
+      },
+      "reported_native_processes": 16,
+      "rows": {
+        "control": {
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "tokens": 222,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2607572,
+              2607572
+            ],
+            [
+              2607589,
+              2607585
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "incumbent": {
+          "label": "incumbent",
+          "source_sha256": "3a8ac904a52c3c2058333921573ae8e1faffdfe832e5bc845cc46dd7634d5d95",
+          "tokens": 172,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              930194,
+              930194
+            ],
+            [
+              930207,
+              930207
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "composition-0": {
+          "label": "composition-0",
+          "source_sha256": "1224a083360be6e1ac9ae8ea70b614df171d636dab6aab7d02208a0402d02487",
+          "tokens": 170,
+          "admissible": false,
+          "reason": "incomplete_cost_coverage",
+          "raw_heartbeats_by_stratum": [
+            [],
+            []
+          ],
+          "axioms_by_version": {}
+        },
+        "composition-1": {
+          "label": "composition-1",
+          "source_sha256": "7d99ba8b2660e866895a7666469e609dbfb5cd51118e72404f12782d5dabd453",
+          "tokens": 170,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              896593,
+              896593
+            ],
+            [
+              896606,
+              896606
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        }
+      },
+      "strata": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "reference-first"
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "candidate-first"
+        }
+      ],
+      "selected_vs_incumbent": {
+        "baseline_tokens": 172,
+        "candidate_tokens": 170,
+        "mean_raw_heartbeat_reduction_pct": [
+          3.612257228062099,
+          3.612206745380331
+        ]
+      }
+    },
+    "confirmation": {
+      "scheduled": 18,
+      "observed": 18,
+      "statuses": {
+        "VERIFIED": 18
+      },
+      "reported_native_processes": 18,
+      "rows": {
+        "control": {
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "tokens": 222,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2607572,
+              2607572,
+              2607572
+            ],
+            [
+              2607585,
+              2607585,
+              2607585
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "incumbent": {
+          "label": "incumbent",
+          "source_sha256": "3a8ac904a52c3c2058333921573ae8e1faffdfe832e5bc845cc46dd7634d5d95",
+          "tokens": 172,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              930194,
+              930194,
+              930194
+            ],
+            [
+              930207,
+              930207,
+              930207
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "composition-1": {
+          "label": "composition-1",
+          "source_sha256": "7d99ba8b2660e866895a7666469e609dbfb5cd51118e72404f12782d5dabd453",
+          "tokens": 170,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              896593,
+              896593,
+              896593
+            ],
+            [
+              896606,
+              896606,
+              896606
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        }
+      },
+      "strata": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "reference-first"
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "candidate-first"
+        }
+      ],
+      "selected_vs_incumbent": {
+        "baseline_tokens": 172,
+        "candidate_tokens": 170,
+        "mean_raw_heartbeat_reduction_pct": [
+          3.612257228062099,
+          3.612206745380331
+        ]
+      }
+    }
+  },
+  "proof_verified": false,
+  "fresh_native_processes": 0,
+  "promoted": false,
+  "training_enabled": false,
+  "official_score": null,
+  "reported_selector_status": "CONFIRMED_LOCAL_IMPROVEMENT",
+  "errors": [],
+  "protocol_content_sha256": "cac752345b01e8f2b551c4da3919b5fece9f8c3b0c8dc5a1a440e76bc522db81",
+  "report_content_sha256": "9f15d9538cd19aad86d8ad2c982a355562f53f7d10ce67731eb7834be0e6b1d2",
+  "legacy_policy_defaults_used": false,
+  "problem": "CallElimCorrect.extractedOldExprInVars",
+  "selected": "composition-1",
+  "objective": "aggregate-local-v1",
+  "reason": "",
+  "reported_counts": {
+    "requests_reserved": 34,
+    "verifier_invocations": 34,
+    "native_processes": 34
+  },
+  "analysis_code_sha256": "bc1e35df92f820366430909e42a45e996b8e0befd10c9ad7bd80fa9a6b737f66",
+  "analysis_code_matches_recorded": true
+}

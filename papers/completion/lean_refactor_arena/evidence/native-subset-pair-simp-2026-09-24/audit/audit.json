@@ -1,0 +1,180 @@
+{
+  "schema": "jevops-arena-report-audit/v1",
+  "status": "CONSISTENT",
+  "checks": {
+    "supported_status": true,
+    "supported_schema": true,
+    "protocol_matches_report": true,
+    "plan_identity": true,
+    "implementation_reported_unchanged": true,
+    "supported_evidence_mode": true,
+    "no_promotion_or_training_claim": true,
+    "selected_matches_screen_analysis": true,
+    "screen.design": true,
+    "screen.record": true,
+    "screen.cache_disabled": true,
+    "screen.runner_identity": true,
+    "screen.mode": true,
+    "screen.receipt_claims": true,
+    "screen.sample_ids_unique": true,
+    "screen.cost_analysis": true,
+    "screen.precommitted_design": true,
+    "screen.invocation_accounting": true,
+    "screen.native_accounting": true,
+    "total_accounting": true,
+    "budget": true,
+    "no_unselected_confirmation": true,
+    "no_unconfirmed_recommendation": true
+  },
+  "phases": {
+    "screen": {
+      "scheduled": 24,
+      "observed": 24,
+      "statuses": {
+        "REJECTED": 12,
+        "VERIFIED": 12
+      },
+      "reported_native_processes": 24,
+      "rows": {
+        "control": {
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "tokens": 222,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2607572,
+              2607572
+            ],
+            [
+              2607587,
+              2607585
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "incumbent": {
+          "label": "incumbent",
+          "source_sha256": "0369a36e7b002fa2c58c694c1db9d44b3be1c3288261b6cd0881aad3ac98c966",
+          "tokens": 169,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              1283749,
+              1283749
+            ],
+            [
+              1283762,
+              1283764
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "composition-0": {
+          "label": "composition-0",
+          "source_sha256": "149410ffd59db80399c276ed4ee9115b39ed0fd4dde1f28a758dcd2e12ec069d",
+          "tokens": 159,
+          "admissible": false,
+          "reason": "incomplete_cost_coverage",
+          "raw_heartbeats_by_stratum": [
+            [],
+            []
+          ],
+          "axioms_by_version": {}
+        },
+        "composition-1": {
+          "label": "composition-1",
+          "source_sha256": "dccc3df6137c4049abeaeddbdec2987bdbfbc66ed1035dcab98302973408e28a",
+          "tokens": 123,
+          "admissible": false,
+          "reason": "incomplete_cost_coverage",
+          "raw_heartbeats_by_stratum": [
+            [],
+            []
+          ],
+          "axioms_by_version": {}
+        },
+        "composition-2": {
+          "label": "composition-2",
+          "source_sha256": "e38ff89bb22ed45e0e0b9351a24c640048ce2ed25f09d62b6d11788ae0653eb5",
+          "tokens": 161,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              1720073,
+              1720073
+            ],
+            [
+              1720086,
+              1720086
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "composition-3": {
+          "label": "composition-3",
+          "source_sha256": "745dd9b4c12af978306fd5b289db1e12d38c5cb47401f1bb5305f0f8e1ce4641",
+          "tokens": 131,
+          "admissible": false,
+          "reason": "incomplete_cost_coverage",
+          "raw_heartbeats_by_stratum": [
+            [],
+            []
+          ],
+          "axioms_by_version": {}
+        }
+      },
+      "strata": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "reference-first"
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "candidate-first"
+        }
+      ]
+    }
+  },
+  "proof_verified": false,
+  "fresh_native_processes": 0,
+  "promoted": false,
+  "training_enabled": false,
+  "official_score": null,
+  "reported_selector_status": "NO_IMPROVEMENT",
+  "errors": [],
+  "protocol_content_sha256": "3a863993726dfb4731d69c288633f50845a4eb4421beea38e807cf4541b18520",
+  "report_content_sha256": "36b882c7d2e19aaf1b521466adc78189b1a962d6366c3fdb00c1f8e53ce77fe3",
+  "legacy_policy_defaults_used": false,
+  "problem": "CallElimCorrect.extractedOldExprInVars",
+  "selected": null,
+  "objective": "strict-dual-v1",
+  "reason": "",
+  "reported_counts": {
+    "requests_reserved": 24,
+    "verifier_invocations": 24,
+    "native_processes": 24
+  },
+  "analysis_code_sha256": "b6b242e8ce6b68e32714a37cb9ee816132d2857ab8cc76922f57153b0deff36c",
+  "analysis_code_matches_recorded": true
+}

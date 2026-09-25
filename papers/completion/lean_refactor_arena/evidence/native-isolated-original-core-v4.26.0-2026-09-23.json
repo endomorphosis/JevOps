@@ -1,0 +1,100 @@
+{
+  "schema": "jevops-arena-isolated-original-control/v1",
+  "arena_problem": true,
+  "name": "Core.InitsUpdatesComm",
+  "pin": {
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+  },
+  "project": {
+    "repository": "https://github.com/strata-org/Strata",
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+    "root": "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/strata-org/Strata",
+    "kind": "repo",
+    "resolve_lake_manifest": true
+  },
+  "corpus_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+  "task_required_version_checks": 3,
+  "selected_version_checks": 1,
+  "candidate_is_original": true,
+  "context": {
+    "problem": "Core.InitsUpdatesComm",
+    "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3''",
+    "reference_source": "theorem InitsUpdatesComm\n  {P : PureExpr} {\u03c3 \u03c3' \u03c3'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates \u03c3 ks vs \u03c3' \u2192\n  InitStates \u03c3' ks' vs' \u03c3'' \u2192\n  \u2203 \u03c3\u2081,\n    \u03c3\u2081 = (updatedStates \u03c3 ks' vs') \u2227\n    InitStates \u03c3 ks' vs' \u03c3\u2081 \u2227\n    UpdateStates \u03c3\u2081 ks vs \u03c3'' := by\n  intros Hup Hinit\n  exists (updatedStates \u03c3 ks' vs')\n  have Hk : (isDefined \u03c3' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing \u03c3''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some \u03c3 x v \u03c3\u2080 xs vs \u03c3\u2081 Hup Hups ih =>\n    refine \u27e8rfl, ?_, ?_\u27e9\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (\u03c3':=updatedStates \u03c3\u2080 ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [\u2190 updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+    "reference_length": 224,
+    "reference_heartbeats": null,
+    "versions": [
+      {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      }
+    ],
+    "dependency_digests": [
+      "f2e354260b316cb426c5d13cc5beef1ac0cc33d9c128b01ca6dc503fb3ad8255"
+    ],
+    "verifier_id": "jevops-native-arena",
+    "verifier_version": "959011df9685a509582c3ace8bf6c0fe1420cac53636bf721a73d1cce77dfeb0",
+    "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+    "header": "",
+    "repository": "https://github.com/strata-org/Strata",
+    "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+    "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"execution_identity\":\"ba86305579ff2a58be193ee629d3b349d2cf8897721feca5c305498686832f37\",\"execution_policy\":{\"executable\":\"/usr/bin/docker\",\"image_id\":\"sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517\",\"memory_bytes\":2147483648,\"nano_cpus\":1000000000,\"network\":\"none\",\"pids\":64,\"profile\":\"jevops-arena-rootless-docker/v1\",\"read_only_inputs\":true,\"rootless_required\":true,\"separate_proof_checker\":false,\"socket\":\"/run/user/1000/docker.sock\",\"tmp_bytes\":67108864},\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":true,\"reference_branch\":\"independent\",\"timeout\":120}",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  },
+  "receipt": {
+    "request_id": "2e6064c85b78d327e28fd4ad0508d2d8637d25118e33a7d0db9d8abeedef8166",
+    "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+    "target": "Core.InitsUpdatesComm",
+    "outcome": "VERIFIED",
+    "type_preserved": true,
+    "exit_code": 0,
+    "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+    "heartbeats": 4689,
+    "reason": "",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"f2e354260b316cb426c5d13cc5beef1ac0cc33d9c128b01ca6dc503fb3ad8255\",\"driver_sha256\":\"730131c08ca482cbcf7f85d5c5945a66a57ee86c6427fa04d55451d702bae780\",\"execution_identity\":\"ba86305579ff2a58be193ee629d3b349d2cf8897721feca5c305498686832f37\",\"execution_policy\":{\"executable\":\"/usr/bin/docker\",\"image_id\":\"sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517\",\"memory_bytes\":2147483648,\"nano_cpus\":1000000000,\"network\":\"none\",\"pids\":64,\"profile\":\"jevops-arena-rootless-docker/v1\",\"read_only_inputs\":true,\"rootless_required\":true,\"separate_proof_checker\":false,\"socket\":\"/run/user/1000/docker.sock\",\"tmp_bytes\":67108864},\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689121,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689131,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":4367.104}"
+  },
+  "isolation_policy": {
+    "profile": "jevops-arena-rootless-docker/v1",
+    "socket": "/run/user/1000/docker.sock",
+    "image_id": "sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517",
+    "executable": "/usr/bin/docker",
+    "memory_bytes": 2147483648,
+    "tmp_bytes": 67108864,
+    "pids": 64,
+    "nano_cpus": 1000000000,
+    "network": "none",
+    "rootless_required": true,
+    "read_only_inputs": true,
+    "separate_proof_checker": false
+  },
+  "mounts": [
+    [
+      "/home/barberb/.elan/toolchains/leanprover--lean4---v4.26.0/bin/lean",
+      "/toolchain/bin/lean"
+    ],
+    [
+      "/home/barberb/.elan/toolchains/leanprover--lean4---v4.26.0/lib",
+      "/toolchain/lib"
+    ],
+    [
+      "/tmp/jevops-project-control-tPmk3u/source/jevops/lean/ArenaCheck.lean",
+      "/driver/ArenaCheck.lean"
+    ],
+    [
+      "/home/barberb/.local/state/ipfs_accelerate_py/vericodegen-2026-lra/track1-lake/clones/github.com/strata-org/Strata/.lake/build/lib/lean",
+      "/deps/0"
+    ]
+  ],
+  "verifier_process_attempts": 1,
+  "new_builds": 0,
+  "live_model_calls": 0,
+  "official_score": null,
+  "promoted": false,
+  "source_execution_attested": false,
+  "metric_integrity_established": false
+}

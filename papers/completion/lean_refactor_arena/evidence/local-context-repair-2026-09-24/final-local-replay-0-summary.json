@@ -1,0 +1,41 @@
+{
+  "schema": "jevops-arena-local/v1",
+  "status": "OBSERVED",
+  "ok": true,
+  "closing_reproduced": false,
+  "proof_admitted": false,
+  "whole_source_checked": false,
+  "binding": {
+    "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+    "trace_sha256": "49332ad13aab5bf13b7473765c007c08383ceb4750db178a936a42b59e4a62e4",
+    "dependency_environment_sha256": "1435c3a321326c4fdfb625d3d8dea90a769c7ec5bb7e3a4bf1b22ed0853bae08",
+    "exporter_sha256": "499ce68eee9ac8c93652e27909f15175983845d71847fc530b6f09e68843e3f9",
+    "event_id": 15,
+    "candidate_sha256": "bb41bd27025e65441fb1ea0a5b8c4f34c26d2f068c505a451f2ef62d3fb071c9",
+    "node_budget": 4096,
+    "event_budget": 256
+  },
+  "environment": "ab54beec23fff063ccb5116e89379f3abc2d7cf767db788784decbeee52a3e74",
+  "native_sha256": "e8589db155252cce0a8b112cd966dbdee0d12c1a160e29c85447d6ec106dff14",
+  "request_sha256": "7d305d61595caf0e1f998edce450f000a5a4c49b8bdb01890172d21f92bb29da",
+  "baseline": {
+    "axioms": [
+      "propext"
+    ],
+    "closed_goals_checked": "1",
+    "remaining_goals": "0",
+    "status": "closed_kernel_checked"
+  },
+  "proposed": {
+    "axioms": [],
+    "closed_goals_checked": "0",
+    "reason": "Type mismatch\n  Core.updatedStatesInit\nhas type\n  List.length ?m.210 = List.length ?m.211 →\n    Imperative.isNotDefined ?m.209 ?m.210 →\n      List.Nodup ?m.210 → Core.InitStates ?m.209 ?m.210 ?m.211 (Core.updatedStates ?m.209 ?m.210 ?m.211)\nbut is expected to have type\n  Imperative.UpdateState P (Core.updatedStates' σ (ks'.zip vs')) x v\n    (Core.updatedState (Core.updatedStates' σ (ks'.zip vs')) x v)",
+    "remaining_goals": null,
+    "status": "rejected"
+  },
+  "candidate": "exact _root_.Core.updatedStatesInit",
+  "event_id": "15",
+  "raw_path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-context-repair-final-20260924-EZ4CQQ/run/local-replay-0.json",
+  "raw_sha256": "2a1660ee37c7cd443a89fd947a87f16053e901ddbfc5b0aa47cbe9705cb69fdf",
+  "summary_only": true
+}

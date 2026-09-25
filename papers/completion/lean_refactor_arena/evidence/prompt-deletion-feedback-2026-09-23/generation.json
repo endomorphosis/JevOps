@@ -1,0 +1,453 @@
+{
+  "schema": "jevops-refactor-deletion-feedback-pilot/v1",
+  "plan_id": "7a3dfdbc34cc58a3d74a7b7a975795d086f3e9b18daa2967e20c8d2b3b2b166c",
+  "rows": [
+    {
+      "slot": 0,
+      "arm": "no-feedback-reverse",
+      "repetition": 0,
+      "prompt_sha256": "e5d23095f0cffeee3f92ac3b101eebf5e4694b39ff3da56d380a76a432803d06",
+      "native_verified": null,
+      "official_score": null,
+      "request_settings": {
+        "provider": "leanstral_local",
+        "model_name": "Leanstral",
+        "base_url": "http://172.17.0.1:8080/v1",
+        "max_new_tokens": 1024,
+        "timeout": 180,
+        "temperature": 0,
+        "stop": [
+          "<|im_end|>"
+        ]
+      },
+      "raw": "</</invoke>\n<|tool_call_end|>|tool_call_end|>|tool_call_end|>|tool_call_end|>|tool_call_end|>|tool_calls>\n",
+      "raw_sha256": "56b1914775a82fcc59fe225aa90b2f7a174d2a57d35c57abe965157231ecb160",
+      "trace": {
+        "router_module": "jevops.llm_router",
+        "effective_provider_name": "leanstral_local",
+        "effective_model_name": "Leanstral",
+        "fixture": false,
+        "external_dependency": false,
+        "provider": "leanstral_local",
+        "model": "Leanstral",
+        "reason": "generated",
+        "tool_calls": [],
+        "requested_model": "Leanstral",
+        "response_model": "leanstral_local",
+        "request_id": "chatcmpl-3FWJJ7lUU64s0QbjZSgMarIygddDubAh",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 4019,
+          "completion_tokens": 46,
+          "total_tokens": 4065
+        },
+        "endpoint": "http://172.17.0.1:8080/v1/chat/completions",
+        "wall_ms": 9603.939690045081,
+        "server_identity_attested": false,
+        "fallback_used": false
+      },
+      "status": "contract_mismatch",
+      "strict_contract": false,
+      "normalizations": [],
+      "wall_seconds": 9.6043
+    },
+    {
+      "slot": 1,
+      "arm": "feedback-reverse",
+      "repetition": 0,
+      "prompt_sha256": "77e4b24158b955cba0a6423f948e790d25cd062ef26462d92a28b70f96be7045",
+      "native_verified": null,
+      "official_score": null,
+      "request_settings": {
+        "provider": "leanstral_local",
+        "model_name": "Leanstral",
+        "base_url": "http://172.17.0.1:8080/v1",
+        "max_new_tokens": 1024,
+        "timeout": 180,
+        "temperature": 0,
+        "stop": [
+          "<|im_end|>"
+        ]
+      },
+      "raw": "{\"request_id\": \"5b2bb52c015c3a55\", \"edit_id\": 64}",
+      "raw_sha256": "bf46d46e0687322075cf229dbcd5656bcede87eb7f6327cda6fa69944b8d53a4",
+      "trace": {
+        "router_module": "jevops.llm_router",
+        "effective_provider_name": "leanstral_local",
+        "effective_model_name": "Leanstral",
+        "fixture": false,
+        "external_dependency": false,
+        "provider": "leanstral_local",
+        "model": "Leanstral",
+        "reason": "generated",
+        "tool_calls": [],
+        "requested_model": "Leanstral",
+        "response_model": "leanstral_local",
+        "request_id": "chatcmpl-SOVuATCBPUiGFKBTVsIaDIySmVtdPtNO",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 4940,
+          "completion_tokens": 30,
+          "total_tokens": 4970
+        },
+        "endpoint": "http://172.17.0.1:8080/v1/chat/completions",
+        "wall_ms": 3685.5118720559403,
+        "server_identity_attested": false,
+        "fallback_used": false
+      },
+      "resolved_delete_lines": [
+        12,
+        12
+      ],
+      "catalog_sha256": "52677802aa9a72d367b5a883b0b552a21d71b1d948af13ef7e1026e12f052219",
+      "status": "parsed",
+      "strict_contract": true,
+      "edit": {
+        "request_id": "5b2bb52c015c3a55",
+        "edit_id": 64
+      },
+      "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [← updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "normalizations": [],
+      "source_sha256": "d3b0f4b8ccc3fd6339156b886fa9567a690edf54d4e7165bd0bbc1aee07e458d",
+      "intake_error": null,
+      "candidate_tokens_unverified": 221,
+      "exact_reference_bytes": false,
+      "wall_seconds": 3.6927,
+      "candidate_label": "draft-0"
+    },
+    {
+      "slot": 2,
+      "arm": "feedback-forward",
+      "repetition": 0,
+      "prompt_sha256": "8314e65ef77e26eecf2a1d8d5d8917c3b8dbdc6b6fd52b174b60e4ddd0b123df",
+      "native_verified": null,
+      "official_score": null,
+      "request_settings": {
+        "provider": "leanstral_local",
+        "model_name": "Leanstral",
+        "base_url": "http://172.17.0.1:8080/v1",
+        "max_new_tokens": 1024,
+        "timeout": 180,
+        "temperature": 0,
+        "stop": [
+          "<|im_end|>"
+        ]
+      },
+      "raw": "{\"request_id\": \"5b2bb52c015c3a55\", \"edit_id\": \"64\"}",
+      "raw_sha256": "cbff1ca90844f27a7bff1475c35e4f45acd567b2f504c4ab526883714dd0feea",
+      "trace": {
+        "router_module": "jevops.llm_router",
+        "effective_provider_name": "leanstral_local",
+        "effective_model_name": "Leanstral",
+        "fixture": false,
+        "external_dependency": false,
+        "provider": "leanstral_local",
+        "model": "Leanstral",
+        "reason": "generated",
+        "tool_calls": [],
+        "requested_model": "Leanstral",
+        "response_model": "leanstral_local",
+        "request_id": "chatcmpl-oXIziG9XbDaE37RGQpeQaQrU2M6nAs2d",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 4940,
+          "completion_tokens": 30,
+          "total_tokens": 4970
+        },
+        "endpoint": "http://172.17.0.1:8080/v1/chat/completions",
+        "wall_ms": 5476.522519951686,
+        "server_identity_attested": false,
+        "fallback_used": false
+      },
+      "status": "contract_mismatch",
+      "strict_contract": false,
+      "normalizations": [],
+      "wall_seconds": 5.477
+    },
+    {
+      "slot": 3,
+      "arm": "no-feedback-forward",
+      "repetition": 0,
+      "prompt_sha256": "bc7219dc20e4fb363ad6ebdeb03d451894c85d4da15ee517e3a4a074b9f1cefb",
+      "native_verified": null,
+      "official_score": null,
+      "request_settings": {
+        "provider": "leanstral_local",
+        "model_name": "Leanstral",
+        "base_url": "http://172.17.0.1:8080/v1",
+        "max_new_tokens": 1024,
+        "timeout": 180,
+        "temperature": 0,
+        "stop": [
+          "<|im_end|>"
+        ]
+      },
+      "raw": "```json\n{\n  \"request_id\": \"5b2bb52c015c3a55\",\n  \"edit_id\": \"1\"\n}\n```",
+      "raw_sha256": "590475021538629e15464acd0cf562f5720b9b5acc1380261aa9c3096dbd74ac",
+      "trace": {
+        "router_module": "jevops.llm_router",
+        "effective_provider_name": "leanstral_local",
+        "effective_model_name": "Leanstral",
+        "fixture": false,
+        "external_dependency": false,
+        "provider": "leanstral_local",
+        "model": "Leanstral",
+        "reason": "generated",
+        "tool_calls": [],
+        "requested_model": "Leanstral",
+        "response_model": "leanstral_local",
+        "request_id": "chatcmpl-6D8xLibqygYf8RF04fP9CSMbWKzjWQk0",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 4019,
+          "completion_tokens": 37,
+          "total_tokens": 4056
+        },
+        "endpoint": "http://172.17.0.1:8080/v1/chat/completions",
+        "wall_ms": 1916.645793011412,
+        "server_identity_attested": false,
+        "fallback_used": false
+      },
+      "status": "contract_mismatch",
+      "strict_contract": false,
+      "normalizations": [],
+      "wall_seconds": 1.917
+    },
+    {
+      "slot": 4,
+      "arm": "feedback-forward",
+      "repetition": 1,
+      "prompt_sha256": "4583e3c6fdeabb99a8a51168b7eaefd8e560f74b2293fd529440aa12cedf4c68",
+      "native_verified": null,
+      "official_score": null,
+      "request_settings": {
+        "provider": "leanstral_local",
+        "model_name": "Leanstral",
+        "base_url": "http://172.17.0.1:8080/v1",
+        "max_new_tokens": 1024,
+        "timeout": 180,
+        "temperature": 0,
+        "stop": [
+          "<|im_end|>"
+        ]
+      },
+      "raw": "{\"request_id\": \"13168854d8f28ddb\", \"edit_id\": \"1\"}",
+      "raw_sha256": "ce9792d5f296c4c15466628a2980fc3ec551997e680add2bcd4070caa1c5bd4e",
+      "trace": {
+        "router_module": "jevops.llm_router",
+        "effective_provider_name": "leanstral_local",
+        "effective_model_name": "Leanstral",
+        "fixture": false,
+        "external_dependency": false,
+        "provider": "leanstral_local",
+        "model": "Leanstral",
+        "reason": "generated",
+        "tool_calls": [],
+        "requested_model": "Leanstral",
+        "response_model": "leanstral_local",
+        "request_id": "chatcmpl-xmdZJKIoif4LuuK2EiIoHBP1tFb77TBV",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 4940,
+          "completion_tokens": 29,
+          "total_tokens": 4969
+        },
+        "endpoint": "http://172.17.0.1:8080/v1/chat/completions",
+        "wall_ms": 9764.19303799048,
+        "server_identity_attested": false,
+        "fallback_used": false
+      },
+      "status": "contract_mismatch",
+      "strict_contract": false,
+      "normalizations": [],
+      "wall_seconds": 9.7646
+    },
+    {
+      "slot": 5,
+      "arm": "no-feedback-reverse",
+      "repetition": 1,
+      "prompt_sha256": "66c11cf6b9517d7c5de88c509b7589f1704ba60ede9ea09c42764dfbf8f93ebe",
+      "native_verified": null,
+      "official_score": null,
+      "request_settings": {
+        "provider": "leanstral_local",
+        "model_name": "Leanstral",
+        "base_url": "http://172.17.0.1:8080/v1",
+        "max_new_tokens": 1024,
+        "timeout": 180,
+        "temperature": 0,
+        "stop": [
+          "<|im_end|>"
+        ]
+      },
+      "raw": "{\"request_id\": \"13168854d8f28ddb\", \"edit_id\": 1}",
+      "raw_sha256": "2fa3a864120c6b6cd22fced0f9b315868318cb3a1d43856b4831a484cce28510",
+      "trace": {
+        "router_module": "jevops.llm_router",
+        "effective_provider_name": "leanstral_local",
+        "effective_model_name": "Leanstral",
+        "fixture": false,
+        "external_dependency": false,
+        "provider": "leanstral_local",
+        "model": "Leanstral",
+        "reason": "generated",
+        "tool_calls": [],
+        "requested_model": "Leanstral",
+        "response_model": "leanstral_local",
+        "request_id": "chatcmpl-Zq3yUnOfFoUmOts7odRatcci4XurRmwM",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 4019,
+          "completion_tokens": 29,
+          "total_tokens": 4048
+        },
+        "endpoint": "http://172.17.0.1:8080/v1/chat/completions",
+        "wall_ms": 3895.828089094721,
+        "server_identity_attested": false,
+        "fallback_used": false
+      },
+      "resolved_delete_lines": [
+        8,
+        14
+      ],
+      "catalog_sha256": "52677802aa9a72d367b5a883b0b552a21d71b1d948af13ef7e1026e12f052219",
+      "status": "parsed",
+      "strict_contract": true,
+      "edit": {
+        "request_id": "13168854d8f28ddb",
+        "edit_id": 1
+      },
+      "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [← updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "normalizations": [],
+      "source_sha256": "baabfe7660cbfa6494a1a09cf14341c04d611df70be17cedc3739dba2d8e939b",
+      "intake_error": null,
+      "candidate_tokens_unverified": 204,
+      "exact_reference_bytes": false,
+      "wall_seconds": 3.9042,
+      "candidate_label": "draft-1"
+    },
+    {
+      "slot": 6,
+      "arm": "feedback-reverse",
+      "repetition": 1,
+      "prompt_sha256": "4fcb2977b93ce91d03167a7295099c6546db942bc21dd1d2699e8456f84924c4",
+      "native_verified": null,
+      "official_score": null,
+      "request_settings": {
+        "provider": "leanstral_local",
+        "model_name": "Leanstral",
+        "base_url": "http://172.17.0.1:8080/v1",
+        "max_new_tokens": 1024,
+        "timeout": 180,
+        "temperature": 0,
+        "stop": [
+          "<|im_end|>"
+        ]
+      },
+      "raw": "{\"request_id\": \"13168854d8f28ddb\", \"edit_id\": 64, \"delete_lines\": [12, 12]}}\n",
+      "raw_sha256": "f65be0af5ccce2d1e9eca695e987485da6d600ed54105bc7bbe36a14b143214d",
+      "trace": {
+        "router_module": "jevops.llm_router",
+        "effective_provider_name": "leanstral_local",
+        "effective_model_name": "Leanstral",
+        "fixture": false,
+        "external_dependency": false,
+        "provider": "leanstral_local",
+        "model": "Leanstral",
+        "reason": "generated",
+        "tool_calls": [],
+        "requested_model": "Leanstral",
+        "response_model": "leanstral_local",
+        "request_id": "chatcmpl-0mMkRAEjUzHandfdIPkiS0Id1pzl7ACf",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 4940,
+          "completion_tokens": 48,
+          "total_tokens": 4988
+        },
+        "endpoint": "http://172.17.0.1:8080/v1/chat/completions",
+        "wall_ms": 3892.71246897988,
+        "server_identity_attested": false,
+        "fallback_used": false
+      },
+      "status": "contract_mismatch",
+      "strict_contract": false,
+      "normalizations": [],
+      "wall_seconds": 3.8932
+    },
+    {
+      "slot": 7,
+      "arm": "no-feedback-forward",
+      "repetition": 1,
+      "prompt_sha256": "2bf6ce487a73be1d1d90ca04fc8660a0f9499978cf2ae266a59d2fcce39a4f5e",
+      "native_verified": null,
+      "official_score": null,
+      "request_settings": {
+        "provider": "leanstral_local",
+        "model_name": "Leanstral",
+        "base_url": "http://172.17.0.1:8080/v1",
+        "max_new_tokens": 1024,
+        "timeout": 180,
+        "temperature": 0,
+        "stop": [
+          "<|im_end|>"
+        ]
+      },
+      "raw": "{\"request_id\": \"13168854d8f28ddb\", \"edit_id\": 1}",
+      "raw_sha256": "2fa3a864120c6b6cd22fced0f9b315868318cb3a1d43856b4831a484cce28510",
+      "trace": {
+        "router_module": "jevops.llm_router",
+        "effective_provider_name": "leanstral_local",
+        "effective_model_name": "Leanstral",
+        "fixture": false,
+        "external_dependency": false,
+        "provider": "leanstral_local",
+        "model": "Leanstral",
+        "reason": "generated",
+        "tool_calls": [],
+        "requested_model": "Leanstral",
+        "response_model": "leanstral_local",
+        "request_id": "chatcmpl-hV9KRY7bNuba49fLBOPMuoJzp3ipM6PV",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 4019,
+          "completion_tokens": 29,
+          "total_tokens": 4048
+        },
+        "endpoint": "http://172.17.0.1:8080/v1/chat/completions",
+        "wall_ms": 1519.8536410462111,
+        "server_identity_attested": false,
+        "fallback_used": false
+      },
+      "resolved_delete_lines": [
+        8,
+        14
+      ],
+      "catalog_sha256": "52677802aa9a72d367b5a883b0b552a21d71b1d948af13ef7e1026e12f052219",
+      "status": "parsed",
+      "strict_contract": true,
+      "edit": {
+        "request_id": "13168854d8f28ddb",
+        "edit_id": 1
+      },
+      "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [← updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+      "normalizations": [],
+      "source_sha256": "baabfe7660cbfa6494a1a09cf14341c04d611df70be17cedc3739dba2d8e939b",
+      "intake_error": null,
+      "candidate_tokens_unverified": 204,
+      "exact_reference_bytes": false,
+      "wall_seconds": 1.5239,
+      "candidate_label": "draft-1"
+    }
+  ],
+  "candidate_files": [
+    "draft-0.json",
+    "draft-1.json"
+  ],
+  "requests_reserved": 8,
+  "native_executions": 0,
+  "paid_api_cost": null,
+  "electricity_cost": null,
+  "official_score": null,
+  "policy_selected": false
+}

@@ -1,0 +1,23 @@
+{
+  "pin": {
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+  },
+  "label": "draft-0",
+  "source_sha256": "ec9a67d33767579d9c4c85d4240e34556ca6b2fbbaf3e96070e2c6ac19b81403",
+  "status": "VERIFIED",
+  "receipt": {
+    "request_id": "bbb594f0763ac6e3cbe2dc0b0b0b30ec61c9832f090fe3a7fb5cce4a3c5efe30",
+    "candidate_sha256": "ec9a67d33767579d9c4c85d4240e34556ca6b2fbbaf3e96070e2c6ac19b81403",
+    "target": "Core.InitsUpdatesComm",
+    "outcome": "VERIFIED",
+    "type_preserved": true,
+    "exit_code": 0,
+    "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+    "heartbeats": 4689,
+    "reason": "",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"be2408939d0a8313fbb48b3339b2b4e495f09db4bb3123ad4cef7bf1c90ba36a\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689119,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689131,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":5826.103}"
+  },
+  "context_id": "a55e6f55de58d939e77e57851c81b8c95f3aa43aa5e05346e15baed82d179826",
+  "wall_seconds": 8.6348
+}

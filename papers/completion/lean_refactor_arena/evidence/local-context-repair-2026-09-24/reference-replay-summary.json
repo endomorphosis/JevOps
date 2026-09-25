@@ -1,0 +1,43 @@
+{
+  "schema": "jevops-arena-local/v1",
+  "status": "OBSERVED",
+  "ok": true,
+  "closing_reproduced": false,
+  "proof_admitted": false,
+  "whole_source_checked": false,
+  "binding": {
+    "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+    "trace_sha256": "49332ad13aab5bf13b7473765c007c08383ceb4750db178a936a42b59e4a62e4",
+    "dependency_environment_sha256": "1435c3a321326c4fdfb625d3d8dea90a769c7ec5bb7e3a4bf1b22ed0853bae08",
+    "exporter_sha256": "499ce68eee9ac8c93652e27909f15175983845d71847fc530b6f09e68843e3f9",
+    "event_id": 2,
+    "candidate_sha256": "42e93b9bb77d8a73e8412111b8f3d6befab66bf48fdcdefa80bb111819aa0cb1",
+    "node_budget": 4096,
+    "event_budget": 256
+  },
+  "environment": "2efb7247bff4b801236060ffce2a67d9115ceb4b3ed770a32e399ad5a0363148",
+  "native_sha256": "d3d644c4ad2e42835430a69fdcb9879f28fff29ded2bda722b8968ea0f0c5d97",
+  "request_sha256": "efcad3860c14fad129f3d4c27622da39eeb53dbb9b920239f84bc47f0c03375f",
+  "baseline": {
+    "axioms": [
+      "Quot.sound",
+      "propext",
+      "Classical.choice"
+    ],
+    "closed_goals_checked": "1",
+    "remaining_goals": "0",
+    "status": "closed_kernel_checked"
+  },
+  "proposed": {
+    "axioms": [],
+    "closed_goals_checked": "0",
+    "remaining_goals": "1",
+    "status": "open_goals"
+  },
+  "candidate": "skip",
+  "event_id": "2",
+  "raw_path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-context-repair-final-20260924-EZ4CQQ/run/reference-replay.json",
+  "raw_sha256": "af7dfdcea1423b38028bb6f2c8307fe10993773ae4319719e79af1ab8e142d28",
+  "summary_only": true,
+  "control_passed": true
+}

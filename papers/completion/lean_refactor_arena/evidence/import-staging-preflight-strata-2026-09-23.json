@@ -1,0 +1,66 @@
+{
+  "schema": "jevops-arena-import-plan-inspection/v1",
+  "arena_problem": "Core.InitsUpdatesComm",
+  "max_preparation_bytes": 50000000000,
+  "metadata_only": true,
+  "proofs_verified": 0,
+  "source_sha256": {
+    "jevops/arena_prepare.py": "dc9a3f81115f759f65906e6b6d9317e8d67d107c15fa491a5b3a775433587eee",
+    "jevops/arena_staging.py": "7049ea0c556e0ed05077739693b6b721190a6e10a9cfd9c7cdf22a455f1b6482"
+  },
+  "rows": [
+    {
+      "lean_tag": "v4.27.0",
+      "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d",
+      "plan": {
+        "schema": "jevops-arena-import-plan/v1",
+        "status": "DOES_NOT_FIT",
+        "source_paths": [
+          "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/strata-v4.27.0/.lake/build/lib/lean"
+        ],
+        "entries": 893,
+        "files": 880,
+        "payload_bytes": 167341758,
+        "required_reservation_bytes": 274137088,
+        "max_bytes": 128000000,
+        "preparation_overhead_bytes": 28327936,
+        "available_headroom_bytes": 151672064,
+        "reasons": [
+          "import byte budget",
+          "requested reservation budget",
+          "reserved preparation headroom"
+        ],
+        "content_validated": false,
+        "bytes_reserved": 0,
+        "proofs_verified": 0
+      }
+    },
+    {
+      "lean_tag": "v4.29.1",
+      "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9",
+      "plan": {
+        "schema": "jevops-arena-import-plan/v1",
+        "status": "DOES_NOT_FIT",
+        "source_paths": [
+          "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/strata-v4.29.1/.lake/build/lib/lean",
+          "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/strata-v4.29.1/.lake/packages/StrataDDM/.lake/build/lib/lean"
+        ],
+        "entries": 794,
+        "files": 781,
+        "payload_bytes": 147651635,
+        "required_reservation_bytes": 242810880,
+        "max_bytes": 128000000,
+        "preparation_overhead_bytes": 28327936,
+        "available_headroom_bytes": 151672064,
+        "reasons": [
+          "import byte budget",
+          "requested reservation budget",
+          "reserved preparation headroom"
+        ],
+        "content_validated": false,
+        "bytes_reserved": 0,
+        "proofs_verified": 0
+      }
+    }
+  ]
+}

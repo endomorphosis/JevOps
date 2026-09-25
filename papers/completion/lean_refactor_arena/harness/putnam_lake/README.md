@@ -27,25 +27,37 @@ $XDG_STATE_HOME/ipfs_accelerate_py/vericodegen-2026/lean_refactor_arena/
 
 One lake project per Putnam Lean tag from the frozen JSONL:
 
-| Lean tag | JSONL `version_info` pin (not a clone URL) | Mathlib rev | Aesop rev |
+| Lean tag | JSONL `version_info` Mathlib commit | Mathlib rev when pin supplied | Legacy Aesop rev |
 | --- | --- | --- | --- |
-| `v4.25.0` | `1ccd71f89cbbd82ae7d097723ce1722ca7b01c33` | `v4.25.0` | `v4.25.0` |
-| `v4.26.0` | `2df2f0150c275ad53cb3c90f7c98ec15a56a1a67` | `v4.26.0` | `v4.26.0` |
-| `v4.27.0` | `a3a10db0e9d66acbebf76c5e6a135066525ac900` | `v4.27.0` | `v4.27.0` |
+| `v4.25.0` | `1ccd71f89cbbd82ae7d097723ce1722ca7b01c33` | JSONL commit | `v4.25.0` |
+| `v4.26.0` | `2df2f0150c275ad53cb3c90f7c98ec15a56a1a67` | JSONL commit | `v4.26.0` |
+| `v4.27.0` | `a3a10db0e9d66acbebf76c5e6a135066525ac900` | JSONL commit | `v4.27.0` |
 
 `putnam_1964_b2` lists only `v4.25.0` and `v4.26.0`. The `v4.27.0` project still exists because the other two Putnam records require it.
 
 Each `<tag>/` tree:
 
 ```text
-lakefile.lean          # require mathlib + aesop from git at the Lean tag
+lakefile.lean          # require mathlib at supplied SHA (tag-only calls retain tag), aesop at tag
 lean-toolchain         # leanprover/lean4:<tag>
 pins.json              # recorded Mathlib/Aesop revs; putnambench_url is null
 Putnam.lean            # import Putnam.Candidate
 Putnam/Candidate.lean  # compile-worker module (not Tmp.lean)
 ```
 
-`pins.json` stores the JSONL git commit as `jsonl_version_pin`. That value is **not** used as a PutnamBench clone. If organizers later publish Mathlib/Aesop SHAs in `evidence/run_freeze.json`, replace the tag revs and rebake.
+`pins.json` stores the JSONL git commit as `jsonl_version_pin`. The organizer's
+vendored `space/benchmark.py` identifies it as the **Mathlib4 commit**, not a
+PutnamBench repository pin. The renderer now passes an explicitly supplied pin
+through to `require mathlib`; it previously recorded the pin but used the tag.
+Tag-only callers remain compatible. Aesop's actual resolved revision belongs in
+the Lake lockfile. Old generated projects and caches are not rewritten here.
+
+The opt-in `jevops.arena_lean` adapter independently checks the exact Mathlib
+commit and every flattened lockfile dependency, including Aesop. It uses the
+JSONL header directly and never splices/imports `Putnam.Candidate`. Missing
+compiled imports are capability gaps. Neither a `BAKED` marker nor `pins.json`
+alone establishes native readiness or proof; see `ARENA_NATIVE_VERIFIER.md` at
+the repository root.
 
 ## lakefile (v4.26.0 example)
 

@@ -1,0 +1,908 @@
+{
+  "schema": "jevops-arena-local/v1",
+  "status": "OBSERVED",
+  "ok": true,
+  "request_sha256": "a8ff779d0e7f94ce709ea299daf7232e3ae63c5594aa0f585cb5d966da1cc774",
+  "proof_admitted": false,
+  "whole_source_checked": false,
+  "evidence_mode": "local_lean",
+  "origin": {
+    "kind": "arena-project/v1",
+    "context_id": "17d89aeec54edc1b76b97f27d882a84135f3b780f573e93d0f8644ad2726fb9a",
+    "record_sha256": "8531dba47f5c2ccb5526c9596f06804c66f4cf6971d1533baf6c1ffb61311625",
+    "target": "Core.InitsUpdatesComm",
+    "pin": {
+      "lean_tag": "v4.29.1",
+      "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+    },
+    "adapter_sha256": "7e2459a2567236430b8f452b0fa26359e3f24e1a2df944607e83d1e8484643ef",
+    "projection": "closing-source-spans/v1",
+    "evidence_mode": "local_lean"
+  },
+  "trace_sha256": "a8da4fe4374ba85bde943464cbbb6bc7aa044a019798ba7861f48de150bce85e",
+  "event_counts": {
+    "captured": 37
+  },
+  "state_schemas": [
+    "jevops-open-proof-state/v2"
+  ],
+  "events": [
+    {
+      "id": "0",
+      "status": "captured",
+      "reason": null,
+      "start": "320",
+      "end": "2042",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Term"
+        ],
+        [
+          "s",
+          "byTactic"
+        ]
+      ],
+      "source_span": null
+    },
+    {
+      "id": "1",
+      "status": "captured",
+      "reason": null,
+      "start": "320",
+      "end": "322",
+      "syntax_kind": [
+        [
+          "s",
+          "by"
+        ]
+      ],
+      "source_span": "by"
+    },
+    {
+      "id": "2",
+      "status": "captured",
+      "reason": null,
+      "start": "325",
+      "end": "2042",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": null
+    },
+    {
+      "id": "3",
+      "status": "captured",
+      "reason": null,
+      "start": "550",
+      "end": "569",
+      "syntax_kind": [
+        [
+          "s",
+          "null"
+        ]
+      ],
+      "source_span": "case update_none =>"
+    },
+    {
+      "id": "4",
+      "status": "captured",
+      "reason": null,
+      "start": "574",
+      "end": "763",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": "simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor"
+    },
+    {
+      "id": "5",
+      "status": "captured",
+      "reason": null,
+      "start": "752",
+      "end": "763",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "constructor"
+        ]
+      ],
+      "source_span": "constructor"
+    },
+    {
+      "id": "6",
+      "status": "captured",
+      "reason": null,
+      "start": "766",
+      "end": "2042",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "case"
+        ]
+      ],
+      "source_span": null
+    },
+    {
+      "id": "7",
+      "status": "captured",
+      "reason": null,
+      "start": "766",
+      "end": "822",
+      "syntax_kind": [
+        [
+          "s",
+          "null"
+        ]
+      ],
+      "source_span": "case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>"
+    },
+    {
+      "id": "8",
+      "status": "captured",
+      "reason": null,
+      "start": "827",
+      "end": "2042",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": null
+    },
+    {
+      "id": "9",
+      "status": "captured",
+      "reason": null,
+      "start": "858",
+      "end": "1054",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": "apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit"
+    },
+    {
+      "id": "10",
+      "status": "captured",
+      "reason": null,
+      "start": "1027",
+      "end": "1054",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "exact"
+        ]
+      ],
+      "source_span": "exact InitStatesNodup Hinit"
+    },
+    {
+      "id": "11",
+      "status": "captured",
+      "reason": null,
+      "start": "1059",
+      "end": "2042",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "cdot"
+        ]
+      ],
+      "source_span": null
+    },
+    {
+      "id": "12",
+      "status": "captured",
+      "reason": null,
+      "start": "1061",
+      "end": "2042",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": null
+    },
+    {
+      "id": "13",
+      "status": "captured",
+      "reason": null,
+      "start": "1135",
+      "end": "1943",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": null
+    },
+    {
+      "id": "14",
+      "status": "captured",
+      "reason": null,
+      "start": "1225",
+      "end": "1708",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": null
+    },
+    {
+      "id": "15",
+      "status": "captured",
+      "reason": null,
+      "start": "1322",
+      "end": "1348",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": "split at Hdef <;> simp_all"
+    },
+    {
+      "id": "16",
+      "status": "captured",
+      "reason": null,
+      "start": "1340",
+      "end": "1348",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "simpAll"
+        ]
+      ],
+      "source_span": "simp_all"
+    },
+    {
+      "id": "17",
+      "status": "captured",
+      "reason": null,
+      "start": "1359",
+      "end": "1708",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticNext_=>_"
+        ]
+      ],
+      "source_span": null
+    },
+    {
+      "id": "18",
+      "status": "captured",
+      "reason": null,
+      "start": "1372",
+      "end": "1374",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "case"
+        ]
+      ],
+      "source_span": "=>"
+    },
+    {
+      "id": "19",
+      "status": "captured",
+      "reason": null,
+      "start": "1359",
+      "end": "1374",
+      "syntax_kind": [
+        [
+          "s",
+          "null"
+        ]
+      ],
+      "source_span": "next val heq =>"
+    },
+    {
+      "id": "20",
+      "status": "captured",
+      "reason": null,
+      "start": "1385",
+      "end": "1708",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": null
+    },
+    {
+      "id": "21",
+      "status": "captured",
+      "reason": null,
+      "start": "1509",
+      "end": "1517",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": "simp_all"
+    },
+    {
+      "id": "22",
+      "status": "captured",
+      "reason": null,
+      "start": "1530",
+      "end": "1668",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": "apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit"
+    },
+    {
+      "id": "23",
+      "status": "captured",
+      "reason": null,
+      "start": "1636",
+      "end": "1668",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "apply"
+        ]
+      ],
+      "source_span": "apply InitStatesNotDefined Hinit"
+    },
+    {
+      "id": "24",
+      "status": "captured",
+      "reason": null,
+      "start": "1679",
+      "end": "1708",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "cdot"
+        ]
+      ],
+      "source_span": ". exact InitStatesNodup Hinit"
+    },
+    {
+      "id": "25",
+      "status": "captured",
+      "reason": null,
+      "start": "1681",
+      "end": "1708",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": "exact InitStatesNodup Hinit"
+    },
+    {
+      "id": "26",
+      "status": "captured",
+      "reason": null,
+      "start": "1717",
+      "end": "1943",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "cdot"
+        ]
+      ],
+      "source_span": ". rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all"
+    },
+    {
+      "id": "27",
+      "status": "captured",
+      "reason": null,
+      "start": "1719",
+      "end": "1943",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": "rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all"
+    },
+    {
+      "id": "28",
+      "status": "captured",
+      "reason": null,
+      "start": "1719",
+      "end": "1751",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": "rw [List.unzip_zip] <;> simp_all"
+    },
+    {
+      "id": "29",
+      "status": "captured",
+      "reason": null,
+      "start": "1743",
+      "end": "1751",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "simpAll"
+        ]
+      ],
+      "source_span": "simp_all"
+    },
+    {
+      "id": "30",
+      "status": "captured",
+      "reason": null,
+      "start": "1935",
+      "end": "1943",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "simpAll"
+        ]
+      ],
+      "source_span": "simp_all"
+    },
+    {
+      "id": "31",
+      "status": "captured",
+      "reason": null,
+      "start": "1950",
+      "end": "2042",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "cdot"
+        ]
+      ],
+      "source_span": ". apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all"
+    },
+    {
+      "id": "32",
+      "status": "captured",
+      "reason": null,
+      "start": "1952",
+      "end": "2042",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": "apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all"
+    },
+    {
+      "id": "33",
+      "status": "captured",
+      "reason": null,
+      "start": "1989",
+      "end": "2023",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": "simp [isDefined] at * <;> simp_all"
+    },
+    {
+      "id": "34",
+      "status": "captured",
+      "reason": null,
+      "start": "2015",
+      "end": "2023",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "simpAll"
+        ]
+      ],
+      "source_span": "simp_all"
+    },
+    {
+      "id": "35",
+      "status": "captured",
+      "reason": null,
+      "start": "2032",
+      "end": "2042",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "cdot"
+        ]
+      ],
+      "source_span": ". simp_all"
+    },
+    {
+      "id": "36",
+      "status": "captured",
+      "reason": null,
+      "start": "2034",
+      "end": "2042",
+      "syntax_kind": [
+        [
+          "s",
+          "Lean"
+        ],
+        [
+          "s",
+          "Parser"
+        ],
+        [
+          "s",
+          "Tactic"
+        ],
+        [
+          "s",
+          "tacticSeq"
+        ]
+      ],
+      "source_span": "simp_all"
+    }
+  ],
+  "raw_path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-context-repair-20260924-MvhckB/run/capture.json",
+  "raw_sha256": "decebba8d9f9e4f5e722b754bbea1e726183747b92ea9e5a0adda4f6c22e53b1",
+  "summary_only": true
+}

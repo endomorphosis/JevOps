@@ -1,0 +1,122 @@
+{
+  "schema": "jevops-arena-report-audit/v1",
+  "status": "CONSISTENT",
+  "checks": {
+    "supported_status": true,
+    "supported_schema": true,
+    "protocol_matches_report": true,
+    "plan_identity": true,
+    "implementation_reported_unchanged": true,
+    "supported_evidence_mode": true,
+    "no_promotion_or_training_claim": true,
+    "selected_matches_screen_analysis": true,
+    "screen.design": true,
+    "screen.record": true,
+    "screen.cache_disabled": true,
+    "screen.runner_identity": true,
+    "screen.mode": true,
+    "screen.receipt_claims": true,
+    "screen.sample_ids_unique": true,
+    "screen.cost_analysis": true,
+    "screen.precommitted_design": true,
+    "screen.invocation_accounting": true,
+    "screen.native_accounting": true,
+    "total_accounting": true,
+    "budget": true,
+    "no_unselected_confirmation": true,
+    "no_unconfirmed_recommendation": true
+  },
+  "phases": {
+    "screen": {
+      "scheduled": 8,
+      "observed": 8,
+      "statuses": {
+        "VERIFIED": 8
+      },
+      "reported_native_processes": 8,
+      "rows": {
+        "control": {
+          "label": "control",
+          "source_sha256": "9839fbd7f2dedf9c22190403722dc98210c990a14188a042ddf41ab5e050496c",
+          "tokens": 1372,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              27475681,
+              27475681
+            ],
+            [
+              27479265,
+              27479265
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.32.0": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "solver-0": {
+          "label": "solver-0",
+          "source_sha256": "2f89279db2c503d15d2513478675ec4b4276ca70be3cd2274ee148dae3bf78e7",
+          "tokens": 1365,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              27554621,
+              27554621
+            ],
+            [
+              27558205,
+              27558205
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.32.0": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        }
+      },
+      "strata": [
+        {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+          "branch_order": "reference-first"
+        },
+        {
+          "lean_tag": "v4.32.0",
+          "git_commit": "c48433678e8fb6306ebcd48453300c8e16058a62",
+          "branch_order": "candidate-first"
+        }
+      ]
+    }
+  },
+  "proof_verified": false,
+  "fresh_native_processes": 0,
+  "promoted": false,
+  "training_enabled": false,
+  "official_score": null,
+  "reported_selector_status": "NO_IMPROVEMENT",
+  "errors": [],
+  "protocol_content_sha256": "0aa6d47877f57cdea8d758a13483d5e098765144039da3a27cc00f35812ed46f",
+  "report_content_sha256": "209fbe52226edf23ca68dbe8ecc8c062751e7940eb3595502d281eaabd965ac8",
+  "legacy_policy_defaults_used": false,
+  "problem": "Electromagnetism.ElectromagneticPotential.time_deriv_time_deriv_electricField_of_isExtrema",
+  "selected": null,
+  "objective": "strict-dual-v1",
+  "reason": "",
+  "reported_counts": {
+    "requests_reserved": 8,
+    "verifier_invocations": 8,
+    "native_processes": 8
+  },
+  "analysis_code_sha256": "b6b242e8ce6b68e32714a37cb9ee816132d2857ab8cc76922f57153b0deff36c",
+  "analysis_code_matches_recorded": true
+}

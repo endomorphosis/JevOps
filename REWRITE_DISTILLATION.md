@@ -4,6 +4,8 @@ Historical joint-training experiment. The newer
 [certified-refactoring follow-up](CERTIFIED_REFACTORING.md) expands to 33 catalog
 families, implements linear certificates, and evaluates an opt-in frozen-head
 adapter that avoids the CE regression below. This older failure remains evidence.
+The subsequent [solver/trajectory follow-up](SOLVER_TRAJECTORIES.md) adds
+suggestion harvesting, intermediate-step losses and an explicit token counter.
 
 Research and measurements: 2026-09-22. This extends the
 [kernel/refactoring research](KERNEL_REFACTORING_RESEARCH.md), not a claim to
@@ -194,8 +196,9 @@ does not implement a Levenshtein Transformer or unrestricted insertion.
 
 Lean's `grind?` can suggest a restricted `grind only` call or script. Harvesting,
 rechecking and distilling those explicit proofs could reduce solver search and
-provide more diverse teachers. Suggestion harvesting is future work; simply
-adding `grind` to a candidate list is not equivalent.
+provide more diverse teachers. This was future work in this experiment;
+the solver/trajectory follow-up implements bounded single-line harvesting.
+Simply adding `grind` to a candidate list is not equivalent.
 [Lean: minimizing grind calls](https://lean-lang.org/doc/reference/latest/The--grind--tactic/Minimizing--grind--calls/).
 
 For invariant compression, GF(2) nullspace mining now finds parity relations in

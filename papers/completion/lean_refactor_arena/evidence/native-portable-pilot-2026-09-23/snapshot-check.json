@@ -1,0 +1,10 @@
+{
+  "schema": "jevops-arena-source-snapshot/v1",
+  "status": "UNCHANGED",
+  "root": "/tmp/jevops-portable-pilot-g5m9qbku/final-source",
+  "manifest_sha256": "5025abf6bffad33e3c0e5c885843bebdc70ec4e54d52a6341a8fc22659f57f25",
+  "content_root": "7889999090424bc4f02de307593793556e85084ae182e1a9b328cb873c834c39",
+  "file_count": 118,
+  "bytes": 3133074,
+  "proof_verified": false
+}

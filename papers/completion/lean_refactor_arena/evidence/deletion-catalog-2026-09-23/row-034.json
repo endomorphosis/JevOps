@@ -1,0 +1,24 @@
+{
+  "pin": {
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+  },
+  "label": "edit-33",
+  "source_sha256": "fe3d1c6ceea4fcdb0b71a87ac92032968a930ad2b24af7d65921f02d9bc1fbac",
+  "status": "REJECTED",
+  "context_id": "c05f2041328cf7cd0931ca56ae2c91af99ef4663915803d6dd2c39f6a0d3554e",
+  "receipt": {
+    "request_id": "6e678628750509f9fadb81af77e5f1303c3fa082b7eadb28581243476bf8caa4",
+    "candidate_sha256": "fe3d1c6ceea4fcdb0b71a87ac92032968a930ad2b24af7d65921f02d9bc1fbac",
+    "target": "Core.InitsUpdatesComm",
+    "outcome": "REJECTED",
+    "type_preserved": false,
+    "exit_code": 0,
+    "axiom_output": "",
+    "heartbeats": null,
+    "reason": "candidate_errors",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"a07f22759ef3aa7cde70314cc088c5ee99a642ed1a58290a81058642231a79ae\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"unsolved goals\\ncase update_none\\nP : PureExpr\\nσ σ' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHlen1 : ks'.length = vs'.length\\nσ✝ σ'' : SemanticStore P\\nHinit : InitStates σ✝ ks' vs' σ''\\nHk : isDefined σ✝ []\\nHlen2 : [].length = [].length\\n⊢ updatedStates σ✝ ks' vs' = updatedStates σ✝ ks' vs' ∧\\n    InitStates σ✝ ks' vs' (updatedStates σ✝ ks' vs') ∧ UpdateStates (updatedStates σ✝ ks' vs') [] [] σ''\\n\\ncase update_some\\nP : PureExpr\\nσ σ' : SemanticStore P\\nks ks' : List P.Ident\\nvs vs' : List P.Expr\\nHlen1 : ks'.length = vs'.length\\nσ✝ : SemanticStore P\\nx✝ : P.Ident\\nv✝ : P.Expr\\nσ'✝ : SemanticStore P\\nxs✝ : List P.Ident\\nvs✝ : List P.Expr\\nσ''✝ : SemanticStore P\\na✝¹ : UpdateState P σ✝ x✝ v✝ σ'✝\\na✝ : UpdateStates σ'✝ xs✝ vs✝ σ''✝\\na_ih✝ :\\n  ∀ {σ'' : SemanticStore P},\\n    InitStates σ''✝ ks' vs' σ'' →\\n      isDefined σ''✝ xs✝ →\\n        xs✝.length = vs✝.length →\\n          updatedStates σ'✝ ks' vs' = updatedStates σ'✝ ks' vs' ∧\\n            InitStates σ'✝ ks' vs' (updatedStates σ'✝ ks' vs') ∧ UpdateStates (updatedStates σ'✝ ks' vs') xs✝ vs✝ σ''\\nσ'' : SemanticStore P\\nHinit : InitStates σ''✝ ks' vs' σ''\\nHk : isDefined σ''✝ (x✝ :: xs✝)\\nHlen2 : (x✝ :: xs✝).length = (v✝ :: vs✝).length\\n⊢ updatedStates σ✝ ks' vs' = updatedStates σ✝ ks' vs' ∧\\n    InitStates σ✝ ks' vs' (updatedStates σ✝ ks' vs') ∧\\n      UpdateStates (updatedStates σ✝ ks' vs') (x✝ :: xs✝) (v✝ :: vs✝) σ''\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":5711.75}"
+  },
+  "native_processes": 1,
+  "wall_seconds": 9.8654
+}

@@ -531,6 +531,32 @@ def _hole_original(item: Any) -> str:
     return str(getattr(item, "original", "") or "")
 
 
+def drive_ablate(
+    record: Mapping[str, Any],
+    tactics: str,
+    holes: Sequence[Any],
+    *,
+    compile_fn: Callable[..., Mapping[str, Any]],
+    apply_fn: Callable[..., str],
+    fill_fn: Callable[[Any], str],
+    state_root: Any,
+    timeout: float,
+    restore: bytes,
+) -> list[dict[str, Any]]:
+    """Drop one hole at a time, then combine lake-valid drops. ``compile_fn`` owns lake."""
+
+    def _compile(body: str) -> Mapping[str, Any]:
+        return compile_fn(record, body, state_root=state_root, timeout=timeout, restore=restore)
+
+    return ablate_then_combine(
+        tactics,
+        holes,
+        apply_fn=lambda text, fills: apply_fn(text, holes, fills),
+        fill_fn=fill_fn,
+        compile_fn=_compile,
+    )
+
+
 def ablate_then_combine(
     text: str,
     holes: Sequence[Any],
@@ -1510,6 +1536,109 @@ def mcmc_try_proposals(
     return tried
 
 
+def drive_mcmc(
+    record: Mapping[str, Any],
+    *,
+    rounds: int,
+    beam: int,
+    temperature: float,
+    seed: int,
+    state_root: Any,
+    timeout: float,
+    init_tactics: Optional[str],
+    leanstral: bool,
+    memory: Optional[dict[str, Any]],
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    rng_cls: Callable[[int], Any],
+    ledger_cls: Callable[..., Any],
+    max_jev: int,
+    clone_fn: Callable[..., Any],
+    relpath_fn: Callable[..., str],
+    compile_fn: Callable[..., dict[str, Any]],
+    token_fn: Callable[[str], int],
+    chain_cls: Callable[..., Any],
+    locked_fn: Callable[[str], Any],
+    failed_kinds: set[str],
+    leanstral_swap_fn: Callable[..., str],
+    propose_fn: Callable[..., Sequence[Any]],
+    rank_fn: Callable[..., Any],
+    accept_fn: Callable[..., bool],
+    max_leanstral: int,
+    pin_prefixes: Sequence[str],
+    hardware_class: str,
+) -> dict[str, Any]:
+    """Metropolis chain over tactic edits. ``compile_fn`` still owns lake."""
+
+    from jevops.outer import bump_box, clone_restore, either, first_int, get_str, stripped_or, take_keys
+
+    reference = tactic_fn(record)
+    rng = rng_cls(first_int(seed))
+    ledger = ledger_cls(
+        name=f"{get_str(record, 'name')}#mcmc-beam",
+        max_jev_calls=max_jev,
+        max_mistral_calls=0,
+        max_grok_calls=0,
+    )
+    _clone, _dest, restore = clone_restore(record, state_root, clone_fn=clone_fn, relpath_fn=relpath_fn)
+    start = stripped_or(init_tactics, reference)
+    start_compiled = compile_fn(record, start, state_root=state_root, timeout=timeout, restore=restore, memory=memory)
+    packed = begin_mcmc(
+        start=start,
+        compiled=start_compiled,
+        reference=reference,
+        token_fn=token_fn,
+        beam=beam,
+        chain_cls=chain_cls,
+        init_kind=either(init_tactics, lambda: "init", lambda: "reference"),
+    )
+    chains, best, history, leanstral_calls, failed_bodies, lake_calls = take_keys(
+        packed, "chains", "best", "history", "leanstral_calls", "failed_bodies", "lake_calls"
+    )
+    counts = {"lake_calls": lake_calls}
+    sticky_fail = set(failed_kinds)
+
+    def _compile(body: str) -> dict[str, Any]:
+        return bump_box(
+            counts,
+            "lake_calls",
+            lambda: compile_fn(record, body, state_root=state_root, timeout=timeout, restore=restore, memory=memory),
+        )
+
+    leanstral_calls = run_mcmc_rounds(
+        rounds=rounds,
+        chains=chains,
+        ledger=ledger,
+        leanstral=leanstral,
+        max_leanstral=max_leanstral,
+        leanstral_fn=lambda tactics: leanstral_swap_fn(record, tactics, rng, locked_fn(reference)),
+        propose_fn=lambda tactics, extra: propose_fn(tactics, reference, rng, extra=extra),
+        filter_fn=filter_blacklist,
+        rank_fn=lambda tactics, proposals: rank_fn(record, tactics, proposals, ledger=ledger),
+        pin_fn=pin_front,
+        pin_prefixes=pin_prefixes,
+        try_fn=lambda **kwargs: mcmc_try_proposals(token_fn=token_fn, accept_fn=accept_fn, **kwargs),
+        compile_fn=_compile,
+        history=history,
+        failed_bodies=failed_bodies,
+        failed_kinds=failed_kinds,
+        sticky_fail=sticky_fail,
+        best=best,
+        temperature=temperature,
+        rng=rng,
+    )
+    return mcmc_result(
+        rounds=rounds,
+        beam=beam,
+        temperature=temperature,
+        seed=seed,
+        lake_calls=counts["lake_calls"],
+        leanstral_calls=leanstral_calls,
+        best=best,
+        history=history,
+        extra={"ledger": ledger.as_dict(), "hardware_class": hardware_class},
+    )
+
+
 def mcmc_result(
     *,
     rounds: int,
@@ -1573,6 +1702,69 @@ def compile_variant_evals(
     return rows
 
 
+def drive_propose_lines(
+    record: Mapping[str, Any],
+    item: Any,
+    vocab: Sequence[str],
+    *,
+    beam: int,
+    temperature: float,
+    generate: Optional[Callable[..., str]],
+    pack: Optional[Mapping[str, Any]],
+    reference: str,
+    guided_fn: Callable[..., Sequence[str]],
+    unused_fn: Callable[[str, Sequence[str]], Sequence[str]],
+    prompt_fn: Callable[..., str],
+    docker0_fn: Callable[..., Any],
+    refuse_fn: Callable[[Any], Any],
+    parse_fn: Callable[[str], str],
+    filter_fn: Callable[..., Sequence[str]],
+    stop: str,
+    sample_cap: int,
+    candidate_cap: int,
+    error_cls: type[BaseException],
+) -> list[str]:
+    """Sample next tactic lines, then merge with the guided vocabulary. Does not admit Lean."""
+
+    from jevops.outer import call_if, either, get_str, or_call, overlay_map, sample_n
+
+    pack = overlay_map(pack)
+    priority = either(
+        bool(reference),
+        lambda: guided_fn(item.prefix, reference, pack),
+        lambda: unused_fn(item.prefix, vocab),
+    )
+    prompt = prompt_fn(record, item.prefix, or_call(priority, unused_fn, item.prefix, vocab), pack)
+    n_samples = sample_n(beam, sample_cap)
+
+    def _one() -> Any:
+        def _docker0() -> Any:
+            result = docker0_fn(
+                prompt,
+                source=get_str(record, "source"),
+                allow_owner_exec=False,
+                temperature=temperature,
+                stop=["\n\n"],
+            )
+
+            def _accept() -> Any:
+                refuse_fn(result.identity)
+                return result.text
+
+            return call_if(not result.skipped and result.text, _accept)
+
+        return either(generate is not None, lambda: generate(prompt, temperature=temperature), _docker0)
+
+    proposals = sample_next_lines(n_samples, generate_fn=_one, parse_fn=parse_fn, empty=stop)
+    return merge_next_line_proposals(
+        proposals,
+        priority,
+        stop=stop,
+        cap=candidate_cap,
+        filter_fn=lambda rows: filter_fn(rows, pack, reference),
+    )
+
+
 def sample_next_lines(
     n_samples: int,
     *,
@@ -1613,6 +1805,77 @@ def unique_pin_cap(
 def first_ident(text: str, ident_re: Any) -> str:
     found = ident_re.findall(str(text or "")) if ident_re is not None else []
     return str(found[0]) if found else ""
+
+
+def drive_symbol_search(
+    query: str,
+    *,
+    memory: Optional[Mapping[str, Any]],
+    tactics: str,
+    duckdb_path: Optional[Any],
+    use_duckdb: bool,
+    vector_snapshot: Optional[Mapping[str, Any]],
+    vector_search: Optional[Callable[..., Any]],
+    root: Optional[Any],
+    ident_re: Any,
+    jsonld_fn: Callable[[Mapping[str, Any]], Any],
+    jsonld_search_fn: Callable[[Any, str], Sequence[Mapping[str, Any]]],
+    hit_fn: Callable[..., dict[str, Any]],
+    sidecar_query_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    sidecar_build_fn: Callable[..., Any],
+    sidecar_row_fn: Callable[[Any], dict[str, Any]],
+    duckdb_fn: Callable[..., tuple[Sequence[dict[str, Any]], str]],
+    vector_fn: Callable[..., tuple[Sequence[dict[str, Any]], str]],
+    kg_fn: Callable[..., Sequence[dict[str, Any]]],
+    ast_fn: Callable[..., tuple[Sequence[dict[str, Any]], str]],
+    rg_fn: Callable[..., Sequence[dict[str, Any]]],
+    rank_fn: Callable[..., Sequence[dict[str, Any]]],
+) -> dict[str, Any]:
+    """Search/rank symbols. JSON-LD, DuckDB, vector, KG, AST, then rg. Does not compile."""
+
+    from jevops.outer import as_dict, call_if, either, or_call, text_or
+
+    q = or_call(text_or(query).strip(), first_ident, tactics, ident_re)
+    sources: dict[str, str] = {}
+    hits: list[dict[str, Any]] = []
+    if q:
+
+        def _jsonld() -> list[dict[str, Any]]:
+            from jevops.outer import get_str, if_none
+
+            doc = jsonld_fn(if_none(memory, default={}))
+            return [hit_fn(get_str(hit, "symbol"), source="jsonld", query=q) for hit in jsonld_search_fn(doc, q)]
+
+        def _sidecar() -> list[dict[str, Any]]:
+            return [
+                sidecar_row_fn(row)
+                for row in sidecar_query_fn(
+                    q, payload=call_if(root is not None, lambda: sidecar_build_fn(root=root, write=False))
+                )
+            ]
+
+        hits, sources = collect_source_hits(
+            (
+                ("jsonld", _jsonld),
+                (
+                    "duckdb",
+                    either(
+                        use_duckdb,
+                        lambda: (lambda: duckdb_fn(q, db_path=duckdb_path)),
+                        lambda: (lambda: ([], "skipped_optional")),
+                    ),
+                ),
+                ("vector", lambda: vector_fn(q, snapshot=vector_snapshot, search_fn=vector_search)),
+                ("kg", lambda: kg_fn(q, memory)),
+                ("ast", lambda: ast_fn(q, root=root)),
+                ("sidecar", _sidecar),
+                ("rg", lambda: rg_fn(q, root=root)),
+            ),
+            fail_notes={"sidecar": "sidecar_failed"},
+        )
+    ranked = rank_fn(hits)
+    promoted = credit_search_hits(as_dict(memory), ranked)
+    return pack_symbol_search(query=q, ranked=ranked, sources=sources, promoted=promoted)
 
 
 def collect_source_hits(
@@ -1689,6 +1952,87 @@ def credit_search_hits(
     return promoted
 
 
+def drive_prefix_search(
+    record: Mapping[str, Any],
+    *,
+    mode: str,
+    max_steps: int,
+    beam: int,
+    temperature: float,
+    generate: Optional[Callable[..., str]],
+    prune: Optional[Callable[..., dict[str, Any]]],
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    prefix_fn: Callable[[str], str],
+    vocab_fn: Callable[[str], Sequence[str]],
+    ledger_cls: Callable[..., Any],
+    max_jev: int,
+    sample_cap: int,
+    default_prune: Callable[..., dict[str, Any]],
+    stop_token: str,
+    pack_fn: Callable[[str, str], Mapping[str, Any]],
+    stop_allowed_fn: Callable[[str, str], bool],
+    propose_fn: Callable[..., Sequence[str]],
+    extend_fn: Callable[..., str],
+    filter_fn: Callable[..., Sequence[str]],
+    item_cls: Callable[..., Any],
+    hardware_class: str,
+) -> dict[str, Any]:
+    """Prefix beam over a reference tactic block. The proposer may call a model. Jev does not write Lean."""
+
+    from jevops.outer import beam_shape, either, get_str, if_none, or_none
+
+    tactics, prefix0, vocab = begin_prefix_search(record, tactic_fn=tactic_fn, prefix_fn=prefix_fn, vocab_fn=vocab_fn)
+    ledger = ledger_cls(
+        name=f"{get_str(record, 'name')}#constrained-beam-local",
+        max_jev_calls=max_jev,
+        max_mistral_calls=0,
+        max_grok_calls=0,
+    )
+    beam_n, n_samples = beam_shape(mode, beam, sample_cap=sample_cap)
+    temp = float(temperature)
+    prune_fn = if_none(prune, default_prune)
+
+    def _prune(item: Any, proposals: Sequence[str], pack: Mapping[str, Any]) -> dict[str, Any]:
+        return either(
+            prune is None,
+            lambda: default_prune(record, item.prefix, proposals, ledger=ledger, keep=beam_n, context=pack),
+            lambda: prune_fn(record, item.prefix, proposals, ledger=ledger, keep=beam_n),
+        )
+
+    out = run_prefix_beam(
+        prefix0,
+        max_steps=max_steps,
+        beam_n=beam_n,
+        stop_token=stop_token,
+        pack_fn=lambda prefix: pack_fn(tactics, prefix),
+        stop_allowed_fn=lambda prefix: stop_allowed_fn(prefix, tactics),
+        propose_fn=lambda item, pack: propose_fn(
+            record, item, vocab, beam=beam_n, temperature=temp, generate=generate, pack=pack, reference=tactics
+        ),
+        prune_fn=_prune,
+        extend_fn=lambda prefix, nxt, pack: extend_fn(prefix, nxt, original=or_none(get_str(pack, "next_original"))),
+        filter_fn=lambda lines, pack: filter_fn(lines, pack, tactics),
+        n_samples=n_samples,
+        item_cls=item_cls,
+    )
+    return pack_beam_search(
+        out,
+        prefix=prefix0,
+        vocab_n=len(list(vocab)),
+        mode=mode,
+        beam=beam_n,
+        temperature=temp,
+        max_steps=max_steps,
+        extra={
+            "pca_mca": pack_fn(tactics, prefix0),
+            "ledger": ledger.as_dict(),
+            "hardware_class": hardware_class,
+            "called_docker0": generate is None,
+            "official_track2": False,
+        },
+    )
+
+
 def pack_beam_search(
     out: Mapping[str, Any],
     *,
@@ -1754,6 +2098,128 @@ def compile_then_hammer(
             elif compiled.get("errors"):
                 grok_errors = grok_errors or list(compiled.get("errors") or [])
     return rows, grok_ok, grok_tactics, grok_errors
+
+
+def drive_keepbest(
+    *,
+    name: str,
+    hosted_path: Optional[Any],
+    state_root: Any,
+    timeout: float,
+    repair: bool,
+    load_fn: Callable[[], tuple[Any, str, Sequence[Mapping[str, Any]]]],
+    clone_fn: Callable[..., Any],
+    relpath_fn: Callable[..., str],
+    split_fn: Callable[[Mapping[str, Any]], Any],
+    body_fn: Callable[[str], str],
+    drafts_fn: Callable[..., Sequence[Any]],
+    span_fn: Callable[[str], Sequence[Any]],
+    hosted_fn: Callable[[Any], str],
+    match_fn: Callable[[str, str], str],
+    flatten_fn: Callable[[str, str], str],
+    compile_fn: Callable[..., Mapping[str, Any]],
+    row_fn: Callable[[Mapping[str, Any], Mapping[str, Any]], Mapping[str, Any]],
+    token_fn: Callable[[str], int],
+    key_fns: Sequence[Callable[[], Any]],
+    prompt_fn: Callable[..., str],
+    ledger_cls: Callable[..., Any],
+    generate_fn: Callable[..., tuple[str, Any, Any]],
+    extract_fn: Callable[[str], str],
+    hardware_class: str,
+    prototype_hardware: str,
+) -> dict[str, Any]:
+    """Splice hosted and fan-out tactics and lake-compile. ``compile_fn`` owns lake."""
+
+    from jevops.outer import attr_or, call_if_file, contains_attr, field_eq, first_or_required, first_where, get_list, load_and_clone, map_if, pin_calls, replace_if, require_file_bytes
+    from jevops.repair import align_generated, align_then_compile
+
+    record, records, digest, clone, dest, restore = load_and_clone(
+        load_fn,
+        name,
+        state_root,
+        clone_fn=clone_fn,
+        relpath_fn=relpath_fn,
+        error_cls=RuntimeError,
+        miss=f"unknown warm-up problem: {name}",
+        read_fn=lambda path: require_file_bytes(path, error_cls=RuntimeError, miss="{path}: clone/checkout Strata first"),
+    )
+    del dest
+    rel = relpath_fn(record)
+    ref_tactics = body_fn(split_fn(record).body_suffix)
+    drafts = drafts_fn(record, records)
+    collapse = first_where(drafts, contains_attr("ops", "collapse_simp_at"))
+    hosted = call_if_file(hosted_path, lambda: match_fn(ref_tactics, hosted_fn(hosted_path)))
+    flattened = map_if(hosted, lambda body: flatten_fn(ref_tactics, body))
+
+    def _repair(
+        rows: Sequence[Mapping[str, Any]],
+        tactics_by_kind: Mapping[str, str],
+        hosted_row: Mapping[str, Any],
+    ) -> Optional[Mapping[str, Any]]:
+        pin_calls(*key_fns)()
+        indent_row = first_where(rows, field_eq("kind", "hosted_indent_normalized"))
+        failed = first_or_required(tactics_by_kind, "hosted_indent_normalized", "hosted_mistral")
+        errors = replace_if(
+            indent_row and indent_row.get("module_exit_0"),
+            [
+                {
+                    "pos": None,
+                    "data": (
+                        "The indent-normalized draft compiles but is not shorter than the "
+                        "reference. Return a strictly shorter tactic block that still compiles."
+                    ),
+                }
+            ],
+            get_list(hosted_row, "errors"),
+        )
+        ledger = ledger_cls(name=f"{name}#repair")
+        text, repair_identity, _line = generate_fn(
+            prompt_fn(record, failed=failed, errors=errors, reference=ref_tactics),
+            ledger,
+            max_new_tokens=1400,
+            timeout=180.0,
+        )
+        repaired_tactics, compile_row = align_then_compile(
+            text,
+            ref_tactics,
+            align_fn=lambda reference, body: align_generated(
+                reference, body, extract_fn=extract_fn, match_fn=match_fn, flatten_fn=flatten_fn
+            ),
+            compile_fn=lambda body: compile_fn(record, body, state_root=state_root, timeout=timeout, restore=restore),
+        )
+        return row_fn(
+            {
+                "kind": "hosted_mistral_repair",
+                "generator": "labs-leanstral-1-5",
+                "tactics": repaired_tactics,
+                "ledger": ledger.as_dict(),
+                "repair_identity": repair_identity,
+            },
+            compile_row,
+        )
+
+    return run_keepbest(
+        name=name,
+        digest=digest,
+        ref_tactics=ref_tactics,
+        hosted=hosted,
+        flattened=flattened,
+        collapse=attr_or(collapse, "tactics"),
+        span_drafts=span_fn(ref_tactics),
+        compile_fn=lambda body: compile_fn(record, body, state_root=state_root, timeout=timeout, restore=restore),
+        row_fn=row_fn,
+        token_fn=token_fn,
+        repair=repair,
+        repair_fn=_repair,
+        pick_fn=pick_min_tiers,
+        first_where_fn=first_where,
+        pack_fn=keepbest_payload,
+        clone=clone,
+        rel=rel,
+        hosted_path=hosted_path,
+        hardware_class=hardware_class,
+        prototype_hardware=prototype_hardware,
+    )
 
 
 def keepbest_payload(
@@ -1872,6 +2338,133 @@ def attach_jev_rounds(
         for row, jev in zip(history, jevs or ()):
             row["jev_choice"] = jev.get("choice")
     return out
+
+
+def drive_sgd(
+    name: str,
+    *,
+    state_root: Any,
+    timeout: float,
+    rounds: int,
+    seed: int,
+    use_leanstral: bool,
+    memory: Optional[dict[str, Any]],
+    rng_cls: Callable[[int], Any],
+    load_fn: Callable[[], tuple[Any, str, Sequence[Mapping[str, Any]]]],
+    clone_fn: Callable[..., Any],
+    relpath_fn: Callable[..., str],
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    holes_fn: Callable[[str], Sequence[Any]],
+    token_fn: Callable[[str], int],
+    key_fns: Sequence[Callable[[], Any]],
+    jev_fn: Callable[..., Mapping[str, Any]],
+    drop_fn: Callable[..., str],
+    eval_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    extract_fn: Callable[[str], str],
+    match_fn: Callable[..., str],
+    flatten_fn: Callable[..., str],
+    ledger_cls: Callable[..., Any],
+    shot_names: Sequence[str],
+    example_fn: Callable[[Mapping[str, Any]], Mapping[str, Any]],
+    prompt_fn: Callable[..., str],
+    keyfile_fns: Sequence[Callable[[], Any]],
+    generate_fn: Callable[..., tuple[str, Any, Any]],
+    hammer_fn: Callable[..., str],
+    redact_fn: Callable[[Any], Any],
+    hardware_class: str,
+    protocol: str,
+    pr: str,
+) -> dict[str, Any]:
+    """Coordinate-descent over holes. ``eval_fn`` still owns lake."""
+
+    from jevops.outer import after_calls, first_int, head_errors, keep_box, load_and_clone, named_shots, pin_calls, take_keys
+    from jevops.repair import bind_align
+
+    rng = rng_cls(first_int(seed))
+    record, records, digest, _clone, _dest, restore = load_and_clone(
+        load_fn,
+        name,
+        state_root,
+        clone_fn=clone_fn,
+        relpath_fn=relpath_fn,
+        error_cls=RuntimeError,
+        miss=f"unknown warm-up problem: {name}",
+    )
+    started = begin_keep_search(
+        record,
+        tactic_fn=tactic_fn,
+        find_fn=holes_fn,
+        token_fn=token_fn,
+        pin_fn=pin_calls(*key_fns),
+    )
+    reference, holes, keep, keep_tokens, history, _dropped, jevs = take_keys(
+        started, "reference", "holes", "keep", "keep_tokens", "history", "dropped", "jevs"
+    )
+    box = keep_box(keep_tokens, keep)
+
+    def _choose(remaining: Sequence[Any], _dropped: set[str], _round: int) -> list[str]:
+        jev = jev_fn(record, remaining, history, box["tokens"])
+        jevs.append(jev)
+        return choose_minibatch(remaining, jev, rng, k=2)
+
+    walked = coordinate_rounds(
+        holes,
+        rounds=rounds,
+        choose_fn=_choose,
+        trial_fn=lambda chosen: drop_fn(reference, holes, chosen),
+        eval_fn=lambda trial: eval_fn(
+            record, trial, state_root=state_root, timeout=timeout, restore=restore, reference=reference, memory=memory
+        ),
+        accept_fn=boxed_keepbest(box),
+        keep_tokens=keep_tokens,
+        keep_body=keep,
+        history=history,
+    )
+    keep, keep_tokens, dropped, history = unpack_walked(walked)
+    rounds_out = attach_jev_rounds(walked["rounds"], jevs, history)
+    align = bind_align(reference, extract_fn=extract_fn, match_fn=match_fn, flatten_fn=flatten_fn)
+
+    def _generate() -> tuple[str, Any, Any]:
+        ledger = ledger_cls(name=f"{name}#sgd")
+        shots = named_shots(records, shot_names, skip_name=name, example_fn=example_fn)
+        text, identity, _line = after_calls(
+            tuple(keyfile_fns),
+            generate_fn,
+            prompt_fn(record, shots),
+            ledger,
+            max_new_tokens=700,
+            timeout=180.0,
+        )
+        return text, identity, ledger
+
+    keep, keep_tokens, leanstral = maybe_leanstral_restart(
+        use=use_leanstral,
+        keep=keep,
+        keep_tokens=keep_tokens,
+        ref_tokens=token_fn(reference),
+        generate_fn=_generate,
+        flatten_fn=align,
+        eval_fn=lambda body: eval_fn(
+            record, body, state_root=state_root, timeout=timeout, restore=restore, reference=reference, memory=memory
+        ),
+        hammer_fn=lambda filled, evals: hammer_fn(filled, reference, head_errors(evals)),
+        ledger_fn=lambda ledger: ledger.as_dict(),
+    )
+    return redact_fn(
+        sgd_payload(
+            name=name,
+            digest=digest,
+            n_holes=len(list(holes)),
+            ref_tokens=token_fn(reference),
+            keep_tokens=keep_tokens,
+            dropped=dropped,
+            rounds=rounds_out,
+            leanstral=leanstral,
+            hardware_class=hardware_class,
+            protocol=protocol,
+            pr=pr,
+        )
+    )
 
 
 def sgd_payload(
@@ -2578,6 +3171,368 @@ def dispatch_mca_generation(
     return out
 
 
+def drive_mca_problem(
+    name: str,
+    *,
+    state_root: Any,
+    timeout: float,
+    call_leanstral: bool,
+    ablate: bool,
+    one_hole: bool,
+    few_shot: bool,
+    grok_few_shot: bool,
+    grok_generate: Optional[Callable[..., str]],
+    grok_tactics_paths: Sequence[Any],
+    typesafe_fanout: bool,
+    load_fn: Callable[[], tuple[Any, str, Sequence[Mapping[str, Any]]]],
+    clone_fn: Callable[..., Any],
+    relpath_fn: Callable[..., str],
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    find_fn: Callable[[str], Sequence[Any]],
+    mask_fn: Callable[..., str],
+    ledger_cls: Callable[..., Any],
+    load_grok_fn: Callable[[Any], str],
+    flatten_fn: Callable[[str, str], str],
+    shot_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    grok_callable_fn: Callable[[], bool],
+    workspace_fn: Callable[[], Any],
+    grok_prompt_fn: Callable[[str], str],
+    grok_file_fn: Callable[..., Any],
+    grok_error: type[BaseException],
+    grok_max_new: int,
+    grok_timeout: float,
+    few_prompt_fn: Callable[..., str],
+    key_fns: Sequence[Callable[[], Any]],
+    generate_mistral_fn: Callable[..., tuple[str, Any, Any]],
+    prioritize_fn: Callable[..., Sequence[Any]],
+    one_prompt_fn: Callable[..., str],
+    parse_fn: Callable[..., Mapping[str, str]],
+    extract_fn: Callable[[str], str],
+    apply_fn: Callable[..., str],
+    match_fn: Callable[..., str],
+    flatten_over_fn: Callable[..., str],
+    asdict_fn: Callable[[Any], dict[str, Any]],
+    mistral_error: type[BaseException],
+    lean_prompt_fn: Callable[..., str],
+    compile_body_fn: Callable[..., dict[str, Any]],
+    compile_row_fn: Callable[..., dict[str, Any]],
+    hammer_passes_fn: Callable[..., tuple[list[dict[str, Any]], str, list[Any], bool]],
+    needs_hammer_fn: Callable[[str], bool],
+    repair_prompt_fn: Callable[..., str],
+    assemble_fn: Callable[..., list[dict[str, Any]]],
+    ablate_holes_fn: Callable[..., Any],
+    tactician_fn: Callable[..., Sequence[Any]],
+    feature_fn: Callable[[str], Mapping[str, Any]],
+    family_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    draft_fn: Callable[..., Sequence[Any]],
+    row_feature_fn: Callable[[Mapping[str, Any]], Any],
+    fit_fn: Callable[..., Any],
+    rank_fn: Callable[..., Mapping[str, Any]],
+    identity_fn: Callable[[Any], Any],
+    redact_fn: Callable[[Any], Any],
+    token_fn: Callable[[str], int],
+    fanout_cap: int,
+    hardware_class: str,
+    grok_hardware_class: str,
+) -> dict[str, Any]:
+    """Mask, generate, and lake one MCA problem. ``compile_body_fn`` owns lake."""
+
+    from jevops.outer import (
+        after_calls,
+        call_caught,
+        call_if,
+        caught_reason,
+        dict_call,
+        either,
+        first_truthy,
+        first_where,
+        fit_drop,
+        get_list,
+        get_str,
+        head_chars,
+        if_none,
+        if_prefix,
+        kind_startswith,
+        load_and_clone,
+        mark_skipped,
+        optional_fn,
+        or_call,
+        or_none,
+        or_str,
+        str_or_none,
+        tagged_mapping,
+        take_keys,
+        text_or,
+    )
+    from jevops.repair import align_generated
+
+    record, records, digest, _clone, _dest, restore = load_and_clone(
+        load_fn,
+        name,
+        state_root,
+        clone_fn=clone_fn,
+        relpath_fn=relpath_fn,
+        error_cls=RuntimeError,
+        miss=f"unknown warm-up problem: {name}",
+    )
+    masked = begin_masked(
+        record,
+        tactic_fn=tactic_fn,
+        find_fn=find_fn,
+        mask_fn=mask_fn,
+        fill_pred=lambda hole: getattr(hole, "family", "") in {"strength_reduction", "algebraic_simplification"},
+    )
+    tactics, holes, skeleton, fill_holes = take_keys(masked, "tactics", "holes", "skeleton", "fill_holes")
+
+    def _grok_paths() -> dict[str, Any]:
+        ledger = ledger_cls(name=f"{name}#grok-file-fanout")
+        rows = collect_path_candidates(
+            grok_tactics_paths,
+            load_fn=load_grok_fn,
+            flatten_fn=lambda text: flatten_fn(tactics, text),
+            pack_fn=pack_generated_candidate,
+            generator="grok-file",
+            extra={"chat_ignored": True},
+            head_fn=head_chars,
+        )
+        return {"ledger": ledger, "grok_file_rows": rows}
+
+    def _grok_few() -> dict[str, Any]:
+        shots = shot_fn(records, skip_name=name)
+        ledger = ledger_cls(name=f"{name}#grok-few-shot")
+        if grok_generate is None and not grok_callable_fn():
+            mark_skipped(ledger, "no_key")
+            return {"ledger": ledger, "grok_skip_reason": "no_key"}
+        workspace = workspace_fn()
+        ok, grok_result, exc = call_caught(
+            lambda: grok_file_fn(
+                grok_prompt_fn(few_prompt_fn(record, shots)),
+                ledger,
+                workspace=workspace,
+                max_new_tokens=grok_max_new,
+                timeout=grok_timeout,
+                generate=grok_generate,
+                fixture=grok_generate is not None,
+                reset_stub=True,
+            ),
+            grok_error,
+        )
+        skip_reason, grok_result = caught_reason(ok, grok_result, exc)
+        out: dict[str, Any] = {"ledger": ledger, "grok_workspace": workspace, "grok_skip_reason": skip_reason, "grok_file_meta": []}
+        if grok_result is not None:
+            _body, row = flatten_shot(
+                kind="grok_few_shot",
+                generator="grok-4.6",
+                text=grok_result.tactics,
+                shots=shots,
+                flatten_fn=lambda text: flatten_fn(tactics, text),
+                pack_fn=pack_generated_candidate,
+                extra={"source": "tactics.lean", "tactics_path": grok_result.tactics_path, "chat_ignored": True},
+            )
+            out["identity"] = grok_result.identity
+            out["grok_few_shot_row"] = row
+            out["grok_file_meta"] = [tagged_mapping("draft", grok_result)]
+        return out
+
+    def _few() -> dict[str, Any]:
+        shots = shot_fn(records, skip_name=name)
+        ledger = ledger_cls(name=f"{name}#few-shot")
+        text, identity, _line = after_calls(
+            tuple(key_fns),
+            generate_mistral_fn,
+            few_prompt_fn(record, shots),
+            ledger,
+            max_new_tokens=900,
+            timeout=180.0,
+        )
+        _filled, row = flatten_shot(
+            kind="leanstral_few_shot",
+            generator="labs-leanstral-1-5",
+            text=text,
+            shots=shots,
+            flatten_fn=lambda body: flatten_fn(tactics, body),
+            pack_fn=pack_generated_candidate,
+        )
+        return {"ledger": ledger, "identity": identity, "few_shot_row": row}
+
+    def _one() -> dict[str, Any]:
+        targets = prioritize_fn(first_truthy(fill_holes, holes), cap=2)
+        if not targets:
+            return {}
+        ledger = ledger_cls(name=f"{name}#mca-one-hole")
+        after_calls(tuple(key_fns), lambda: None)
+        fills, identity = collect_one_hole_fills(
+            targets,
+            holes,
+            tactics,
+            generate_fn=lambda hole: generate_mistral_fn(one_prompt_fn(record, tactics, hole), ledger, max_new_tokens=256, timeout=120.0),
+            parse_fn=parse_fn,
+            fallback_fn=extract_fn,
+            apply_fn=apply_fn,
+            align_fn=lambda filled: align_generated(tactics, filled, extract_fn=lambda text: text, match_fn=match_fn, flatten_fn=flatten_over_fn),
+            pack_fn=pack_generated_candidate,
+            asdict_fn=asdict_fn,
+            skip_exc=(mistral_error,),
+            generator="labs-leanstral-1-5",
+            head_fn=head_chars,
+        )
+        return {"ledger": ledger, "identity": identity, "one_hole_fills": fills}
+
+    def _mask() -> dict[str, Any]:
+        ledger = ledger_cls(name=f"{name}#mca-mask")
+        text, identity, _line = after_calls(
+            tuple(key_fns),
+            generate_mistral_fn,
+            lean_prompt_fn(record, mask_fn(tactics, fill_holes), fill_holes),
+            ledger,
+            max_new_tokens=700,
+            timeout=180.0,
+        )
+        return {"ledger": ledger, "identity": identity, "leanstral_text": text}
+
+    generated = dispatch_mca_generation(
+        grok_paths=grok_tactics_paths,
+        grok_few_shot=grok_few_shot,
+        few_shot=few_shot,
+        call_leanstral=call_leanstral,
+        one_hole=one_hole,
+        fill_holes=fill_holes,
+        holes=holes,
+        grok_paths_fn=_grok_paths,
+        grok_few_shot_fn=_grok_few,
+        few_shot_fn=_few,
+        one_hole_fn=_one,
+        mask_fn=_mask,
+    )
+    grok_few_shot = bool(generated.get("grok_few_shot"))
+
+    def _compile(body: str) -> dict[str, Any]:
+        return dict_call(compile_body_fn, record, body, state_root=state_root, timeout=timeout, restore=restore)
+
+    def _hammer(kind: str, item: Mapping[str, Any], compiled: Mapping[str, Any]) -> tuple[list[dict[str, Any]], str, list[Any], bool]:
+        return hammer_passes_fn(
+            kind=kind,
+            tactics_now=get_str(item, "tactics"),
+            reference=tactics,
+            errors=get_list(compiled, "errors"),
+            record=record,
+            state_root=state_root,
+            timeout=timeout,
+            restore=restore,
+            generator=if_prefix(kind, "grok", "grok+simp_all/omega", "leanstral+simp_all/omega"),
+        )
+
+    def _repair(rows: list[dict[str, Any]], grok_ok: bool, grok_tactics: str, grok_errors: list[Any]) -> tuple[list[dict[str, Any]], bool]:
+        grok_few_shot_row = generated.get("grok_few_shot_row")
+        ledger = generated.get("ledger")
+        grok_tactics_current = first_truthy(grok_tactics, default="")
+        grok_errors_current = get_list(grok_errors)
+        if not (grok_few_shot and grok_few_shot_row is not None and not grok_ok and ledger is not None):
+            return rows, grok_ok
+        ok, grok_result, exc = call_caught(
+            lambda: grok_file_fn(
+                grok_prompt_fn(
+                    repair_prompt_fn(
+                        record,
+                        failed=or_call(grok_tactics_current, lambda: grok_few_shot_row["tactics"]),
+                        errors=grok_errors_current,
+                        reference=tactics,
+                    )
+                ),
+                ledger,
+                workspace=if_none(generated.get("grok_workspace"), factory=workspace_fn),
+                max_new_tokens=grok_max_new,
+                timeout=grok_timeout,
+                generate=grok_generate,
+                fixture=grok_generate is not None,
+                reset_stub=False,
+            ),
+            grok_error,
+        )
+        if not ok:
+            generated["grok_skip_reason"] = or_str(generated.get("grok_skip_reason"), exc)
+            rows.append(pack_failed_candidate(kind="grok_few_shot_repair", generator="grok-4.6", reason=text_or(exc), extra={"source": "tactics.lean", "chat_ignored": True}))
+            return rows, grok_ok
+        generated["identity"] = grok_result.identity
+        generated.setdefault("grok_file_meta", []).append(tagged_mapping("repair", grok_result))
+        repaired = flatten_fn(tactics, grok_result.tactics)
+        compiled_r = compile_body_fn(record, repaired, state_root=state_root, timeout=timeout, restore=restore)
+        rows, hammer_ok = after_compile_row(
+            rows,
+            {"kind": "grok_few_shot_repair", "generator": "grok-4.6", "tactics": repaired, "holes": []},
+            compiled_r,
+            row_fn=compile_row_fn,
+            hammer_fn=lambda: hammer_passes_fn(
+                kind="grok_few_shot_repair",
+                tactics_now=repaired,
+                reference=tactics,
+                errors=get_list(compiled_r, "errors"),
+                record=record,
+                state_root=state_root,
+                timeout=timeout,
+                restore=restore,
+                generator="grok+simp_all/omega",
+            ),
+        )
+        if compiled_r.get("theorem_ok"):
+            return rows, True
+        return rows, bool(first_truthy(grok_ok, hammer_ok, default=False))
+
+    def _fanout(candidates: list[dict[str, Any]], ledger: Any) -> dict[str, Any]:
+        seed_row = first_where(candidates, kind_startswith("grok")) or {"tactics": tactics}
+        _raw, _digest, warmup_records = load_fn()
+        extras = collect_grok_fanout_extras(
+            seed_row["tactics"],
+            tactics,
+            tactician_fn=tactician_fn,
+            feature_fn=feature_fn,
+            family_fn=family_fn,
+            draft_fn=draft_fn,
+            model=fit_drop(warmup_records, row_feature_fn, fit_fn),
+        )
+        ranked = rank_fn(record, extras, ledger=ledger)
+        pin_grok_fanout(candidates, extras, get_str(ranked, "best_first_draft"), cap=fanout_cap, key_fn=lambda item: item["kind"])
+        return ranked
+
+    return run_mca_problem(
+        generated=generated,
+        name=name,
+        digest=digest,
+        tactics=tactics,
+        holes=holes,
+        skeleton=skeleton,
+        assemble_fn=lambda leanstral_text, hole_rows: assemble_fn(record, tactics, hole_rows, leanstral_text=leanstral_text),
+        compile_fn=_compile,
+        row_fn=compile_row_fn,
+        hammer_fn=_hammer,
+        needs_hammer_fn=needs_hammer_fn,
+        repair_fn=_repair,
+        ablate_fn=optional_fn(ablate and holes, lambda: ablate_holes_fn(record, tactics, prioritize_fn(holes, cap=6), state_root=state_root, timeout=timeout, restore=restore)),
+        fanout_fn=_fanout,
+        extra_fn=lambda grok_ok, grok_tactics, grok_errors, generated, typesafe_meta: {
+            "leanstral_identity": either(generated.get("grok_few_shot"), lambda: None, lambda: generated.get("identity")),
+            "grok_identity": call_if(generated.get("grok_few_shot"), lambda: identity_fn(generated.get("identity"))),
+            "grok_few_shot": bool(generated.get("grok_few_shot")),
+            "grok_ok": grok_ok,
+            "grok_skip_reason": or_none(generated.get("grok_skip_reason")),
+            "grok_used_file": bool(generated.get("grok_few_shot")),
+            "grok_chat_ignored": bool(generated.get("grok_few_shot")),
+            "grok_workspace": str_or_none(generated.get("grok_workspace")),
+            "grok_file_calls": list(generated.get("grok_file_meta") or ()),
+            "typesafe_fanout": typesafe_meta,
+            "ledger": call_if(generated.get("ledger"), lambda: generated["ledger"].as_dict()),
+        },
+        redact_fn=redact_fn,
+        token_fn=token_fn,
+        head_fn=head_chars,
+        asdict_fn=asdict_fn,
+        hardware_class=hardware_class,
+        grok_hardware_class=grok_hardware_class,
+        grok_paths=grok_tactics_paths,
+        typesafe_fanout=typesafe_fanout,
+    )
+
+
 def run_mca_problem(
     *,
     generated: Mapping[str, Any],
@@ -2710,6 +3665,121 @@ def diffuse_noise_step(
         extra=overlay_map(noise_meta, identity=identity),
     )
     return row, keep_out, int(tokens)
+
+
+def drive_diffuse(
+    name: str,
+    *,
+    state_root: Any,
+    timeout: float,
+    rounds: int,
+    seed: int,
+    use_leanstral: bool,
+    tau: float,
+    load_records_fn: Callable[[], tuple[Any, str, Sequence[Mapping[str, Any]]]],
+    clone_fn: Callable[..., Any],
+    relpath_fn: Callable[..., str],
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    holes_fn: Callable[[str], Sequence[Any]],
+    token_fn: Callable[[str], int],
+    key_fns: Sequence[Callable[[], Any]],
+    leanstral_fns: Sequence[Callable[[], Any]],
+    drop_fn: Callable[..., str],
+    eval_fn: Callable[..., Sequence[Mapping[str, Any]]],
+    jev_fn: Callable[..., Mapping[str, Any]],
+    ledger_cls: Callable[..., Any],
+    one_prompt_fn: Callable[..., str],
+    shrink_prompt_fn: Callable[..., str],
+    generate_fn: Callable[..., tuple[str, Any, Any]],
+    extract_fn: Callable[[str], str],
+    match_fn: Callable[..., str],
+    flatten_over_fn: Callable[..., str],
+    hammer_fn: Callable[..., str],
+    skip_exc: tuple[type[BaseException], ...],
+    redact_fn: Callable[[Any], Any],
+    hardware_class: str,
+    protocol: str,
+    pr: str,
+) -> dict[str, Any]:
+    """Exploit high-p holes, then optional Leanstral noise. ``eval_fn`` owns lake."""
+
+    from jevops.outer import either, load_and_clone, pin_calls
+    from jevops.repair import flatten_matched
+
+    held: dict[str, Any] = {}
+
+    def _load(problem: str, *, error_cls: Any) -> tuple[Any, Any, str, Any, Any, bytes]:
+        packed = load_and_clone(
+            load_records_fn,
+            problem,
+            state_root,
+            clone_fn=clone_fn,
+            relpath_fn=relpath_fn,
+            error_cls=error_cls,
+            miss=f"unknown warm-up problem: {problem}",
+        )
+        held["restore"] = packed[5]
+        return packed
+
+    def _eval(record: Mapping[str, Any], body: str) -> list[dict[str, Any]]:
+        return eval_fn(
+            record,
+            body,
+            state_root=state_root,
+            timeout=timeout,
+            restore=held["restore"],
+            reference=tactic_fn(record),
+        )
+
+    def _noise(
+        round_i: int,
+        remaining: Sequence[Any],
+        keep: str,
+        keep_tokens: int,
+        record: Mapping[str, Any],
+        records: Sequence[Mapping[str, Any]],
+        rng: Any,
+    ) -> tuple[Any, str, int]:
+        return diffuse_noise_step(
+            use_leanstral=use_leanstral,
+            remaining=remaining,
+            rng=rng,
+            keep=keep,
+            keep_tokens=keep_tokens,
+            record=record,
+            records=records,
+            name=name,
+            ledger_fn=lambda i: ledger_cls(name=f"{name}#diffuse-r{i}"),
+            one_hole_prompt_fn=one_prompt_fn,
+            shrink_prompt_fn=shrink_prompt_fn,
+            generate_fn=generate_fn,
+            extract_fn=extract_fn,
+            flatten_fn=flatten_matched(match_fn, flatten_over_fn),
+            hammer_fn=lambda noisy, errors: hammer_fn(noisy, tactic_fn(record), errors),
+            eval_fn=lambda body: _eval(record, body),
+            skip_exc=skip_exc,
+            round_i=round_i,
+        )
+
+    return run_diffuse_search(
+        name,
+        load_fn=_load,
+        tactic_fn=tactic_fn,
+        find_fn=holes_fn,
+        token_fn=token_fn,
+        pin_fn=pin_calls(*key_fns, *either(use_leanstral, lambda: tuple(leanstral_fns), lambda: ())),
+        drop_fn=drop_fn,
+        eval_fn=_eval,
+        jev_fn=jev_fn,
+        noise_fn=_noise,
+        rounds=rounds,
+        seed=seed,
+        tau=tau,
+        redact_fn=redact_fn,
+        hardware_class=hardware_class,
+        protocol=protocol,
+        pr=pr,
+    )
 
 
 def run_diffuse_search(
@@ -3252,6 +4322,148 @@ def begin_mcmc(
         "failed_bodies": set(),
         "leanstral_calls": 0,
     }
+
+
+def drive_guided_lines(
+    prefix: str,
+    reference: str,
+    pack: Mapping[str, Any],
+    *,
+    status_fn: Callable[[Mapping[str, Any]], Mapping[str, Any]],
+    header_fn: Callable[[str], Mapping[str, str]],
+    remaining_fn: Callable[[str, str, str], Any],
+    arm_fn: Callable[[str, str], Any],
+    closers: Sequence[str],
+) -> list[str]:
+    """Next lines from case headers. Does not compile."""
+
+    from jevops.outer import text_or
+
+    headers = header_fn(reference)
+    return guided_next(
+        prefix,
+        status_fn(pack),
+        header_of=lambda tag: headers.get(text_or(tag), ""),
+        remaining_fn=lambda tag: remaining_fn(prefix, reference, text_or(tag)),
+        arm_lines_fn=lambda tag: arm_fn(reference, text_or(tag)),
+        closers=closers,
+    )
+
+
+def drive_filter_earliest(
+    lines: Sequence[str],
+    pack: Mapping[str, Any],
+    reference: str,
+    *,
+    status_fn: Callable[[Mapping[str, Any]], Mapping[str, Any]],
+    header_fn: Callable[[str], Mapping[str, str]],
+    stop: str,
+    closer_pred: Callable[[str], bool],
+) -> list[str]:
+    """Drop lines that skip the earliest unfinished case. Does not compile."""
+
+    from jevops.outer import text_or
+
+    headers = header_fn(reference)
+    return filter_to_earliest(
+        lines,
+        status_fn(pack),
+        header_of=lambda tag: headers.get(text_or(tag), ""),
+        stop=stop,
+        closer_pred=closer_pred,
+        header_match=lambda stripped, earliest: stripped.startswith("case ") and earliest in stripped.split(),
+        tag_token_fn=lambda tag: f"case {tag}",
+    )
+
+
+def drive_keepbest_rows(
+    record: Mapping[str, Any],
+    tactics_list: Sequence[str],
+    *,
+    state_root: Any,
+    timeout: float,
+    clone_fn: Callable[..., Any],
+    relpath_fn: Callable[[Mapping[str, Any]], str],
+    tactic_fn: Callable[[Mapping[str, Any]], str],
+    variants_fn: Callable[..., Sequence[str]],
+    compile_fn: Callable[..., Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Compile keep-best variants. The compiler is injected. Not an admit by itself."""
+
+    from jevops.outer import clone_restore
+
+    _clone, _dest, restore = clone_restore(
+        record,
+        state_root,
+        clone_fn=clone_fn,
+        relpath_fn=relpath_fn,
+    )
+    reference = tactic_fn(record)
+    pairs = keepbest_beam_pairs(reference, tactics_list, variants_fn=variants_fn)
+    return compile_variant_rows(
+        pairs,
+        lambda body: compile_fn(
+            record,
+            body,
+            state_root=state_root,
+            timeout=timeout,
+            restore=restore,
+        ),
+    )
+
+
+def drive_line_swap(
+    record: Mapping[str, Any],
+    tactics: str,
+    rng: Any,
+    locked_haves: Any,
+    *,
+    mutable_fn: Callable[..., Sequence[int]],
+    generate_fn: Callable[..., Any],
+    parse_fn: Callable[[str], str],
+    looks_fn: Callable[[str], bool],
+    replace_fn: Callable[[str, int, str], str],
+    stop: str,
+    head_fn: Optional[Callable[[str, int], str]] = None,
+    radius: int = 4,
+    max_new_tokens: int = 48,
+    timeout: float = 90.0,
+    allow_owner_exec: bool = False,
+) -> Optional[dict[str, str]]:
+    """One mutable-line replacement. The generator is injected. Not a lake admit."""
+
+    from jevops.mask import around_lines
+    from jevops.outer import get_str, head_chars, pick_line
+
+    idxs = list(mutable_fn(tactics, locked_haves) or ())
+    if not idxs:
+        return None
+    index, target = pick_line(tactics, rng, idxs)
+    prompt = (
+        "Replace ONE Lean 4 tactic line with a shorter equivalent. "
+        "Reply with only that line. No sorry. Keep case/induction.\n\n"
+        f"Problem: {get_str(record, 'name')}\n"
+        f"Around:\n" + around_lines(tactics, index, radius=radius) + "\n\n"
+        f"Replace this line:\n{target}\n\nReplacement:"
+    )
+    result = generate_fn(
+        prompt,
+        max_new_tokens=max_new_tokens,
+        timeout=timeout,
+        source=get_str(record, "source"),
+        allow_owner_exec=allow_owner_exec,
+    )
+    return swap_from_generate(
+        result,
+        tactics=tactics,
+        index=index,
+        parse_fn=parse_fn,
+        looks_fn=looks_fn,
+        replace_fn=replace_fn,
+        stop=stop,
+        target=target,
+        head_fn=head_fn or head_chars,
+    )
 
 
 def swap_from_generate(

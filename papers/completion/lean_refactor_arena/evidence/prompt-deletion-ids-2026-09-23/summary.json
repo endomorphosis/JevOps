@@ -1,0 +1,137 @@
+{
+  "schema": "jevops-refactor-deletion-id-summary/v1",
+  "date": "2026-09-23",
+  "plan_id": "0c12f96ec8a9b7d6142a59c095b53195eb424a5ddfc73e3980b284c6e8f0a52b",
+  "catalog_sha256": "52677802aa9a72d367b5a883b0b552a21d71b1d948af13ef7e1026e12f052219",
+  "task": "Core.InitsUpdatesComm",
+  "status": "COMPLETE",
+  "task_split": "previously studied public warm-up, not held out",
+  "model_calls_attempted": 8,
+  "returned_responses": 8,
+  "infrastructure_failures": 0,
+  "retry_count": 0,
+  "model_fixture": false,
+  "fallback_used": false,
+  "by_arm": {
+    "endpoints-forward": {
+      "attempts": 2,
+      "responses_returned": 2,
+      "strict_contract": 0,
+      "admitted_replies": 0,
+      "unique_sources": 0,
+      "outcomes": {
+        "contract_mismatch": 2
+      }
+    },
+    "endpoints-reverse": {
+      "attempts": 2,
+      "responses_returned": 2,
+      "strict_contract": 0,
+      "admitted_replies": 0,
+      "unique_sources": 0,
+      "outcomes": {
+        "contract_mismatch": 2
+      }
+    },
+    "ids-forward": {
+      "attempts": 2,
+      "responses_returned": 2,
+      "strict_contract": 1,
+      "admitted_replies": 1,
+      "unique_sources": 1,
+      "outcomes": {
+        "parsed": 1,
+        "contract_mismatch": 1
+      }
+    },
+    "ids-reverse": {
+      "attempts": 2,
+      "responses_returned": 2,
+      "strict_contract": 2,
+      "admitted_replies": 2,
+      "unique_sources": 2,
+      "outcomes": {
+        "parsed": 2
+      }
+    }
+  },
+  "by_output_contract": {
+    "endpoints": {
+      "attempts": 4,
+      "responses_returned": 4,
+      "strict_contract": 0,
+      "admitted_replies": 0,
+      "unique_sources": 0,
+      "outcomes": {
+        "contract_mismatch": 4
+      }
+    },
+    "ids": {
+      "attempts": 4,
+      "responses_returned": 4,
+      "strict_contract": 3,
+      "admitted_replies": 3,
+      "unique_sources": 2,
+      "outcomes": {
+        "parsed": 3,
+        "contract_mismatch": 1
+      }
+    }
+  },
+  "usage_observed_requests": 8,
+  "complete_generation_token_usage": {
+    "prompt_tokens": 30104,
+    "completion_tokens": 268,
+    "total_tokens": 30372
+  },
+  "generation_request_wall_seconds_sum": 33.6581,
+  "admitted_replies": 3,
+  "unique_admitted_sources": 2,
+  "native_requests": 5,
+  "native_processes": 5,
+  "native_outcomes": {
+    "VERIFIED": 3,
+    "REJECTED": 2,
+    "NOT_RUN_AFTER_NON_SUCCESS": 4
+  },
+  "native_request_wall_seconds_sum": 69.2092,
+  "all_pin_verified_candidates": [],
+  "verified_refactoring_improvements": 0,
+  "performance_confirmation_run": false,
+  "performance_selected": false,
+  "training": false,
+  "promotion": false,
+  "official_score": null,
+  "paid_api_cost": null,
+  "electricity_cost": null,
+  "snapshot_checks": {
+    "generation": "UNCHANGED",
+    "native": "UNCHANGED"
+  },
+  "snapshot_manifest_sha256": "764fd200a65d7c44a66034b72e77023f7a93fe3328357bcedfe38be3e55f42f5",
+  "complete_source_snapshot": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/prompt-deletion-ids-20260923-CJZSJi/snapshot",
+  "complete_source_snapshot_in_archive": false,
+  "tests": {
+    "passed": 282,
+    "deselected": 1,
+    "seconds": 12.11,
+    "scope": "targeted offline suite, real_kernel_checked excluded",
+    "initial_run": {
+      "passed": 278,
+      "failed": 1,
+      "deselected": 1,
+      "seconds": 12.5
+    },
+    "fix": "String type guard before message-role set membership; no endpoint or execution restriction relaxed."
+  },
+  "interpretation": "Numbered IDs improved admissible selection in this small comparison, not verified refactoring quality.",
+  "limitations": [
+    "Eight requests on one previously studied task; greedy repetitions are not independent samples.",
+    "Both output formats received the same numbered catalog; earlier pilot rates are not matched controls.",
+    "Contract representation and wording lengths differ; this is not a pure equal-token wording intervention.",
+    "No constrained decoding; valid IDs remain subject to native proof verification.",
+    "Server model metadata is not independently attested.",
+    "Native execution used trusted-local scratch, not an OS sandbox.",
+    "No trained policy, performance confirmation or official Arena score."
+  ]
+}

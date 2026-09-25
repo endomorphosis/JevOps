@@ -1,0 +1,564 @@
+{
+  "schema": "jevops-local-premise-batch/v1",
+  "request": {
+    "schema": "jevops-local-premise-request/v1",
+    "record_sha256": "8531dba47f5c2ccb5526c9596f06804c66f4cf6971d1533baf6c1ffb61311625",
+    "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+    "trace_sha256": "49332ad13aab5bf13b7473765c007c08383ceb4750db178a936a42b59e4a62e4",
+    "capture_environment": "86bcf497e7f845f21b84c3ff55275146542c889a71c94cb75b9f7b28cd73e151",
+    "environment_sha256": "1435c3a321326c4fdfb625d3d8dea90a769c7ec5bb7e3a4bf1b22ed0853bae08",
+    "origin_sha256": "3724278fc025a04d5f692d3c2c10b2718d9414c1cc248a339727e93d58533e00",
+    "index_sha256": "29e072d25834c7d6cff18266ff65a58802dd52efd26935bf6aacdff34a77f356",
+    "scope_sha256": "6a37eb1bb55a2dc8d2c43f4af2f7373fb18cac783ed4fde77ed30130f67b73aa",
+    "effective_scope_sha256": "370b8609d861f4460f0e0cf5b465bee7d25513705e6708379ca8ba0b6f72e093",
+    "declaration": "Core.InitsUpdatesComm",
+    "target": "Core.InitsUpdatesComm",
+    "methods": [
+      "exact",
+      "apply"
+    ],
+    "cap": 2,
+    "top_k": 4,
+    "max_scan": 512,
+    "max_events": 64,
+    "max_query_nodes": 256,
+    "ranking_bytes": 1048576,
+    "feature_method": "goal-and-local-type-constants/v1",
+    "tokenizer_id": "lra-reference-lexical/v1",
+    "request_sha256": "930b89d2c5e89f3775fe60bba0b0d5fa3c22b1990fd1aaf2526251cb92fd9347"
+  },
+  "policy": "deterministic-lexical-local-premises/v1",
+  "status": "DRAFTS_ONLY",
+  "truncated": true,
+  "proposals": [
+    {
+      "event_id": 15,
+      "candidate": "exact _root_.Core.updatedStatesInit"
+    },
+    {
+      "event_id": 15,
+      "candidate": "exact _root_.Core.UpdateStateDefined'"
+    }
+  ],
+  "proof_verified": false,
+  "proof_admitted": false,
+  "whole_source_checked": false,
+  "fresh_verification_required": true,
+  "official_score": null,
+  "events": [
+    {
+      "event_id": 1,
+      "event_sha256": "840e54bb4a3db2a5cc8b6a9e7f6457aa2b257f230a69c67b29b968c6dc7d2238",
+      "start": "320",
+      "end": "322",
+      "status": "UNSUPPORTED_SPAN",
+      "outcomes": []
+    },
+    {
+      "event_id": 18,
+      "event_sha256": "3086adad84d35f45ee67248a852a17731084f638777a04d17215ad6f24aa9a38",
+      "start": "1372",
+      "end": "1374",
+      "status": "UNSUPPORTED_SPAN",
+      "outcomes": []
+    },
+    {
+      "event_id": 16,
+      "event_sha256": "3d3d12bb0502031c515634892e015668c57dee5b3f922816f67091f173191221",
+      "start": "1340",
+      "end": "1348",
+      "status": "RANKED",
+      "outcomes": [
+        {
+          "candidate": "exact _root_.Core.updatedStatesInit",
+          "source_sha256": "47e66463d9c712b076394bb844b3a527717b8085e2af0217e029d135283f8bad",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.UpdateStateDefined'",
+          "source_sha256": "1e4275058966951f5b8b15c387b138ab94614141206e0a5722599e568d307dd8",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.updatedStateUpdate",
+          "source_sha256": "085bcda986f2ae942641bc8bdbb85ace734c4962512daf6c9d925829375ee6be",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.UpdateStateNotDefMonotone'",
+          "source_sha256": "b25dc97538e914e6386667491088538e83b9ec74effeed1e848f2e81d3a56f97",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.updatedStatesInit",
+          "source_sha256": "228a06bae79131dbd708846b7a8f8a3eda626476745d52b7cbdee039a39a0176",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.UpdateStateDefined'",
+          "source_sha256": "92d00f43a3c1a10df62fe525cae1b8d1e64c74b1f45bb346870d51415e663a97",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.updatedStateUpdate",
+          "source_sha256": "ba37f3cac1a55cc183a13d7933435a926da705fb2725765498c735b4bfe5d463",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.UpdateStateNotDefMonotone'",
+          "source_sha256": "716e394f2819b52d71cac35f202b216fbfd31e4a856be773ae52b74a74a6d870",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        }
+      ]
+    },
+    {
+      "event_id": 21,
+      "event_sha256": "68d36c51f89ea1e72f939535c09475969bed6d71e4e24e8afd06c9704b057e3c",
+      "start": "1509",
+      "end": "1517",
+      "status": "RANKED",
+      "outcomes": [
+        {
+          "candidate": "exact _root_.Core.UpdateStateDefined'",
+          "source_sha256": "5f691de4834d2042fefb25b6b7d12f1ad2bf1897378485d1bff682294676df25",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.updatedStatesInit",
+          "source_sha256": "769c16fa55d6fc876c1e084cf6a0b974f27c608495f54f8504402bc6896ed6df",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.InitStatesSomeMonotone",
+          "source_sha256": "efe66cb41ef3efb724940b5d6344caea30061e3925a006356e5b277f21a229b0",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.updatedStateUpdate",
+          "source_sha256": "25a1a4b0fff4b53fd45bc1d18b59776cd24c2d4dc237e6bffb39fb0d4da8a411",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.UpdateStateDefined'",
+          "source_sha256": "934096364bea299a5388fc335c76a246cce3dcb798fcfd9964cbdccb393294f5",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.updatedStatesInit",
+          "source_sha256": "4a6ec3ffb939c137eacc6b00576c36fda9861d6fd1175f41a4ca2c5f56ab760a",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.InitStatesSomeMonotone",
+          "source_sha256": "fa5d916d654db767cafe0ed31cd13ce8586412323cc4a9095ad046da1f1fa4c8",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.updatedStateUpdate",
+          "source_sha256": "8b92a8a2180ace439bee326effd558d3fdf5e8c317a34e44daea9dca887a48f2",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        }
+      ]
+    },
+    {
+      "event_id": 29,
+      "event_sha256": "21856db730df444f36d810cfc0b441e8247f7940bc01afc22dbd1699052fb990",
+      "start": "1743",
+      "end": "1751",
+      "status": "RANKED",
+      "outcomes": [
+        {
+          "candidate": "exact _root_.Core.UpdateStateDefined'",
+          "source_sha256": "f2dab722c3101067812d11ee48de88a6f4f9481f9bdb1ed980e4a1d4e9dc09f9",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.updatedStatesInit",
+          "source_sha256": "7e904100087f7ba65d67357c32ee95b4a7453fa596c9275514248577f807149a",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.UpdateStateNotDefMonotone'",
+          "source_sha256": "42fc4dadaf6c62e22384c1cf2008dd5453a02dee5a4151353ef60d71055a9e01",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.InitStatesNodup",
+          "source_sha256": "a908473f7bf8c1d74b9c059136e5c6be6be49d8c90261cdaaa361a2933ff79ff",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.UpdateStateDefined'",
+          "source_sha256": "2e81367387be4512d80d72fa22f92b0796c92cef6abe4e36d84fc084b22d0092",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.updatedStatesInit",
+          "source_sha256": "8b1910a2ea4af61ca28936293fa653464c95ea4f5f4d1229a709d4d36a7d2df4",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.UpdateStateNotDefMonotone'",
+          "source_sha256": "3bf5d311221e3c8a7e3498ba68718d3363c1bc21d7527612575846b6945603ee",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.InitStatesNodup",
+          "source_sha256": "ae0d4326db07b8d8524eedc4d6023ce58cf15d73e6c74090b9837bc3a9c2e78c",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        }
+      ]
+    },
+    {
+      "event_id": 30,
+      "event_sha256": "c996d7efd89268096d3e7d513e5760a2dc0b56eccedb9524a85b653a2ca2aec8",
+      "start": "1935",
+      "end": "1943",
+      "status": "RANKED",
+      "outcomes": [
+        {
+          "candidate": "exact _root_.Core.updatedStatesInit",
+          "source_sha256": "7f86c2ab07170666f20645869ba3f3f8f81810de788982dd47a127e491b05f56",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.UpdateStateNotDefMonotone'",
+          "source_sha256": "d7e4199083f71d3331a78c459b81ceb239a8529307c0155a8734a9f07aa4f107",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.InitStatesNodup",
+          "source_sha256": "6aeb8a5811c442937fff37ae51b97a3265816a3eb3e44023ffd397ded83b989a",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.InitStatesNotDefined",
+          "source_sha256": "753667ea129f59003d256b9afcd340ac1d09eb286793dff1ff9ea6200c5bfa4c",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.updatedStatesInit",
+          "source_sha256": "598efba51a27d92dcf26c43fa7c3db1d148e1de0883f7c91661d014c886a5710",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.UpdateStateNotDefMonotone'",
+          "source_sha256": "234eef13ff8dbdea7c5cb4aee7fac84ee96e82ee4fc0f6a6e7fc48753f31b272",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.InitStatesNodup",
+          "source_sha256": "58608a5f6d2af0ebc9f09d82479be264b19f70e8033441df1610d9c9521e203a",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.InitStatesNotDefined",
+          "source_sha256": "662a27ab07c927c30616a45cdff38a7e1d4462837bd4bdd09662a54ef45dc63b",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        }
+      ]
+    },
+    {
+      "event_id": 34,
+      "event_sha256": "f7b78d8b76d3d6fb8cbefcb633cee0e589a55bff24b557b622a4fcdef1e22e79",
+      "start": "2015",
+      "end": "2023",
+      "status": "RANKED",
+      "outcomes": [
+        {
+          "candidate": "exact _root_.Core.updatedStatesInit",
+          "source_sha256": "31d9a09c42e010dd221a232efe15ff0ea2dd0e30b2463f8ff9423d4454cfb15f",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.UpdateStateNotDefMonotone'",
+          "source_sha256": "db208760dcd65c3f4b233902164088d4be3e5c2c739a28c340a273e6ed221c45",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.InitStatesNodup",
+          "source_sha256": "fd00d3d1c3c9d66e1f9a352735a058a26123cbc0f2fcb07a2be05455a7859205",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.InitStatesNotDefined",
+          "source_sha256": "1e26e58668112c1e46309ca1d5ae4ee215b9a8d85281a757382c725963e693e8",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.updatedStatesInit",
+          "source_sha256": "f667f9718dc1e21e2370496cbee6e5cb7b791736088d8edaf9d5487c9c7f2f67",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.UpdateStateNotDefMonotone'",
+          "source_sha256": "e91ef40f68250d00655b44e7c0f3eb0f41c6fa9a85fdbd48a33bbf0e7de6eff3",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.InitStatesNodup",
+          "source_sha256": "f6343f4c7ed7e51f7ba58bcccecc43475b3165dbb02a45549c8dddfbe5f2e7de",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.InitStatesNotDefined",
+          "source_sha256": "87217bca1616b7a3377ca63ace788b15f9afeb2540bd0cfa66b1ea8c07a10692",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        }
+      ]
+    },
+    {
+      "event_id": 36,
+      "event_sha256": "a356f2d885bc3d9d89e8aa1897378c1fbaa6ba4dcc8f7d93c9f78d0058d3498c",
+      "start": "2034",
+      "end": "2042",
+      "status": "RANKED",
+      "outcomes": [
+        {
+          "candidate": "exact _root_.Core.UpdateStateDefined'",
+          "source_sha256": "c747ca59cc2691c09ec0b6db94176c0fede5454e6826ba157528c5dd1af4d138",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.updatedStatesInit",
+          "source_sha256": "ca269b937297b07d30b0e19116b005399d0b78f70a437248eb40a93b33f479b9",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.UpdateStateNotDefMonotone'",
+          "source_sha256": "f86a260eb4b558bc0e1875eb2bf89a7cc079dec78035c78e0c22f6cefe6475ad",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.InitStatesNodup",
+          "source_sha256": "79df124b419a529a3c4291c103ef25104f9f40e504d7f69a0098d140bb2d0b81",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.UpdateStateDefined'",
+          "source_sha256": "f35e9af1f38072479f527aaded55dfd65c9327b865db80c78e4c4b8105ca4c33",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.updatedStatesInit",
+          "source_sha256": "5a2fb13f437bc22b828c2787426a7da067a91ab8cfd608e33d78a64db9cf3413",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.UpdateStateNotDefMonotone'",
+          "source_sha256": "8640fc128734b9addf0f8412369288a0a6488fec146ef72bf1b8f5938716537c",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.InitStatesNodup",
+          "source_sha256": "21918cdbb2519e6f89c8578bae297754668e76af2c15b99cba57b98b3767f476",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        }
+      ]
+    },
+    {
+      "event_id": 35,
+      "event_sha256": "6ad83819ce1cd08bf5c30847d57c3c8944c0029b473a6479ee8242f1126c10fe",
+      "start": "2032",
+      "end": "2042",
+      "status": "RANKED",
+      "outcomes": [
+        {
+          "candidate": "exact _root_.Core.UpdateStateDefined'",
+          "source_sha256": "28c94941c4d979dbeb91e6901e0d962d12860ff5ed960519d1b1d5cf271b646d",
+          "tokens": 224,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.updatedStatesInit",
+          "source_sha256": "5c51e20d0b817573d66803a4a5360dc00ed356c562a1a67bed8c11e006393ebc",
+          "tokens": 224,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.UpdateStateNotDefMonotone'",
+          "source_sha256": "6c96a883dce291a235e504f7e7d90a25595074a3d502055cb02e8261107df606",
+          "tokens": 224,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.InitStatesNodup",
+          "source_sha256": "ebd225e18f43d171f9424adcb6816152fedcf3687a1b93fb87fc228bc9b73394",
+          "tokens": 224,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.UpdateStateDefined'",
+          "source_sha256": "0843a756e5a73798f574a7c8b75fcef5081291e454067660c985d2202679b2bb",
+          "tokens": 224,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.updatedStatesInit",
+          "source_sha256": "7a0e60cb6b77f8cca38609eb2b14b55879f1333c972db2e8705150261d813048",
+          "tokens": 224,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.UpdateStateNotDefMonotone'",
+          "source_sha256": "e8b31877dc9ce9742520a4cfd128cd0aecd5545bcf5c60886a56fa800d09990f",
+          "tokens": 224,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.InitStatesNodup",
+          "source_sha256": "da22dbdd57c5a26d23e57c13450d41b3597d8fbb1aeb451a18123f3560f1b9e0",
+          "tokens": 224,
+          "status": "NOT_SHORTER"
+        }
+      ]
+    },
+    {
+      "event_id": 5,
+      "event_sha256": "670669eb22e84eb56e620d5a5ecb1d6f0d89841dc04bb111c306a3bf638a2bc2",
+      "start": "752",
+      "end": "763",
+      "status": "RANKED",
+      "outcomes": [
+        {
+          "candidate": "exact _root_.Core.updatedStatesInit",
+          "source_sha256": "e046abef0c81b41d3efc0b1da954fbda100d60b43c3d8de2ac2790ac3b2dd037",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.InitStatesNodup",
+          "source_sha256": "360699dc1daee6cbd8148307e88237ff7717f2e901586ca9349ec48da7a1f77b",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.InitStatesNotDefined",
+          "source_sha256": "0ae5ecff2d7aa6c64625ce820488b411135a391a0034045c26317ae7259fbf32",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "exact _root_.Core.UpdateStatesNotDefMonotone'",
+          "source_sha256": "66a091bc692a06ebfba9cc335a91fcc4760cebc8e2d33d89ba75e0c1bad633be",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.updatedStatesInit",
+          "source_sha256": "81646fa2b554f2ff039c648e4c5c1c7a84e48f674c895706b09509852d5a9295",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.InitStatesNodup",
+          "source_sha256": "884ec337de98e6861ed0ea6bbf6c090ef5db7962c6c7a9c5fc5eb946d637785d",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.InitStatesNotDefined",
+          "source_sha256": "973cdc5b408f93fd9de1d61f83d360e5182ff3fd6d5d4bc6b026176ceee92600",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        },
+        {
+          "candidate": "apply _root_.Core.UpdateStatesNotDefMonotone'",
+          "source_sha256": "954c99e3c4239566c21e95faec6704c1f227952a43a05f5133ea1286da3fb071",
+          "tokens": 225,
+          "status": "NOT_SHORTER"
+        }
+      ]
+    },
+    {
+      "event_id": 19,
+      "event_sha256": "6a50282ba3c0c3aa972fdfd55b41cf634725247be6597ab4505e78491bc43187",
+      "start": "1359",
+      "end": "1374",
+      "status": "UNSUPPORTED_SPAN",
+      "outcomes": []
+    },
+    {
+      "event_id": 3,
+      "event_sha256": "edc34df57a8ab157ad039ca46c1e51f85d9ec4b6a083da673fd164f761d9fe51",
+      "start": "550",
+      "end": "569",
+      "status": "UNSUPPORTED_SPAN",
+      "outcomes": []
+    },
+    {
+      "event_id": 15,
+      "event_sha256": "a7f687207f7e4f0198c94798914959f17fcdbdec1cb1448c1f82f34b495b5308",
+      "start": "1322",
+      "end": "1348",
+      "status": "RANKED",
+      "outcomes": [
+        {
+          "candidate": "exact _root_.Core.updatedStatesInit",
+          "source_sha256": "22d02b7af5f90da91b46519a1737f08c36e9884cab9eb021adbaee1e563b9a9e",
+          "tokens": 221,
+          "status": "DRAFT",
+          "label": "local-premise-0"
+        },
+        {
+          "candidate": "exact _root_.Core.UpdateStateDefined'",
+          "source_sha256": "5f85f4e004eb71e968aa190bf8b50edfff6678b91a883136d3d5a0b8f1107060",
+          "tokens": 221,
+          "status": "DRAFT",
+          "label": "local-premise-1"
+        }
+      ]
+    }
+  ],
+  "raw_path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-context-repair-final-20260924-EZ4CQQ/run/local-drafts.json",
+  "raw_sha256": "c2470544672665571a42c55f70b45839020778c1717968a707ba69b7b938b2bf",
+  "summary_only": true
+}

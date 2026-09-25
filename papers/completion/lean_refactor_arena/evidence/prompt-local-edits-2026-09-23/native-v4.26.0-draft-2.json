@@ -1,0 +1,23 @@
+{
+  "pin": {
+    "lean_tag": "v4.26.0",
+    "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+  },
+  "label": "draft-2",
+  "source_sha256": "79bacabf0298f77bdea74f7d9ef7e6523bfa03ce8086122562955351d2cec206",
+  "status": "REJECTED",
+  "receipt": {
+    "request_id": "21e64114cea39fea74ca27eacd216411e41b96bfd6bc2c0c6a40d55fdf1636ab",
+    "candidate_sha256": "79bacabf0298f77bdea74f7d9ef7e6523bfa03ce8086122562955351d2cec206",
+    "target": "Core.InitsUpdatesComm",
+    "outcome": "REJECTED",
+    "type_preserved": false,
+    "exit_code": 0,
+    "axiom_output": "",
+    "heartbeats": null,
+    "reason": "candidate_errors",
+    "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"be2408939d0a8313fbb48b3339b2b4e495f09db4bb3123ad4cef7bf1c90ba36a\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"diagnostics\":[{\"message\":\"Tactic `apply` failed: could not unify the conclusion of `updatedStateUpdate`\\n  UpdateState P ?m.207 ?m.208 ?m.209 (updatedState ?m.207 ?m.208 ?m.209)\\nwith the goal\\n  UpdateState P (updatedStates' σ (ks'.zip vs')) x v (updatedState (updatedStates' σ (xs.zip vs)) x v)\\n\\nNote: The full type of `updatedStateUpdate` is\\n  ?m.207 ?m.208 = some val → UpdateState P ?m.207 ?m.208 ?m.209 (updatedState ?m.207 ?m.208 ?m.209)\\n\\nP : PureExpr\\nσ✝ σ' : SemanticStore P\\nks ks' : List P.Ident\\nvs✝ vs' : List P.Expr\\nHlen1 : ks'.length = vs'.length\\nσ : SemanticStore P\\nx : P.Ident\\nv : P.Expr\\nσ₀ : SemanticStore P\\nxs : List P.Ident\\nvs : List P.Expr\\nσ₁ : SemanticStore P\\nHup : UpdateState P σ x v σ₀\\nHups : UpdateStates σ₀ xs vs σ₁\\nσ'' : SemanticStore P\\nx✝ : Option P.Expr\\nval : P.Expr\\nih :\\n  ∀ {σ'' : SemanticStore P},\\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\\nHinit : InitStates σ₁ ks' vs' σ''\\nHk : isDefined σ₁ (x :: xs)\\nHlen2 : xs.length = vs.length\\nheq : σ x = some val\\n⊢ UpdateState P (updatedStates' σ (ks'.zip vs')) x v (updatedState (updatedStates' σ (xs.zip vs)) x v)\",\"severity\":\"error\"},{\"message\":\"unsolved goals\\ncase refine_2.a\\nP : PureExpr\\nσ✝ σ' : SemanticStore P\\nks ks' : List P.Ident\\nvs✝ vs' : List P.Expr\\nHlen1 : ks'.length = vs'.length\\nσ : SemanticStore P\\nx : P.Ident\\nv : P.Expr\\nσ₀ : SemanticStore P\\nxs : List P.Ident\\nvs : List P.Expr\\nσ₁ : SemanticStore P\\nHup : UpdateState P σ x v σ₀\\nHups : UpdateStates σ₀ xs vs σ₁\\nih :\\n  ∀ {σ'' : SemanticStore P},\\n    InitStates σ₁ ks' vs' σ'' →\\n      isDefined σ₁ xs →\\n        xs.length = vs.length →\\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\\nσ'' : SemanticStore P\\nHinit : InitStates σ₁ ks' vs' σ''\\nHk : isDefined σ₁ (x :: xs)\\nHlen2 : (x :: xs).length = (v :: vs).length\\n⊢ ¬x ∈ (xs.zip vs).unzip.fst\",\"severity\":\"error\"},{\"message\":\"Tactic `rewrite` failed: Did not find an occurrence of the pattern\\n  (List.zip ?m.213 ?m.214).unzip\\nin the target expression\\n  UpdateStates (updatedStates σ₀ xs vs) xs vs σ''\\n\\ncase refine_2.a\\nP : PureExpr\\nσ✝ σ' : SemanticStore P\\nks ks' : List P.Ident\\nvs✝ vs' : List P.Expr\\nHlen1 : ks'.length = vs'.length\\nσ : SemanticStore P\\nx : P.Ident\\nv : P.Expr\\nσ₀ : SemanticStore P\\nxs : List P.Ident\\nvs : List P.Expr\\nσ₁ : SemanticStore P\\nHup : UpdateState P σ x v σ₀\\nHups : UpdateStates σ₀ xs vs σ₁\\nih :\\n  ∀ {σ'' : SemanticStore P},\\n    InitStates σ₁ ks' vs' σ'' →\\n      isDefined σ₁ xs →\\n        xs.length = vs.length →\\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\\nσ'' : SemanticStore P\\nHinit : InitStates σ₁ ks' vs' σ''\\nHk : isDefined σ₁ (x :: xs)\\nHlen2 : (x :: xs).length = (v :: vs).length\\n⊢ UpdateStates (updatedStates σ₀ xs vs) xs vs σ''\",\"severity\":\"error\"},{\"message\":\"No goals to be solved\",\"severity\":\"error\"}],\"outcome\":\"REJECTED\",\"reason\":\"candidate_errors\"},\"wall_ms\":6705.477}"
+  },
+  "context_id": "a55e6f55de58d939e77e57851c81b8c95f3aa43aa5e05346e15baed82d179826",
+  "wall_seconds": 8.7672
+}

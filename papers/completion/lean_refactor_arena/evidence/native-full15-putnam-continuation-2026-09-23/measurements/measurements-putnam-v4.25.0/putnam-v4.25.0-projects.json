@@ -1,0 +1,10 @@
+[
+  {
+    "repository": "",
+    "lean_tag": "v4.25.0",
+    "git_commit": "1ccd71f89cbbd82ae7d097723ce1722ca7b01c33",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/putnam-v4.25.0",
+    "kind": "putnam",
+    "resolve_lake_manifest": true
+  }
+]

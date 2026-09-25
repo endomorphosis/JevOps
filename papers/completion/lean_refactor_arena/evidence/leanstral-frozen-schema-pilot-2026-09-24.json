@@ -1,0 +1,204 @@
+{
+  "artifacts": [
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-a/preparation.json",
+      "sha256": "2c8245c51db5d12af1b44d55fc507c276acfea480eb8c32bb72457b2de3b0766"
+    },
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-a/pilot/report.json",
+      "sha256": "ba50ed69c973def2bd4647d080ae21d2a261ea3eecf89fcf96e5339dcd89b9a6"
+    },
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-a/pilot/plan.json",
+      "sha256": "3e7a18c891a341705f006fc5f5b1d7483bdfd036b7cda6bc4f523bdaf574dde1"
+    },
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-a/pilot/calls.sqlite",
+      "sha256": "6672e9c0cb370266ba7b23625ab609c50e3fcbb8bb14de27e4c7a19a53994e2e"
+    },
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-a/canaries/report.json",
+      "sha256": "0968f7b0fcaba3a380afa88d1a31bc74b00798ad06c6e13b479b8d973d5633a0"
+    },
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-a/offline/tests.xml",
+      "sha256": "84d8a17da9f464d828dc21495001ab8c607cfacedbc2dbf8a71f3fcf92493632"
+    },
+    {
+      "path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-a/offline-parent-fixed/tests.xml",
+      "sha256": "7838cf251ff4c594478b2b38617fb7a064a215de3c7c7e23bd823a75aa2bd07f"
+    }
+  ],
+  "bundle": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-a",
+  "cache_policy": "retain_all",
+  "cases": [
+    {
+      "arms": {
+        "schema-constrained": {
+          "attempts_reserved": 1,
+          "best_valid_tokens": null,
+          "known_model_tokens": 0,
+          "measured_generations": 0,
+          "shorter_valid_attempts": 0,
+          "statuses": {
+            "GENERATION_OR_ACCOUNTING_FAILED": 1
+          },
+          "strict_format_attempts": 0,
+          "tokens_observed": null,
+          "tokens_reserved": 2266,
+          "trials": [
+            {
+              "all_pin_valid": null,
+              "error_category": "http_error",
+              "http_status": 400,
+              "intake_error": null,
+              "native_outcomes": [],
+              "status": "GENERATION_OR_ACCOUNTING_FAILED",
+              "step": 0
+            }
+          ],
+          "valid_attempts": 0
+        },
+        "unconstrained": {
+          "attempts_reserved": 3,
+          "best_valid_tokens": null,
+          "known_model_tokens": 4886,
+          "measured_generations": 3,
+          "shorter_valid_attempts": 0,
+          "statuses": {
+            "CHECKED": 1,
+            "FORMAT_REJECTED": 1,
+            "INTAKE_REJECTED": 1
+          },
+          "strict_format_attempts": 2,
+          "tokens_observed": 4886,
+          "tokens_reserved": 6800,
+          "trials": [
+            {
+              "all_pin_valid": false,
+              "error_category": null,
+              "http_status": null,
+              "intake_error": null,
+              "native_outcomes": [
+                "REJECTED",
+                "REJECTED",
+                "REJECTED"
+              ],
+              "status": "CHECKED",
+              "step": 0
+            },
+            {
+              "all_pin_valid": false,
+              "error_category": null,
+              "http_status": null,
+              "intake_error": "unsupported_proof_envelope",
+              "native_outcomes": [],
+              "status": "INTAKE_REJECTED",
+              "step": 1
+            },
+            {
+              "all_pin_valid": false,
+              "error_category": null,
+              "http_status": null,
+              "intake_error": null,
+              "native_outcomes": [],
+              "status": "FORMAT_REJECTED",
+              "step": 2
+            }
+          ],
+          "valid_attempts": 0
+        }
+      },
+      "controls": [
+        {
+          "heartbeats": 4227,
+          "outcome": "VERIFIED",
+          "pin": "v4.29.1"
+        },
+        {
+          "heartbeats": 4657,
+          "outcome": "VERIFIED",
+          "pin": "v4.27.0"
+        },
+        {
+          "heartbeats": 4689,
+          "outcome": "VERIFIED",
+          "pin": "v4.26.0"
+        }
+      ],
+      "problem": "Core.InitsUpdatesComm",
+      "status": "INCOMPLETE"
+    }
+  ],
+  "comparison_established": false,
+  "complete": false,
+  "evidence_mode": "local_lean",
+  "generated_at": "2026-09-24T01:00:57.795572+00:00",
+  "generator_sha256": "cc03608221f3b3d3d85fa99e28d68ac5e56bbb3e650a24e8ba955e8d76baef0f",
+  "heartbeat_improvement_established": false,
+  "isolation_canaries": {
+    "passed": 9,
+    "passed_gate": true,
+    "tests": 9
+  },
+  "model_calls": 4,
+  "native_requests": 6,
+  "note": "Diagnostic development screen, not a policy promotion or official score. Unknown generation usage stays unknown; reference heartbeats are not compression gains.",
+  "official_score": null,
+  "offline_tests": {
+    "offline": {
+      "errors": 124,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 254
+    },
+    "offline-parent-fixed": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 254
+    }
+  },
+  "plan_id": "af84fa4e86e8b112ffb1a7f613357dbfdc329c5476fb28ec2c70abee062c8863",
+  "promotion": false,
+  "schema": "jevops-frozen-schema-pilot-summary/v1",
+  "server_journal_diagnostic": {
+    "expanded_16k_string_rule_seen": true,
+    "matching_failed_request_ids": [
+      "16fab5995b67d5d6"
+    ],
+    "raw_journal_sha256": "4ed349057a645150901f452123591e22c2f95eafc65c7bfb8026737696ec9777",
+    "repetition_limit_error_seen": true,
+    "window_end": "2026-09-24 00:55:01 UTC",
+    "window_start": "2026-09-24 00:54:31 UTC"
+  },
+  "snapshot": {
+    "bytes": 8131053,
+    "content_root": "47a9abbd9f4e254ae0b3f91be19721d3f9974ac6b628d5eab4be249b111aeda3",
+    "file_count": 388,
+    "manifest_sha256": "f0fd109642f0ca2333a4de6fb20eca8c3b3c55c5af9bab6a1ce5b46e29b346cc",
+    "proof_verified": false,
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-schema-frozen-20260924-a/runtime",
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED"
+  },
+  "storage_cap_bytes": 50000000000,
+  "storage_guard": "passed",
+  "study": "json-schema",
+  "training": false,
+  "watcher_after": {
+    "native_requests_reserved": 164,
+    "official_score": null,
+    "promotions": 0,
+    "router_calls_reserved": 12,
+    "state": "ENVIRONMENT_FAILED"
+  },
+  "watcher_before": {
+    "native_requests_reserved": 164,
+    "official_score": null,
+    "promotions": 0,
+    "router_calls_reserved": 12,
+    "state": "ENVIRONMENT_FAILED"
+  },
+  "watcher_unchanged": true
+}

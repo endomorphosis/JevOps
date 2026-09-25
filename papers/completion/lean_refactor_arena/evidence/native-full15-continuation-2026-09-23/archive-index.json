@@ -1,0 +1,177 @@
+[
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/full15-benchmark-20260923-IrlqY5/runtime/inputs/corpus.jsonl",
+    "archive": "inputs/corpus.jsonl",
+    "sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/full15-benchmark-20260923-IrlqY5/baseline.json",
+    "archive": "inputs/previous-baseline.json",
+    "sha256": "c78db0d35abd1b2073f66113930506eb6916f45a90cb367eebc24125fd42e8a4"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/full15-benchmark-20260923-IrlqY5/trial-subst.json",
+    "archive": "inputs/trial-subst.json",
+    "sha256": "9ff039941596ccc7bd6188166065d27b740a11a2a5f6a6abbc4e9da9bbb644b4"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/full15-benchmark-20260923-IrlqY5/trial-extracted.json",
+    "archive": "inputs/trial-extracted.json",
+    "sha256": "72eb9cdfd7fadde08e942dd31a0b66fe54a6109a737052efdc0615bb14da6d65"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/full15-benchmark-20260923-IrlqY5/trial-core.json",
+    "archive": "inputs/trial-core.json",
+    "sha256": "b1b0b5022f6abda5fcb6362ff3c872ef0a952d33939180c07e71f83e614fda68"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/cslib-v4.30.0-baseline.json",
+    "archive": "inputs/cslib-v4.30.0-baseline.json",
+    "sha256": "ccaa254b98c95faee61fb8f86caa1d98188124f00158b07b0a81e3f71d5abda3"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/arklib-v4.30.0-baseline.json",
+    "archive": "inputs/arklib-v4.30.0-baseline.json",
+    "sha256": "d1b0b6f4415018f02894340f894a64e2a77be8b632604bd0477d1302e54f0e1a"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/plan.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/plan.json",
+    "sha256": "1fd26e82fcb2ea754cddb22c206163001607522825c9d13b29acf91e0242cb8f"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/snapshot-before.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/snapshot-before.json",
+    "sha256": "8978e3a4d36560e1949f0f438bfbd5a4a9e74539aa6a1446698ca11917ff1c53"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/cslib-v4.30.0-projects.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/cslib-v4.30.0-projects.json",
+    "sha256": "7a28f3985b8e0652472d0321fa24490a94fd01a6e718eb29beaf0dd68e8ea6ab"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/cslib-v4.30.0.log",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/cslib-v4.30.0.log",
+    "sha256": "ccaa254b98c95faee61fb8f86caa1d98188124f00158b07b0a81e3f71d5abda3"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/cslib-v4.30.0-baseline.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/cslib-v4.30.0-baseline.json",
+    "sha256": "ccaa254b98c95faee61fb8f86caa1d98188124f00158b07b0a81e3f71d5abda3"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/arklib-v4.30.0-projects.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/arklib-v4.30.0-projects.json",
+    "sha256": "b12bd5fab8064407e892aa23cdab613cee8e618e03dc7819d5da55660ffb60ca"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/arklib-v4.30.0.log",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/arklib-v4.30.0.log",
+    "sha256": "d1b0b6f4415018f02894340f894a64e2a77be8b632604bd0477d1302e54f0e1a"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/arklib-v4.30.0-baseline.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/arklib-v4.30.0-baseline.json",
+    "sha256": "d1b0b6f4415018f02894340f894a64e2a77be8b632604bd0477d1302e54f0e1a"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/snapshot-after.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/snapshot-after.json",
+    "sha256": "8978e3a4d36560e1949f0f438bfbd5a4a9e74539aa6a1446698ca11917ff1c53"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measurements-cslib-v4.30.0-arklib-v4.30.0/outcomes.json",
+    "archive": "measurements/measurements-cslib-v4.30.0-arklib-v4.30.0/outcomes.json",
+    "sha256": "2450c77863f26da03051d706ad674430dea093e452075310dcc9b396d0cc7ec6"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790150072654781028.json",
+    "archive": "preparation/1790150072654781028.json",
+    "sha256": "4d1a66259009e94095b89188c3ab0614828965b033a24022df3402cbc6c92ac7"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790150072654781028.log",
+    "archive": "preparation/1790150072654781028.log",
+    "sha256": "04bcd280480e1c4a0151d24f7c04df38c303b245147c2ac136562ef8b7678f31"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790150126535508494.json",
+    "archive": "preparation/1790150126535508494.json",
+    "sha256": "2eb3a25ff30d0d9591142f6b2601ce8c14ccdde38a7439e9dd1020f09e787618"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790150126535508494.log",
+    "archive": "preparation/1790150126535508494.log",
+    "sha256": "459ab03b4372e95f8e2453e68110c450896ef2218d6a33c6ee71c5984817e7a1"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790150752301250269.json",
+    "archive": "preparation/1790150752301250269.json",
+    "sha256": "c58da5c326292e1e3d12d4bc63d99b80ab938062eca9eed5926c065d3838640b"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790150752301250269.log",
+    "archive": "preparation/1790150752301250269.log",
+    "sha256": "2ca03fde1004005acdb7022e2a6bb7a06a60a1241933a86d2250a5ec84618fac"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790152583426052327.json",
+    "archive": "preparation/1790152583426052327.json",
+    "sha256": "cd084bf3b2506e8d333e186df6e6294700bea9f661cf53ecb862d6b586a23835"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790152583426052327.log",
+    "archive": "preparation/1790152583426052327.log",
+    "sha256": "8874aa261246768991d6f3455934a7097772917cc1c0d6728ac025592407ecf3"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/preparation-plan.json",
+    "archive": "preparation/preparation-plan.json",
+    "sha256": "76cd6a6b70216825a952d9020d715a67744f6ba926d12004e107e92818d2ba8d"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/preparation-results.json",
+    "archive": "preparation/preparation-results.json",
+    "sha256": "5891a002dd1f62f135fbae85d71234380215920cd770000beca9d34a7f147bd6"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_exact.py",
+    "archive": "preparation/prepare_exact.py",
+    "sha256": "37c4a25aa915b4caa3fec78515ecae443e848e47f4c3e49fa78d2c8575fd6ce8"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_remaining.py",
+    "archive": "preparation/prepare_remaining.py",
+    "sha256": "88052edd76fa13a45c2bff72c08dd4913ddedff86722a0b5bbd93c5dfc3a0979"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/measure_prepared.py",
+    "archive": "preparation/measure_prepared.py",
+    "sha256": "f80006a542af0271add8676f62fb97b48a1a7d21930f6ff929350fbee3ff4b9b"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/archive_completion.py",
+    "archive": "preparation/archive_completion.py",
+    "sha256": "9f6c215d052f7a40c771aee404b61bdce8f3ea8cf616bff07adb77b0bb7de541"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/prepare_putnam25.py",
+    "archive": "preparation/prepare_putnam25.py",
+    "sha256": "8846a199166e03a83473bbe6b872912ec3bbf3efd4560964d82f2cb665ea11a0"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/full15-benchmark-20260923-IrlqY5/runtime/snapshot.json",
+    "archive": "native-runtime.snapshot.json",
+    "sha256": "0dc965d987860cfbae9ff470d52f068fb8ac1f081056f5c89d038d91f23203fc"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/report-code-v3/snapshot.json",
+    "archive": "reporter.snapshot.json",
+    "sha256": "833ab5852a2e7940483a8b0fcb609981ca6f429eaeebb6a485180176afb757c2"
+  },
+  {
+    "source": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/report-code-v3/jevops/arena_benchmark_report.py",
+    "archive": "report-generator.py",
+    "sha256": "a8deca39d3db4c552750529187bad6f94cba23255dca8c3742167e433e76fb8d"
+  }
+]

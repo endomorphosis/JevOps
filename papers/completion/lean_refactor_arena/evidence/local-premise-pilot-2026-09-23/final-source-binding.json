@@ -1,0 +1,22 @@
+{
+  "before": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-premise-pilot-20260924-vbLY69/snapshot",
+    "manifest_sha256": "11d9103a6fd1f2f4f815907716e6efbcb14ecf5b563b8a465cd744ecb4c0fd2b",
+    "content_root": "8101d305caef5b184dbbde9cdfc3daedcd37fb57a9b97d17e3528f378fa9c6f1",
+    "file_count": 229,
+    "bytes": 4760619,
+    "proof_verified": false
+  },
+  "after": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/local-premise-pilot-20260924-vbLY69/snapshot",
+    "manifest_sha256": "11d9103a6fd1f2f4f815907716e6efbcb14ecf5b563b8a465cd744ecb4c0fd2b",
+    "content_root": "8101d305caef5b184dbbde9cdfc3daedcd37fb57a9b97d17e3528f378fa9c6f1",
+    "file_count": 229,
+    "bytes": 4760619,
+    "proof_verified": false
+  }
+}

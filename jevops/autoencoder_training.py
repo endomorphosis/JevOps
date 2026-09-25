@@ -24,7 +24,10 @@ import math
 import random
 import re
 from dataclasses import dataclass, field
-from typing import Any, Callable, Iterable, Mapping, MutableMapping, Optional, Sequence
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Mapping, MutableMapping, Optional, Sequence
+
+if TYPE_CHECKING:
+    from .jev_surrogate import JeVFeedbackSpec
 
 
 TRAINING_SCHEMA = "jevops-lean-ir-autoencoder-training/v2"
@@ -862,6 +865,79 @@ class LeanIRAutoencoder:
                                  body_from_ir(example.target_ir), temperature=self.config.temperature,
                                  smoothing=self.config.label_smoothing,
                                  cosine_weight=self.config.loss_weights.get("rewrite_cosine", .35))
+
+    def jev_feedback_request(self, source: str, *, spec: JeVFeedbackSpec, split: str) -> dict[str, Any]:
+        """Freeze a training-only JeV request; no scoring or weight update occurs."""
+        from .jev_surrogate import make_request
+
+        if not self.config.train_rewrite_policy:
+            raise ValueError("rewrite training is not enabled")
+        return make_request(source, self.state["rewrite_templates"], self.state["rewrite_weights"],
+                            spec=spec, split=split, temperature=self.config.temperature, step=self.step)
+
+    def train_jev_feedback(
+        self, source: str, receipt: Mapping[str, Any], *, spec: JeVFeedbackSpec, split: str,
+        weight: float = 0.0, learning_rate: Optional[float] = None,
+        reference_weights: Optional[Mapping[str, float]] = None, kl_weight: float = 0.0,
+    ) -> dict[str, Any]:
+        """Opt-in expected-utility SGD on edit weights, never proof admission.
+
+        Invalid/lossy candidates may receive repair-quality feedback. This API
+        neither mines templates nor creates supervised teachers. CE/cosine
+        training and promotion gates remain separate. Reference weights, when
+        used, must be a caller-owned frozen checkpoint, not the current policy.
+        """
+        from .jev_surrogate import _number, digest, expected_utility_gradient, feedback_utilities
+        from .rewrite_policy import choices
+
+        report: dict[str, Any] = {"schema": "jevops-jev-edit-update/v1", "updated": False,
+                                  "reason": "disabled", "proof_admitted": False,
+                                  "teacher_created": False, "score_coverage": 0.0}
+        try:
+            weight = _number(weight, "surrogate weight")
+            if not 0 <= weight <= 1:
+                raise ValueError("surrogate weight must be between 0 and 1")
+            if weight == 0:
+                return report
+            request = self.jev_feedback_request(source, spec=spec, split=split)
+            utilities = feedback_utilities(request, receipt)
+            lr = _number(self.learning_rate() if learning_rate is None else learning_rate, "learning rate")
+            if not 0 < lr <= self.config.max_learning_rate:
+                raise ValueError("learning rate outside configured bounds")
+            rows = choices(source, self.state["rewrite_templates"])
+            weights = self.state["rewrite_weights"]
+            reference = None if reference_weights is None else dict(reference_weights)
+            before = expected_utility_gradient(weights, rows, utilities, temperature=self.config.temperature,
+                                               reference_weights=reference, kl_weight=kl_weight)
+            gradient = before["gradient"]
+            norm = math.hypot(*gradient.values())
+            scale = min(1.0, self.config.gradient_clip / (weight * norm)) if norm else 1.0
+            updated = dict(weights)
+            for key, value in gradient.items():
+                if value != 0:
+                    updated[key] = updated.get(key, 0.0) - lr * weight * scale * value
+            # All checks and measurements precede the atomic state update.
+            after = expected_utility_gradient(updated, rows, utilities, temperature=self.config.temperature,
+                                              reference_weights=reference, kl_weight=kl_weight)
+            report.update(request_id=request["request_id"], feedback_id=receipt["feedback_id"],
+                          score_coverage=1.0, choice_count=len(rows), weight=weight, learning_rate=lr,
+                          gradient_norm=norm, applied_gradient_norm=weight * scale * norm,
+                          surrogate_loss_before=before["surrogate_loss"], surrogate_loss_after=after["surrogate_loss"],
+                          expected_utility_before=before["expected_utility"], expected_utility_after=after["expected_utility"],
+                          reference_kl_before=before["reference_kl"], reference_kl_after=after["reference_kl"],
+                          objective_before=before["total"], objective_after=after["total"], kl_weight=kl_weight,
+                          reference_sha256=None if reference is None else digest(reference),
+                          reconstruction_parameters_unchanged=True)
+            if updated == weights:
+                report["reason"] = "zero_update"
+                return report
+            next_step = self.step + 1
+            next_rewrite_step = self.state["rewrite_steps"] + 1
+            self.state.update(rewrite_weights=updated, rewrite_steps=next_rewrite_step, step=next_step)
+            report.update(updated=True, reason="surrogate_update")
+        except (ValueError, TypeError, KeyError, OverflowError) as exc:
+            report["reason"] = str(exc) if isinstance(exc, ValueError) else "malformed_feedback_or_configuration"
+        return report
 
     def predict_ir(
         self,
@@ -2306,7 +2382,7 @@ def canary_gate(
     if before_count > 0 and before_count != after_count:
         regressions["sample_coverage_changed"] = 1.0
     for key in ("cross_entropy", "binding_cross_entropy", "rewrite_cross_entropy", "rewrite_expected_cosine_loss", "cosine_similarity", "reconstruction_loss",
-                "verifier_success_rate", "nca_reward"):
+                "verifier_success_rate", "nca_reward", "trajectory_cross_entropy", "trajectory_expected_cosine_loss"):
         if before.get(key) is not None:
             try:
                 valid = math.isfinite(float(after[key])) and math.isfinite(float(before[key]))
@@ -2341,6 +2417,14 @@ def canary_gate(
             if rise > max(0.0, float(max_cross_entropy_regression)):
                 regressions[key] = rise
     after_cos = _finite(after.get("cosine_similarity"), 0.0)
+    if "trajectory_step_count" in before:
+        for key in ("trajectory_step_count", "trajectory_labeled_step_count", "trajectory_complete_examples"):
+            if after.get(key) != before.get(key):
+                regressions[key+"_changed"] = 1.0
+        for key in ("trajectory_cross_entropy", "trajectory_expected_cosine_loss"):
+            rise = _finite(after.get(key)) - _finite(before.get(key))
+            if rise > max(0.0, float(max_cross_entropy_regression)):
+                regressions[key] = rise
     if before_cos - after_cos > max(0.0, float(max_cosine_regression)):
         regressions["cosine_similarity"] = before_cos - after_cos
     before_rec = _finite(before.get("reconstruction_loss"), 0.0)

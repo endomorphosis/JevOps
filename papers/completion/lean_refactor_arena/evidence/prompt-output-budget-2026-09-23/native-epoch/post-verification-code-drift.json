@@ -1,0 +1,37 @@
+{
+  "observed_at_utc": "2026-09-23T17:36:50.818906+00:00",
+  "generation_plan_id": "d364e4d60ffce58002def6f5373f75d3931b47858369048c0cdc385d89748433",
+  "verification_plan_id": "8836b3d28ee7309103cfe6dceac180617901ad15f5d1d5725c71fd56f9f0073d",
+  "changes_since_verification_plan": {
+    "jevops/arena_lean.py": {
+      "at_verification_plan": "9bd5c34cec5c33913421e5230dfff372809023b74130d207b2e539bc0d6d355b",
+      "observed_after": "3cc0e2535aaa92d3f87b87ab78bfa7734ec6416c18a1240fab0df772eeda3be0"
+    }
+  },
+  "failed_receipts": [
+    {
+      "pin": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "label": "control",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "status": "ERROR",
+      "receipt": {
+        "request_id": "f591ccead4a1ecfefdd30065f359125c933141ce8ba1c69c3261a7b1cbd0eda2",
+        "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+        "target": "Core.InitsUpdatesComm",
+        "outcome": "ERROR",
+        "type_preserved": false,
+        "exit_code": null,
+        "axiom_output": "",
+        "heartbeats": null,
+        "reason": "ValueError: dependencies_changed_start_new_context",
+        "observations_json": "{}"
+      },
+      "context_id": "0061e4d261e944b21cd6d54dc072a40a50ee072ad35d5fc9523ed5cb00489238",
+      "wall_seconds": 20.1459
+    }
+  ],
+  "old_evidence_rebound_to_current_code": false
+}

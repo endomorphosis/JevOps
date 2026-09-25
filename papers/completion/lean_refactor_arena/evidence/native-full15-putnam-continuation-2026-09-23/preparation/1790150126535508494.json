@@ -1,0 +1,20 @@
+{
+  "schema": "jevops-arena-preparation/v1",
+  "run_id": "1790150126535508494",
+  "command": [
+    "/bin/bash",
+    "-euc",
+    "export PATH=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan/toolchains/leanprover--lean4---v4.30.0/bin:/usr/bin:/bin; export MATHLIB_NO_CACHE_ON_UPDATE=1; mapfile -t modules < <(rg --no-filename --no-line-number \"^(public |private |meta )*import (all )?(Mathlib|Aesop|Batteries|Qq|Plausible|ProofWidgets|LeanSearchClient|ImportGraph)(\\\\.|$)\" Cslib | sed -E \"s/^(public |private |meta )*import (all )?//; s/[[:space:]].*$//\" | sort -u); test \"${#modules[@]}\" -gt 0; lake --no-cache exe cache get \"${modules[@]}\"; lake --no-cache build +Cslib.Languages.CombinatoryLogic.Confluence:deps"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "cleanup": "absent_or_daemon_unavailable",
+  "wall_seconds": 619.4295357099036,
+  "log": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/logs/1790150126535508494.log",
+  "image_id": "sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517",
+  "network_allowed": true,
+  "build_concurrency": 1,
+  "official_score": null,
+  "volume_capacity_bytes": 49018310656,
+  "volume_used_bytes": 24035721216
+}

@@ -1,0 +1,4 @@
+MODE: preserve all-version compatibility.
+Read every required Lean tag and repository revision in the current problem. Review version-specific failures before choosing tactics or lemma names. Prefer constructs already present in the frozen proof and the narrowest scope-correct applications.
+Do not import newer lemmas, change dependencies, rename the target, weaken the statement or choose a convenient version. Missing environments are capability gaps, not successes. Historical passes can be stale when dependency or verifier context changes.
+Return one complete tactic block intended for all required versions; the harness will test each one. When evidence conflicts, choose a smaller conservative edit rather than majority voting or silently dropping a pin.

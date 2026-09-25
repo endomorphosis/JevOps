@@ -2,8 +2,8 @@
 
 The original benchmark imported the much larger ``ipfs_datasets_py`` frontend
 at module import time.  That made a frozen-data plan impossible to run from a
-clean JevOps checkout.  Prefer the research frontend when it is explicitly
-available, but keep the benchmark's path-pinning and process contract local so
+clean JevOps checkout. Use the research frontend only with explicit
+``JEVOPS_USE_EXTERNAL_DEPS=1``; keep path-pinning and the process contract local so
 missing optional dependencies are reported as capability gaps rather than
 silently replaced with ``PATH`` binaries.
 """
@@ -23,6 +23,8 @@ KERNEL_COMMAND_TEMPLATE = "{lake} env {lean} --json {source_file}"
 
 
 def _external_module() -> Any:
+    if os.environ.get("JEVOPS_USE_EXTERNAL_DEPS") != "1":
+        return None
     candidates = []
     for key in ("JEVOPS_IPFS_DATASETS_PATH", "IPFS_DATASETS_PATH"):
         value = os.environ.get(key, "").strip()

@@ -1,0 +1,22 @@
+{
+  "before": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/proposition-discharge-20260924-6nMAkZ/snapshot",
+    "manifest_sha256": "592a17b97e7ed4359d65def1959694a962c39ee2c4d6679b75a7fdd191d54cd9",
+    "content_root": "beedaffce69ab75381d3cb98389f88c67c08590f6d9ff355d78888dcf57ec243",
+    "file_count": 244,
+    "bytes": 5048683,
+    "proof_verified": false
+  },
+  "after": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/proposition-discharge-20260924-6nMAkZ/snapshot",
+    "manifest_sha256": "592a17b97e7ed4359d65def1959694a962c39ee2c4d6679b75a7fdd191d54cd9",
+    "content_root": "beedaffce69ab75381d3cb98389f88c67c08590f6d9ff355d78888dcf57ec243",
+    "file_count": 244,
+    "bytes": 5048683,
+    "proof_verified": false
+  }
+}

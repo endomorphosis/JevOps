@@ -1,0 +1,106 @@
+{
+  "artifact_directory": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/leanstral-contract-qpdv841d/pilot",
+  "calls_reserved": 24,
+  "caution": "Different declared output contracts, one distractor count, matched positions/repetitions within two nonce families. No optimal-prompt, reasoning, proof-token or heartbeat improvement established.",
+  "checks": {
+    "all_24_unique_slots": true,
+    "all_client_bindings_match": true,
+    "development_nomination_frozen": true,
+    "frozen_plan_and_prompts": true,
+    "prior_report_unchanged": true,
+    "raw_response_hashes": true,
+    "server_metadata_stable_at_phase_checks": true,
+    "sqlite_ledger_matches": true,
+    "strict_outcomes_recomputed": true
+  },
+  "confirmation_pairwise_against_baseline": {
+    "client-bound-tactic": {
+      "baseline_only_success": 1,
+      "other_only_success": 2,
+      "tie": 3
+    }
+  },
+  "elapsed_seconds": 64.855,
+  "groups": [
+    {
+      "arm": "id-echo-control",
+      "attempts": 6,
+      "client_bound_responses": 6,
+      "declared_contract": "json",
+      "exact_tactics_ignoring_envelope_diagnostic_only": 5,
+      "split": "development",
+      "strict_successes_under_declared_contract": 2,
+      "unmeasured": 0,
+      "wrong_echoed_request_ids": 4
+    },
+    {
+      "arm": "client-bound-tactic",
+      "attempts": 6,
+      "client_bound_responses": 6,
+      "declared_contract": "json_tactic",
+      "exact_tactics_ignoring_envelope_diagnostic_only": 6,
+      "split": "development",
+      "strict_successes_under_declared_contract": 6,
+      "unmeasured": 0,
+      "wrong_echoed_request_ids": null
+    },
+    {
+      "arm": "id-echo-control",
+      "attempts": 6,
+      "client_bound_responses": 6,
+      "declared_contract": "json",
+      "exact_tactics_ignoring_envelope_diagnostic_only": 4,
+      "split": "confirmation",
+      "strict_successes_under_declared_contract": 4,
+      "unmeasured": 0,
+      "wrong_echoed_request_ids": 0
+    },
+    {
+      "arm": "client-bound-tactic",
+      "attempts": 6,
+      "client_bound_responses": 6,
+      "declared_contract": "json_tactic",
+      "exact_tactics_ignoring_envelope_diagnostic_only": 5,
+      "split": "confirmation",
+      "strict_successes_under_declared_contract": 5,
+      "unmeasured": 0,
+      "wrong_echoed_request_ids": null
+    }
+  ],
+  "native_requests": 0,
+  "nomination": {
+    "arm": "client-bound-tactic",
+    "automatic_promotion": false,
+    "development_successes": {
+      "client-bound-tactic": 6,
+      "id-echo-control": 2
+    },
+    "objective": "strict_context_accuracy",
+    "reason": "descriptive_nomination_only"
+  },
+  "official_score": null,
+  "plan_id": "02a66b86066cfd3f6fa85debf3070dd997f6db5eece28c0c0843bb69ea00ba5d",
+  "promotion": false,
+  "protocol_change": true,
+  "report_sha256": "7bf7ab4f56138a3289ce3aca68856a130b44a74602a07f7cd8eb3af4d861913b",
+  "schema": "jevops-leanstral-contract-pilot-evidence/v1",
+  "tests": {
+    "passed": 402,
+    "skipped": 3,
+    "test_seals": "off"
+  },
+  "training_runs": 0,
+  "treatment_minus_control_tokens_server_reported": {
+    "completion_tokens": {
+      "max": -13,
+      "median": -18.0,
+      "min": -22
+    },
+    "prompt_tokens": {
+      "max": -10,
+      "median": -11.0,
+      "min": -13
+    }
+  },
+  "watcher_configuration_and_budget_unchanged": true
+}

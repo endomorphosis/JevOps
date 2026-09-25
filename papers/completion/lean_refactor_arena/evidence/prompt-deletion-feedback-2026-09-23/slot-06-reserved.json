@@ -1,0 +1,8 @@
+{
+  "slot": 6,
+  "arm": "feedback-reverse",
+  "repetition": 1,
+  "plan_id": "7a3dfdbc34cc58a3d74a7b7a975795d086f3e9b18daa2967e20c8d2b3b2b166c",
+  "attempt_reserved": true,
+  "max_output_tokens_reserved": 1024
+}

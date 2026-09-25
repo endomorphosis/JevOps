@@ -1,0 +1,54 @@
+{
+  "slot": 4,
+  "arm": "whole-body",
+  "repetition": 2,
+  "prompt_sha256": "cd76c07eedd5381abe8d64bd1910d48edb82c7dde9c5f089eacfd4db16b66689",
+  "native_verified": null,
+  "official_score": null,
+  "request_settings": {
+    "provider": "leanstral_local",
+    "model_name": "Leanstral",
+    "base_url": "http://172.17.0.1:8080/v1",
+    "max_new_tokens": 1024,
+    "timeout": 180,
+    "temperature": 0,
+    "stop": [
+      "<|im_end|>"
+    ]
+  },
+  "raw": "{\"request_id\": \"bc6bc87e6349438c\", \"tactic\": \"intros Hup Hinit\\n  exists (updatedStates σ ks' vs')\\n  have Hk : isDefined σ' ks := UpdateStatesDefined Hup\\n  have Hlen1 : List.length (updatedStates σ ks' vs') = List.length ks' := UpdateStatesLength Hup\\n  have Hlen2 : List.length σ' = List.length ks' := UpdateStatesLength Hup\\n  induction Hup generalizing σ''\\n  case update_none =>\\n    simp_all\\n    apply And.intro\\n    refine updatedStatesInit Hlen1 ?_ ?_\\n    exact InitStatesNotDefined Hinit\\n    exact InitStatesNodup Hinit\\n    simp [InitStatesUpdated Hinit]\\n    constructor\\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\\n    refine ⟨rfl, ?_, ?_⟩\\n    · apply updatedStatesInit Hlen1\\n      apply UpdateStateNotDefMonotone' ?_ Hup\\n      apply UpdateStatesNotDefMonotone' ?_ Hups\\n      exact InitStatesNotDefined Hinit\\n      exact InitStatesNodup Hinit\\n    · apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\\n      · simp [UpdateStateUpdated Hup, updatedStates]\\n        rw [← updatedStateComm']\\n        · have Hdef := UpdateStateDefined' Hup\\n          simp [isDefined, Option.isSome] at Hdef\\n          split at Hdef\\n          · simp_all\\n          · next val heq =>\\n            apply updatedStateUpdate (v':=val)\\n            apply InitStatesSomeMonotone heq\\n            apply updatedStatesInit\\n            · simp_all\\n            · apply UpdateStateNotDefMonotone' ?_ Hup\\n              apply UpdateStatesNotDefMonotone' ?_ Hups\\n              apply InitStatesNotDefined Hinit\\n            · exact InitStatesNodup Hinit\\n      · rw [List.unzip_zip] <;> simp_all\\n        have Hnd := InitStatesNotDefined Hinit\\n        simp [isNotDefined, isDefined] at *\\n        apply Not.intro\\n        intros Hin\\n        specialize Hnd _ Hin\\n        simp_all\\n    · apply (ih Hinit ?_ ?_).2.2\\n      · simp [isDefined] at * <;> simp_all\\n      · simp_all\"}",
+  "raw_sha256": "6d04ba599a4ef9e1f713cf5081ce56a86eda007aa0180848c1b13c55c04ba3c1",
+  "trace": {
+    "router_module": "jevops.llm_router",
+    "effective_provider_name": "leanstral_local",
+    "effective_model_name": "Leanstral",
+    "fixture": false,
+    "external_dependency": false,
+    "provider": "leanstral_local",
+    "model": "Leanstral",
+    "reason": "generated",
+    "requested_model": "Leanstral",
+    "response_model": "leanstral_local",
+    "request_id": "chatcmpl-lA79h00CKQm9w9gOLKqKtwBpMMgwGWNl",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 2834,
+      "completion_tokens": 575,
+      "total_tokens": 3409
+    },
+    "endpoint": "http://172.17.0.1:8080/v1/chat/completions",
+    "wall_ms": 31486.130911041982,
+    "server_identity_attested": false,
+    "fallback_used": false
+  },
+  "status": "parsed",
+  "strict_contract": true,
+  "tactic": "intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : isDefined σ' ks := UpdateStatesDefined Hup\n  have Hlen1 : List.length (updatedStates σ ks' vs') = List.length ks' := UpdateStatesLength Hup\n  have Hlen2 : List.length σ' = List.length ks' := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    · apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    · apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      · simp [UpdateStateUpdated Hup, updatedStates]\n        rw [← updatedStateComm']\n        · have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef\n          · simp_all\n          · next val heq =>\n            apply updatedStateUpdate (v':=val)\n            apply InitStatesSomeMonotone heq\n            apply updatedStatesInit\n            · simp_all\n            · apply UpdateStateNotDefMonotone' ?_ Hup\n              apply UpdateStatesNotDefMonotone' ?_ Hups\n              apply InitStatesNotDefined Hinit\n            · exact InitStatesNodup Hinit\n      · rw [List.unzip_zip] <;> simp_all\n        have Hnd := InitStatesNotDefined Hinit\n        simp [isNotDefined, isDefined] at *\n        apply Not.intro\n        intros Hin\n        specialize Hnd _ Hin\n        simp_all\n    · apply (ih Hinit ?_ ?_).2.2\n      · simp [isDefined] at * <;> simp_all\n      · simp_all",
+  "normalizations": [],
+  "source": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  intros Hup Hinit\n    exists (updatedStates σ ks' vs')\n    have Hk : isDefined σ' ks := UpdateStatesDefined Hup\n    have Hlen1 : List.length (updatedStates σ ks' vs') = List.length ks' := UpdateStatesLength Hup\n    have Hlen2 : List.length σ' = List.length ks' := UpdateStatesLength Hup\n    induction Hup generalizing σ''\n    case update_none =>\n      simp_all\n      apply And.intro\n      refine updatedStatesInit Hlen1 ?_ ?_\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n      simp [InitStatesUpdated Hinit]\n      constructor\n    case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n      refine ⟨rfl, ?_, ?_⟩\n      · apply updatedStatesInit Hlen1\n        apply UpdateStateNotDefMonotone' ?_ Hup\n        apply UpdateStatesNotDefMonotone' ?_ Hups\n        exact InitStatesNotDefined Hinit\n        exact InitStatesNodup Hinit\n      · apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n        · simp [UpdateStateUpdated Hup, updatedStates]\n          rw [← updatedStateComm']\n          · have Hdef := UpdateStateDefined' Hup\n            simp [isDefined, Option.isSome] at Hdef\n            split at Hdef\n            · simp_all\n            · next val heq =>\n              apply updatedStateUpdate (v':=val)\n              apply InitStatesSomeMonotone heq\n              apply updatedStatesInit\n              · simp_all\n              · apply UpdateStateNotDefMonotone' ?_ Hup\n                apply UpdateStatesNotDefMonotone' ?_ Hups\n                apply InitStatesNotDefined Hinit\n              · exact InitStatesNodup Hinit\n        · rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      · apply (ih Hinit ?_ ?_).2.2\n        · simp [isDefined] at * <;> simp_all\n        · simp_all",
+  "source_sha256": "6bfe627dda3b3964618ba49880399a7fb4a1f345cdb902b1fa1bc2774e359dee",
+  "intake_error": null,
+  "candidate_tokens_unverified": 240,
+  "exact_reference_bytes": false,
+  "wall_seconds": 31.4889
+}

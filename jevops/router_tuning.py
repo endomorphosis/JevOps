@@ -10,7 +10,8 @@ The router is a proposal generator, never a proof oracle.  The loop keeps the
 following order of authority:
 
 1. Lean/Lake admission;
-2. proof-body token count among admitted candidates;
+2. proof-body token count among admitted candidates (or explicitly injected
+   Arena measurements in the opt-in arena-v1 mode);
 3. IR/cosine, CE, NCA, and router-confidence signals as learning/tie-break
    signals only.
 
@@ -30,11 +31,13 @@ import subprocess
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Mapping, MutableMapping, Optional, Sequence
+from typing import TYPE_CHECKING, Any, Callable, Mapping, MutableMapping, Optional, Sequence
 
 from . import autoencoder as ae
 from . import tactics as tactic_ops
 from . import logic_refactor
+if TYPE_CHECKING:
+    from .arena import ArenaEvaluator
 from .autoencoder_training import (
     AutoencoderConfig,
     LeanIRAutoencoder,
@@ -140,6 +143,9 @@ class RouterTuningConfig:
     strategy_cap: int = 16
     hammer_sweep: bool = True
     logic_reductions: bool = True
+    solver_feedback: bool = False
+    typed_terms: bool = False
+    constructive_terms: bool = False
     max_logic_candidates: int = 12
     max_hammer_candidates: int = 24
     max_composed_candidates: int = 12
@@ -153,10 +159,15 @@ class RouterTuningConfig:
     train_rewrite_policy: bool = False
     freeze_reconstruction_heads: bool = False
     strict_router: bool = True
+    selection_objective: str = "shortest"
     design_hint: Mapping[str, Any] = field(default_factory=dict)
     router_kwargs: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
+        if self.selection_objective not in {"shortest", "arena-v1"}:
+            raise ValueError("unknown selection objective")
+        if self.selection_objective == "arena-v1" and self.train:
+            raise ValueError("arena-v1 currently requires train=False; model promotion is separate")
         object.__setattr__(self, "provider", str(self.provider or "codex_cli"))
         object.__setattr__(self, "model_name", _normalise_model_name(self.model_name))
         object.__setattr__(self, "reasoning_effort", str(self.reasoning_effort or "high"))
@@ -180,6 +191,9 @@ class RouterTuningConfig:
         object.__setattr__(self, "seed", int(self.seed))
         object.__setattr__(self, "hammer_sweep", bool(self.hammer_sweep))
         object.__setattr__(self, "logic_reductions", bool(self.logic_reductions))
+        object.__setattr__(self, "solver_feedback", bool(self.solver_feedback))
+        object.__setattr__(self, "typed_terms", bool(self.typed_terms))
+        object.__setattr__(self, "constructive_terms", bool(self.constructive_terms))
         object.__setattr__(self, "teacher_replay", bool(self.teacher_replay))
         object.__setattr__(self, "train_binding_policy", bool(self.train_binding_policy))
         object.__setattr__(self, "train_rewrite_policy", bool(self.train_rewrite_policy))
@@ -204,6 +218,9 @@ class RouterTuningConfig:
             "strategy_cap": self.strategy_cap,
             "hammer_sweep": self.hammer_sweep,
             "logic_reductions": self.logic_reductions,
+            "solver_feedback": self.solver_feedback,
+            "typed_terms": self.typed_terms,
+            "constructive_terms": self.constructive_terms,
             "max_logic_candidates": self.max_logic_candidates,
             "max_hammer_candidates": self.max_hammer_candidates,
             "max_composed_candidates": self.max_composed_candidates,
@@ -217,6 +234,7 @@ class RouterTuningConfig:
             "seed": self.seed,
             "train": self.train,
             "strict_router": self.strict_router,
+            "selection_objective": self.selection_objective,
             "design_hint": dict(self.design_hint),
         }
 
@@ -605,6 +623,9 @@ def _compact_row(row: Mapping[str, Any]) -> dict[str, Any]:
         "seed_commit": row.get("seed_commit"),
         "seed_path": row.get("seed_path"),
         "composition_parent_ids": row.get("composition_parent_ids"),
+        "arena_evaluation": ({key: (row.get("arena_evaluation") or {}).get(key)
+                              for key in ("context_id", "candidate_sha256", "status", "length", "score", "reason")}
+                             if row.get("arena_evaluation") is not None else None),
     }
 
 
@@ -624,12 +645,24 @@ class RouterTuningLoop:
         seed_candidates: Optional[Sequence[Any]] = None,
         design_hint: Optional[Mapping[str, Any]] = None,
         rng: Optional[random.Random] = None,
+        arena_evaluator: Optional[ArenaEvaluator] = None,
     ) -> None:
         self.memory = memory
         self.source = str(source or "")
         self.problem = str(problem or "")
         self.compile_fn = compile_fn
         self.config = config or RouterTuningConfig()
+        self.arena_evaluator = arena_evaluator
+        if self.config.selection_objective == "arena-v1":
+            from .arena import ArenaEvaluator
+
+            if not isinstance(arena_evaluator, ArenaEvaluator) or compile_fn is not None:
+                raise ValueError("arena-v1 requires an ArenaEvaluator and no legacy compile_fn")
+            if arena_evaluator.context.reference_source != self.source or arena_evaluator.context.problem != self.problem:
+                raise ValueError("arena evaluator problem/source mismatch")
+            self.compile_fn = arena_evaluator.compile_candidate
+        elif arena_evaluator is not None:
+            raise ValueError("ArenaEvaluator requires selection_objective='arena-v1'")
         self.design_hint = dict(design_hint or self.config.design_hint or {})
         self.rng = rng or random.Random(self.config.seed)
         self.router_generate = router_generate or make_llm_router_generate(
@@ -653,9 +686,29 @@ class RouterTuningLoop:
         self._compile_cache: dict[str, dict[str, Any]] = {}
         self._known_failure_skips = 0
         self._source_prefix, self._source_body, self._has_theorem = _source_parts(self.source)
+        if self.arena_evaluator is not None:
+            statement = self.arena_evaluator.context.statement
+            suffix = self.source[len(statement):]
+            marker = re.match(r"\s*:=\s*by\b", suffix)
+            if marker is None:
+                raise ValueError("Arena router currently supports tactic-style proof bodies only")
+            self._source_prefix = statement + suffix[:marker.end()]
+            self._source_body = suffix[marker.end():].lstrip("\n")
+            self._has_theorem = True
         self._source_ir = ae.encode_lean_ir(self.source)
 
+    def _body(self, source: str) -> str:
+        if self.arena_evaluator is not None:
+            if not source.startswith(self._source_prefix):
+                raise ValueError("Arena tactic envelope mismatch")
+            return source[len(self._source_prefix):].lstrip("\n")
+        return _source_parts(source)[1]
+
     def _compile(self, candidate: str) -> dict[str, Any]:
+        if self.arena_evaluator is not None:
+            # Context-bound cache and reservations belong to the evaluator.
+            # Do not make transient failures permanent in the legacy cache.
+            return self.arena_evaluator.compile_candidate(candidate)
         key = hashlib.sha256(candidate.encode("utf-8")).hexdigest()
         if key in self._compile_cache:
             return dict(self._compile_cache[key])
@@ -674,6 +727,24 @@ class RouterTuningLoop:
         result.setdefault("token_count", len(candidate.split()))
         self._compile_cache[key] = dict(result)
         return dict(result)
+
+    def _selection_key(self, row: Mapping[str, Any]) -> tuple:
+        if self.arena_evaluator is not None:
+            measurement = row.get("arena_evaluation") or {}
+            score = measurement.get("score") or {}
+            if measurement.get("status") != "MEASURED" or not row.get("lake_ok"):
+                return (float("inf"), float("inf"), str(row.get("id") or ""))
+            return (-score["combined_pct"], -score["compatibility_pct"], str(row.get("id") or ""))
+        return (int(row.get("body_tokens") or 10**9), int(row.get("token_count") or 10**9),
+                -float(row.get("reward") or 0.0), str(row.get("id") or ""))
+
+    def _improves(self, row: Mapping[str, Any], best: Optional[Mapping[str, Any]]) -> bool:
+        if best is None:
+            return True
+        if self.arena_evaluator is not None:
+            # A tie never overwrites the incumbent merely because hashes differ.
+            return self._selection_key(row)[:2] < self._selection_key(best)[:2]
+        return (int(row["body_tokens"]), int(row["token_count"])) < (int(best["body_tokens"]), int(best["token_count"]))
 
     @staticmethod
     def _normalise_seed_candidate(value: Any) -> dict[str, Any]:
@@ -776,6 +847,7 @@ class RouterTuningLoop:
             "minimality_reward": float(minimality),
             "reward": float(scored.get("reward") or 0.0),
             "admission": "verified" if lake_ok else "rejected",
+            "arena_evaluation": compile_result.get("arena_evaluation"),
         }
         for key, value in dict(metadata or {}).items():
             if key not in {
@@ -984,7 +1056,7 @@ class RouterTuningLoop:
                         "plan_digest": plan_digest,
                     }
                 )
-                variants = _strategy_body(str(item["strategy"]), _source_parts(current)[1], self.rng, goal=str(current_ir.get("goal") or ""))
+                variants = _strategy_body(str(item["strategy"]), self._body(current), self.rng, goal=str(current_ir.get("goal") or ""))
                 deferred_strategies.append((rule_id, rationale, variants[1:]))
                 for strategy_kind, body, origin in variants[:1]:
                     self._push(
@@ -1063,7 +1135,7 @@ class RouterTuningLoop:
         *,
         exclude_kinds: Sequence[str] = (),
     ) -> list[dict[str, Any]]:
-        """Return distinct Lake-admitted teachers in shortest-first order."""
+        """Return distinct admitted parents in the configured objective order."""
 
         excluded = {str(kind) for kind in exclude_kinds}
         candidates = [
@@ -1078,7 +1150,7 @@ class RouterTuningLoop:
             if current_row.get("lake_ok"):
                 candidates.append(current_row)
         candidates.sort(
-            key=lambda row: (
+            key=self._selection_key if self.arena_evaluator is not None else lambda row: (
                 int(row.get("body_tokens") or 10**9),
                 int(row.get("token_count") or 10**9),
                 str(row.get("id") or ""),
@@ -1119,8 +1191,8 @@ class RouterTuningLoop:
         pair_variants: list[tuple[list[tuple[str, str, tuple[str, ...]]], list[str]]] = []
         for left_index, left in enumerate(sources):
             for right in sources[left_index + 1 :]:
-                left_body = _source_parts(str(left.get("source") or ""))[1]
-                right_body = _source_parts(str(right.get("source") or ""))[1]
+                left_body = self._body(str(left.get("source") or ""))
+                right_body = self._body(str(right.get("source") or ""))
                 parent_ids = [
                     str(left.get("rule_id") or left.get("id") or "")[:80],
                     str(right.get("rule_id") or right.get("id") or "")[:80],
@@ -1273,7 +1345,7 @@ class RouterTuningLoop:
         )
         groups: list[tuple[dict[str, Any], str, list[tuple[str, str, tuple[str, ...]]]]] = []
         for base in sources:
-            body = _source_parts(str(base.get("source") or ""))[1]
+            body = self._body(str(base.get("source") or ""))
             # Enumerate a bounded neighborhood, then interleave methods.
             # Exhausting all closers before visiting the next strategy used
             # to starve most methods under realistic compiler budgets.
@@ -1312,7 +1384,7 @@ class RouterTuningLoop:
         for base in sources:
             source = str(base["source"])
             groups.append((base, logic_refactor.reduction_sweep(
-                _source_parts(source)[1], source=source, goal=str(self._source_ir.get("goal") or ""),
+                self._body(source), source=source, goal=str(self._source_ir.get("goal") or ""),
                 requested=requested, cap=self.config.max_logic_candidates,
                 # Step one, not the quota: a quota sharing a factor with the
                 # method count would permanently skip some starting families.
@@ -1333,6 +1405,73 @@ class RouterTuningLoop:
                 if len(rows) - before >= max_new:
                     return len(rows) - before
         return len(rows) - before
+
+    def _solver_feedback_rows(self, rows, seen, current, *, max_new: int):
+        """One source, at most eight compiler requests; hints require replay.
+
+        Receipts without position-bound structured diagnostics abstain. In
+        particular, historical arena bridges do not acquire this capability
+        merely by enabling the configuration flag.
+        """
+        if not self.config.solver_feedback or max_new <= 0:
+            return 0, None
+        from .solver_feedback import harvest_solver_feedback
+        sources = self._verified_sources(rows, current)
+        if not sources:
+            return 0, None
+        base = sources[0]
+        feedback = harvest_solver_feedback(str(base["source"]), self._compile,
+                                           max_calls=8, max_sites=2, max_rounds=2,
+                                           token_fn=ae.proof_body_token_count)
+        before = len(rows)
+        if feedback["trajectory"]:
+            body = self._body(feedback["best_source"])
+            rule_id = self._register_rule({"kind": "logic_reduction", "strategy": "solver_feedback",
+                                          "origin": "solver_feedback", "candidate_digest": _digest(body),
+                                          "parent_rule_ids": [str(base.get("rule_id") or base["id"])[:80]]})
+            self._push(rows, seen, body, origin="logic:solver_feedback", kind="solver_feedback",
+                       metadata={"rule_id": rule_id, "rule_kind": "logic_reduction"})
+        return len(rows)-before, feedback
+
+    def _typed_term_rows(self, rows, seen, current, *, max_new: int):
+        if not self.config.typed_terms or max_new <= 0:
+            return 0, None
+        from .typed_terms import collect_typed_term
+        sources = self._verified_sources(rows, current)
+        if not sources:
+            return 0, None
+        base = sources[0]
+        report = collect_typed_term(str(base["source"]), self._compile)
+        before = len(rows)
+        if report["trajectory"]:
+            body = self._body(report["best_source"])
+            rule_id = self._register_rule({"kind": "logic_reduction", "strategy": "typed_term",
+                                          "origin": "typed_term", "candidate_digest": _digest(body),
+                                          "parent_rule_ids": [str(base.get("rule_id") or base["id"])[:80]]})
+            self._push(rows, seen, body, origin="logic:typed_term", kind="typed_term",
+                       metadata={"rule_id": rule_id, "rule_kind": "logic_reduction"})
+        return len(rows)-before, report
+
+    def _constructive_rows(self, rows, seen, current, *, max_new: int):
+        if not self.config.constructive_terms or max_new <= 0:
+            return 0, None
+        from .constructive_proofs import propose
+        from .proof_tokens import proof_source_tokens
+        sources = self._verified_sources(rows, current)
+        if not sources:
+            return 0, None
+        base = sources[0]
+        report = propose(str(base["source"]))
+        candidate = report.get("candidate")
+        before = len(rows)
+        if candidate and proof_source_tokens(candidate) < proof_source_tokens(base["source"]):
+            body = self._body(candidate)
+            rule_id = self._register_rule({"kind": "logic_reduction", "strategy": "constructive_terms",
+                                          "origin": "constructive_terms", "candidate_digest": _digest(body),
+                                          "parent_rule_ids": [str(base.get("rule_id") or base["id"])[:80]]})
+            self._push(rows, seen, body, origin="logic:constructive_terms", kind="constructive_terms",
+                       metadata={"rule_id": rule_id, "rule_kind": "logic_reduction"})
+        return len(rows)-before, report
 
     def _teacher_source_digest(self) -> str:
         """Identify the theorem envelope used by the persisted teacher rows."""
@@ -1379,7 +1518,7 @@ class RouterTuningLoop:
             source = str(row.get("source") or "")
             if not source.strip():
                 continue
-            body = _source_parts(source)[1].strip("\n")
+            body = self._body(source).strip("\n")
             if not body or len(body) > self.config.max_candidate_chars:
                 continue
             candidate_digest = _digest(body)
@@ -1869,8 +2008,13 @@ class RouterTuningLoop:
         model_prediction_after: Optional[dict[str, Any]] = None
         model_loss_after: Optional[dict[str, Any]] = None
         for round_index in range(self.config.rounds):
+            if self.arena_evaluator is not None and (
+                self.arena_evaluator.verifier is None
+                or self.arena_evaluator.calls >= self.arena_evaluator.max_calls
+            ):
+                break  # No speculative provider work without verification capacity.
             failure_skips_before = self._known_failure_skips
-            current_body = _source_parts(current)[1]
+            current_body = self._body(current)
             current_row = best or baseline
             analysis = self._analysis(current_body)
             prompt = _router_prompt(
@@ -1909,6 +2053,8 @@ class RouterTuningLoop:
             ir_crossover_count = 0
             hammer_count = 0
             logic_count = 0
+            feedback_count, feedback_report = 0, None
+            typed_count, typed_report = 0, None
             replay_count = 0
             seed_admitted = 0
             # Give each independent family a bounded slice of the remaining
@@ -1930,6 +2076,12 @@ class RouterTuningLoop:
                 branch_caps.append(("hammer", self.config.max_hammer_candidates))
             if self.config.logic_reductions:
                 branch_caps.append(("logic", self.config.max_logic_candidates))
+            if self.config.solver_feedback:
+                branch_caps.append(("solver_feedback", 1))
+            if self.config.typed_terms:
+                branch_caps.append(("typed_terms", 1))
+            if self.config.constructive_terms:
+                branch_caps.append(("constructive_terms", 1))
             training_state = ((self.memory.get("nca") or {}).get("autoencoder") or {}).get("training_state") or {}
             has_binding_policy = isinstance(training_state, Mapping) and bool(training_state.get("binding_steps"))
             if has_binding_policy:
@@ -2046,6 +2198,9 @@ class RouterTuningLoop:
                     round_index=round_index,
                 )
             model_irs = None
+            if self.config.solver_feedback:
+                feedback_count, feedback_report = self._solver_feedback_rows(
+                    rows, seen, current, max_new=branch_budget("solver_feedback", 1))
             if has_binding_policy:
                 binding_budget = branch_budget("binding_model", 1)
                 model_irs = self._autoencoder_irs(current)
@@ -2054,6 +2209,10 @@ class RouterTuningLoop:
                         if candidate_ir.get("proposal_policy") == "binding_raw":
                             self._push_ir(rows, seen, candidate_ir, origin="autoencoder:binding_raw", kind="ir_model")
                             break
+            if self.config.typed_terms:
+                typed_count, typed_report = self._typed_term_rows(rows, seen, current, max_new=branch_budget("typed_terms", 1))
+            constructive_count, constructive_report = self._constructive_rows(
+                rows, seen, current, max_new=branch_budget("constructive_terms", 1) if self.config.constructive_terms else 0)
             for kind, body, origin in self._local_rows(current_body, plan.get("strategies") or ()):
                 if len(rows) >= self.config.max_candidate_pool - elite_reserved_capacity:
                     break
@@ -2091,18 +2250,15 @@ class RouterTuningLoop:
             pre_verified = [row for row in rows if row.get("lake_ok")]
             pre_winner = min(
                 pre_verified,
-                key=lambda row: (
-                    int(row.get("body_tokens") or 10**9),
-                    int(row.get("token_count") or 10**9),
-                    -float(row.get("reward") or 0.0),
-                    str(row.get("id") or ""),
-                ),
+                key=self._selection_key,
                 default=None,
             )
             previous_best_tokens = int(best.get("body_tokens") or 10**9) if best is not None else 10**9
             elite_composition_triggered = bool(
                 pre_winner is not None
-                and int(pre_winner.get("body_tokens") or 10**9) <= previous_best_tokens
+                and (self._selection_key(pre_winner)[:2] <= self._selection_key(best)[:2]
+                     if self.arena_evaluator is not None and best is not None
+                     else int(pre_winner.get("body_tokens") or 10**9) <= previous_best_tokens)
             )
             if elite_composition_triggered:
                 elite_capacity = max(0, self.config.max_candidate_pool - len(rows))
@@ -2118,20 +2274,11 @@ class RouterTuningLoop:
             verified = [row for row in rows if row.get("lake_ok")]
             round_winner = min(
                 verified,
-                key=lambda row: (
-                    int(row.get("body_tokens") or 10**9),
-                    int(row.get("token_count") or 10**9),
-                    -float(row.get("reward") or 0.0),
-                    str(row.get("id") or ""),
-                ),
+                key=self._selection_key,
                 default=None,
             )
             improved = False
-            if round_winner is not None and (
-                best is None
-                or (int(round_winner["body_tokens"]), int(round_winner["token_count"]))
-                < (int(best["body_tokens"]), int(best["token_count"]))
-            ):
+            if round_winner is not None and self._improves(round_winner, best):
                 best = round_winner
                 current = str(round_winner["source"])
                 improved = True
@@ -2163,6 +2310,12 @@ class RouterTuningLoop:
                         "hammer_candidates": hammer_count,
                         "known_failure_skips": self._known_failure_skips - failure_skips_before,
                         "logic_candidates": logic_count,
+                        "solver_feedback_candidates": feedback_count,
+                        "solver_feedback": feedback_report,
+                        "typed_term_candidates": typed_count,
+                        "typed_terms": typed_report,
+                        "constructive_candidates": constructive_count,
+                        "constructive_terms": constructive_report,
                         "logic_strategies": sorted({str(row.get("origin")).split(":")[1]
                                                     for row in rows if str(row.get("origin", "")).startswith("logic:")}),
                         "composed_candidates": composition_count,
@@ -2241,6 +2394,11 @@ class RouterTuningLoop:
             "admission": best.get("admission"),
             "lake_ok": best.get("lake_ok"),
             "best_source": best.get("source"),
+            "selection_objective": self.config.selection_objective,
+            "arena": ({"scoring_id": (best.get("arena_evaluation") or {}).get("scoring_id"), "official_score": None,
+                       "best": best.get("arena_evaluation"),
+                       "accounting": self.arena_evaluator.accounting()}
+                      if self.arena_evaluator is not None else None),
             "best_ir": best.get("ir"),
             "model_prediction_after": model_prediction_after,
             "model_body_tokens_after": (
@@ -2284,6 +2442,7 @@ def tune_autoencoder_with_router(
     seed_candidates: Optional[Sequence[Any]] = None,
     design_hint: Optional[Mapping[str, Any]] = None,
     rng: Optional[random.Random] = None,
+    arena_evaluator: Optional[ArenaEvaluator] = None,
 ) -> dict[str, Any]:
     """Convenience wrapper for :class:`RouterTuningLoop`."""
 
@@ -2298,11 +2457,20 @@ def tune_autoencoder_with_router(
         seed_candidates=seed_candidates,
         design_hint=design_hint,
         rng=rng,
+        arena_evaluator=arena_evaluator,
     ).run()
 
 
 def _lean_compiler(*, project_root: Path, use_lake: bool = False, timeout: float = 20.0,
-                   kernel_only: bool = False) -> Callable[..., dict[str, Any]]:
+                   kernel_only: bool = False, collect_diagnostics: bool = False,
+                   measure_proofs: bool = False, proof_node_budget: int = 50_000,
+                   export_dags: bool = False, environment_sha256: str | None = None) -> Callable[..., dict[str, Any]]:
+    if (measure_proofs or export_dags) and not kernel_only:
+        raise ValueError("expression metrics/DAGs require kernel-only audit")
+    if (measure_proofs or export_dags) and (type(proof_node_budget) is not int or not 1 <= proof_node_budget <= 100_000):
+        raise ValueError("invalid proof expression node budget")
+    if export_dags and (not isinstance(environment_sha256, str) or not re.fullmatch(r"[0-9a-f]{64}", environment_sha256)):
+        raise ValueError("DAG export requires a dependency environment fingerprint")
     executable = "lake" if use_lake else "lean"
 
     def compile_one(source: str, problem: str = "") -> dict[str, Any]:
@@ -2321,6 +2489,10 @@ def _lean_compiler(*, project_root: Path, use_lake: bool = False, timeout: float
             path = Path(temp_name) / "Main.lean"
             path.write_text(checked_source, encoding="utf-8")
             argv = [executable, "env", "lean", str(path)] if use_lake else [executable, str(path)]
+            if collect_diagnostics:
+                argv.insert(-1, "--json")
+            if measure_proofs or export_dags:
+                argv[-1:-1] = ["-o", str(path.with_suffix(".olean"))]
             try:
                 completed = subprocess.run(
                     argv,
@@ -2332,15 +2504,46 @@ def _lean_compiler(*, project_root: Path, use_lake: bool = False, timeout: float
                 )
             except (OSError, subprocess.TimeoutExpired) as exc:
                 return {"theorem_ok": False, "reason": type(exc).__name__, "token_count": len(str(source).split())}
-            output = (completed.stdout or "") + "\n" + (completed.stderr or "")
+            stdout, diagnostics = completed.stdout or "", None
+            if collect_diagnostics:
+                from .solver_feedback import compiler_messages, source_digest
+                try:
+                    diagnostics, stdout = compiler_messages(stdout, str(path))
+                except ValueError as exc:
+                    return {"theorem_ok": False, "reason": str(exc), "kernel_audit": {"accepted": False}}
+            output = stdout + "\n" + (completed.stderr or "")
             audit = audit_axioms(output, declarations) if kernel_only else None
+            accepted = (completed.returncode == 0 and not re.search(r"\bsorry(?:Ax)?\b", output)
+                        and (audit is None or audit["accepted"]))
+            metrics = None
+            if measure_proofs:
+                metrics = {"ok": False, "reason": "unverified_or_multiple_declarations"}
+                if accepted and len(declarations) == 1:
+                    from .proof_metrics import inspect_olean
+                    metrics = inspect_olean(directory=path.parent, declaration=declarations[0], source=source,
+                                            project_root=project_root, use_lake=use_lake, timeout=timeout,
+                                            node_budget=proof_node_budget)
+            dag = None
+            if export_dags:
+                dag = {"ok": False, "reason": "unverified_or_multiple_declarations"}
+                if accepted and len(declarations) == 1:
+                    from .expr_dag import export_olean
+                    dag = export_olean(directory=path.parent, declaration=declarations[0],
+                                       environment_sha256=environment_sha256, project_root=project_root,
+                                       use_lake=use_lake, timeout=timeout, node_budget=proof_node_budget)
             return {
-                "theorem_ok": (completed.returncode == 0 and not re.search(r"\bsorry(?:Ax)?\b", output)
-                               and (audit is None or audit["accepted"])),
+                "theorem_ok": accepted,
                 "kernel_audit": audit,
                 "token_count": len(str(source).split()),
-                "stdout_tail": (completed.stdout or "")[-240:],
+                "stdout_tail": stdout[-240:],
                 "stderr_tail": (completed.stderr or "")[-240:],
+                **({"diagnostics": diagnostics, "diagnostics_source_sha256": source_digest(source)}
+                   if collect_diagnostics else {}),
+                **({"proof_metrics": metrics} if measure_proofs else {}),
+                **({"expression_dag": dag,
+                    "source_sha256": hashlib.sha256(source.encode()).hexdigest(),
+                    "compiled_source_sha256": hashlib.sha256(checked_source.encode()).hexdigest()}
+                   if export_dags else {}),
             }
 
     return compile_one
@@ -2354,6 +2557,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument("--problem", default="")
     parser.add_argument("--project-root", default=".")
     parser.add_argument("--kernel-only", action="store_true", help="require axiom audits using only propext, Classical.choice and Quot.sound (top-level named theorem helper)")
+    parser.add_argument("--solver-feedback", action="store_true", help="query/replay bounded Lean suggestions (requires --kernel-only)")
+    parser.add_argument("--typed-terms", action="store_true", help="query/replay elaborated proof terms (requires --kernel-only)")
+    parser.add_argument("--constructive-terms", action="store_true", help="bounded constructive term search; compiler-checked proposals")
     parser.add_argument("--provider", default="codex_cli")
     parser.add_argument("--model", dest="model_name", default="gpt-5.6-luna")
     parser.add_argument("--reasoning-effort", default="high")
@@ -2369,6 +2575,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument("--freeze-reconstruction-heads", action="store_true", help="freeze operation/latent weights while training rewrite selection")
     parser.add_argument("--allow-cross-provider-fallback", action="store_true")
     args = parser.parse_args(list(argv) if argv is not None else None)
+    if (args.solver_feedback or args.typed_terms) and not args.kernel_only:
+        parser.error("--solver-feedback/--typed-terms require --kernel-only")
 
     project_root = Path(args.project_root).expanduser().resolve()
     source = Path(args.source_file).expanduser().read_text(encoding="utf-8")
@@ -2386,6 +2594,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         rounds=args.rounds,
         n_variations=args.n_variations,
         logic_reductions=not args.no_logic_reductions,
+        solver_feedback=args.solver_feedback,
+        typed_terms=args.typed_terms,
+        constructive_terms=args.constructive_terms,
         max_logic_candidates=args.max_logic_candidates,
         train=not args.no_train,
         train_binding_policy=args.train_binding_policy,
@@ -2397,7 +2608,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         memory,
         source,
         problem=args.problem or Path(args.source_file).stem,
-        compile_fn=_lean_compiler(project_root=project_root, use_lake=args.lake, kernel_only=args.kernel_only),
+        compile_fn=_lean_compiler(project_root=project_root, use_lake=args.lake, kernel_only=args.kernel_only,
+                                  collect_diagnostics=args.solver_feedback or args.typed_terms),
         config=config,
     )
     if args.state_path:

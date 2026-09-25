@@ -1,0 +1,1125 @@
+{
+  "schema": "jevops-deletion-catalog-summary/v1",
+  "problem": "Core.InitsUpdatesComm",
+  "plan_id": "f45580980c3d51fa04bd173ec351ce8582be6051c369cc90a0bf76e6a8a86558",
+  "catalog_sha256": "52677802aa9a72d367b5a883b0b552a21d71b1d948af13ef7e1026e12f052219",
+  "status": "COMPLETE",
+  "evidence_mode": "local_lean",
+  "actions": 64,
+  "distinct_candidates": 64,
+  "all_pin_verified_candidates": [],
+  "rejected_candidates": 64,
+  "inconclusive_candidates": 0,
+  "controls": [
+    {
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "VERIFIED",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973"
+    },
+    {
+      "pin": {
+        "lean_tag": "v4.27.0",
+        "git_commit": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      "status": "VERIFIED",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973"
+    },
+    {
+      "pin": {
+        "lean_tag": "v4.29.1",
+        "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      "status": "VERIFIED",
+      "source_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973"
+    }
+  ],
+  "row_status_counts": {
+    "VERIFIED": 3,
+    "REJECTED": 64,
+    "NOT_RUN_AFTER_NON_SUCCESS": 128
+  },
+  "native_requests_reserved": 67,
+  "native_processes": 67,
+  "model_calls": 0,
+  "wall_seconds_including_setup": 829.0873,
+  "request_wall_seconds": 783.5221,
+  "source_snapshot": {
+    "schema": "jevops-arena-source-snapshot/v1",
+    "status": "UNCHANGED",
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/deletion-catalog-20260923-wEXRF9/snapshot",
+    "manifest_sha256": "636f1549d31ac65ec9ddbd04110e32913d6f6294c0e677afa9e910359cb9d364",
+    "content_root": "8f74d268c02b8db32b6e6cc07941c09061140ad159e8d56490aca58650169c89",
+    "file_count": 226,
+    "bytes": 4724976,
+    "proof_verified": false
+  },
+  "first_error_histogram": {
+    "Case tag `update_some` not found.": 1,
+    "unexpected end of input; expected '{'": 1,
+    "unsolved goals": 25,
+    "Unknown identifier `Hup`": 2,
+    "Type mismatch": 8,
+    "Tactic `apply` failed: could not unify the conclusion of `UpdateStates.update_some`": 2,
+    "Application type mismatch: The argument": 3,
+    "Tactic `apply` failed: could not unify the type of `(ih Hinit ?m.138 ?m.139).right.right`": 1,
+    "Tactic `rewrite` failed: Did not find an occurrence of the pattern": 2,
+    "Tactic `apply` failed: could not unify the conclusion of `@updatedStatesInit`": 1,
+    "Tactic `apply` failed: could not unify the type of `InitStatesNotDefined Hinit`": 1,
+    "Unknown identifier `Hnd`": 2,
+    "Unknown identifier `Hlen1`": 2,
+    "Case tag `update_none` not found.": 2,
+    "Tactic `constructor` failed: no applicable constructor found": 1,
+    "Tactic `apply` failed: could not unify the conclusion of `updatedStatesInit Hlen1`": 1,
+    "Tactic `apply` failed: could not unify the type of `UpdateStatesNotDefMonotone' ?m.109 Hups`": 1,
+    "Tactic `apply` failed: could not unify the conclusion of `updatedStateUpdate`": 1,
+    "Unknown identifier `val`": 1,
+    "simp_all made no progress": 2,
+    "Unknown identifier `Hin`": 1,
+    "Invalid `⟨...⟩` notation: The expected type": 1,
+    "Function expected at": 1,
+    "`simp` made no progress": 1
+  },
+  "candidate_results": [
+    {
+      "edit_id": 1,
+      "delete_lines": [
+        8,
+        14
+      ],
+      "label": "edit-01",
+      "tokens": 204,
+      "source_sha256": "baabfe7660cbfa6494a1a09cf14341c04d611df70be17cedc3739dba2d8e939b",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Case tag `update_some` not found.\n\nNote: There are no cases to select."
+    },
+    {
+      "edit_id": 2,
+      "delete_lines": [
+        16,
+        46
+      ],
+      "label": "edit-02",
+      "tokens": 72,
+      "source_sha256": "99cac8c59bfc36e1acba41c1525a0175b9d8a10bed3bc31371a731e694eab8c7",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unexpected end of input; expected '{'"
+    },
+    {
+      "edit_id": 3,
+      "delete_lines": [
+        18,
+        21
+      ],
+      "label": "edit-03",
+      "tokens": 210,
+      "source_sha256": "5573fa9ed0a8a908400b90e770be2cfe6c08ef24d7db88d6763c17636ce91a67",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase refine_1.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ isNotDefined σ ks'\n\ncase refine_1.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ ks'.Nodup"
+    },
+    {
+      "edit_id": 4,
+      "delete_lines": [
+        23,
+        46
+      ],
+      "label": "edit-04",
+      "tokens": 109,
+      "source_sha256": "0dab8725eb4a3b58a95095ebb90813f650771e9dd1cc049757ebb1782d2c39d2",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase refine_2.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ UpdateState P (updatedStates σ ks' vs') x v (updatedStates σ₀ ks' vs')\n\ncase refine_2.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''"
+    },
+    {
+      "edit_id": 5,
+      "delete_lines": [
+        24,
+        43
+      ],
+      "label": "edit-05",
+      "tokens": 137,
+      "source_sha256": "83556eddc11c8e23b5378dec9144b2b94e1164c9dce29559a8239339e5097e4b",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase refine_2.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ UpdateState P (updatedStates' σ (ks'.zip vs')) x v (updatedStates' (updatedState σ x v) (ks'.zip vs'))"
+    },
+    {
+      "edit_id": 6,
+      "delete_lines": [
+        26,
+        36
+      ],
+      "label": "edit-06",
+      "tokens": 177,
+      "source_sha256": "5ba264005bdfbd6c7e690abe44ef596918437f462f092c015b2283f98ef772ae",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase refine_2.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\nHdef : isDefined σ [x]\n⊢ UpdateState P (updatedStates' σ (ks'.zip vs')) x v (updatedState (updatedStates' σ (ks'.zip vs')) x v)"
+    },
+    {
+      "edit_id": 7,
+      "delete_lines": [
+        34,
+        35
+      ],
+      "label": "edit-07",
+      "tokens": 217,
+      "source_sha256": "1d163834ba3cb45d78af3195a5986105e5cda6a96c7f2d0d41ad0b5b58c47722",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nσ'' : SemanticStore P\nx✝ : Option P.Expr\nval : P.Expr\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : xs.length = vs.length\nheq : σ x = some val\n⊢ isNotDefined σ₀ ks'"
+    },
+    {
+      "edit_id": 8,
+      "delete_lines": [
+        38,
+        43
+      ],
+      "label": "edit-08",
+      "tokens": 202,
+      "source_sha256": "bae58dcdec4e876b7ede1e4310f95d5b087fb0ac73462dd4156443ada80f294b",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase refine_2.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nσ'' : SemanticStore P\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : xs.length = vs.length\n⊢ ¬x ∈ ks'"
+    },
+    {
+      "edit_id": 9,
+      "delete_lines": [
+        45,
+        46
+      ],
+      "label": "edit-09",
+      "tokens": 213,
+      "source_sha256": "68ebecfebaabc57c0ddb34d0ba21e593bff4298b7f6f036698e82d49f8df52de",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ isDefined σ₁ xs\n\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ xs.length = vs.length"
+    },
+    {
+      "edit_id": 10,
+      "delete_lines": [
+        1,
+        4
+      ],
+      "label": "edit-10",
+      "tokens": 198,
+      "source_sha256": "e5793610699fb3eb03feb22e9f97784345e5acc0ca6d4030511d1473f59591c0",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Unknown identifier `Hup`"
+    },
+    {
+      "edit_id": 11,
+      "delete_lines": [
+        5,
+        46
+      ],
+      "label": "edit-11",
+      "tokens": 27,
+      "source_sha256": "abc0ceaf6e664f125cc3625bf5f93b758c3b2e8de8f45b840980b5d6d86c1142",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\nP : PureExpr\nσ σ' σ'' : SemanticStore P\nks ks' : List P.Ident\nvs vs' : List P.Expr\nHup : UpdateStates σ ks vs σ'\nHinit : InitStates σ' ks' vs' σ''\nHk : isDefined σ' ks\nHlen1 : ks'.length = vs'.length\n⊢ updatedStates σ ks' vs' = updatedStates σ ks' vs' ∧\n    InitStates σ ks' vs' (updatedStates σ ks' vs') ∧ UpdateStates (updatedStates σ ks' vs') ks vs σ''"
+    },
+    {
+      "edit_id": 12,
+      "delete_lines": [
+        8,
+        11
+      ],
+      "label": "edit-12",
+      "tokens": 213,
+      "source_sha256": "4ab45a608b5930b26e0826eeb8a078098b9af35798c69e62f08cc7d98fa1f76a",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Type mismatch\n  InitStatesNodup Hinit\nhas type\n  ks'.Nodup\nbut is expected to have type\n  updatedStates σ✝ ks' vs' = updatedStates σ✝ ks' vs' ∧\n    InitStates σ✝ ks' vs' (updatedStates σ✝ ks' vs') ∧ UpdateStates (updatedStates σ✝ ks' vs') [] [] σ''"
+    },
+    {
+      "edit_id": 13,
+      "delete_lines": [
+        12,
+        14
+      ],
+      "label": "edit-13",
+      "tokens": 215,
+      "source_sha256": "a9ba9bb3871ab97c0f668e6a89e0f24047c57ba2604d959a32637e0745b18fdd",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase left.refine_2\nP : PureExpr\nσ σ' : SemanticStore P\nks ks' : List P.Ident\nvs vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ✝ σ'' : SemanticStore P\nHinit : InitStates σ✝ ks' vs' σ''\nHk : isDefined σ✝ []\n⊢ ks'.Nodup\n\ncase right\nP : PureExpr\nσ σ' : SemanticStore P\nks ks' : List P.Ident\nvs vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ✝ σ'' : SemanticStore P\nHinit : InitStates σ✝ ks' vs' σ''\nHk : isDefined σ✝ []\n⊢ UpdateStates (updatedStates σ✝ ks' vs') [] [] σ''"
+    },
+    {
+      "edit_id": 14,
+      "delete_lines": [
+        16,
+        21
+      ],
+      "label": "edit-14",
+      "tokens": 198,
+      "source_sha256": "770e46e71b28d722489d07d0b99fdd782407e9578f6bf5e7db57d14e472ae9a3",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Tactic `apply` failed: could not unify the conclusion of `UpdateStates.update_some`\n  UpdateStates ?m.90 (?m.91 :: ?m.94) (?m.92 :: ?m.95) ?m.96\nwith the goal\n  updatedStates σ ks' vs' = updatedStates σ ks' vs' ∧\n    InitStates σ ks' vs' (updatedStates σ ks' vs') ∧ UpdateStates (updatedStates σ ks' vs') (x :: xs) (v :: vs) σ''\n\nNote: The full type of `UpdateStates.update_some` is\n  UpdateState P ?m.90 ?m.91 ?m.92 (updatedStates σ₀ ks' vs') →\n    UpdateStates (updatedStates σ₀ ks' vs') ?m.94 ?m.95 ?m.96 →\n      UpdateStates ?m.90 (?m.91 :: ?m.94) (?m.92 :: ?m.95) ?m.96\n\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ updatedStates σ ks' vs' = updatedStates σ ks' vs' ∧\n    InitStates σ ks' vs' (updatedStates σ ks' vs') ∧ UpdateStates (updatedStates σ ks' vs') (x :: xs) (v :: vs) σ''"
+    },
+    {
+      "edit_id": 15,
+      "delete_lines": [
+        22,
+        46
+      ],
+      "label": "edit-15",
+      "tokens": 98,
+      "source_sha256": "211eeafdeb8128b28fd72b289ce02d277424e67faa08b33a3368b334a974a927",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase refine_2\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ UpdateStates (updatedStates σ ks' vs') (x :: xs) (v :: vs) σ''"
+    },
+    {
+      "edit_id": 16,
+      "delete_lines": [
+        18,
+        19
+      ],
+      "label": "edit-16",
+      "tokens": 216,
+      "source_sha256": "9fe5697ebfe560d71d54955626994d3c8ad5fbee567356a1e4e7b912b1903c6a",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Application type mismatch: The argument\n  Hinit\nhas type\n  InitStates σ₁ ks' vs' σ''\nbut is expected to have type\n  InitStates σ ks' ?m.106 ?m.107\nin the application\n  InitStatesNotDefined Hinit"
+    },
+    {
+      "edit_id": 17,
+      "delete_lines": [
+        20,
+        21
+      ],
+      "label": "edit-17",
+      "tokens": 218,
+      "source_sha256": "be852d35c9dd2877ebecc49e2e23cf3ebec12edafa94f11c12ef8e96c43ba23e",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ isNotDefined σ₁ ks'\n\ncase refine_1.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ ks'.Nodup"
+    },
+    {
+      "edit_id": 18,
+      "delete_lines": [
+        23,
+        43
+      ],
+      "label": "edit-18",
+      "tokens": 129,
+      "source_sha256": "3e0fdd1872015d7b05fb6dc06556374de9e4693179981ce87ab5727b986b3331",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Tactic `apply` failed: could not unify the type of `(ih Hinit ?m.138 ?m.139).right.right`\n  UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nwith the goal\n  UpdateState P (updatedStates σ ks' vs') x v (updatedStates σ₀ ks' vs')\n\ncase refine_2.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ UpdateState P (updatedStates σ ks' vs') x v (updatedStates σ₀ ks' vs')"
+    },
+    {
+      "edit_id": 19,
+      "delete_lines": [
+        44,
+        46
+      ],
+      "label": "edit-19",
+      "tokens": 204,
+      "source_sha256": "a8435f881e68009856a3df6d0de599bfba6d3dec5dc1a1c9e295b35f963774d5",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase refine_2.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''"
+    },
+    {
+      "edit_id": 20,
+      "delete_lines": [
+        24,
+        36
+      ],
+      "label": "edit-20",
+      "tokens": 166,
+      "source_sha256": "30f5e920ce1443d3d24497645024fe3cfc562057189fbeb612113a28a62f8a3a",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  (List.zip ?m.140 ?m.141).unzip\nin the target expression\n  UpdateState P (updatedStates' σ (ks'.zip vs')) x v (updatedStates' (updatedState σ x v) (ks'.zip vs'))\n\ncase refine_2.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ UpdateState P (updatedStates' σ (ks'.zip vs')) x v (updatedStates' (updatedState σ x v) (ks'.zip vs'))"
+    },
+    {
+      "edit_id": 21,
+      "delete_lines": [
+        37,
+        43
+      ],
+      "label": "edit-21",
+      "tokens": 195,
+      "source_sha256": "ab3c560c3bcae0b5bcec6f11964094a07edbe77723e04aa8891e786fdd554933",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase refine_2.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ ¬x ∈ (ks'.zip vs').unzip.fst"
+    },
+    {
+      "edit_id": 22,
+      "delete_lines": [
+        26,
+        30
+      ],
+      "label": "edit-22",
+      "tokens": 197,
+      "source_sha256": "2f2d0b8fa224485a4e0a98546fe6753cfe732fc5edc27b27e24239b78bbba1fd",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Tactic `apply` failed: could not unify the conclusion of `@updatedStatesInit`\n  InitStates ?σ ?hs ?vs (updatedStates ?σ ?hs ?vs)\nwith the goal\n  UpdateState P (updatedStates' σ (ks'.zip vs')) x v (updatedState (updatedStates' σ (ks'.zip vs')) x v)\n\nNote: The full type of `@updatedStatesInit` is\n  ∀ {P : PureExpr} {σ : SemanticStore P} {hs : List P.Ident} {vs : List P.Expr},\n    hs.length = vs.length → isNotDefined σ hs → hs.Nodup → InitStates σ hs vs (updatedStates σ hs vs)\n\ncase refine_2.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\nHdef : isDefined σ [x]\n⊢ UpdateState P (updatedStates' σ (ks'.zip vs')) x v (updatedState (updatedStates' σ (ks'.zip vs')) x v)"
+    },
+    {
+      "edit_id": 23,
+      "delete_lines": [
+        31,
+        36
+      ],
+      "label": "edit-23",
+      "tokens": 204,
+      "source_sha256": "e7988212d3b0a6b023c97fddba4bbe492ee6a882dd6fa85062b8d27312d6ad48",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nσ'' : SemanticStore P\nx✝ : Option P.Expr\nval : P.Expr\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : xs.length = vs.length\nheq : σ x = some val\n⊢ InitStates σ ?m.216 ?m.217 (updatedStates' σ (ks'.zip vs'))\n\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nσ'' : SemanticStore P\nx✝ : Option P.Expr\nval : P.Expr\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : xs.length = vs.length\nheq : σ x = some val\n⊢ List P.Ident\n\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nσ'' : SemanticStore P\nx✝ : Option P.Expr\nval : P.Expr\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : xs.length = vs.length\nheq : σ x = some val\n⊢ List P.Expr"
+    },
+    {
+      "edit_id": 24,
+      "delete_lines": [
+        34,
+        34
+      ],
+      "label": "edit-24",
+      "tokens": 220,
+      "source_sha256": "cf14b38650556644d13b7efc5de8a86dad62772ffda3aeaefd1e9f09186828f1",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Tactic `apply` failed: could not unify the type of `InitStatesNotDefined Hinit`\n  isNotDefined σ₁ ks'\nwith the goal\n  isNotDefined σ₀ ks'\n\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nσ'' : SemanticStore P\nx✝ : Option P.Expr\nval : P.Expr\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : xs.length = vs.length\nheq : σ x = some val\n⊢ isNotDefined σ₀ ks'"
+    },
+    {
+      "edit_id": 25,
+      "delete_lines": [
+        35,
+        35
+      ],
+      "label": "edit-25",
+      "tokens": 221,
+      "source_sha256": "2283cc8e0722157094ff2a8689127b4f4fd222a2e4057113384004ae5fa0e8fb",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nσ'' : SemanticStore P\nx✝ : Option P.Expr\nval : P.Expr\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : xs.length = vs.length\nheq : σ x = some val\n⊢ isNotDefined σ₁ ks'"
+    },
+    {
+      "edit_id": 26,
+      "delete_lines": [
+        38,
+        40
+      ],
+      "label": "edit-26",
+      "tokens": 209,
+      "source_sha256": "800cf56408b7deabc0f947769adf654f7d0f76ec9c1740e108225bc91e44751e",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Unknown identifier `Hnd`"
+    },
+    {
+      "edit_id": 27,
+      "delete_lines": [
+        41,
+        43
+      ],
+      "label": "edit-27",
+      "tokens": 217,
+      "source_sha256": "acefaf3fc6b27a6d3883f94f4883a0e706c589ff07f97dd1092834032e86828e",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase refine_2.a.h\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nσ'' : SemanticStore P\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      (∀ (v : P.Ident), v ∈ xs → (σ₁ v).isSome = true) → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\nHinit : InitStates σ₁ ks' vs' σ''\nHlen2 : xs.length = vs.length\nHnd : ∀ (v : P.Ident), v ∈ ks' → σ₁ v = none\nHk : (σ₁ x).isSome = true ∧ ∀ (a : P.Ident), a ∈ xs → (σ₁ a).isSome = true\n⊢ x ∈ ks' → False"
+    },
+    {
+      "edit_id": 28,
+      "delete_lines": [
+        45,
+        45
+      ],
+      "label": "edit-28",
+      "tokens": 215,
+      "source_sha256": "2b6b96a9b98f8c12d4cb4fa8aba457ea952f68bd520cadf09385763a6a59e84d",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nσ'' : SemanticStore P\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : xs.length = vs.length\n⊢ isDefined σ₁ xs"
+    },
+    {
+      "edit_id": 29,
+      "delete_lines": [
+        46,
+        46
+      ],
+      "label": "edit-29",
+      "tokens": 222,
+      "source_sha256": "70b6b0ce04f34141b6599a36fa4c4f9863d90846ff0b185cd7c881c01e737880",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ xs.length = vs.length"
+    },
+    {
+      "edit_id": 30,
+      "delete_lines": [
+        1,
+        2
+      ],
+      "label": "edit-30",
+      "tokens": 214,
+      "source_sha256": "9fcccaf904144d43d6d68c84241d81a928df4c9feee16a62aeb3b37f5664ea34",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Unknown identifier `Hup`"
+    },
+    {
+      "edit_id": 31,
+      "delete_lines": [
+        3,
+        4
+      ],
+      "label": "edit-31",
+      "tokens": 208,
+      "source_sha256": "55fac7594db69cfc339c65720eeb1565cb86be550529b9947b6ca8ce9c9617e4",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Unknown identifier `Hlen1`"
+    },
+    {
+      "edit_id": 32,
+      "delete_lines": [
+        5,
+        6
+      ],
+      "label": "edit-32",
+      "tokens": 215,
+      "source_sha256": "7678af37c8be5c8d02e41190975d315fe0d6d0fa5c45f0cf0a5df59a6bc764d2",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Case tag `update_none` not found.\n\nNote: There are no cases to select."
+    },
+    {
+      "edit_id": 33,
+      "delete_lines": [
+        7,
+        46
+      ],
+      "label": "edit-33",
+      "tokens": 36,
+      "source_sha256": "fe3d1c6ceea4fcdb0b71a87ac92032968a930ad2b24af7d65921f02d9bc1fbac",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase update_none\nP : PureExpr\nσ σ' : SemanticStore P\nks ks' : List P.Ident\nvs vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ✝ σ'' : SemanticStore P\nHinit : InitStates σ✝ ks' vs' σ''\nHk : isDefined σ✝ []\nHlen2 : [].length = [].length\n⊢ updatedStates σ✝ ks' vs' = updatedStates σ✝ ks' vs' ∧\n    InitStates σ✝ ks' vs' (updatedStates σ✝ ks' vs') ∧ UpdateStates (updatedStates σ✝ ks' vs') [] [] σ''\n\ncase update_some\nP : PureExpr\nσ σ' : SemanticStore P\nks ks' : List P.Ident\nvs vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ✝ : SemanticStore P\nx✝ : P.Ident\nv✝ : P.Expr\nσ'✝ : SemanticStore P\nxs✝ : List P.Ident\nvs✝ : List P.Expr\nσ''✝ : SemanticStore P\na✝¹ : UpdateState P σ✝ x✝ v✝ σ'✝\na✝ : UpdateStates σ'✝ xs✝ vs✝ σ''✝\na_ih✝ :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ''✝ ks' vs' σ'' →\n      isDefined σ''✝ xs✝ →\n        xs✝.length = vs✝.length →\n          updatedStates σ'✝ ks' vs' = updatedStates σ'✝ ks' vs' ∧\n            InitStates σ'✝ ks' vs' (updatedStates σ'✝ ks' vs') ∧ UpdateStates (updatedStates σ'✝ ks' vs') xs✝ vs✝ σ''\nσ'' : SemanticStore P\nHinit : InitStates σ''✝ ks' vs' σ''\nHk : isDefined σ''✝ (x✝ :: xs✝)\nHlen2 : (x✝ :: xs✝).length = (v✝ :: vs✝).length\n⊢ updatedStates σ✝ ks' vs' = updatedStates σ✝ ks' vs' ∧\n    InitStates σ✝ ks' vs' (updatedStates σ✝ ks' vs') ∧\n      UpdateStates (updatedStates σ✝ ks' vs') (x✝ :: xs✝) (v✝ :: vs✝) σ''"
+    },
+    {
+      "edit_id": 34,
+      "delete_lines": [
+        8,
+        9
+      ],
+      "label": "edit-34",
+      "tokens": 221,
+      "source_sha256": "5cea432bc6934c2f52ce53ed328d41e7617f20b3094f2d7424860b019bcc6151",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Type mismatch\n  updatedStatesInit Hlen1 ?m.67 ?m.68\nhas type\n  InitStates ?m.64 ks' vs' (updatedStates ?m.64 ks' vs')\nbut is expected to have type\n  updatedStates σ✝ ks' vs' = updatedStates σ✝ ks' vs' ∧\n    InitStates σ✝ ks' vs' (updatedStates σ✝ ks' vs') ∧ UpdateStates (updatedStates σ✝ ks' vs') [] [] σ''"
+    },
+    {
+      "edit_id": 35,
+      "delete_lines": [
+        10,
+        11
+      ],
+      "label": "edit-35",
+      "tokens": 216,
+      "source_sha256": "dec2437aff4f04fbfc59c4a915e06b9283babdeffa0b31baa6a74a7387f0838f",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Type mismatch\n  InitStatesNodup Hinit\nhas type\n  ks'.Nodup\nbut is expected to have type\n  InitStates σ✝ ks' vs' (updatedStates σ✝ ks' vs')"
+    },
+    {
+      "edit_id": 36,
+      "delete_lines": [
+        12,
+        13
+      ],
+      "label": "edit-36",
+      "tokens": 216,
+      "source_sha256": "06f61c14c881dc9139e695b02c1f48ac363ec8499558f306c9c06e71f3693d21",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Tactic `constructor` failed: no applicable constructor found\n\ncase left.refine_2\nP : PureExpr\nσ σ' : SemanticStore P\nks ks' : List P.Ident\nvs vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ✝ σ'' : SemanticStore P\nHinit : InitStates σ✝ ks' vs' σ''\nHk : isDefined σ✝ []\n⊢ ks'.Nodup"
+    },
+    {
+      "edit_id": 37,
+      "delete_lines": [
+        14,
+        14
+      ],
+      "label": "edit-37",
+      "tokens": 223,
+      "source_sha256": "1322d8297d61c1d8821370521190a6115a641a6ac815d228b980a11c43147a09",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase right\nP : PureExpr\nσ σ' : SemanticStore P\nks ks' : List P.Ident\nvs vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ✝ σ'' : SemanticStore P\nHinit : InitStates σ✝ ks' vs' σ''\nHk : isDefined σ✝ []\n⊢ UpdateStates (updatedStates σ✝ ks' vs') [] [] (updatedStates σ✝ ks' vs')"
+    },
+    {
+      "edit_id": 38,
+      "delete_lines": [
+        16,
+        16
+      ],
+      "label": "edit-38",
+      "tokens": 216,
+      "source_sha256": "7648ab4a0580da3bf881216cec885f17b1b3519789fc268500a4ecc6ce90f680",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Tactic `apply` failed: could not unify the conclusion of `updatedStatesInit Hlen1`\n  InitStates ?m.90 ks' vs' (updatedStates ?m.90 ks' vs')\nwith the goal\n  updatedStates σ ks' vs' = updatedStates σ ks' vs' ∧\n    InitStates σ ks' vs' (updatedStates σ ks' vs') ∧ UpdateStates (updatedStates σ ks' vs') (x :: xs) (v :: vs) σ''\n\nNote: The full type of `updatedStatesInit Hlen1` is\n  isNotDefined ?m.90 ks' → ks'.Nodup → InitStates ?m.90 ks' vs' (updatedStates ?m.90 ks' vs')\n\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ updatedStates σ ks' vs' = updatedStates σ ks' vs' ∧\n    InitStates σ ks' vs' (updatedStates σ ks' vs') ∧ UpdateStates (updatedStates σ ks' vs') (x :: xs) (v :: vs) σ''"
+    },
+    {
+      "edit_id": 39,
+      "delete_lines": [
+        17,
+        21
+      ],
+      "label": "edit-39",
+      "tokens": 206,
+      "source_sha256": "edb33d400f4341d5a55a6a85ecd99b490b3270a4b220541aa51fdef9ebc56de3",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Tactic `apply` failed: could not unify the conclusion of `UpdateStates.update_some`\n  UpdateStates ?m.98 (?m.99 :: ?m.102) (?m.100 :: ?m.103) ?m.104\nwith the goal\n  InitStates σ ks' vs' (updatedStates σ ks' vs')\n\nNote: The full type of `UpdateStates.update_some` is\n  UpdateState P ?m.98 ?m.99 ?m.100 (updatedStates σ₀ ks' vs') →\n    UpdateStates (updatedStates σ₀ ks' vs') ?m.102 ?m.103 ?m.104 →\n      UpdateStates ?m.98 (?m.99 :: ?m.102) (?m.100 :: ?m.103) ?m.104\n\ncase refine_1\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ InitStates σ ks' vs' (updatedStates σ ks' vs')"
+    },
+    {
+      "edit_id": 40,
+      "delete_lines": [
+        18,
+        18
+      ],
+      "label": "edit-40",
+      "tokens": 220,
+      "source_sha256": "25f21d0a87b3b8c48f3683e76c7031b29fa483e37e9f1a2270321d4951d13033",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Tactic `apply` failed: could not unify the type of `UpdateStatesNotDefMonotone' ?m.109 Hups`\n  isNotDefined σ₀ ?m.106\nwith the goal\n  isNotDefined σ ks'\n\ncase refine_1.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ isNotDefined σ ks'"
+    },
+    {
+      "edit_id": 41,
+      "delete_lines": [
+        19,
+        19
+      ],
+      "label": "edit-41",
+      "tokens": 220,
+      "source_sha256": "899de335c62cac888e94acfc4d300f60b0a86a424b3b10336e3e876c89d8c1eb",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Application type mismatch: The argument\n  Hinit\nhas type\n  InitStates σ₁ ks' vs' σ''\nbut is expected to have type\n  InitStates σ₀ ks' ?m.113 ?m.114\nin the application\n  InitStatesNotDefined Hinit"
+    },
+    {
+      "edit_id": 42,
+      "delete_lines": [
+        20,
+        20
+      ],
+      "label": "edit-42",
+      "tokens": 221,
+      "source_sha256": "b3130954c04bc1f44a03df8fdb4410e2fd61de9c3266ffce59f1d1448b68233e",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Type mismatch\n  InitStatesNodup Hinit\nhas type\n  ks'.Nodup\nbut is expected to have type\n  isNotDefined σ₁ ks'"
+    },
+    {
+      "edit_id": 43,
+      "delete_lines": [
+        21,
+        21
+      ],
+      "label": "edit-43",
+      "tokens": 221,
+      "source_sha256": "a5bdd486a16b57ced54a819469548bc4cffc5b31f76d75756c36d035a02cb11c",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase refine_1.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ ks'.Nodup"
+    },
+    {
+      "edit_id": 44,
+      "delete_lines": [
+        24,
+        24
+      ],
+      "label": "edit-44",
+      "tokens": 219,
+      "source_sha256": "d174810f792b4668a016995b033535d6453341a0e053b4b05e92304fe1005090",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Tactic `apply` failed: could not unify the conclusion of `updatedStateUpdate`\n  UpdateState P ?m.200 ?m.201 ?m.202 (updatedState ?m.200 ?m.201 ?m.202)\nwith the goal\n  UpdateState P (updatedStates' σ (ks'.zip vs')) x v (updatedStates' (updatedState σ x v) (ks'.zip vs'))\n\nNote: The full type of `updatedStateUpdate` is\n  ?m.200 ?m.201 = some val → UpdateState P ?m.200 ?m.201 ?m.202 (updatedState ?m.200 ?m.201 ?m.202)\n\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nσ'' : SemanticStore P\nx✝ : Option P.Expr\nval : P.Expr\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : xs.length = vs.length\nheq : σ x = some val\n⊢ UpdateState P (updatedStates' σ (ks'.zip vs')) x v (updatedStates' (updatedState σ x v) (ks'.zip vs'))"
+    },
+    {
+      "edit_id": 45,
+      "delete_lines": [
+        25,
+        36
+      ],
+      "label": "edit-45",
+      "tokens": 171,
+      "source_sha256": "f162ff279a6571e8a6417994f7e8d29b0f6929e0737a6feb1f66c9d2dbc4578d",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  (List.zip ?m.147 ?m.148).unzip\nin the target expression\n  UpdateState P (updatedStates' σ (ks'.zip vs')) x v (updatedState (updatedStates' σ (ks'.zip vs')) x v)\n\ncase refine_2.a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      isDefined σ₁ xs →\n        xs.length = vs.length →\n          updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n            InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\nσ'' : SemanticStore P\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : (x :: xs).length = (v :: vs).length\n⊢ UpdateState P (updatedStates' σ (ks'.zip vs')) x v (updatedState (updatedStates' σ (ks'.zip vs')) x v)"
+    },
+    {
+      "edit_id": 46,
+      "delete_lines": [
+        26,
+        28
+      ],
+      "label": "edit-46",
+      "tokens": 207,
+      "source_sha256": "b0b20b57985d3087dc1ff2a6f1b91d06603a2b745ee4e8f001201226f60455a5",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Unknown identifier `val`"
+    },
+    {
+      "edit_id": 47,
+      "delete_lines": [
+        29,
+        31
+      ],
+      "label": "edit-47",
+      "tokens": 212,
+      "source_sha256": "7cc1e1efa5fc82f9198cf02689a8a29a6ff09410e4ad9c9fb7d3bd54885d09ad",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "simp_all made no progress"
+    },
+    {
+      "edit_id": 48,
+      "delete_lines": [
+        32,
+        36
+      ],
+      "label": "edit-48",
+      "tokens": 206,
+      "source_sha256": "cb335887b0aec2758d51ea40c1906fdd6b9987dea542618756aca58074a81eff",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nσ'' : SemanticStore P\nx✝ : Option P.Expr\nval : P.Expr\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : xs.length = vs.length\nheq : σ x = some val\n⊢ ks'.length = vs'.length\n\ncase a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nσ'' : SemanticStore P\nx✝ : Option P.Expr\nval : P.Expr\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : xs.length = vs.length\nheq : σ x = some val\n⊢ isNotDefined σ ks'\n\ncase a\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nσ'' : SemanticStore P\nx✝ : Option P.Expr\nval : P.Expr\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' → isDefined σ₁ xs → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\nHinit : InitStates σ₁ ks' vs' σ''\nHk : isDefined σ₁ (x :: xs)\nHlen2 : xs.length = vs.length\nheq : σ x = some val\n⊢ ks'.Nodup"
+    },
+    {
+      "edit_id": 49,
+      "delete_lines": [
+        38,
+        39
+      ],
+      "label": "edit-49",
+      "tokens": 211,
+      "source_sha256": "8cdb44c2267e7bc45d4e8a46c17cc038eabc82da7c8404785397404983209f1b",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Unknown identifier `Hnd`"
+    },
+    {
+      "edit_id": 50,
+      "delete_lines": [
+        40,
+        41
+      ],
+      "label": "edit-50",
+      "tokens": 220,
+      "source_sha256": "ef0fb1a8a82a0cfad2abede3c363e2547f3effc140c946628d00a3980cf51b14",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Unknown identifier `Hin`"
+    },
+    {
+      "edit_id": 51,
+      "delete_lines": [
+        42,
+        43
+      ],
+      "label": "edit-51",
+      "tokens": 219,
+      "source_sha256": "78973e06eabe8dc6ecabea62f77cc69f39af24795ebef5d437f27e345c8c36fc",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase refine_2.a.h\nP : PureExpr\nσ✝ σ' : SemanticStore P\nks ks' : List P.Ident\nvs✝ vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ : SemanticStore P\nx : P.Ident\nv : P.Expr\nσ₀ : SemanticStore P\nxs : List P.Ident\nvs : List P.Expr\nσ₁ : SemanticStore P\nHup : UpdateState P σ x v σ₀\nHups : UpdateStates σ₀ xs vs σ₁\nσ'' : SemanticStore P\nih :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ₁ ks' vs' σ'' →\n      (∀ (v : P.Ident), v ∈ xs → (σ₁ v).isSome = true) → InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs')\nHinit : InitStates σ₁ ks' vs' σ''\nHlen2 : xs.length = vs.length\nHnd : ∀ (v : P.Ident), v ∈ ks' → σ₁ v = none\nHk : (σ₁ x).isSome = true ∧ ∀ (a : P.Ident), a ∈ xs → (σ₁ a).isSome = true\nHin : x ∈ ks'\n⊢ False"
+    },
+    {
+      "edit_id": 52,
+      "delete_lines": [
+        1,
+        1
+      ],
+      "label": "edit-52",
+      "tokens": 221,
+      "source_sha256": "757635e63a7497c0b0a5b64a69d6e24e9bc1479e817ad944025408d53ed6eb3b",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Invalid `⟨...⟩` notation: The expected type\n  UpdateStates σ ks vs σ' →\n    InitStates σ' ks' vs' σ'' → ∃ σ₁, σ₁ = updatedStates σ ks' vs' ∧ InitStates σ ks' vs' σ₁ ∧ UpdateStates σ₁ ks vs σ''\nis not an inductive type\n\nNote: This notation can only be used when the expected type is an inductive type with a single constructor"
+    },
+    {
+      "edit_id": 53,
+      "delete_lines": [
+        2,
+        2
+      ],
+      "label": "edit-53",
+      "tokens": 217,
+      "source_sha256": "c694188e921dc7b0a15801e2f9f6e9cf96bca34ba660c02ff42561dbdca952c4",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Application type mismatch: The argument\n  rfl\nhas type\n  ?m.88 = ?m.88\nof sort `Prop` but is expected to have type\n  SemanticStore P\nof sort `Type` in the application\n  Exists.intro rfl"
+    },
+    {
+      "edit_id": 54,
+      "delete_lines": [
+        3,
+        3
+      ],
+      "label": "edit-54",
+      "tokens": 213,
+      "source_sha256": "db9500f4e0520079a6fdb1bb2befad976b1990891e40872ed9faf0b1f1d4e0a4",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "simp_all made no progress"
+    },
+    {
+      "edit_id": 55,
+      "delete_lines": [
+        4,
+        4
+      ],
+      "label": "edit-55",
+      "tokens": 219,
+      "source_sha256": "7ed0a152fa1d8ca0eb747a11fd894c7e27d88f49eaa67aad641790f08bd0a510",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Unknown identifier `Hlen1`"
+    },
+    {
+      "edit_id": 56,
+      "delete_lines": [
+        5,
+        5
+      ],
+      "label": "edit-56",
+      "tokens": 219,
+      "source_sha256": "5810c8c18e0449ec29e34ff13a761b0ea053d340cf217ca5bcb9f85eae7f3b7c",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Function expected at\n  ih Hinit ?m.282\nbut this term has type\n  updatedStates σ₀ ks' vs' = updatedStates σ₀ ks' vs' ∧\n    InitStates σ₀ ks' vs' (updatedStates σ₀ ks' vs') ∧ UpdateStates (updatedStates σ₀ ks' vs') xs vs σ''\n\nNote: Expected a function because this term is being applied to the argument\n  ?_"
+    },
+    {
+      "edit_id": 57,
+      "delete_lines": [
+        6,
+        6
+      ],
+      "label": "edit-57",
+      "tokens": 220,
+      "source_sha256": "fac60562be3b51e3cbf3bcaa3316dee485ae0377a4b6f9fe276230b356e387ea",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Case tag `update_none` not found.\n\nNote: There are no cases to select."
+    },
+    {
+      "edit_id": 58,
+      "delete_lines": [
+        7,
+        14
+      ],
+      "label": "edit-58",
+      "tokens": 201,
+      "source_sha256": "90a15930f6b7a29ab7e57f59f000dfe9cdbe277dbfd19e40296231cbb74f709c",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase update_none\nP : PureExpr\nσ σ' : SemanticStore P\nks ks' : List P.Ident\nvs vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ✝ σ'' : SemanticStore P\nHinit : InitStates σ✝ ks' vs' σ''\nHk : isDefined σ✝ []\nHlen2 : [].length = [].length\n⊢ updatedStates σ✝ ks' vs' = updatedStates σ✝ ks' vs' ∧\n    InitStates σ✝ ks' vs' (updatedStates σ✝ ks' vs') ∧ UpdateStates (updatedStates σ✝ ks' vs') [] [] σ''"
+    },
+    {
+      "edit_id": 59,
+      "delete_lines": [
+        15,
+        46
+      ],
+      "label": "edit-59",
+      "tokens": 59,
+      "source_sha256": "51048f46b2be1f8935f3b1af7d73bfa49b86c05fe311be7ffa49888b8a3752f3",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "unsolved goals\ncase update_some\nP : PureExpr\nσ σ' : SemanticStore P\nks ks' : List P.Ident\nvs vs' : List P.Expr\nHlen1 : ks'.length = vs'.length\nσ✝ : SemanticStore P\nx✝ : P.Ident\nv✝ : P.Expr\nσ'✝ : SemanticStore P\nxs✝ : List P.Ident\nvs✝ : List P.Expr\nσ''✝ : SemanticStore P\na✝¹ : UpdateState P σ✝ x✝ v✝ σ'✝\na✝ : UpdateStates σ'✝ xs✝ vs✝ σ''✝\na_ih✝ :\n  ∀ {σ'' : SemanticStore P},\n    InitStates σ''✝ ks' vs' σ'' →\n      isDefined σ''✝ xs✝ →\n        xs✝.length = vs✝.length →\n          updatedStates σ'✝ ks' vs' = updatedStates σ'✝ ks' vs' ∧\n            InitStates σ'✝ ks' vs' (updatedStates σ'✝ ks' vs') ∧ UpdateStates (updatedStates σ'✝ ks' vs') xs✝ vs✝ σ''\nσ'' : SemanticStore P\nHinit : InitStates σ''✝ ks' vs' σ''\nHk : isDefined σ''✝ (x✝ :: xs✝)\nHlen2 : (x✝ :: xs✝).length = (v✝ :: vs✝).length\n⊢ updatedStates σ✝ ks' vs' = updatedStates σ✝ ks' vs' ∧\n    InitStates σ✝ ks' vs' (updatedStates σ✝ ks' vs') ∧\n      UpdateStates (updatedStates σ✝ ks' vs') (x✝ :: xs✝) (v✝ :: vs✝) σ''"
+    },
+    {
+      "edit_id": 60,
+      "delete_lines": [
+        8,
+        8
+      ],
+      "label": "edit-60",
+      "tokens": 223,
+      "source_sha256": "6e2443aa4d04c9aa81853a6ad1f1a6105a2802c6e4ed374ec6b705323c8a7138",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Type mismatch\n  updatedStatesInit Hlen1 ?m.71 ?m.72\nhas type\n  InitStates ?m.68 ks' vs' (updatedStates ?m.68 ks' vs')\nbut is expected to have type\n  updatedStates σ✝ ks' vs' = updatedStates σ✝ ks' vs'"
+    },
+    {
+      "edit_id": 61,
+      "delete_lines": [
+        9,
+        9
+      ],
+      "label": "edit-61",
+      "tokens": 222,
+      "source_sha256": "154de5dc1dc4414f51ee5bd6b9cfbc98eebbf46a09f339d9a3f888156e9bd8b0",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Type mismatch\n  updatedStatesInit Hlen1 ?m.69 ?m.70\nhas type\n  InitStates ?m.66 ks' vs' (updatedStates ?m.66 ks' vs')\nbut is expected to have type\n  InitStates σ✝ ks' vs' (updatedStates σ✝ ks' vs') ∧ UpdateStates (updatedStates σ✝ ks' vs') [] [] σ''"
+    },
+    {
+      "edit_id": 62,
+      "delete_lines": [
+        10,
+        10
+      ],
+      "label": "edit-62",
+      "tokens": 219,
+      "source_sha256": "0e13617e4857e012b43c1cff20591f44e45e27397ede96da07e05d9ee239f6b2",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Type mismatch\n  InitStatesNotDefined Hinit\nhas type\n  isNotDefined σ✝ ks'\nbut is expected to have type\n  InitStates σ✝ ks' vs' (updatedStates σ✝ ks' vs')"
+    },
+    {
+      "edit_id": 63,
+      "delete_lines": [
+        11,
+        11
+      ],
+      "label": "edit-63",
+      "tokens": 221,
+      "source_sha256": "0b74fe88e37eea38168345e37fde446adeff223661b82873c4ab70096e7d8f39",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "Type mismatch\n  InitStatesNodup Hinit\nhas type\n  ks'.Nodup\nbut is expected to have type\n  isNotDefined σ✝ ks'"
+    },
+    {
+      "edit_id": 64,
+      "delete_lines": [
+        12,
+        12
+      ],
+      "label": "edit-64",
+      "tokens": 221,
+      "source_sha256": "d3b0f4b8ccc3fd6339156b886fa9567a690edf54d4e7165bd0bbc1aee07e458d",
+      "pin": {
+        "lean_tag": "v4.26.0",
+        "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      },
+      "status": "REJECTED",
+      "first_error": "`simp` made no progress"
+    }
+  ],
+  "independent_archive_audit": {
+    "bound_receipts": 67,
+    "unique_reservations": 67,
+    "individual_rows_match_report": 195,
+    "source_and_request_identities_checked": true,
+    "control_axiom_audits_accepted": 3
+  },
+  "scope": "Only this fixed 64-edit catalog in this fresh native context; not all possible deletions or refactors.",
+  "performance_confirmation": null,
+  "official_score": null,
+  "promotion": false,
+  "training": false,
+  "paid_api_cost": null,
+  "electricity_cost": null
+}

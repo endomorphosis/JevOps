@@ -1,0 +1,287 @@
+{
+  "schema": "jevops-arena-solver-frontier/v1",
+  "plan": {
+    "schema": "jevops-arena-solver-frontier/v1",
+    "context_id": "9adb48a8f0c3f20a08913120d5ed2cd90d63e07b8a6d5361aad95809b9d52501",
+    "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+    "pin": {
+      "lean_tag": "v4.26.0",
+      "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f"
+    },
+    "mode": "frontier-v1",
+    "limits": {
+      "max_calls": 3,
+      "max_states": 2,
+      "max_depth": 1,
+      "max_sites": 1,
+      "max_proposals": 128,
+      "max_source_bytes": 65536,
+      "max_frontier_bytes": 262144,
+      "max_drafts": 4
+    },
+    "implementation": {
+      "arena_solver.py": "f5d84215694d0ce38b1948ce46859a463ec6802c347e1a66926493384a05b040",
+      "solver_feedback.py": "26f0dd45cb6e958648471244f3b1f46c6321efaa526b9e0fc88f66424d7840e6",
+      "arena.py": "e1ba89358f25828d3cabd7acca049cfcaa6ab2cee8901ca01add7bb4dc5789ca"
+    },
+    "evidence_mode": "local_lean",
+    "draft_policy": "shortest-v1",
+    "plan_id": "c5d003f42f163082106f9830e67f8b84a157d2115f87f15092fd8a50fe1dba64"
+  },
+  "status": "COMPLETE",
+  "evidence_mode": "local_lean",
+  "seed_checked": true,
+  "context_applicable": true,
+  "incumbent_source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+  "incumbent_changed": false,
+  "frontier": [
+    {
+      "id": 0,
+      "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+      "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+      "tokens": 185,
+      "raw_heartbeats": 2324399,
+      "depth": 0,
+      "parent": null,
+      "attempt": 0,
+      "solver_spans": {
+        "nodes_visited": 672,
+        "schema": "jevops-lean-solver-spans/v1",
+        "source_utf8_bytes": 1743,
+        "spans": [
+          {
+            "end_utf8": 306,
+            "start_utf8": 206,
+            "syntax_kind": "Lean.Parser.Tactic.simp",
+            "tactic": "simp"
+          },
+          {
+            "end_utf8": 756,
+            "start_utf8": 748,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 857,
+            "start_utf8": 849,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1070,
+            "start_utf8": 1062,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1156,
+            "start_utf8": 1148,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1310,
+            "start_utf8": 1302,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1422,
+            "start_utf8": 1414,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1508,
+            "start_utf8": 1500,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1657,
+            "start_utf8": 1649,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1743,
+            "start_utf8": 1735,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          }
+        ],
+        "status": "CAPTURED"
+      }
+    },
+    {
+      "id": 1,
+      "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars, List.Subset.empty, List.append_assoc] at *\n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+      "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+      "tokens": 190,
+      "raw_heartbeats": 2049150,
+      "depth": 1,
+      "parent": 0,
+      "attempt": 2,
+      "solver_spans": {
+        "nodes_visited": 683,
+        "schema": "jevops-lean-solver-spans/v1",
+        "source_utf8_bytes": 1775,
+        "spans": [
+          {
+            "end_utf8": 339,
+            "start_utf8": 206,
+            "syntax_kind": "Lean.Parser.Tactic.simp",
+            "tactic": "simp"
+          },
+          {
+            "end_utf8": 788,
+            "start_utf8": 780,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 889,
+            "start_utf8": 881,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1102,
+            "start_utf8": 1094,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1188,
+            "start_utf8": 1180,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1342,
+            "start_utf8": 1334,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1454,
+            "start_utf8": 1446,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1540,
+            "start_utf8": 1532,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1689,
+            "start_utf8": 1681,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          },
+          {
+            "end_utf8": 1775,
+            "start_utf8": 1767,
+            "syntax_kind": "Lean.Parser.Tactic.simpAll",
+            "tactic": "simp_all"
+          }
+        ],
+        "status": "CAPTURED"
+      }
+    }
+  ],
+  "pareto_ids": [
+    0,
+    1
+  ],
+  "drafts": [],
+  "attempts": [
+    {
+      "kind": "seed",
+      "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+      "receipt": {
+        "request_id": "4ad1015e0240544d7cea455144f7a36252809cd3bc90a88f8be2074183e2ab4f",
+        "candidate_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "target": "CallElimCorrect.extractedOldExprInVars",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 2324,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"3a93ee3faf953ae73e6f4c3a6fd25b38de3a073e9373bcc95ade16b8fc0b69d2\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2324,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2324399,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":672,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1743,\"spans\":[{\"end_utf8\":306,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":756,\"start_utf8\":748,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":857,\"start_utf8\":849,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1070,\"start_utf8\":1062,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1156,\"start_utf8\":1148,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1310,\"start_utf8\":1302,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1422,\"start_utf8\":1414,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1508,\"start_utf8\":1500,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1657,\"start_utf8\":1649,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1743,\"start_utf8\":1735,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":17402.441}"
+      }
+    },
+    {
+      "kind": "suggestion-probe",
+      "source_sha256": "3c4f378422fd17c09ee1ba76630511d21ccd80ddabc052ab2e7837476a7dc7c2",
+      "receipt": {
+        "request_id": "483e606d340960c06953f0df7d4f0cf958c5407f6fc1fdad141f5aa1bb338ff9",
+        "candidate_sha256": "3c4f378422fd17c09ee1ba76630511d21ccd80ddabc052ab2e7837476a7dc7c2",
+        "target": "CallElimCorrect.extractedOldExprInVars",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 2369,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"3a93ee3faf953ae73e6f4c3a6fd25b38de3a073e9373bcc95ade16b8fc0b69d2\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars,\\n    List.Subset.empty] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars,\\n    List.Subset.empty] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars,\\n    List.Subset.empty] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars,\\n    List.Subset.empty] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [Imperative.HasVarsPure.getVars, extractOldExprVars, Lambda.LExpr.LExpr.getVars] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [Imperative.HasVarsPure.getVars, extractOldExprVars, Lambda.LExpr.LExpr.getVars] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [Imperative.HasVarsPure.getVars, extractOldExprVars, List.append_assoc,\\n    Lambda.LExpr.LExpr.getVars] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"},{\"fileName\":\"ArenaCandidate.lean\",\"message\":\"Try this:\\n  [apply] simp only [Imperative.HasVarsPure.getVars, extractOldExprVars, Lambda.LExpr.LExpr.getVars] at *\",\"pos\":{\"column\":4,\"line\":8},\"severity\":\"information\"}],\"heartbeats\":2369,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2369658,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":675,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1744,\"spans\":[{\"end_utf8\":757,\"start_utf8\":749,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":858,\"start_utf8\":850,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1071,\"start_utf8\":1063,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1157,\"start_utf8\":1149,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1311,\"start_utf8\":1303,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1423,\"start_utf8\":1415,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1509,\"start_utf8\":1501,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1658,\"start_utf8\":1650,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1744,\"start_utf8\":1736,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":18786.703}"
+      }
+    },
+    {
+      "kind": "solver-suggestion",
+      "source_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+      "receipt": {
+        "request_id": "3c8ac3bcb4d8bf7e97ed19b31406c664014ef9cf4fbe763c78eec2427a30320f",
+        "candidate_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+        "target": "CallElimCorrect.extractedOldExprInVars",
+        "outcome": "VERIFIED",
+        "type_preserved": true,
+        "exit_code": 0,
+        "axiom_output": "'CallElimCorrect.extractedOldExprInVars' depends on axioms: [propext, Quot.sound]",
+        "heartbeats": 2049,
+        "reason": "",
+        "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"3a93ee3faf953ae73e6f4c3a6fd25b38de3a073e9373bcc95ade16b8fc0b69d2\",\"driver_sha256\":\"b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"propext\",\"Quot.sound\"],\"diagnostics\":[],\"heartbeats\":2049,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":2049150,\"reason\":\"\",\"reference_axioms\":[\"propext\",\"Quot.sound\"],\"reference_heartbeats\":2607,\"reference_raw_heartbeats\":2607585,\"solver_spans\":{\"nodes_visited\":683,\"schema\":\"jevops-lean-solver-spans/v1\",\"source_utf8_bytes\":1775,\"spans\":[{\"end_utf8\":339,\"start_utf8\":206,\"syntax_kind\":\"Lean.Parser.Tactic.simp\",\"tactic\":\"simp\"},{\"end_utf8\":788,\"start_utf8\":780,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":889,\"start_utf8\":881,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1102,\"start_utf8\":1094,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1188,\"start_utf8\":1180,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1342,\"start_utf8\":1334,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1454,\"start_utf8\":1446,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1540,\"start_utf8\":1532,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1689,\"start_utf8\":1681,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"},{\"end_utf8\":1775,\"start_utf8\":1767,\"syntax_kind\":\"Lean.Parser.Tactic.simpAll\",\"tactic\":\"simp_all\"}],\"status\":\"CAPTURED\"},\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":16932.247}"
+      }
+    }
+  ],
+  "edits": [
+    {
+      "parent": 0,
+      "edit": {
+        "source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+        "start": 200,
+        "end": 306,
+        "replacement": "    simp only [extractOldExprVars, Imperative.HasVarsPure.getVars, Lambda.LExpr.LExpr.getVars, List.Subset.empty, List.append_assoc] at *\n",
+        "kind": "solver-suggestion"
+      },
+      "candidate_sha256": "1ac8efb101aef4a6cbb2a636e13f991b5dd6239ed08df05410e660f65903430d",
+      "retained": true
+    }
+  ],
+  "omitted": {
+    "duplicate": 0,
+    "unsupported": 0,
+    "not_shorter": 0,
+    "state_limit": 0,
+    "byte_limit": 0,
+    "support_windows": 0,
+    "query_sites": 9,
+    "draft_limit": 0
+  },
+  "proposals": 1,
+  "retained_source_bytes": 3518,
+  "verifier_calls": 3,
+  "cache_hits": 0,
+  "wall_seconds": 68.66967304900754,
+  "truncated": true,
+  "cost_scope": "single-pin whole-command discovery; not fresh cost confirmation",
+  "proof_admitted": false,
+  "promoted": false,
+  "training_enabled": false,
+  "minimality_proven": false,
+  "official_score": null,
+  "measured_api_cost": null
+}

@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/usr/bin/env",
+    "PATH=/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/elan/toolchains/leanprover--lean4---v4.25.0/bin:/usr/bin:/bin",
+    "/usr/bin/python3",
+    "-B",
+    "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/completion-20260923-t90ZWh/resume_putnam25.py",
+    "--inside"
+  ],
+  "timeout_seconds": 3600,
+  "payload_sha256": "cf6c4abd9ac6c1dc502695919616120db3f8a72158288c2032153d8e1591131c",
+  "reason": "Restore upstream release tags pointing to exact locked ProofWidgets revision.",
+  "proofs_verified": 0
+}

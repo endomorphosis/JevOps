@@ -1,0 +1,107 @@
+{
+  "schema": "jevops-local-premise-pilot/v1",
+  "record": {
+    "name": "Core.InitsUpdatesComm",
+    "source": "strata",
+    "statement": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ''",
+    "src": "theorem InitsUpdatesComm\n  {P : PureExpr} {σ σ' σ'' : SemanticStore P}\n  {ks ks' : List P.Ident} {vs vs' : List P.Expr} :\n  UpdateStates σ ks vs σ' →\n  InitStates σ' ks' vs' σ'' →\n  ∃ σ₁,\n    σ₁ = (updatedStates σ ks' vs') ∧\n    InitStates σ ks' vs' σ₁ ∧\n    UpdateStates σ₁ ks vs σ'' := by\n  intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n    simp_all\n    apply And.intro\n    refine updatedStatesInit Hlen1 ?_ ?_\n    exact InitStatesNotDefined Hinit\n    exact InitStatesNodup Hinit\n    simp [InitStatesUpdated Hinit]\n    constructor\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    . apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    . apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      . simp [UpdateStateUpdated Hup, updatedStates]\n        rw [← updatedStateComm']\n        . have Hdef := UpdateStateDefined' Hup\n          simp [isDefined, Option.isSome] at Hdef\n          split at Hdef <;> simp_all\n          next val heq =>\n          apply updatedStateUpdate (v':=val)\n          apply InitStatesSomeMonotone heq\n          apply updatedStatesInit\n          . simp_all\n          . apply UpdateStateNotDefMonotone' ?_ Hup\n            apply UpdateStatesNotDefMonotone' ?_ Hups\n            apply InitStatesNotDefined Hinit\n          . exact InitStatesNodup Hinit\n        . rw [List.unzip_zip] <;> simp_all\n          have Hnd := InitStatesNotDefined Hinit\n          simp [isNotDefined, isDefined] at *\n          apply Not.intro\n          intros Hin\n          specialize Hnd _ Hin\n          simp_all\n      . apply (ih Hinit ?_ ?_).2.2\n        . simp [isDefined] at * <;> simp_all\n        . simp_all",
+    "proof_length": 224,
+    "num_lines": 55,
+    "header": "",
+    "file_path": "Strata/Languages/Core/StatementSemanticsProps.lean",
+    "url": "https://github.com/strata-org/Strata",
+    "start_line": 950,
+    "end_line": 1004,
+    "version_info": [
+      {
+        "v4.29.1": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+      },
+      {
+        "v4.27.0": "4348c65a93a3b57b1a4541991ed2d2fcdd9fa35d"
+      },
+      {
+        "v4.26.0": "451e5f047bafa010d178856db76c00029bfa4d7f"
+      }
+    ]
+  },
+  "nominees": [
+    {
+      "name": "Core.updatedStatesInit",
+      "origin": "Strata/target-free-prefix",
+      "split": "library"
+    },
+    {
+      "name": "Core.InitStatesNotDefined",
+      "origin": "Strata/target-free-prefix",
+      "split": "library"
+    },
+    {
+      "name": "Core.InitStatesNodup",
+      "origin": "Strata/target-free-prefix",
+      "split": "library"
+    },
+    {
+      "name": "Core.UpdateStateNotDefMonotone'",
+      "origin": "Strata/target-free-prefix",
+      "split": "library"
+    },
+    {
+      "name": "Core.UpdateStatesNotDefMonotone'",
+      "origin": "Strata/target-free-prefix",
+      "split": "library"
+    },
+    {
+      "name": "Core.updatedStateUpdate",
+      "origin": "Strata/target-free-prefix",
+      "split": "library"
+    },
+    {
+      "name": "Core.InitStatesSomeMonotone",
+      "origin": "Strata/target-free-prefix",
+      "split": "library"
+    },
+    {
+      "name": "Core.UpdateStateDefined'",
+      "origin": "Strata/target-free-prefix",
+      "split": "library"
+    }
+  ],
+  "cap_per_family": 2,
+  "families": [
+    "whole",
+    "local"
+  ],
+  "max_processes": 81,
+  "process_ceiling": 81,
+  "discovery_ceiling": 9,
+  "screening_ceiling": 12,
+  "measurement_ceiling": 60,
+  "capture_pin": {
+    "lean_tag": "v4.29.1",
+    "git_commit": "384e22374e0872095ad9c6f74c5998c09cfd93a9"
+  },
+  "protocol": {
+    "stop_on_control_failure": true,
+    "stop_candidate_after_non_verified": true,
+    "retain_local_replay_failures_in_screen": true,
+    "same_draft_and_screen_cap_per_family": true,
+    "discovery_overhead_matched": false,
+    "capture_projection": "closing-source-spans/v1",
+    "node_budget": 4096,
+    "event_budget": 256,
+    "max_events": 64,
+    "top_k": 4,
+    "max_scan": 512,
+    "timeout_seconds": 90,
+    "repetitions": 2,
+    "seed": 17,
+    "confirmation": false,
+    "resume": false
+  },
+  "task_split": "exploratory-public-warmup-not-held-out",
+  "model_calls": 0,
+  "training": false,
+  "promoted": false,
+  "official_score": null,
+  "plan_id": "068b18513e164ae99c89b74bc8680a64978c4aa32cbc14caa332214154bb7904"
+}

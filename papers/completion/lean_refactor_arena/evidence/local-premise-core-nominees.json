@@ -1,0 +1,10 @@
+[
+  {"name": "Core.updatedStatesInit", "origin": "Strata/target-free-prefix", "split": "library"},
+  {"name": "Core.InitStatesNotDefined", "origin": "Strata/target-free-prefix", "split": "library"},
+  {"name": "Core.InitStatesNodup", "origin": "Strata/target-free-prefix", "split": "library"},
+  {"name": "Core.UpdateStateNotDefMonotone'", "origin": "Strata/target-free-prefix", "split": "library"},
+  {"name": "Core.UpdateStatesNotDefMonotone'", "origin": "Strata/target-free-prefix", "split": "library"},
+  {"name": "Core.updatedStateUpdate", "origin": "Strata/target-free-prefix", "split": "library"},
+  {"name": "Core.InitStatesSomeMonotone", "origin": "Strata/target-free-prefix", "split": "library"},
+  {"name": "Core.UpdateStateDefined'", "origin": "Strata/target-free-prefix", "split": "library"}
+]

@@ -1,0 +1,18 @@
+{
+  "schema": "jevops-refactor-report/v1",
+  "generator": "jevops.refactor_report",
+  "generator_sha256": "c13bc7cebbdcc5a7de8b755ccc14daa90bfc465fde53b2d83958133c3510a009",
+  "input_sha256": {
+    "run": "f19a39664ce050af05854b19ed07a5c25084d33bf5d7806daf0cafeacf92493d"
+  },
+  "output_sha256": {
+    "checkpoint.json": "3ec5c27f72513079d6e019d64ea0f6233524156d358efbdc873be1ba866cb424",
+    "evidence.json": "2f2727e9b82bcaf75ea40487a26c0d035a634d579f43f1d62fb4babeb1709fea",
+    "summary.md": "4d0152e03f3f9d50c67919d14dce67a496da457e189278d26e8bd1611b9f146a"
+  },
+  "state_sha256": "f1e20d8e4039fbf5f7280502404ddb49e567ee9a4df8192b260b049e2eddfff9",
+  "new_measurements_performed": false,
+  "archived_input_sha256": {
+    "inputs/run.json.gz": "c22521558defd550967fda961938eafd04a25a59ca3fd9ec09eb56831082410e"
+  }
+}

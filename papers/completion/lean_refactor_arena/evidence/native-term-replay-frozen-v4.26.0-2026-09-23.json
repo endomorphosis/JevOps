@@ -1,0 +1,168 @@
+{
+  "schema": "jevops-arena-term-replay/v1",
+  "status": "PROOF_DATA_CHECKED",
+  "reason": "",
+  "environment": "5763eb75737ae88439095c4413a01d43445b8095c9846b729c816ae2b3e2bd33",
+  "candidate_sha256": "dbee645ae74a815e0d2f4b627f69ef56a286bab8d0f3dc37726ef1613954ba9f",
+  "candidate_source": "theorem replay_smoke (h : True) : True := by exact h",
+  "target": "replay_smoke",
+  "challenge": {
+    "problem": "replay_smoke",
+    "statement": "theorem replay_smoke (h : True) : True",
+    "reference_source": "theorem replay_smoke (h : True) : True := by have redundant := h; exact redundant",
+    "reference_length": 8,
+    "reference_heartbeats": null,
+    "versions": [
+      {
+        "lean_tag": "v4.26.0",
+        "git_commit": "local-stdlib-replay-smoke"
+      }
+    ],
+    "dependency_digests": [
+      "97ce59d64a7f2dd8b2103987aea8361af8ed8b8e6909ade423602c9f6e165b97"
+    ],
+    "verifier_id": "jevops-native-arena",
+    "verifier_version": "771bbbff434768a2b63cec6bcfa75143bd957f978304cd0fc2a7a6a448ca0fcc",
+    "heartbeat_method": "command-elaboration-internal-heartbeats-div-1000/v1",
+    "header": "",
+    "repository": "",
+    "file_path": "",
+    "verifier_options_json": "{\"async\":false,\"branch_order\":\"reference-first\",\"execution_identity\":\"ba86305579ff2a58be193ee629d3b349d2cf8897721feca5c305498686832f37\",\"execution_policy\":{\"executable\":\"/usr/bin/docker\",\"image_id\":\"sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517\",\"memory_bytes\":2147483648,\"nano_cpus\":1000000000,\"network\":\"none\",\"pids\":64,\"profile\":\"jevops-arena-rootless-docker/v1\",\"read_only_inputs\":true,\"rootless_required\":true,\"separate_proof_checker\":false,\"socket\":\"/run/user/1000/docker.sock\",\"tmp_bytes\":67108864},\"kernel_check\":true,\"max_heartbeats\":2000000,\"os_sandbox\":true,\"reference_branch\":\"independent\",\"timeout\":60}",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  },
+  "replay_code_identity": "1bcddafc8d79f8795a08bbc72970ca93988e29a1f049b173b93f4a74cfedde46",
+  "node_budget": 20000,
+  "max_heartbeats": 2000000,
+  "evidence_mode": "local_lean",
+  "proof_data_checked": true,
+  "candidate_source_verified": false,
+  "source_export_binding": "UNESTABLISHED",
+  "metric_integrity_established": false,
+  "independent_kernel": false,
+  "promoted": false,
+  "training_enabled": false,
+  "official_score": null,
+  "execution_policy": {
+    "profile": "jevops-arena-rootless-docker/v1",
+    "socket": "/run/user/1000/docker.sock",
+    "image_id": "sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517",
+    "executable": "/usr/bin/docker",
+    "memory_bytes": 2147483648,
+    "tmp_bytes": 67108864,
+    "pids": 64,
+    "nano_cpus": 1000000000,
+    "network": "none",
+    "rootless_required": true,
+    "read_only_inputs": true,
+    "separate_proof_checker": false
+  },
+  "separate_proof_data_checker": true,
+  "checker_executes_candidate_source": false,
+  "stages": [
+    {
+      "mode": "produce",
+      "status": "EXPORTED",
+      "envelope_sha256": "c2bf56712df0ff23191c0327f4e79ff4be52a7a100b1c4b56fc6991b3983a248"
+    },
+    {
+      "mode": "check",
+      "envelope": {
+        "environment": "5763eb75737ae88439095c4413a01d43445b8095c9846b729c816ae2b3e2bd33",
+        "lean_githash": "d8204c9fd894f91bbb2cdfec5912ec8196fd8562",
+        "lean_version": "4.26.0",
+        "mode": "check",
+        "report": {
+          "axioms": [],
+          "reason": "",
+          "reference_axioms": [],
+          "status": "PROOF_DATA_CHECKED"
+        },
+        "request_id": "0978c0194780f15ef7a830fa975f772cd8a5d46c883839a219841e73ce45529d",
+        "schema": "jevops-arena-term-replay-stage/v1",
+        "target": "replay_smoke"
+      }
+    }
+  ],
+  "export_sha256": "0cbae6fc54ae7d85e420ef37f25db277b3ce0038c0d97dc674221a46532163fa",
+  "export_artifact": {
+    "dag": {
+      "environment": "5763eb75737ae88439095c4413a01d43445b8095c9846b729c816ae2b3e2bd33",
+      "expressions": [
+        [
+          "const",
+          [
+            [
+              "s",
+              "True"
+            ]
+          ],
+          []
+        ],
+        [
+          "bvar",
+          "0"
+        ],
+        [
+          "lam",
+          [
+            [
+              "s",
+              "h"
+            ]
+          ],
+          "explicit",
+          "0",
+          "1"
+        ],
+        [
+          "forall",
+          [
+            [
+              "s",
+              "h"
+            ]
+          ],
+          "explicit",
+          "0",
+          "0"
+        ]
+      ],
+      "lean_githash": "d8204c9fd894f91bbb2cdfec5912ec8196fd8562",
+      "lean_version": "4.26.0",
+      "levels": [],
+      "metadata_policy": "ordered-scalars-v1-reject-syntax",
+      "roots": [
+        "2",
+        "3"
+      ],
+      "schema": "jevops-lean-expr-dag/v1"
+    },
+    "level_parameters": [],
+    "target": "replay_smoke"
+  },
+  "export_stats": {
+    "expression_nodes": 4,
+    "level_nodes": 0,
+    "root_expanded_expression_nodes": [
+      3,
+      3
+    ],
+    "root_expression_depth": [
+      2,
+      2
+    ],
+    "json_bytes": 420,
+    "zlib_bytes": 277,
+    "closed": true,
+    "kernel_typechecked": false,
+    "proof_admitted": false
+  },
+  "processes_reserved": 2,
+  "process_attempts": 2,
+  "receipt_cache_enabled": false,
+  "arena_problem": false
+}

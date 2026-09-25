@@ -1,0 +1,10 @@
+{
+  "schema": "jevops-arena-source-snapshot/v1",
+  "status": "UNCHANGED",
+  "root": "/tmp/jevops-historical-confirm-auww7aer/source",
+  "manifest_sha256": "4b5dc4f12f173ed53d8cb1f6998500d4dd078155b5f6b8579f41ac148ecb8e14",
+  "content_root": "ce9d5f95887c04ecba9ee6cd8ab1d5c294c2c6a97ed443403b48e70f7ec572b3",
+  "file_count": 111,
+  "bytes": 3077036,
+  "proof_verified": false
+}

@@ -1,0 +1,182 @@
+{
+  "schema": "jevops-arena-provider-batch/v1",
+  "request": {
+    "schema": "jevops-arena-provider-request/v1",
+    "record_sha256": "f67209bc43e57d3b8336d92b3f776e6b8ca34c968e3a9d9cebb05f160a3a4fc3",
+    "environment_sha256": "9d58b293589edfa5b65145b8e5b18f69f5a672aadb5b0372d8d94c21716b162b",
+    "scope_sha256": "d810f87556d3992e290e3c09efbe04d86e16c1a3ab1dc2bee09f3f69a5d0d9c5",
+    "index_sha256": "c1f5fc7ae85791f4203c6ee1167e1a4b02e777cf911ce0b382899ada3e4bb2ed",
+    "ranking_sha256": "768c428b0697dcf4cd9d438adb1886725ef47386902d7f6dd94e0dd6a4c47fdb",
+    "target": "CallElimCorrect.extractedOldExprInVars",
+    "statement": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post)",
+    "base_source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+    "base_source_sha256": "d64b61e754f350f2ad179bb9178fcb0f24c5ec042b1fa1c2646bc2cf59d09c0d",
+    "premises": [
+      "List.Subset.empty",
+      "CallElimCorrect.List.Subset.app",
+      "CallElimCorrect.List.Subset.trans"
+    ],
+    "rules": [
+      "drop_redundant_simp_at",
+      "drop_rename_i",
+      "proof_slice",
+      "proof_slice_unused_have",
+      "intro_exact_assumption",
+      "port_exact_hyp",
+      "port_use_exact",
+      "port_use_exact_reuse",
+      "port_ctor_pair_exacts",
+      "port_semi_assumption",
+      "port_repeat_par_grind",
+      "port_grind_only_to_grind",
+      "port_drop_unfold_before_split",
+      "port_drop_try_simp_all",
+      "port_drop_intro_before_simp_all",
+      "port_trim_intro_names",
+      "port_unused_intros",
+      "port_trailing_tuple_comma",
+      "port_redundant_inner_simp",
+      "port_hoist_repeated_simp",
+      "port_shorten_llexpr_getvars",
+      "port_shorten_list_subset_trans",
+      "port_shorten_list_subset_app",
+      "port_shorten_hasvars_getvars"
+    ],
+    "methods": [
+      "term",
+      "exact",
+      "apply"
+    ],
+    "proposal_limit": 8,
+    "tokenizer_id": "lra-reference-lexical/v1",
+    "request_sha256": "1d59be5de9ce6be9731e2aadeab173937350ad2b078c141010d3edb5e8ddfa8f"
+  },
+  "ranking": {
+    "schema": "jevops-premise-ranking/v1",
+    "index_sha256": "c1f5fc7ae85791f4203c6ee1167e1a4b02e777cf911ce0b382899ada3e4bb2ed",
+    "feature_method": "case-sensitive-qualified-and-leaf-identifiers/v2",
+    "scope_sha256": "d810f87556d3992e290e3c09efbe04d86e16c1a3ab1dc2bee09f3f69a5d0d9c5",
+    "goal_sha256": "bd683e2b359daf5817c12baf76b26aa21a4f26bc13eecde182364d1aa49fbdfd",
+    "target": "CallElimCorrect.extractedOldExprInVars",
+    "top_k": 3,
+    "max_scan": 512,
+    "considered": 3,
+    "status": "RANKED",
+    "matches": [
+      {
+        "name": "List.Subset.empty",
+        "score_numerator": 1,
+        "score_denominator": 11,
+        "premise_sha256": "a1261541cad8c24c03fda596089ad0fd0c15c916efe5bc0f27686fe5b4de14f8"
+      },
+      {
+        "name": "CallElimCorrect.List.Subset.app",
+        "score_numerator": 1,
+        "score_denominator": 13,
+        "premise_sha256": "578b37d98175b5bb96d66e4d127ebf956417fb660cf0aae749e37049f03f892c"
+      },
+      {
+        "name": "CallElimCorrect.List.Subset.trans",
+        "score_numerator": 1,
+        "score_denominator": 13,
+        "premise_sha256": "43d23e22fd29f19841a8089d06c34067bae633e1d891d4b33eba442eaf58f842"
+      }
+    ],
+    "excluded": [],
+    "proof_verified": false
+  },
+  "upstream": {
+    "repository": "endomorphosis/ipfs_datasets_py",
+    "commit": "ddf6b79467b68159650df81befc288c8553df664",
+    "license": "AGPL-3.0",
+    "reuse": "adapted selection and candidate-source design"
+  },
+  "limits": {
+    "per_provider_seconds": 5,
+    "total_seconds": 20,
+    "request_bytes": 262144,
+    "response_bytes": 65536
+  },
+  "cap": 3,
+  "base_tokens": 185,
+  "reference_tokens": 222,
+  "seed": {
+    "label": "historical-260",
+    "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := by\n  intros Hnorm\n  induction post <;>\n    simp [Imperative.HasVarsPure.getVars, extractOldExprVars,\n          Lambda.LExpr.LExpr.getVars] at * \n  case app fn e fn_ih e_ih =>\n    unfold extractOldExprVars\n    split\n    . intros x Hin\n      assumption\n    . next Hfalse =>\n      cases Hnorm with\n      | app H1 H2 Hn =>\n      exfalso\n      specialize Hn _\n      constructor\n      cases Hn\n      apply Hfalse\n      rfl\n    . cases Hnorm with\n      | app H1 H2 Hn =>\n      apply List.Subset.app\n      . apply List.Subset.trans\n        apply fn_ih\n        assumption\n        intro\n        simp_all\n      . apply List.Subset.trans\n        apply e_ih\n        assumption\n        intro\n        simp_all\n  case abs ih =>\n    cases Hnorm\n    apply ih ; assumption\n  case quant trih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply trih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case ite cih tih eih =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply cih ; assumption\n      intro\n      simp_all\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply tih ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply eih ; assumption\n      intro\n      simp_all\n  case eq ih1 ih2 =>\n    cases Hnorm\n    apply List.Subset.app\n    . apply List.Subset.trans\n      apply ih1 ; assumption\n      intro\n      simp_all\n    . apply List.Subset.trans\n      apply ih2 ; assumption\n      intro\n      simp_all",
+    "provenance": "historical git 680c83db61c747d409f066750e3d753099008a52; filename uses legacy counter; new native verification required"
+  },
+  "attempts": [
+    {
+      "provider_id": "premise-baseline",
+      "adapter": "PremiseProvider",
+      "request_sha256": "1d59be5de9ce6be9731e2aadeab173937350ad2b078c141010d3edb5e8ddfa8f",
+      "status": "PROPOSED",
+      "outcomes": [
+        {
+          "nomination": {
+            "kind": "premise",
+            "name": "List.Subset.empty",
+            "method": "term"
+          },
+          "status": "DRAFT",
+          "source_sha256": "89303709a5055f0296006e49b8f7e1cd446e914d1c84be46de8134615ed8feb7",
+          "tokens": 1,
+          "label": "provider-0"
+        },
+        {
+          "nomination": {
+            "kind": "premise",
+            "name": "CallElimCorrect.List.Subset.app",
+            "method": "term"
+          },
+          "status": "DRAFT",
+          "source_sha256": "d3bc4c1a7996f848171459f765ab9e600598d0c1b07c5371b1a70f2bdad8f642",
+          "tokens": 1,
+          "label": "provider-1"
+        },
+        {
+          "nomination": {
+            "kind": "premise",
+            "name": "CallElimCorrect.List.Subset.trans",
+            "method": "term"
+          },
+          "status": "DRAFT",
+          "source_sha256": "dbe78f6ab51479b637659f56eab0199346e2f87c527906b4db3f84ce52d0a1b6",
+          "tokens": 1,
+          "label": "provider-2"
+        }
+      ],
+      "response_sha256": "4ec79d6a8126c54b93f8e72a4ac469a703671c5d1de7aa5828709ddc7e33eaf8"
+    }
+  ],
+  "drafts": [
+    {
+      "name": "CallElimCorrect.extractedOldExprInVars",
+      "label": "provider-0",
+      "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := _root_.List.Subset.empty",
+      "provenance": "unverified premise-baseline; request 1d59be5de9ce6be9731e2aadeab173937350ad2b078c141010d3edb5e8ddfa8f"
+    },
+    {
+      "name": "CallElimCorrect.extractedOldExprInVars",
+      "label": "provider-1",
+      "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := _root_.CallElimCorrect.List.Subset.app",
+      "provenance": "unverified premise-baseline; request 1d59be5de9ce6be9731e2aadeab173937350ad2b078c141010d3edb5e8ddfa8f"
+    },
+    {
+      "name": "CallElimCorrect.extractedOldExprInVars",
+      "label": "provider-2",
+      "source": "open OldExpressions in\ntheorem extractedOldExprInVars :\n  NormalizedOldExpr post \u2192\n  (extractOldExprVars post).Subset\n  (Imperative.HasVarsPure.getVars post) := _root_.CallElimCorrect.List.Subset.trans",
+      "provenance": "unverified premise-baseline; request 1d59be5de9ce6be9731e2aadeab173937350ad2b078c141010d3edb5e8ddfa8f"
+    }
+  ],
+  "external_calls_attempted": 0,
+  "proof_verified": false,
+  "native_verifier_calls": 0,
+  "training_enabled": false,
+  "promoted": false,
+  "official_score": null,
+  "implementation_sha256": {
+    "arena_providers.py": "1794c7eb41bb0ee6efd0f2cb23a1148104624680708cf98bfcd01892bcb29c37",
+    "premise_search.py": "cbb235149bb5a2f8ec7e49cb70d7642c863e7440f76e9ce7cf10526a94d86a6a"
+  }
+}

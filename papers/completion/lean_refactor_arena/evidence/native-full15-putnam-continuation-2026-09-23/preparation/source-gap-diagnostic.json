@@ -1,0 +1,19 @@
+{
+  "schema": "jevops-arena-source-location-diagnostic/v1",
+  "problem": "Binius.BinaryBasefold.fiberwise_dist_lt_imp_dist_lt_unique_decoding_radius",
+  "lean_tag": "v4.30.0",
+  "pinned_source_path": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/projects/arklib-v4.30.0/ArkLib/ProofSystem/Binius/BinaryBasefold/Prelude.lean",
+  "corpus_sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+  "source_sha256": "bee74a914714a136db0f48690db7f0bd317a82311e3f320414b74e3894f5a6a2",
+  "original_reference_occurrences": 0,
+  "exact_statement_occurrences": 1,
+  "one_internal_space_variant_occurrences": 1,
+  "variant_start_line": 1394,
+  "reference_change_bytes": 1,
+  "before": "have h_elemenet_Y_bad : y_of_x",
+  "after": "have h_elemenet_Y_bad :  y_of_x",
+  "admission_changed": false,
+  "proofs_verified": 0,
+  "status": "UNAVAILABLE",
+  "note": "Read-only diagnostic. A unique formatting variant is not a native proof receipt."
+}

@@ -1,0 +1,48 @@
+{
+  "slot": 2,
+  "arm": "whole-body",
+  "repetition": 1,
+  "prompt_sha256": "248f89fcf781072f7e2d6725941e3951649ef6753f38d399db986a2848fb550b",
+  "native_verified": null,
+  "official_score": null,
+  "request_settings": {
+    "provider": "leanstral_local",
+    "model_name": "Leanstral",
+    "base_url": "http://172.17.0.1:8080/v1",
+    "max_new_tokens": 1024,
+    "timeout": 180,
+    "temperature": 0,
+    "stop": [
+      "<|im_end|>"
+    ]
+  },
+  "raw": "I need to shorten this Lean proof while maintaining its structure and functionality. Let me analyze the proof to find opportunities for reduction.\n\nThe proof uses `induction Hup generalizing σ''` which creates two cases: `update_none` and `update_some`. The `update_none` case is quite long with many helper lemmas being applied.\n\nLet me trace through the proof more carefully:\n\n1. `update_none` case: This handles the case where `UpdateStates` is `update_none`. The proof structure here is:\n   - `simp_all` to simplify\n   - Then `apply And.intro` with three arguments\n   - First argument uses `refine updatedStatesInit Hlen1 ?_ ?_` then `exact InitStatesNotDefined Hinit` and `exact InitStatesNodup Hinit`\n   - Second argument `simp [InitStatesUpdated Hinit]`\n   - Third argument uses `rw [List.unzip_zip] <;> simp_all` then `have Hnd := InitStatesNotDefined Hinit` then `simp [isNotDefined, isDefined] at *` then `apply Not.intro` then `intros Hin` then `specialize Hnd _ Hin` then `simp_all`\n\n2. `update_some` case: This handles the case where `UpdateStates` is `update_some`. The proof structure here is:\n   - `apply updatedStatesInit Hlen1` with three arguments\n   - First argument uses `apply UpdateStateNotDefMonotone' ?_ Hup` then `apply UpdateStatesNotDefMonotone' ?_ Hups` then `exact InitStatesNotDefined Hinit` and `exact InitStatesNodup Hinit`\n   - Second argument uses `apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')` then `simp [UpdateStateUpdated Hup, updatedStates]` then `rw [← updatedStateComm']` then `apply (ih Hinit ?_ ?_).2.2` with three arguments\n   - First sub-argument uses `simp [isDefined] at * <;> simp_all`\n   - Second sub-argument uses `simp_all`\n\nThe proof is quite long and repetitive. I can see several opportunities for shortening:\n\n1. In the `update_none` case, the third argument to `updatedStatesInit` is quite long. I can try to simplify it.\n\n2. In the `update_some` case, the second argument to `updatedStatesInit` is also long.\n\n3. The `ih` application in the `update_some` case is quite long.\n\nLet me try to write a shorter version of the proof. I'll focus on making the proof more concise while maintaining the same structure and functionality.\n\nHere's my attempt at a shorter proof:\n\n```lean\n  intros Hup Hinit\n  exists (updatedStates σ ks' vs')\n  have Hk : (isDefined σ' ks) := UpdateStatesDefined Hup\n  have Hlen1 := InitStatesLength Hinit\n  have Hlen2 := UpdateStatesLength Hup\n  induction Hup generalizing σ''\n  case update_none =>\n    simp_all\n    refine ⟨?_, ?_, ?_⟩\n    · apply updatedStatesInit Hlen1\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    · simp [InitStatesUpdated Hinit]\n    · rw [List.unzip_zip] <;> simp_all\n      have Hnd := InitStatesNotDefined Hinit\n      simp [isNotDefined, isDefined] at *\n      apply Not.intro\n      intro Hin\n      specialize Hnd _ Hin\n      simp_all\n  case update_some σ x v σ₀ xs vs σ₁ Hup Hups ih =>\n    refine ⟨rfl, ?_, ?_⟩\n    · apply updatedStatesInit Hlen1\n      apply UpdateStateNotDefMonotone' ?_ Hup\n      apply UpdateStatesNotDefMonotone' ?_ Hups\n      exact InitStatesNotDefined Hinit\n      exact InitStatesNodup Hinit\n    · apply UpdateStates.update_some (σ':=updatedStates σ₀ ks' vs')\n      simp [UpdateStateUpdated Hup, updatedStates]\n      rw [← updatedStateComm']\n      apply (ih Hinit ?_ ?_).2.2\n      · simp [isDefined] at * <;> simp_all\n      · simp_all\n```\n\nWait, I need to check if this is actually shorter. Let me count the lines:\n\nOriginal: 46 lines\nMy version: Let me count... it's still quite long. I need to be more aggressive with shortening.\n\n",
+  "raw_sha256": "fc84fd76044126c383117a01a540812fc7e5c5a96892aba41e87b5e613259b67",
+  "trace": {
+    "router_module": "jevops.llm_router",
+    "effective_provider_name": "leanstral_local",
+    "effective_model_name": "Leanstral",
+    "fixture": false,
+    "external_dependency": false,
+    "provider": "leanstral_local",
+    "model": "Leanstral",
+    "reason": "generated",
+    "requested_model": "Leanstral",
+    "response_model": "leanstral_local",
+    "request_id": "chatcmpl-V5E6hdsjbAliBWO6NM7Q62KOwxtsFf4b",
+    "finish_reason": "length",
+    "usage": {
+      "prompt_tokens": 2830,
+      "completion_tokens": 1024,
+      "total_tokens": 3854
+    },
+    "endpoint": "http://172.17.0.1:8080/v1/chat/completions",
+    "wall_ms": 50761.22373493854,
+    "server_identity_attested": false,
+    "fallback_used": false
+  },
+  "status": "output_truncated",
+  "strict_contract": false,
+  "tactic": null,
+  "wall_seconds": 50.7615
+}

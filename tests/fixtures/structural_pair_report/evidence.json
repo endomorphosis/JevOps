@@ -1,0 +1,775 @@
+{
+  "schema": "jevops-typed-edit-evidence/v1",
+  "synthetic": {
+    "schema": "jevops-verified-rewrite-distillation/v1",
+    "tokenizer_id": "lra-local-ws-punct/v1",
+    "scope": "synthetic_structural_transfer_not_unseen_semantic_families_or_arena_score",
+    "split_policy": "content_disjoint_alpha_renamed_shared_structural_families",
+    "semantic_family_decontamination": false,
+    "ok": true,
+    "epochs": 12,
+    "fixture_seed": 20260923,
+    "manifest_sha256": "e2904587d66ae2c5e150bd9b54306d4cd497fe8bd009c594c48be47940e18ec4",
+    "state_sha256": "f1e20d8e4039fbf5f7280502404ddb49e567ee9a4df8192b260b049e2eddfff9",
+    "extended_curriculum": false,
+    "compositional_holdout": false,
+    "trajectory_training": false,
+    "solver_feedback_enabled": false,
+    "typed_terms_enabled": false,
+    "reconstruction_heads_unchanged": true,
+    "model_step": 12,
+    "rewrite_steps": 12,
+    "grammar": {
+      "added_templates": 1,
+      "template_count": 1,
+      "not_mined": [],
+      "before_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "after_digest": "eddb3af1b7cde280a438db135374850c32ce41eddbb8d6774fffbc209533412c",
+      "requires_new_edit_ce_baseline": true
+    },
+    "config": {
+      "decay_steps": 1000,
+      "gradient_clip": 1.0,
+      "holdout_fraction": 0.1,
+      "label_smoothing": 0.02,
+      "learning_rate": 0.15,
+      "loss_weights": {
+        "cosine": 0.35,
+        "cross_entropy": 1.0,
+        "fuzzy_prover": 0.2,
+        "kl": 0.01,
+        "length": 0.03,
+        "minimality": 0.1,
+        "nca": 0.2,
+        "reconstruction": 0.8,
+        "reward": 0.5
+      },
+      "max_learning_rate": 0.25,
+      "max_ops": 32,
+      "train_binding_policy": false,
+      "train_rewrite_policy": true,
+      "freeze_reconstruction_heads": true,
+      "rewrite_max_edits": 4,
+      "min_learning_rate": 0.0005,
+      "plateau_factor": 0.5,
+      "plateau_patience": 2,
+      "beam_width": 4,
+      "seed": 17,
+      "temperature": 1.0,
+      "validation_fraction": 0.1,
+      "warmup_steps": 0,
+      "weight_decay": 0.0001,
+      "canary_fraction": 0.1
+    },
+    "train_ids": [
+      "distill_train_terminal_alias_434286"
+    ],
+    "train_parent_ids": [
+      "distill_train_terminal_alias_434286"
+    ],
+    "development_gates": {
+      "validation": {
+        "accepted": true,
+        "status": "semantic_scored",
+        "regressions": {},
+        "objective_delta": 1.4422874876439638
+      },
+      "canary": {
+        "accepted": true,
+        "status": "semantic_scored",
+        "regressions": {},
+        "objective_delta": 1.4422874876439638
+      }
+    },
+    "holdout_gate": {
+      "accepted": true,
+      "status": "semantic_scored",
+      "regressions": {},
+      "objective_delta": 1.4422874876439638
+    },
+    "holdout_valid": true,
+    "holdout_accessed_after_freeze": true,
+    "tuning_allowed_after_holdout": false,
+    "checkpoint_promoted": false,
+    "arena_data_used": false,
+    "live_llm_used": false,
+    "production_memory_used": false,
+    "cost_guard_enabled": true,
+    "cost_gate": {
+      "accepted": true,
+      "evaluated_count": 4,
+      "nonregressing_count": 4
+    },
+    "constructive_terms_enabled": false,
+    "difference_curriculum": false,
+    "before": {
+      "train": {
+        "sample_count": 1,
+        "verified": 1,
+        "verified_shortening": 0,
+        "source_tokens": 9,
+        "prediction_tokens": 9,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 1,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.0,
+        "reconstruction_loss": 0.5,
+        "objective": 6.091952602413629,
+        "rewrite_cross_entropy": 0.6931471805599453,
+        "rewrite_expected_cosine_loss": 0.5,
+        "rewrite_sample_count": 1
+      },
+      "validation": {
+        "sample_count": 1,
+        "verified": 1,
+        "verified_shortening": 0,
+        "source_tokens": 9,
+        "prediction_tokens": 9,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 1,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.0,
+        "reconstruction_loss": 0.5,
+        "objective": 6.091952602413629,
+        "rewrite_cross_entropy": 0.6931471805599453,
+        "rewrite_expected_cosine_loss": 0.5,
+        "rewrite_sample_count": 1
+      },
+      "canary": {
+        "sample_count": 1,
+        "verified": 1,
+        "verified_shortening": 0,
+        "source_tokens": 9,
+        "prediction_tokens": 9,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 1,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.0,
+        "reconstruction_loss": 0.5,
+        "objective": 6.091952602413629,
+        "rewrite_cross_entropy": 0.6931471805599453,
+        "rewrite_expected_cosine_loss": 0.5,
+        "rewrite_sample_count": 1
+      }
+    },
+    "after": {
+      "train": {
+        "sample_count": 1,
+        "verified": 1,
+        "verified_shortening": 1,
+        "source_tokens": 9,
+        "prediction_tokens": 1,
+        "verified_saved_tokens": 8,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 1,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.5,
+        "reconstruction_loss": 0.0,
+        "objective": 4.6496651147696655,
+        "rewrite_cross_entropy": 0.1041954781608104,
+        "rewrite_expected_cosine_loss": 0.07618347072906044,
+        "rewrite_sample_count": 1
+      },
+      "validation": {
+        "sample_count": 1,
+        "verified": 1,
+        "verified_shortening": 1,
+        "source_tokens": 9,
+        "prediction_tokens": 1,
+        "verified_saved_tokens": 8,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 1,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.5,
+        "reconstruction_loss": 0.0,
+        "objective": 4.6496651147696655,
+        "rewrite_cross_entropy": 0.1041954781608104,
+        "rewrite_expected_cosine_loss": 0.07618347072906044,
+        "rewrite_sample_count": 1
+      },
+      "canary": {
+        "sample_count": 1,
+        "verified": 1,
+        "verified_shortening": 1,
+        "source_tokens": 9,
+        "prediction_tokens": 1,
+        "verified_saved_tokens": 8,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 1,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.5,
+        "reconstruction_loss": 0.0,
+        "objective": 4.6496651147696655,
+        "rewrite_cross_entropy": 0.1041954781608104,
+        "rewrite_expected_cosine_loss": 0.07618347072906044,
+        "rewrite_sample_count": 1
+      }
+    },
+    "zero_weight_ablation": {
+      "train": {
+        "sample_count": 1,
+        "verified": 1,
+        "verified_shortening": 0,
+        "source_tokens": 9,
+        "prediction_tokens": 9,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 1,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.0,
+        "reconstruction_loss": 0.5,
+        "objective": 6.091952602413629,
+        "rewrite_cross_entropy": 0.6931471805599453,
+        "rewrite_expected_cosine_loss": 0.5,
+        "rewrite_sample_count": 1
+      },
+      "validation": {
+        "sample_count": 1,
+        "verified": 1,
+        "verified_shortening": 0,
+        "source_tokens": 9,
+        "prediction_tokens": 9,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 1,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.0,
+        "reconstruction_loss": 0.5,
+        "objective": 6.091952602413629,
+        "rewrite_cross_entropy": 0.6931471805599453,
+        "rewrite_expected_cosine_loss": 0.5,
+        "rewrite_sample_count": 1
+      },
+      "canary": {
+        "sample_count": 1,
+        "verified": 1,
+        "verified_shortening": 0,
+        "source_tokens": 9,
+        "prediction_tokens": 9,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 1,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.0,
+        "reconstruction_loss": 0.5,
+        "objective": 6.091952602413629,
+        "rewrite_cross_entropy": 0.6931471805599453,
+        "rewrite_expected_cosine_loss": 0.5,
+        "rewrite_sample_count": 1
+      }
+    },
+    "holdout": {
+      "holdout": {
+        "sample_count": 1,
+        "verified": 1,
+        "verified_shortening": 1,
+        "source_tokens": 9,
+        "prediction_tokens": 1,
+        "verified_saved_tokens": 8,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 1,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.5,
+        "reconstruction_loss": 0.0,
+        "objective": 4.6496651147696655,
+        "rewrite_cross_entropy": 0.1041954781608104,
+        "rewrite_expected_cosine_loss": 0.07618347072906044,
+        "rewrite_sample_count": 1
+      }
+    },
+    "holdout_zero_weight_ablation": {
+      "holdout": {
+        "sample_count": 1,
+        "verified": 1,
+        "verified_shortening": 0,
+        "source_tokens": 9,
+        "prediction_tokens": 9,
+        "verified_saved_tokens": 0,
+        "verifier_success_rate": 1.0,
+        "verifier_evaluated_count": 1,
+        "cross_entropy": 4.343805421853684,
+        "cosine_similarity": 0.0,
+        "reconstruction_loss": 0.5,
+        "objective": 6.091952602413629,
+        "rewrite_cross_entropy": 0.6931471805599453,
+        "rewrite_expected_cosine_loss": 0.5,
+        "rewrite_sample_count": 1
+      }
+    },
+    "unique_compile_count": 12,
+    "rejected_compile_count": 0,
+    "holdout_predictions": [
+      {
+        "id": "distill_holdout_terminal_alias_48631",
+        "split": "holdout",
+        "family": "terminal_alias",
+        "source_tokens": 9,
+        "prediction_tokens": 1,
+        "prediction": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  assumption\n",
+        "prediction_sha256": "59351e1bf82f17db4219521bf5f458e439dcff033b2af69d0bf2cd110808ba21",
+        "verified": true,
+        "verified_shortening": true,
+        "loss": {
+          "cosine_loss": 0.5,
+          "cosine_similarity": 0.5,
+          "copy_penalty": 0.0,
+          "cross_entropy": 4.343805421853684,
+          "binding_cross_entropy": null,
+          "rewrite_cross_entropy": 0.1041954781608104,
+          "rewrite_expected_cosine_loss": 0.07618347072906044,
+          "fuzzy_prover_reward": null,
+          "ir_exact_match": 1.0,
+          "kl_loss": 0.0,
+          "length_penalty": 0.0,
+          "minimality_reward": 1.0,
+          "nca_loss": 0.0,
+          "nca_reward": null,
+          "reconstruction_loss": 0.0,
+          "reward": 1.0,
+          "reward_loss": 0.0,
+          "total": 4.6496651147696655,
+          "typesafe_reward": null,
+          "verifier_reward": 1.0
+        },
+        "rewrite_policy": {
+          "trace": [
+            {
+              "rule_id": "4566076209c9638bb646",
+              "start": 0,
+              "probability": 0.9238165292709396,
+              "choices": 2
+            }
+          ],
+          "teacher_used": false,
+          "solver_used": false,
+          "mode": "learned_span_edits",
+          "authority": "model_proposal_requires_Lean"
+        },
+        "proof_metrics": {
+          "ok": true,
+          "axioms": [],
+          "constant_bodies_unfolded": false,
+          "declaration": "distill_holdout_terminal_alias_48631",
+          "independent_kernel_verifier_used": false,
+          "proof": {
+            "closed": true,
+            "dag_edges": 4,
+            "height": 3,
+            "kinds": {
+              "bvar": 1,
+              "lambda": 2,
+              "sort": 1
+            },
+            "tree_count_saturated": false,
+            "tree_nodes": 5,
+            "tree_nodes_lower_bound": 5,
+            "unique_structural_nodes": 4
+          },
+          "schema": "jevops-expr-metrics/v1",
+          "type": {
+            "closed": true,
+            "dag_edges": 4,
+            "height": 3,
+            "kinds": {
+              "bvar": 2,
+              "forall": 2,
+              "sort": 1
+            },
+            "tree_count_saturated": false,
+            "tree_nodes": 5,
+            "tree_nodes_lower_bound": 5,
+            "unique_structural_nodes": 5
+          },
+          "source_sha256": "042a1bc0c46fdbcd2758e8a921e5d0250063c62706c5b63ef41c8c7376109c94",
+          "inspector_sha256": "b80085bd2e7cf82609df78415494a43dda451724ba3c8a8a913bcbff0f6415f4",
+          "artifact_files_sha256": {
+            "Main.olean": "be766a1e2bd6b757599c38097bbfa460f36e277886e857f317fdf62d62adff7b"
+          },
+          "artifact_sha256": "962a530ec090fef2e54ca09968eb282260aeb0ab2ba93aefc9476e4e2ce1d090",
+          "node_budget": 50000
+        },
+        "source_proof_metrics": {
+          "ok": true,
+          "axioms": [],
+          "constant_bodies_unfolded": false,
+          "declaration": "distill_holdout_terminal_alias_48631",
+          "independent_kernel_verifier_used": false,
+          "proof": {
+            "closed": true,
+            "dag_edges": 7,
+            "height": 4,
+            "kinds": {
+              "bvar": 2,
+              "lambda": 2,
+              "let": 1,
+              "sort": 1
+            },
+            "tree_count_saturated": false,
+            "tree_nodes": 8,
+            "tree_nodes_lower_bound": 8,
+            "unique_structural_nodes": 6
+          },
+          "schema": "jevops-expr-metrics/v1",
+          "type": {
+            "closed": true,
+            "dag_edges": 4,
+            "height": 3,
+            "kinds": {
+              "bvar": 2,
+              "forall": 2,
+              "sort": 1
+            },
+            "tree_count_saturated": false,
+            "tree_nodes": 5,
+            "tree_nodes_lower_bound": 5,
+            "unique_structural_nodes": 5
+          },
+          "source_sha256": "572a6fe08ee61262fdf5b6a3b49671a0d4add09e8ce6b218bd3631c8c33b43a3",
+          "inspector_sha256": "b80085bd2e7cf82609df78415494a43dda451724ba3c8a8a913bcbff0f6415f4",
+          "artifact_files_sha256": {
+            "Main.olean": "d3bc6da8c046fc8dec9e72daada6891ea66ac1608d4a94d25bd746de31b352ba"
+          },
+          "artifact_sha256": "194b03144c7989948c0bce4930086e2691d54e2f74ba770219f93011b81281e3",
+          "node_budget": 50000
+        },
+        "expression_nonregression": true,
+        "cost_measured": true,
+        "teacher_tokens": 1,
+        "kernel_audit": {
+          "schema": "jevops-axiom-audit/v1",
+          "accepted": true,
+          "declarations": [
+            "distill_holdout_terminal_alias_48631"
+          ],
+          "axioms": [],
+          "unexpected_axioms": [],
+          "missing_reports": [],
+          "conflicting_reports": [],
+          "native_axioms": [],
+          "allowed_axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "independent_kernel_verifier_used": false
+        }
+      }
+    ],
+    "teachers": [
+      {
+        "id": "distill_train_terminal_alias_434286",
+        "split": "train",
+        "family": "terminal_alias",
+        "source": "theorem distill_train_terminal_alias_434286 (p_434286 : Prop) (h_434286 : p_434286) : p_434286 := by\n  have alias_434286 : p_434286 := h_434286\n  exact alias_434286\n",
+        "target": "theorem distill_train_terminal_alias_434286 (p_434286 : Prop) (h_434286 : p_434286) : p_434286 := by\n  assumption\n",
+        "source_tokens": 9,
+        "target_tokens": 1,
+        "cost_guard": true,
+        "cost_checks": [
+          {
+            "before_sha256": "06328df77b0433609e5cd83a61d4a1907e2eea337df1366570ae88d4a5b6cc8e",
+            "after_sha256": "06328df77b0433609e5cd83a61d4a1907e2eea337df1366570ae88d4a5b6cc8e",
+            "measured": true,
+            "expression_nonregression": true,
+            "accepted": true
+          },
+          {
+            "before_sha256": "06328df77b0433609e5cd83a61d4a1907e2eea337df1366570ae88d4a5b6cc8e",
+            "after_sha256": "2ac8acc10f8839898a71799124a1c1eeacbd6dfa1a39a7253605aab83101eb38",
+            "measured": true,
+            "expression_nonregression": true,
+            "accepted": true
+          },
+          {
+            "before_sha256": "2ac8acc10f8839898a71799124a1c1eeacbd6dfa1a39a7253605aab83101eb38",
+            "after_sha256": "42d66a7a54a18217a4699506f933f2cb9bc484e62d27c9fa6e680bad02bf2d60",
+            "measured": true,
+            "expression_nonregression": true,
+            "accepted": true
+          }
+        ],
+        "constructive_terms": null,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_train_terminal_alias_434286"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "local_alias_reduce",
+            "kind": "terminal_alias",
+            "before_tokens": 9,
+            "before_source": "theorem distill_train_terminal_alias_434286 (p_434286 : Prop) (h_434286 : p_434286) : p_434286 := by\n  have alias_434286 : p_434286 := h_434286\n  exact alias_434286\n",
+            "after_source": "theorem distill_train_terminal_alias_434286 (p_434286 : Prop) (h_434286 : p_434286) : p_434286 := by\n  exact h_434286\n",
+            "after_tokens": 2,
+            "source_sha256": "2ac8acc10f8839898a71799124a1c1eeacbd6dfa1a39a7253605aab83101eb38",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_train_terminal_alias_434286"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          },
+          {
+            "strategy": "rewrite_transport",
+            "kind": "exact_to_assumption",
+            "before_tokens": 2,
+            "before_source": "theorem distill_train_terminal_alias_434286 (p_434286 : Prop) (h_434286 : p_434286) : p_434286 := by\n  exact h_434286\n",
+            "after_source": "theorem distill_train_terminal_alias_434286 (p_434286 : Prop) (h_434286 : p_434286) : p_434286 := by\n  assumption\n",
+            "after_tokens": 1,
+            "source_sha256": "42d66a7a54a18217a4699506f933f2cb9bc484e62d27c9fa6e680bad02bf2d60",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_train_terminal_alias_434286"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "distill_holdout_terminal_alias_48631",
+        "split": "holdout",
+        "family": "terminal_alias",
+        "source": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  have alias_48631 : p_48631 := h_48631\n  exact alias_48631\n",
+        "target": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  assumption\n",
+        "source_tokens": 9,
+        "target_tokens": 1,
+        "cost_guard": true,
+        "cost_checks": [
+          {
+            "before_sha256": "1dc102803e67d9123843faf6e41fea056d4e15760847b90b66a5a10624ec040c",
+            "after_sha256": "1dc102803e67d9123843faf6e41fea056d4e15760847b90b66a5a10624ec040c",
+            "measured": true,
+            "expression_nonregression": true,
+            "accepted": true
+          },
+          {
+            "before_sha256": "1dc102803e67d9123843faf6e41fea056d4e15760847b90b66a5a10624ec040c",
+            "after_sha256": "563be4315747a6c43292b3b18fcdcd87e705a251fe051222086ed4be5040ec41",
+            "measured": true,
+            "expression_nonregression": true,
+            "accepted": true
+          },
+          {
+            "before_sha256": "563be4315747a6c43292b3b18fcdcd87e705a251fe051222086ed4be5040ec41",
+            "after_sha256": "59351e1bf82f17db4219521bf5f458e439dcff033b2af69d0bf2cd110808ba21",
+            "measured": true,
+            "expression_nonregression": true,
+            "accepted": true
+          }
+        ],
+        "constructive_terms": null,
+        "source_compile": {
+          "theorem_ok": true,
+          "kernel_audit": {
+            "schema": "jevops-axiom-audit/v1",
+            "accepted": true,
+            "declarations": [
+              "distill_holdout_terminal_alias_48631"
+            ],
+            "axioms": [],
+            "unexpected_axioms": [],
+            "missing_reports": [],
+            "conflicting_reports": [],
+            "native_axioms": [],
+            "allowed_axioms": [
+              "Classical.choice",
+              "Quot.sound",
+              "propext"
+            ],
+            "independent_kernel_verifier_used": false
+          }
+        },
+        "trace": [
+          {
+            "strategy": "local_alias_reduce",
+            "kind": "terminal_alias",
+            "before_tokens": 9,
+            "before_source": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  have alias_48631 : p_48631 := h_48631\n  exact alias_48631\n",
+            "after_source": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  exact h_48631\n",
+            "after_tokens": 2,
+            "source_sha256": "563be4315747a6c43292b3b18fcdcd87e705a251fe051222086ed4be5040ec41",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_holdout_terminal_alias_48631"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          },
+          {
+            "strategy": "rewrite_transport",
+            "kind": "exact_to_assumption",
+            "before_tokens": 2,
+            "before_source": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  exact h_48631\n",
+            "after_source": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  assumption\n",
+            "after_tokens": 1,
+            "source_sha256": "59351e1bf82f17db4219521bf5f458e439dcff033b2af69d0bf2cd110808ba21",
+            "compile": {
+              "theorem_ok": true,
+              "kernel_audit": {
+                "schema": "jevops-axiom-audit/v1",
+                "accepted": true,
+                "declarations": [
+                  "distill_holdout_terminal_alias_48631"
+                ],
+                "axioms": [],
+                "unexpected_axioms": [],
+                "missing_reports": [],
+                "conflicting_reports": [],
+                "native_axioms": [],
+                "allowed_axioms": [
+                  "Classical.choice",
+                  "Quot.sound",
+                  "propext"
+                ],
+                "independent_kernel_verifier_used": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "typed_training_probes": {},
+    "epoch_history": [
+      {
+        "epoch": 1,
+        "sample_count": 1,
+        "cross_entropy": 4.343805421853684,
+        "gradient_norm": 0.0,
+        "latent_gradient_norm": 0.0,
+        "learning_rate": 0.1499996311238389,
+        "binding_updates": 0,
+        "rewrite_labeled_examples": 1
+      },
+      {
+        "epoch": 7,
+        "sample_count": 1,
+        "cross_entropy": 4.343805421853684,
+        "gradient_norm": 0.0,
+        "latent_gradient_norm": 0.0,
+        "learning_rate": 0.14998192578166455,
+        "binding_updates": 0,
+        "rewrite_labeled_examples": 1
+      },
+      {
+        "epoch": 12,
+        "sample_count": 1,
+        "cross_entropy": 4.343805421853684,
+        "gradient_norm": 0.0,
+        "latent_gradient_norm": 0.0,
+        "learning_rate": 0.14994688807988404,
+        "binding_updates": 0,
+        "rewrite_labeled_examples": 1
+      }
+    ],
+    "structural_pairs": {
+      "schema": "jevops-structural-training-pairs/v1",
+      "ok": true,
+      "accepted_count": 1,
+      "train_proposal_count": 1,
+      "compile_calls": 2,
+      "graph_bytes": 1118,
+      "tokenizer_id": "lra-local-ws-punct/v1",
+      "dependency_environment_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "dependency_closure_verified": false,
+      "semantic_family_decontamination": false,
+      "manifest_sha256": "3c5e712ace4185e69f44ae479fd1bf4c56a019277d4738701eb5e2ead88aa2cc",
+      "decisions": [
+        {
+          "id": "distill_train_terminal_alias_434286",
+          "split": "train",
+          "status": "accepted",
+          "source_sha256": "00c2aeb969597dee8f191ecba379782aa2f62bb78551a2134c1bbce4e8ff7ddb",
+          "target_sha256": "59aaa4a68313038c05639cb34b236b9d004af81e5d1559add0c08238401027a1",
+          "pair_sha256": "f24c042b5f512c89248dc5539962bbd97588543d1ef063d3b511effe874c911f"
+        },
+        {
+          "id": "distill_validation_terminal_alias_859226",
+          "split": "validation",
+          "status": "excluded_split"
+        },
+        {
+          "id": "distill_canary_terminal_alias_990545",
+          "split": "canary",
+          "status": "excluded_split"
+        },
+        {
+          "id": "distill_holdout_terminal_alias_48631",
+          "split": "holdout",
+          "status": "excluded_split"
+        }
+      ],
+      "pair_sha256": [
+        "f24c042b5f512c89248dc5539962bbd97588543d1ef063d3b511effe874c911f"
+      ]
+    },
+    "structural_pair_targets_used": true,
+    "graph_features_used_for_training": false
+  },
+  "checkpoint_promoted": false
+}

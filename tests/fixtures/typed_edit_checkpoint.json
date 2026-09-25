@@ -1,0 +1,1195 @@
+{
+  "config": {
+    "decay_steps": 1000,
+    "gradient_clip": 1.0,
+    "holdout_fraction": 0.1,
+    "label_smoothing": 0.02,
+    "learning_rate": 0.15,
+    "loss_weights": {
+      "cosine": 0.35,
+      "cross_entropy": 1.0,
+      "fuzzy_prover": 0.2,
+      "kl": 0.01,
+      "length": 0.03,
+      "minimality": 0.1,
+      "nca": 0.2,
+      "reconstruction": 0.8,
+      "reward": 0.5
+    },
+    "max_learning_rate": 0.25,
+    "max_ops": 32,
+    "train_binding_policy": false,
+    "train_rewrite_policy": true,
+    "freeze_reconstruction_heads": true,
+    "rewrite_max_edits": 4,
+    "min_learning_rate": 0.0005,
+    "plateau_factor": 0.5,
+    "plateau_patience": 2,
+    "beam_width": 4,
+    "seed": 17,
+    "temperature": 1.0,
+    "validation_fraction": 0.1,
+    "warmup_steps": 0,
+    "weight_decay": 0.0001,
+    "canary_fraction": 0.1
+  },
+  "state": {
+    "schema": "jevops-lean-ir-autoencoder-model/v2",
+    "version": 2,
+    "step": 640,
+    "accepted_steps": 0,
+    "plateau_factor": 1.0,
+    "vocab": [
+      "intro",
+      "intros",
+      "exact",
+      "apply",
+      "assumption",
+      "cases",
+      "induction",
+      "simp",
+      "simp_all",
+      "rw",
+      "nth_rewrite",
+      "dsimp",
+      "unfold",
+      "change",
+      "show",
+      "have",
+      "use",
+      "refine",
+      "exfalso",
+      "contradiction",
+      "left",
+      "right",
+      "rfl",
+      "trivial",
+      "constructor",
+      "rintro",
+      "rcases",
+      "subst",
+      "ext",
+      "funext",
+      "all_goals",
+      "any_goals",
+      "first",
+      "try",
+      "solve_by_elim",
+      "exact_mod_cast",
+      "field_simp",
+      "positivity",
+      "simp_rw",
+      "omega",
+      "linarith",
+      "nlinarith",
+      "norm_num",
+      "ring",
+      "ring_nf",
+      "aesop",
+      "grind",
+      "decide",
+      "simpa",
+      "subst_vars",
+      "ac_rfl",
+      "by_contra",
+      "by_cases",
+      "classical",
+      "push_neg",
+      "bv_decide",
+      "norm_cast",
+      "push_cast",
+      "abel",
+      "abel_nf",
+      "noncomm_ring",
+      "group",
+      "order",
+      "bound",
+      "zify",
+      "qify",
+      "decide_cbv",
+      "split_ifs",
+      "contrapose",
+      "fin_cases",
+      "interval_cases",
+      "revert",
+      "clear",
+      "symm",
+      "let",
+      "skip",
+      "<eos>"
+    ],
+    "feature_buckets": 256,
+    "op_bias": {
+      "intro": 0.0,
+      "intros": 0.0,
+      "exact": 0.0,
+      "apply": 0.0,
+      "assumption": 0.0,
+      "cases": 0.0,
+      "induction": 0.0,
+      "simp": 0.0,
+      "simp_all": 0.0,
+      "rw": 0.0,
+      "nth_rewrite": 0.0,
+      "dsimp": 0.0,
+      "unfold": 0.0,
+      "change": 0.0,
+      "show": 0.0,
+      "have": 0.0,
+      "use": 0.0,
+      "refine": 0.0,
+      "exfalso": 0.0,
+      "contradiction": 0.0,
+      "left": 0.0,
+      "right": 0.0,
+      "rfl": 0.0,
+      "trivial": 0.0,
+      "constructor": 0.0,
+      "rintro": 0.0,
+      "rcases": 0.0,
+      "subst": 0.0,
+      "ext": 0.0,
+      "funext": 0.0,
+      "all_goals": 0.0,
+      "any_goals": 0.0,
+      "first": 0.0,
+      "try": 0.0,
+      "solve_by_elim": 0.0,
+      "exact_mod_cast": 0.0,
+      "field_simp": 0.0,
+      "positivity": 0.0,
+      "simp_rw": 0.0,
+      "omega": 0.0,
+      "linarith": 0.0,
+      "nlinarith": 0.0,
+      "norm_num": 0.0,
+      "ring": 0.0,
+      "ring_nf": 0.0,
+      "aesop": 0.0,
+      "grind": 0.0,
+      "decide": 0.0,
+      "simpa": 0.0,
+      "subst_vars": 0.0,
+      "ac_rfl": 0.0,
+      "by_contra": 0.0,
+      "by_cases": 0.0,
+      "classical": 0.0,
+      "push_neg": 0.0,
+      "bv_decide": 0.0,
+      "norm_cast": 0.0,
+      "push_cast": 0.0,
+      "abel": 0.0,
+      "abel_nf": 0.0,
+      "noncomm_ring": 0.0,
+      "group": 0.0,
+      "order": 0.0,
+      "bound": 0.0,
+      "zify": 0.0,
+      "qify": 0.0,
+      "decide_cbv": 0.0,
+      "split_ifs": 0.0,
+      "contrapose": 0.0,
+      "fin_cases": 0.0,
+      "interval_cases": 0.0,
+      "revert": 0.0,
+      "clear": 0.0,
+      "symm": 0.0,
+      "let": 0.0,
+      "skip": 0.0,
+      "<eos>": 0.0
+    },
+    "transition": {},
+    "feature_op": {},
+    "latent_bias": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "feature_latent": {},
+    "binding_steps": 0,
+    "binding_weights": {
+      "bias": 0.0,
+      "reaches_root": 0.0,
+      "direct_root_use": 0.0,
+      "used_by_binding": 0.0,
+      "no_users": 0.0,
+      "trivial_true": 0.0
+    },
+    "rewrite_steps": 640,
+    "rewrite_templates": [
+      {
+        "id": "f8f51701eac723ec901d",
+        "before": [
+          "exact ",
+          0,
+          ""
+        ],
+        "after": [
+          "assumption"
+        ],
+        "slots": 1,
+        "lines": 1,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "5688d83afec749b4b91f",
+        "before": [
+          "have ",
+          0,
+          " : ",
+          1,
+          " := ",
+          2,
+          "\nexact ",
+          0,
+          ""
+        ],
+        "after": [
+          "exact ",
+          2,
+          ""
+        ],
+        "slots": 3,
+        "lines": 2,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "226d10eec59f318c1e9c",
+        "before": [
+          "constructor\n\u00b7 exact ",
+          0,
+          "\n\u00b7 exact ",
+          1,
+          ""
+        ],
+        "after": [
+          "exact \u27e8",
+          0,
+          ", ",
+          1,
+          "\u27e9"
+        ],
+        "slots": 2,
+        "lines": 3,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "a19dfa0225f61b7113ee",
+        "before": [
+          "symm\nexact Eq.symm ",
+          0,
+          ""
+        ],
+        "after": [
+          "exact ",
+          0,
+          ""
+        ],
+        "slots": 1,
+        "lines": 2,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "f96a7acf7c2959514765",
+        "before": [
+          "intro ",
+          0,
+          "\nexact ",
+          0,
+          ".1"
+        ],
+        "after": [
+          "simp_all"
+        ],
+        "slots": 1,
+        "lines": 2,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "39d1342dbcd8121e89fc",
+        "before": [
+          "apply ",
+          0,
+          "\nexact ",
+          1,
+          ""
+        ],
+        "after": [
+          "exact ",
+          0,
+          " ",
+          1,
+          ""
+        ],
+        "slots": 2,
+        "lines": 2,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "69f0c33a6916cde43b90",
+        "before": [
+          "intro ",
+          0,
+          "\nexact ",
+          1,
+          " ",
+          0,
+          ""
+        ],
+        "after": [
+          "exact ",
+          1,
+          ""
+        ],
+        "slots": 2,
+        "lines": 2,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "bbd0ccb7041befe20772",
+        "before": [
+          "simp only [Nat.zero_add, Nat.add_zero]"
+        ],
+        "after": [
+          "simp only [Nat.zero_add]"
+        ],
+        "slots": 0,
+        "lines": 1,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "0b8678beee9e32fa8ff5",
+        "before": [
+          "simp only [Nat.zero_add, Nat.add_zero, Nat.mul_one]"
+        ],
+        "after": [
+          "simp only [Nat.zero_add]"
+        ],
+        "slots": 0,
+        "lines": 1,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "6cd72f7a3665b0b321b3",
+        "before": [
+          "apply ",
+          0,
+          "\n\u00b7 exact ",
+          1,
+          "\n\u00b7 exact ",
+          2,
+          ""
+        ],
+        "after": [
+          "exact ",
+          0,
+          " ",
+          1,
+          " ",
+          2,
+          ""
+        ],
+        "slots": 3,
+        "lines": 3,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "d2b65b58014cb14ab817",
+        "before": [
+          "apply Eq.trans\n\u00b7 exact ",
+          0,
+          "\n\u00b7 exact ",
+          1,
+          ""
+        ],
+        "after": [
+          "exact Eq.trans ",
+          0,
+          " ",
+          1,
+          ""
+        ],
+        "slots": 2,
+        "lines": 3,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "907938545f8c4a99efab",
+        "before": [
+          "apply (",
+          0,
+          " ",
+          1,
+          ")"
+        ],
+        "after": [
+          "exact ",
+          0,
+          " ",
+          1,
+          ""
+        ],
+        "slots": 2,
+        "lines": 1,
+        "scope": "lexical_local_copy_requires_Lean"
+      },
+      {
+        "id": "5ec9697ed5180163b228",
+        "before": [
+          "apply And.right\nexact ",
+          0,
+          ""
+        ],
+        "after": [
+          "exact ",
+          0,
+          ".right"
+        ],
+        "slots": 1,
+        "lines": 2,
+        "scope": "lexical_local_copy_requires_Lean"
+      }
+    ],
+    "rewrite_weights": {
+      "f8f51701eac723ec901d|bias": 0.24802201911105418,
+      "f8f51701eac723ec901d|first": 1.3996623605358194,
+      "f8f51701eac723ec901d|last": 0.24802201911105418,
+      "f8f51701eac723ec901d|nested": 0.0,
+      "f8f51701eac723ec901d|prev:bos": 1.4010024448606975,
+      "f8f51701eac723ec901d|next:eos": 0.24802201911105418,
+      "f8f51701eac723ec901d|domain:Prop": -0.11481411925106931,
+      "f8f51701eac723ec901d|domain:Nat": 0.36283613836212314,
+      "f8f51701eac723ec901d|domain:Int": 0.0,
+      "f8f51701eac723ec901d|domain:Bool": 0.0,
+      "f8f51701eac723ec901d|domain:List": 0.0,
+      "f8f51701eac723ec901d|domain:Fin": 0.0,
+      "f8f51701eac723ec901d|domain:PLift": 0.0,
+      "f8f51701eac723ec901d|prev:have": -0.4120845244795146,
+      "5688d83afec749b4b91f|bias": 0.655630385318227,
+      "5688d83afec749b4b91f|first": 0.655630385318227,
+      "5688d83afec749b4b91f|last": 0.655630385318227,
+      "5688d83afec749b4b91f|nested": 0.0,
+      "5688d83afec749b4b91f|prev:bos": 0.655630385318227,
+      "5688d83afec749b4b91f|next:eos": 0.655630385318227,
+      "5688d83afec749b4b91f|domain:Prop": 0.655630385318227,
+      "5688d83afec749b4b91f|domain:Nat": 0.0,
+      "5688d83afec749b4b91f|domain:Int": 0.0,
+      "5688d83afec749b4b91f|domain:Bool": 0.0,
+      "5688d83afec749b4b91f|domain:List": 0.0,
+      "5688d83afec749b4b91f|domain:Fin": 0.0,
+      "5688d83afec749b4b91f|domain:PLift": 0.0,
+      "226d10eec59f318c1e9c|bias": 0.5195110969842495,
+      "226d10eec59f318c1e9c|first": 0.5195110969842495,
+      "226d10eec59f318c1e9c|last": 0.5195110969842495,
+      "226d10eec59f318c1e9c|nested": 0.0,
+      "226d10eec59f318c1e9c|prev:bos": 0.5195110969842495,
+      "226d10eec59f318c1e9c|next:eos": 0.5195110969842495,
+      "226d10eec59f318c1e9c|domain:Prop": 0.5195110969842495,
+      "226d10eec59f318c1e9c|domain:Nat": 0.0,
+      "226d10eec59f318c1e9c|domain:Int": 0.0,
+      "226d10eec59f318c1e9c|domain:Bool": 0.0,
+      "226d10eec59f318c1e9c|domain:List": 0.0,
+      "226d10eec59f318c1e9c|domain:Fin": 0.0,
+      "226d10eec59f318c1e9c|domain:PLift": 0.0,
+      "a19dfa0225f61b7113ee|bias": 0.5286437986977833,
+      "a19dfa0225f61b7113ee|first": 0.5286437986977833,
+      "a19dfa0225f61b7113ee|last": 0.5286437986977833,
+      "a19dfa0225f61b7113ee|nested": 0.0,
+      "a19dfa0225f61b7113ee|prev:bos": 0.5286437986977833,
+      "a19dfa0225f61b7113ee|next:eos": 0.5286437986977833,
+      "a19dfa0225f61b7113ee|domain:Prop": 0.0,
+      "a19dfa0225f61b7113ee|domain:Nat": 0.5286437986977833,
+      "a19dfa0225f61b7113ee|domain:Int": 0.0,
+      "a19dfa0225f61b7113ee|domain:Bool": 0.0,
+      "a19dfa0225f61b7113ee|domain:List": 0.0,
+      "a19dfa0225f61b7113ee|domain:Fin": 0.0,
+      "a19dfa0225f61b7113ee|domain:PLift": 0.0,
+      "f96a7acf7c2959514765|bias": 0.12554975033608373,
+      "f96a7acf7c2959514765|first": 0.12554975033608373,
+      "f96a7acf7c2959514765|last": 0.12554975033608373,
+      "f96a7acf7c2959514765|nested": 0.0,
+      "f96a7acf7c2959514765|prev:bos": 0.12554975033608373,
+      "f96a7acf7c2959514765|next:eos": 0.12554975033608373,
+      "f96a7acf7c2959514765|domain:Prop": 0.12554975033608373,
+      "f96a7acf7c2959514765|domain:Nat": 0.0,
+      "f96a7acf7c2959514765|domain:Int": 0.0,
+      "f96a7acf7c2959514765|domain:Bool": 0.0,
+      "f96a7acf7c2959514765|domain:List": 0.0,
+      "f96a7acf7c2959514765|domain:Fin": 0.0,
+      "f96a7acf7c2959514765|domain:PLift": -1.6481202205809398,
+      "f8f51701eac723ec901d|prev:apply": -0.7411339182981971,
+      "39d1342dbcd8121e89fc|bias": 0.6318128969561466,
+      "39d1342dbcd8121e89fc|first": 0.6318128969561466,
+      "39d1342dbcd8121e89fc|last": 0.6318128969561466,
+      "39d1342dbcd8121e89fc|nested": 0.0,
+      "39d1342dbcd8121e89fc|prev:bos": 0.6318128969561466,
+      "39d1342dbcd8121e89fc|next:eos": 0.6318128969561466,
+      "39d1342dbcd8121e89fc|domain:Prop": 0.6318128969561466,
+      "39d1342dbcd8121e89fc|domain:Nat": 0.0,
+      "39d1342dbcd8121e89fc|domain:Int": 0.0,
+      "39d1342dbcd8121e89fc|domain:Bool": 0.0,
+      "39d1342dbcd8121e89fc|domain:List": 0.0,
+      "39d1342dbcd8121e89fc|domain:Fin": 0.0,
+      "39d1342dbcd8121e89fc|domain:PLift": 0.0,
+      "69f0c33a6916cde43b90|bias": 0.5274633086265471,
+      "69f0c33a6916cde43b90|first": 0.5274633086265471,
+      "69f0c33a6916cde43b90|last": 0.5274633086265471,
+      "69f0c33a6916cde43b90|nested": 0.0,
+      "69f0c33a6916cde43b90|prev:bos": 0.5274633086265471,
+      "69f0c33a6916cde43b90|next:eos": 0.5274633086265471,
+      "69f0c33a6916cde43b90|domain:Prop": 0.5274633086265471,
+      "69f0c33a6916cde43b90|domain:Nat": 0.0,
+      "69f0c33a6916cde43b90|domain:Int": 0.0,
+      "69f0c33a6916cde43b90|domain:Bool": 0.0,
+      "69f0c33a6916cde43b90|domain:List": 0.0,
+      "69f0c33a6916cde43b90|domain:Fin": 0.0,
+      "69f0c33a6916cde43b90|domain:PLift": 0.0,
+      "bbd0ccb7041befe20772|bias": 0.5122690563818821,
+      "bbd0ccb7041befe20772|first": 0.5122690563818821,
+      "bbd0ccb7041befe20772|last": 0.5122690563818821,
+      "bbd0ccb7041befe20772|nested": 0.0,
+      "bbd0ccb7041befe20772|prev:bos": 0.5122690563818821,
+      "bbd0ccb7041befe20772|next:eos": 0.5122690563818821,
+      "bbd0ccb7041befe20772|domain:Prop": 0.0,
+      "bbd0ccb7041befe20772|domain:Nat": 0.5122690563818821,
+      "bbd0ccb7041befe20772|domain:Int": 0.0,
+      "bbd0ccb7041befe20772|domain:Bool": 0.0,
+      "bbd0ccb7041befe20772|domain:List": 0.0,
+      "bbd0ccb7041befe20772|domain:Fin": 0.0,
+      "bbd0ccb7041befe20772|domain:PLift": 0.0,
+      "0b8678beee9e32fa8ff5|bias": 0.5120318986073251,
+      "0b8678beee9e32fa8ff5|first": 0.5120318986073251,
+      "0b8678beee9e32fa8ff5|last": 0.5120318986073251,
+      "0b8678beee9e32fa8ff5|nested": 0.0,
+      "0b8678beee9e32fa8ff5|prev:bos": 0.5120318986073251,
+      "0b8678beee9e32fa8ff5|next:eos": 0.5120318986073251,
+      "0b8678beee9e32fa8ff5|domain:Prop": 0.0,
+      "0b8678beee9e32fa8ff5|domain:Nat": 0.5120318986073251,
+      "0b8678beee9e32fa8ff5|domain:Int": 0.0,
+      "0b8678beee9e32fa8ff5|domain:Bool": 0.0,
+      "0b8678beee9e32fa8ff5|domain:List": 0.0,
+      "0b8678beee9e32fa8ff5|domain:Fin": 0.0,
+      "0b8678beee9e32fa8ff5|domain:PLift": 0.0,
+      "6cd72f7a3665b0b321b3|bias": 0.5173932560728745,
+      "6cd72f7a3665b0b321b3|first": 0.5173932560728745,
+      "6cd72f7a3665b0b321b3|last": 0.5173932560728745,
+      "6cd72f7a3665b0b321b3|nested": 0.0,
+      "6cd72f7a3665b0b321b3|prev:bos": 0.5173932560728745,
+      "6cd72f7a3665b0b321b3|next:eos": 0.5173932560728745,
+      "6cd72f7a3665b0b321b3|domain:Prop": 0.5173932560728745,
+      "6cd72f7a3665b0b321b3|domain:Nat": 0.0,
+      "6cd72f7a3665b0b321b3|domain:Int": 0.0,
+      "6cd72f7a3665b0b321b3|domain:Bool": 0.0,
+      "6cd72f7a3665b0b321b3|domain:List": 0.0,
+      "6cd72f7a3665b0b321b3|domain:Fin": 0.0,
+      "6cd72f7a3665b0b321b3|domain:PLift": 0.0,
+      "d2b65b58014cb14ab817|bias": 0.5171534666605886,
+      "d2b65b58014cb14ab817|first": 0.5171534666605886,
+      "d2b65b58014cb14ab817|last": 0.5171534666605886,
+      "d2b65b58014cb14ab817|nested": 0.0,
+      "d2b65b58014cb14ab817|prev:bos": 0.5171534666605886,
+      "d2b65b58014cb14ab817|next:eos": 0.5171534666605886,
+      "d2b65b58014cb14ab817|domain:Prop": 0.0,
+      "d2b65b58014cb14ab817|domain:Nat": 0.5171534666605886,
+      "d2b65b58014cb14ab817|domain:Int": 0.0,
+      "d2b65b58014cb14ab817|domain:Bool": 0.0,
+      "d2b65b58014cb14ab817|domain:List": 0.0,
+      "d2b65b58014cb14ab817|domain:Fin": 0.0,
+      "d2b65b58014cb14ab817|domain:PLift": 0.0,
+      "907938545f8c4a99efab|bias": 0.5580430043767883,
+      "907938545f8c4a99efab|first": 0.5580430043767883,
+      "907938545f8c4a99efab|last": 0.5580430043767883,
+      "907938545f8c4a99efab|nested": 0.0,
+      "907938545f8c4a99efab|prev:bos": 0.5580430043767883,
+      "907938545f8c4a99efab|next:eos": 0.5580430043767883,
+      "907938545f8c4a99efab|domain:Prop": 0.5580430043767883,
+      "907938545f8c4a99efab|domain:Nat": 0.0,
+      "907938545f8c4a99efab|domain:Int": 0.0,
+      "907938545f8c4a99efab|domain:Bool": 0.0,
+      "907938545f8c4a99efab|domain:List": 0.0,
+      "907938545f8c4a99efab|domain:Fin": 0.0,
+      "907938545f8c4a99efab|domain:PLift": 0.0,
+      "5ec9697ed5180163b228|bias": 0.6278474080930727,
+      "5ec9697ed5180163b228|first": 0.6278474080930727,
+      "5ec9697ed5180163b228|last": 0.6278474080930727,
+      "5ec9697ed5180163b228|nested": 0.0,
+      "5ec9697ed5180163b228|prev:bos": 0.6278474080930727,
+      "5ec9697ed5180163b228|next:eos": 0.6278474080930727,
+      "5ec9697ed5180163b228|domain:Prop": 0.6278474080930727,
+      "5ec9697ed5180163b228|domain:Nat": 0.0,
+      "5ec9697ed5180163b228|domain:Int": 0.0,
+      "5ec9697ed5180163b228|domain:Bool": 0.0,
+      "5ec9697ed5180163b228|domain:List": 0.0,
+      "5ec9697ed5180163b228|domain:Fin": 0.0,
+      "5ec9697ed5180163b228|domain:PLift": 0.0
+    }
+  },
+  "state_sha256": "a67f6f416d2b5f2a3da6b2df8f988472733fd835b103f618c3d2a2ab2a5e9d58",
+  "manifest": [
+    {
+      "id": "distill_train_exact_local_547339",
+      "split": "train",
+      "family": "exact_local",
+      "strategies": [
+        "rewrite_transport"
+      ],
+      "source": "theorem distill_train_exact_local_547339 (p_547339 : Prop) (h_547339 : p_547339) : p_547339 := by\n  exact h_547339\n"
+    },
+    {
+      "id": "distill_train_terminal_alias_434286",
+      "split": "train",
+      "family": "terminal_alias",
+      "strategies": [
+        "local_alias_reduce",
+        "rewrite_transport"
+      ],
+      "source": "theorem distill_train_terminal_alias_434286 (p_434286 : Prop) (h_434286 : p_434286) : p_434286 := by\n  have alias_434286 : p_434286 := h_434286\n  exact alias_434286\n"
+    },
+    {
+      "id": "distill_train_constructor_pack_845876",
+      "split": "train",
+      "family": "constructor_pack",
+      "strategies": [
+        "structural_reduce"
+      ],
+      "source": "theorem distill_train_constructor_pack_845876 (p_845876 q_845876 : Prop) (h_845876 : p_845876) (k_845876 : q_845876) : p_845876 \u2227 q_845876 := by\n  constructor\n  \u00b7 exact h_845876\n  \u00b7 exact k_845876\n"
+    },
+    {
+      "id": "distill_train_symmetry_318162",
+      "split": "train",
+      "family": "symmetry",
+      "strategies": [
+        "symmetry_reduce",
+        "rewrite_transport"
+      ],
+      "source": "theorem distill_train_symmetry_318162 (p_318162 q_318162 : Nat) (h_318162 : p_318162 = q_318162) : p_318162 = q_318162 := by\n  symm\n  exact Eq.symm h_318162\n"
+    },
+    {
+      "id": "distill_train_projection_383384",
+      "split": "train",
+      "family": "projection",
+      "strategies": [
+        "logic_simp"
+      ],
+      "source": "theorem distill_train_projection_383384 (p_383384 q_383384 : Prop) : p_383384 \u2227 q_383384 \u2192 p_383384 := by\n  intro h_383384\n  exact h_383384.1\n"
+    },
+    {
+      "id": "distill_train_lift_projection_303694",
+      "split": "train",
+      "family": "lift_projection",
+      "strategies": [
+        "logic_simp"
+      ],
+      "source": "theorem distill_train_lift_projection_303694 (p_303694 : Prop) : PLift p_303694 \u2192 p_303694 := by\n  intro h_303694\n  exact h_303694.1\n"
+    },
+    {
+      "id": "distill_train_application_183173",
+      "split": "train",
+      "family": "application",
+      "strategies": [
+        "application_reduce"
+      ],
+      "source": "theorem distill_train_application_183173 (p_183173 q_183173 : Prop) (k_183173 : p_183173 \u2192 q_183173) (h_183173 : p_183173) : q_183173 := by\n  apply k_183173\n  exact h_183173\n"
+    },
+    {
+      "id": "distill_train_eta_803321",
+      "split": "train",
+      "family": "eta",
+      "strategies": [
+        "eta_reduce"
+      ],
+      "source": "theorem distill_train_eta_803321 (p_803321 q_803321 : Prop) (k_803321 : p_803321 \u2192 q_803321) : p_803321 \u2192 q_803321 := by\n  intro h_803321\n  exact k_803321 h_803321\n"
+    },
+    {
+      "id": "distill_train_solver_arguments_739395",
+      "split": "train",
+      "family": "solver_arguments",
+      "strategies": [
+        "solver_argument_reduce"
+      ],
+      "source": "theorem distill_train_solver_arguments_739395 (p_739395 : Nat) : 0 + p_739395 = p_739395 := by\n  simp only [Nat.zero_add, Nat.add_zero]\n"
+    },
+    {
+      "id": "distill_train_solver_feedback_738428",
+      "split": "train",
+      "family": "solver_feedback",
+      "strategies": [],
+      "source": "theorem distill_train_solver_feedback_738428 (p_738428 : Nat) : 0 + p_738428 = p_738428 := by\n  simp only [Nat.zero_add, Nat.add_zero, Nat.mul_one]\n"
+    },
+    {
+      "id": "distill_validation_exact_local_16011",
+      "split": "validation",
+      "family": "exact_local",
+      "strategies": [
+        "rewrite_transport"
+      ],
+      "source": "theorem distill_validation_exact_local_16011 (p_16011 : Prop) (h_16011 : p_16011) : p_16011 := by\n  exact h_16011\n"
+    },
+    {
+      "id": "distill_validation_terminal_alias_859226",
+      "split": "validation",
+      "family": "terminal_alias",
+      "strategies": [
+        "local_alias_reduce",
+        "rewrite_transport"
+      ],
+      "source": "theorem distill_validation_terminal_alias_859226 (p_859226 : Prop) (h_859226 : p_859226) : p_859226 := by\n  have alias_859226 : p_859226 := h_859226\n  exact alias_859226\n"
+    },
+    {
+      "id": "distill_validation_constructor_pack_984955",
+      "split": "validation",
+      "family": "constructor_pack",
+      "strategies": [
+        "structural_reduce"
+      ],
+      "source": "theorem distill_validation_constructor_pack_984955 (p_984955 q_984955 : Prop) (h_984955 : p_984955) (k_984955 : q_984955) : p_984955 \u2227 q_984955 := by\n  constructor\n  \u00b7 exact h_984955\n  \u00b7 exact k_984955\n"
+    },
+    {
+      "id": "distill_validation_symmetry_692830",
+      "split": "validation",
+      "family": "symmetry",
+      "strategies": [
+        "symmetry_reduce",
+        "rewrite_transport"
+      ],
+      "source": "theorem distill_validation_symmetry_692830 (p_692830 q_692830 : Nat) (h_692830 : p_692830 = q_692830) : p_692830 = q_692830 := by\n  symm\n  exact Eq.symm h_692830\n"
+    },
+    {
+      "id": "distill_validation_projection_958028",
+      "split": "validation",
+      "family": "projection",
+      "strategies": [
+        "logic_simp"
+      ],
+      "source": "theorem distill_validation_projection_958028 (p_958028 q_958028 : Prop) : p_958028 \u2227 q_958028 \u2192 p_958028 := by\n  intro h_958028\n  exact h_958028.1\n"
+    },
+    {
+      "id": "distill_validation_lift_projection_572983",
+      "split": "validation",
+      "family": "lift_projection",
+      "strategies": [
+        "logic_simp"
+      ],
+      "source": "theorem distill_validation_lift_projection_572983 (p_572983 : Prop) : PLift p_572983 \u2192 p_572983 := by\n  intro h_572983\n  exact h_572983.1\n"
+    },
+    {
+      "id": "distill_validation_application_661715",
+      "split": "validation",
+      "family": "application",
+      "strategies": [
+        "application_reduce"
+      ],
+      "source": "theorem distill_validation_application_661715 (p_661715 q_661715 : Prop) (k_661715 : p_661715 \u2192 q_661715) (h_661715 : p_661715) : q_661715 := by\n  apply k_661715\n  exact h_661715\n"
+    },
+    {
+      "id": "distill_validation_eta_735541",
+      "split": "validation",
+      "family": "eta",
+      "strategies": [
+        "eta_reduce"
+      ],
+      "source": "theorem distill_validation_eta_735541 (p_735541 q_735541 : Prop) (k_735541 : p_735541 \u2192 q_735541) : p_735541 \u2192 q_735541 := by\n  intro h_735541\n  exact k_735541 h_735541\n"
+    },
+    {
+      "id": "distill_validation_solver_arguments_152259",
+      "split": "validation",
+      "family": "solver_arguments",
+      "strategies": [
+        "solver_argument_reduce"
+      ],
+      "source": "theorem distill_validation_solver_arguments_152259 (p_152259 : Nat) : 0 + p_152259 = p_152259 := by\n  simp only [Nat.zero_add, Nat.add_zero]\n"
+    },
+    {
+      "id": "distill_validation_solver_feedback_585853",
+      "split": "validation",
+      "family": "solver_feedback",
+      "strategies": [],
+      "source": "theorem distill_validation_solver_feedback_585853 (p_585853 : Nat) : 0 + p_585853 = p_585853 := by\n  simp only [Nat.zero_add, Nat.add_zero, Nat.mul_one]\n"
+    },
+    {
+      "id": "distill_canary_exact_local_345421",
+      "split": "canary",
+      "family": "exact_local",
+      "strategies": [
+        "rewrite_transport"
+      ],
+      "source": "theorem distill_canary_exact_local_345421 (p_345421 : Prop) (h_345421 : p_345421) : p_345421 := by\n  exact h_345421\n"
+    },
+    {
+      "id": "distill_canary_terminal_alias_990545",
+      "split": "canary",
+      "family": "terminal_alias",
+      "strategies": [
+        "local_alias_reduce",
+        "rewrite_transport"
+      ],
+      "source": "theorem distill_canary_terminal_alias_990545 (p_990545 : Prop) (h_990545 : p_990545) : p_990545 := by\n  have alias_990545 : p_990545 := h_990545\n  exact alias_990545\n"
+    },
+    {
+      "id": "distill_canary_constructor_pack_136264",
+      "split": "canary",
+      "family": "constructor_pack",
+      "strategies": [
+        "structural_reduce"
+      ],
+      "source": "theorem distill_canary_constructor_pack_136264 (p_136264 q_136264 : Prop) (h_136264 : p_136264) (k_136264 : q_136264) : p_136264 \u2227 q_136264 := by\n  constructor\n  \u00b7 exact h_136264\n  \u00b7 exact k_136264\n"
+    },
+    {
+      "id": "distill_canary_symmetry_805376",
+      "split": "canary",
+      "family": "symmetry",
+      "strategies": [
+        "symmetry_reduce",
+        "rewrite_transport"
+      ],
+      "source": "theorem distill_canary_symmetry_805376 (p_805376 q_805376 : Nat) (h_805376 : p_805376 = q_805376) : p_805376 = q_805376 := by\n  symm\n  exact Eq.symm h_805376\n"
+    },
+    {
+      "id": "distill_canary_projection_534966",
+      "split": "canary",
+      "family": "projection",
+      "strategies": [
+        "logic_simp"
+      ],
+      "source": "theorem distill_canary_projection_534966 (p_534966 q_534966 : Prop) : p_534966 \u2227 q_534966 \u2192 p_534966 := by\n  intro h_534966\n  exact h_534966.1\n"
+    },
+    {
+      "id": "distill_canary_lift_projection_122963",
+      "split": "canary",
+      "family": "lift_projection",
+      "strategies": [
+        "logic_simp"
+      ],
+      "source": "theorem distill_canary_lift_projection_122963 (p_122963 : Prop) : PLift p_122963 \u2192 p_122963 := by\n  intro h_122963\n  exact h_122963.1\n"
+    },
+    {
+      "id": "distill_canary_application_452644",
+      "split": "canary",
+      "family": "application",
+      "strategies": [
+        "application_reduce"
+      ],
+      "source": "theorem distill_canary_application_452644 (p_452644 q_452644 : Prop) (k_452644 : p_452644 \u2192 q_452644) (h_452644 : p_452644) : q_452644 := by\n  apply k_452644\n  exact h_452644\n"
+    },
+    {
+      "id": "distill_canary_eta_593638",
+      "split": "canary",
+      "family": "eta",
+      "strategies": [
+        "eta_reduce"
+      ],
+      "source": "theorem distill_canary_eta_593638 (p_593638 q_593638 : Prop) (k_593638 : p_593638 \u2192 q_593638) : p_593638 \u2192 q_593638 := by\n  intro h_593638\n  exact k_593638 h_593638\n"
+    },
+    {
+      "id": "distill_canary_solver_arguments_992361",
+      "split": "canary",
+      "family": "solver_arguments",
+      "strategies": [
+        "solver_argument_reduce"
+      ],
+      "source": "theorem distill_canary_solver_arguments_992361 (p_992361 : Nat) : 0 + p_992361 = p_992361 := by\n  simp only [Nat.zero_add, Nat.add_zero]\n"
+    },
+    {
+      "id": "distill_canary_solver_feedback_777081",
+      "split": "canary",
+      "family": "solver_feedback",
+      "strategies": [],
+      "source": "theorem distill_canary_solver_feedback_777081 (p_777081 : Nat) : 0 + p_777081 = p_777081 := by\n  simp only [Nat.zero_add, Nat.add_zero, Nat.mul_one]\n"
+    },
+    {
+      "id": "distill_holdout_exact_local_76450",
+      "split": "holdout",
+      "family": "exact_local",
+      "strategies": [
+        "rewrite_transport"
+      ],
+      "source": "theorem distill_holdout_exact_local_76450 (p_76450 : Prop) (h_76450 : p_76450) : p_76450 := by\n  exact h_76450\n"
+    },
+    {
+      "id": "distill_holdout_terminal_alias_48631",
+      "split": "holdout",
+      "family": "terminal_alias",
+      "strategies": [
+        "local_alias_reduce",
+        "rewrite_transport"
+      ],
+      "source": "theorem distill_holdout_terminal_alias_48631 (p_48631 : Prop) (h_48631 : p_48631) : p_48631 := by\n  have alias_48631 : p_48631 := h_48631\n  exact alias_48631\n"
+    },
+    {
+      "id": "distill_holdout_constructor_pack_16582",
+      "split": "holdout",
+      "family": "constructor_pack",
+      "strategies": [
+        "structural_reduce"
+      ],
+      "source": "theorem distill_holdout_constructor_pack_16582 (p_16582 q_16582 : Prop) (h_16582 : p_16582) (k_16582 : q_16582) : p_16582 \u2227 q_16582 := by\n  constructor\n  \u00b7 exact h_16582\n  \u00b7 exact k_16582\n"
+    },
+    {
+      "id": "distill_holdout_symmetry_614767",
+      "split": "holdout",
+      "family": "symmetry",
+      "strategies": [
+        "symmetry_reduce",
+        "rewrite_transport"
+      ],
+      "source": "theorem distill_holdout_symmetry_614767 (p_614767 q_614767 : Nat) (h_614767 : p_614767 = q_614767) : p_614767 = q_614767 := by\n  symm\n  exact Eq.symm h_614767\n"
+    },
+    {
+      "id": "distill_holdout_projection_240161",
+      "split": "holdout",
+      "family": "projection",
+      "strategies": [
+        "logic_simp"
+      ],
+      "source": "theorem distill_holdout_projection_240161 (p_240161 q_240161 : Prop) : p_240161 \u2227 q_240161 \u2192 p_240161 := by\n  intro h_240161\n  exact h_240161.1\n"
+    },
+    {
+      "id": "distill_holdout_lift_projection_891716",
+      "split": "holdout",
+      "family": "lift_projection",
+      "strategies": [
+        "logic_simp"
+      ],
+      "source": "theorem distill_holdout_lift_projection_891716 (p_891716 : Prop) : PLift p_891716 \u2192 p_891716 := by\n  intro h_891716\n  exact h_891716.1\n"
+    },
+    {
+      "id": "distill_holdout_application_530167",
+      "split": "holdout",
+      "family": "application",
+      "strategies": [
+        "application_reduce"
+      ],
+      "source": "theorem distill_holdout_application_530167 (p_530167 q_530167 : Prop) (k_530167 : p_530167 \u2192 q_530167) (h_530167 : p_530167) : q_530167 := by\n  apply k_530167\n  exact h_530167\n"
+    },
+    {
+      "id": "distill_holdout_eta_884431",
+      "split": "holdout",
+      "family": "eta",
+      "strategies": [
+        "eta_reduce"
+      ],
+      "source": "theorem distill_holdout_eta_884431 (p_884431 q_884431 : Prop) (k_884431 : p_884431 \u2192 q_884431) : p_884431 \u2192 q_884431 := by\n  intro h_884431\n  exact k_884431 h_884431\n"
+    },
+    {
+      "id": "distill_holdout_solver_arguments_193804",
+      "split": "holdout",
+      "family": "solver_arguments",
+      "strategies": [
+        "solver_argument_reduce"
+      ],
+      "source": "theorem distill_holdout_solver_arguments_193804 (p_193804 : Nat) : 0 + p_193804 = p_193804 := by\n  simp only [Nat.zero_add, Nat.add_zero]\n"
+    },
+    {
+      "id": "distill_holdout_solver_feedback_657638",
+      "split": "holdout",
+      "family": "solver_feedback",
+      "strategies": [],
+      "source": "theorem distill_holdout_solver_feedback_657638 (p_657638 : Nat) : 0 + p_657638 = p_657638 := by\n  simp only [Nat.zero_add, Nat.add_zero, Nat.mul_one]\n"
+    },
+    {
+      "id": "transfer_holdout_composed_application_265235",
+      "split": "holdout",
+      "family": "composed_application",
+      "strategies": [
+        "application_reduce",
+        "application_reduce"
+      ],
+      "source": "theorem transfer_holdout_composed_application_265235 (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) (h_265235 : p_265235) : q_265235 \u2227 q_265235 := by\n  constructor\n  case left =>\n    apply f_265235\n    exact h_265235\n  case right =>\n    apply f_265235\n    exact h_265235\n"
+    },
+    {
+      "id": "transfer_holdout_composed_eta_265235",
+      "split": "holdout",
+      "family": "composed_eta",
+      "strategies": [
+        "eta_reduce",
+        "eta_reduce"
+      ],
+      "source": "theorem transfer_holdout_composed_eta_265235 (b : Bool) (p_265235 q_265235 : Prop) (f_265235 : p_265235 \u2192 q_265235) : p_265235 \u2192 q_265235 := by\n  cases b\n  case false =>\n    intro h_265235\n    exact f_265235 h_265235\n  case true =>\n    intro h_265235\n    exact f_265235 h_265235\n"
+    },
+    {
+      "id": "transfer_holdout_new_equality_context_265235",
+      "split": "holdout",
+      "family": "new_equality_context",
+      "strategies": [
+        "rewrite_transport"
+      ],
+      "source": "theorem transfer_holdout_new_equality_context_265235 (p_265235 q_265235 : Int) (h_265235 : p_265235 = q_265235) : p_265235 = q_265235 := by\n  exact h_265235\n"
+    },
+    {
+      "id": "transfer_holdout_new_identity_control_265235",
+      "split": "holdout",
+      "family": "new_identity_control",
+      "strategies": [
+        "kernel_reduce"
+      ],
+      "source": "theorem transfer_holdout_new_identity_control_265235 (p_265235 : Nat) : p_265235 = p_265235 := by\n  rfl\n"
+    },
+    {
+      "id": "train_typed_binary_application_54907",
+      "split": "train",
+      "family": "typed_binary_application",
+      "strategies": [],
+      "source": "theorem train_typed_binary_application_54907 (p_54907 q_54907 r_54907 : Prop) (f_54907 : p_54907 \u2192 q_54907 \u2192 r_54907) (h_54907 : p_54907) (k_54907 : q_54907) : r_54907 := by\n  apply f_54907\n  \u00b7 exact h_54907\n  \u00b7 exact k_54907\n"
+    },
+    {
+      "id": "train_typed_transitivity_54907",
+      "split": "train",
+      "family": "typed_transitivity",
+      "strategies": [],
+      "source": "theorem train_typed_transitivity_54907 (p_54907 q_54907 r_54907 : Nat) (h_54907 : p_54907 = q_54907) (k_54907 : q_54907 = r_54907) : p_54907 = r_54907 := by\n  apply Eq.trans\n  \u00b7 exact h_54907\n  \u00b7 exact k_54907\n"
+    },
+    {
+      "id": "train_typed_dependent_application_54907",
+      "split": "train",
+      "family": "typed_dependent_application",
+      "strategies": [],
+      "source": "theorem train_typed_dependent_application_54907 (\u03b1 : Type) (p_54907 : \u03b1 \u2192 Prop) (f_54907 : \u2200 x, p_54907 x) (a_54907 : \u03b1) : p_54907 a_54907 := by\n  apply (f_54907 a_54907)\n"
+    },
+    {
+      "id": "train_typed_projection_54907",
+      "split": "train",
+      "family": "typed_projection",
+      "strategies": [],
+      "source": "theorem train_typed_projection_54907 (p_54907 q_54907 : Prop) (h_54907 : p_54907 \u2227 q_54907) : q_54907 := by\n  apply And.right\n  exact h_54907\n"
+    },
+    {
+      "id": "validation_typed_binary_application_16011",
+      "split": "validation",
+      "family": "typed_binary_application",
+      "strategies": [],
+      "source": "theorem validation_typed_binary_application_16011 (p_16011 q_16011 r_16011 : Prop) (f_16011 : p_16011 \u2192 q_16011 \u2192 r_16011) (h_16011 : p_16011) (k_16011 : q_16011) : r_16011 := by\n  apply f_16011\n  \u00b7 exact h_16011\n  \u00b7 exact k_16011\n"
+    },
+    {
+      "id": "validation_typed_transitivity_16011",
+      "split": "validation",
+      "family": "typed_transitivity",
+      "strategies": [],
+      "source": "theorem validation_typed_transitivity_16011 (p_16011 q_16011 r_16011 : Nat) (h_16011 : p_16011 = q_16011) (k_16011 : q_16011 = r_16011) : p_16011 = r_16011 := by\n  apply Eq.trans\n  \u00b7 exact h_16011\n  \u00b7 exact k_16011\n"
+    },
+    {
+      "id": "validation_typed_dependent_application_16011",
+      "split": "validation",
+      "family": "typed_dependent_application",
+      "strategies": [],
+      "source": "theorem validation_typed_dependent_application_16011 (\u03b1 : Type) (p_16011 : \u03b1 \u2192 Prop) (f_16011 : \u2200 x, p_16011 x) (a_16011 : \u03b1) : p_16011 a_16011 := by\n  apply (f_16011 a_16011)\n"
+    },
+    {
+      "id": "validation_typed_projection_16011",
+      "split": "validation",
+      "family": "typed_projection",
+      "strategies": [],
+      "source": "theorem validation_typed_projection_16011 (p_16011 q_16011 : Prop) (h_16011 : p_16011 \u2227 q_16011) : q_16011 := by\n  apply And.right\n  exact h_16011\n"
+    },
+    {
+      "id": "canary_typed_binary_application_345421",
+      "split": "canary",
+      "family": "typed_binary_application",
+      "strategies": [],
+      "source": "theorem canary_typed_binary_application_345421 (p_345421 q_345421 r_345421 : Prop) (f_345421 : p_345421 \u2192 q_345421 \u2192 r_345421) (h_345421 : p_345421) (k_345421 : q_345421) : r_345421 := by\n  apply f_345421\n  \u00b7 exact h_345421\n  \u00b7 exact k_345421\n"
+    },
+    {
+      "id": "canary_typed_transitivity_345421",
+      "split": "canary",
+      "family": "typed_transitivity",
+      "strategies": [],
+      "source": "theorem canary_typed_transitivity_345421 (p_345421 q_345421 r_345421 : Nat) (h_345421 : p_345421 = q_345421) (k_345421 : q_345421 = r_345421) : p_345421 = r_345421 := by\n  apply Eq.trans\n  \u00b7 exact h_345421\n  \u00b7 exact k_345421\n"
+    },
+    {
+      "id": "canary_typed_dependent_application_345421",
+      "split": "canary",
+      "family": "typed_dependent_application",
+      "strategies": [],
+      "source": "theorem canary_typed_dependent_application_345421 (\u03b1 : Type) (p_345421 : \u03b1 \u2192 Prop) (f_345421 : \u2200 x, p_345421 x) (a_345421 : \u03b1) : p_345421 a_345421 := by\n  apply (f_345421 a_345421)\n"
+    },
+    {
+      "id": "canary_typed_projection_345421",
+      "split": "canary",
+      "family": "typed_projection",
+      "strategies": [],
+      "source": "theorem canary_typed_projection_345421 (p_345421 q_345421 : Prop) (h_345421 : p_345421 \u2227 q_345421) : q_345421 := by\n  apply And.right\n  exact h_345421\n"
+    },
+    {
+      "id": "holdout_typed_binary_application_76450",
+      "split": "holdout",
+      "family": "typed_binary_application",
+      "strategies": [],
+      "source": "theorem holdout_typed_binary_application_76450 (p_76450 q_76450 r_76450 : Prop) (f_76450 : p_76450 \u2192 q_76450 \u2192 r_76450) (h_76450 : p_76450) (k_76450 : q_76450) : r_76450 := by\n  apply f_76450\n  \u00b7 exact h_76450\n  \u00b7 exact k_76450\n"
+    },
+    {
+      "id": "holdout_typed_transitivity_76450",
+      "split": "holdout",
+      "family": "typed_transitivity",
+      "strategies": [],
+      "source": "theorem holdout_typed_transitivity_76450 (p_76450 q_76450 r_76450 : Nat) (h_76450 : p_76450 = q_76450) (k_76450 : q_76450 = r_76450) : p_76450 = r_76450 := by\n  apply Eq.trans\n  \u00b7 exact h_76450\n  \u00b7 exact k_76450\n"
+    },
+    {
+      "id": "holdout_typed_dependent_application_76450",
+      "split": "holdout",
+      "family": "typed_dependent_application",
+      "strategies": [],
+      "source": "theorem holdout_typed_dependent_application_76450 (\u03b1 : Type) (p_76450 : \u03b1 \u2192 Prop) (f_76450 : \u2200 x, p_76450 x) (a_76450 : \u03b1) : p_76450 a_76450 := by\n  apply (f_76450 a_76450)\n"
+    },
+    {
+      "id": "holdout_typed_projection_76450",
+      "split": "holdout",
+      "family": "typed_projection",
+      "strategies": [],
+      "source": "theorem holdout_typed_projection_76450 (p_76450 q_76450 : Prop) (h_76450 : p_76450 \u2227 q_76450) : q_76450 := by\n  apply And.right\n  exact h_76450\n"
+    }
+  ],
+  "manifest_sha256": "b726c19b115da9a2e8526e0af361498a88438035f81601f897eeaee700048026",
+  "train_parent_ids": [
+    "distill_train_exact_local_547339",
+    "distill_train_terminal_alias_434286",
+    "distill_train_constructor_pack_845876",
+    "distill_train_symmetry_318162",
+    "distill_train_projection_383384",
+    "distill_train_lift_projection_303694",
+    "distill_train_application_183173",
+    "distill_train_eta_803321",
+    "distill_train_solver_arguments_739395",
+    "distill_train_solver_feedback_738428",
+    "train_typed_binary_application_54907",
+    "train_typed_transitivity_54907",
+    "train_typed_dependent_application_54907",
+    "train_typed_projection_54907"
+  ],
+  "train_ids": [
+    "distill_train_exact_local_547339:step:0",
+    "distill_train_terminal_alias_434286:step:0",
+    "distill_train_terminal_alias_434286:step:1",
+    "distill_train_constructor_pack_845876:step:0",
+    "distill_train_symmetry_318162:step:0",
+    "distill_train_symmetry_318162:step:1",
+    "distill_train_projection_383384:step:0",
+    "distill_train_lift_projection_303694:step:0",
+    "distill_train_application_183173:step:0",
+    "distill_train_eta_803321:step:0",
+    "distill_train_solver_arguments_739395:step:0",
+    "distill_train_solver_feedback_738428:step:0",
+    "train_typed_binary_application_54907:step:0",
+    "train_typed_transitivity_54907:step:0",
+    "train_typed_dependent_application_54907:step:0",
+    "train_typed_projection_54907:step:0"
+  ],
+  "tokenizer_id": "lra-local-ws-punct/v1",
+  "checkpoint_promoted": false,
+  "arena_data_used": false,
+  "reconstruction_heads_unchanged": true,
+  "schema": "jevops-typed-edit-checkpoint/v1",
+  "expression_nonregression_accepted": false,
+  "scope": "synthetic_structural_transfer_not_unseen_semantic_families_or_arena_score"
+}

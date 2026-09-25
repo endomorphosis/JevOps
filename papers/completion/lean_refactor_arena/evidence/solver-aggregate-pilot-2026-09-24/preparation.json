@@ -1,0 +1,32 @@
+{
+  "schema": "jevops-aggregate-pilot-preparation/v1",
+  "failed_preparation": {
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/solver-aggregate-20260924-8GM0mS/source",
+    "manifest_sha256": "9862e790797603b827647e62b1967b1c0d01157b11be4912e9c071f896052ca9",
+    "tests_passed": 580,
+    "tests_skipped": 5,
+    "tests_deselected": 89,
+    "integrity_status": "REJECTED",
+    "reason": "Automatically loaded pytest-benchmark plugin created a writable empty .benchmarks directory; pre-run snapshot validation rejected it.",
+    "native_processes": 0,
+    "copy_retained": true
+  },
+  "corrected_preparation": {
+    "root": "/home/barberb/.local/state/jevops-arena-provision-Nr5jXM/work/solver-aggregate-20260924-8GM0mS/source-complete",
+    "manifest_sha256": "36266b3347b0956f276e6aa04cf3bdb68c7840eb872d14f541b07bb5920d6a51",
+    "content_root": "afdd557187951533a74fe9ccec72a7b67ed1a7c9aa611901a4bfbeeafcf84468",
+    "file_count": 1524,
+    "bytes": 45637444,
+    "tests_passed": 580,
+    "tests_skipped": 5,
+    "tests_deselected": 89,
+    "test_wall_seconds": 12.60,
+    "integrity_status_after_tests": "UNCHANGED",
+    "fix": "Fresh independent snapshot; PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 inherited by test subprocesses, alongside PYTHONDONTWRITEBYTECODE=1. Explicit repository conftest plugin still loaded."
+  },
+  "max_bytes": 50000000000,
+  "downloads": 0,
+  "builds": 0,
+  "models_called": 0,
+  "proof_verified": false
+}

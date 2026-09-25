@@ -1,0 +1,47 @@
+{
+  "schema": "jevops-arena-storage-preflight/v1",
+  "allowance_bytes": 50000000000,
+  "available_bytes": 8421285888,
+  "allocated_filesystem_bytes": 35617026048,
+  "remaining_jobs": [
+    {
+      "name": "arklib-v4.30.0",
+      "root_exists": true,
+      "minimum_free_bytes": 3000000000,
+      "status": "EXISTING_NOT_RECHECKED"
+    },
+    {
+      "name": "arklib-v4.29.0",
+      "root_exists": false,
+      "minimum_free_bytes": 3000000000,
+      "status": "PREFLIGHT_PASSES_NOT_PREPARED"
+    },
+    {
+      "name": "arklib-v4.28.0",
+      "root_exists": false,
+      "minimum_free_bytes": 3000000000,
+      "status": "PREFLIGHT_PASSES_NOT_PREPARED"
+    },
+    {
+      "name": "putnam-v4.25.0",
+      "root_exists": true,
+      "minimum_free_bytes": 12000000000,
+      "status": "EXISTING_NOT_RECHECKED"
+    },
+    {
+      "name": "putnam-v4.26.0",
+      "root_exists": false,
+      "minimum_free_bytes": 12000000000,
+      "status": "INSUFFICIENT_PREFLIGHT_HEADROOM"
+    },
+    {
+      "name": "putnam-v4.27.0",
+      "root_exists": false,
+      "minimum_free_bytes": 12000000000,
+      "status": "INSUFFICIENT_PREFLIGHT_HEADROOM"
+    }
+  ],
+  "deleted_paths": [],
+  "proofs_verified": 0,
+  "note": "A passing preflight is not a build or proof result. Retaining all environments; no cache-rotation approval assumed."
+}

@@ -1,0 +1,22 @@
+{
+  "schema": "jevops-refactor-report/v1",
+  "generator": "jevops.refactor_report",
+  "generator_sha256": "892c43b30b01ec17b9ef549de1f7d7cb9add1baaa4e6847c31500ea8b97e38c9",
+  "input_sha256": {
+    "run": "5d25d4a2a5721b49c100422446fff69527e729db7cb9cf32be1a64fcbd6f5c0f",
+    "arena": "d79435141cbbb1e4326e9fe16ee3ebcb428a752d528700d5930f9d22db8b3ca7",
+    "expressions": "c3cf6c054c9502e4b93186eec8ba85b00df1a1bc391af82209b7bad003e07f4d"
+  },
+  "output_sha256": {
+    "checkpoint.json": "fb47d1c0c9ede5e39a1a0a10d548fb683026ac6c95967ac9e189cd65ff49a6c5",
+    "evidence.json": "d2710db4e3b91fec982058e08d4e5804cef4ef3693bff39a5ef47d13ae581cdb",
+    "summary.md": "d3226fbb719eb6cf6116bb0d8cf9ebcd48e5fa2a6590a0d9c390ee9f69e98e91"
+  },
+  "state_sha256": "bb6f5f3583d08f033f478eacbcf5db6441e247bddbfbe44d7aa4905d52257d07",
+  "new_measurements_performed": false,
+  "archived_input_sha256": {
+    "inputs/run.json.gz": "47c289d2b5412b09d567ffa19e70bdc945bdb8d223860a8c04dd04acc8d2c48b",
+    "inputs/arena.json.gz": "6229013648c024cb3ebc2141eb37555bb60be93b3265b71a0061faf133e2c328",
+    "inputs/expressions.json.gz": "bf2cce9b9246e559637ab845c5bafd55ab042877279589be6ffb7262c5e490e5"
+  }
+}

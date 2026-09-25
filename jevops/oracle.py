@@ -152,6 +152,46 @@ def pack_eval(compiled: Mapping[str, Any], *, name: Any, tactics: str) -> dict[s
     }
 
 
+def drive_eval_theorem(
+    name: str,
+    *,
+    current: Mapping[str, Any],
+    tactics: str,
+    compile_fn: Callable[..., Mapping[str, Any]],
+    args: Any,
+    restore: bytes,
+    memory: Optional[dict[str, Any]],
+    load_records_fn: Callable[[], Sequence[Mapping[str, Any]]],
+    tactic_block_fn: Callable[[Mapping[str, Any]], str],
+    clone_dir_fn: Callable[[str], Any],
+    relpath_fn: Callable[..., str],
+    read_bytes_fn: Callable[..., bytes],
+    cap: int,
+    state_root: Any,
+    default_timeout: float = 180.0,
+) -> dict[str, Any]:
+    """Lake a small named theorem, or the current record. Other names fail closed."""
+
+    from jevops.outer import arg_value
+
+    return eval_named_or_current(
+        name,
+        current=current,
+        tactics=tactics,
+        compile_fn=compile_fn,
+        memory=memory,
+        timeout=arg_value(args, "timeout", default_timeout, cast=float),
+        load_records_fn=load_records_fn,
+        tactic_block_fn=tactic_block_fn,
+        clone_dir_fn=clone_dir_fn,
+        relpath_fn=relpath_fn,
+        read_bytes_fn=read_bytes_fn,
+        cap=cap,
+        state_root=state_root,
+        restore=restore,
+    )
+
+
 def eval_named_or_current(
     name: str,
     *,
@@ -216,6 +256,135 @@ def eval_named_or_current(
         compile_fn=_compile,
     )
     return pack_eval(compiled, name=rec.get("name"), tactics=body)
+
+
+def drive_lake_round(
+    *,
+    record: Mapping[str, Any],
+    tactics: str,
+    analysis: Mapping[str, Any],
+    drafts: list[dict[str, Any]],
+    intent: Mapping[str, Any],
+    ranked: Mapping[str, Any],
+    memory: dict[str, Any],
+    args: Any,
+    restore: bytes,
+    round_i: int,
+    compile_one: Callable[..., Mapping[str, Any]],
+    cap: int,
+    state_root: Any,
+    restore_binders_fn: Callable[..., str],
+    hammer_fn: Callable[..., str],
+    success_fn: Callable[..., Any],
+    failure_fn: Callable[..., Any],
+    error_class_fn: Callable[..., str],
+    sidecar_ready_fn: Callable[[], bool],
+    sidecar_build_fn: Callable[[], Any],
+    credit_theorem_fn: Callable[..., Any],
+) -> tuple[Optional[str], list[dict[str, Any]]]:
+    """Lake up to lake_top drafts. ``compile_one`` still owns lake."""
+
+    from jevops.nca import credit_skill
+    from jevops.outer import (
+        arg_value,
+        assign_if,
+        call_if,
+        either,
+        first_int,
+        first_truthy,
+        get_list,
+        get_str,
+        ignore_each,
+        nested_get,
+        pipe,
+        text_or,
+        write_best_body,
+    )
+
+    too_big, lake_budget_n = lake_budget(
+        analysis.get("n_tokens"),
+        cap=cap,
+        top=arg_value(args, "lake_top", 3, cast=int),
+    )
+    timeout = arg_value(args, "timeout", 180.0, cast=float)
+    out_dir = arg_value(args, "out", None)
+    tactics_ref = tactics
+
+    def _compile_kind(_kind: str, script: str) -> Mapping[str, Any]:
+        return compile_one(record, script, state_root=state_root, timeout=timeout, restore=restore)
+
+    def _repair(*, kind: str, tactics: str, compiled: Mapping[str, Any], row: Mapping[str, Any]) -> Optional[str]:
+        del kind
+        errors = get_list(compiled, "errors")
+        return either(
+            row.get("error_class") == "unknown_identifier",
+            lambda: pipe(
+                tactics,
+                lambda body: restore_binders_fn(body, tactics_ref, errors),
+                lambda body: hammer_fn(body, tactics_ref, errors),
+            ),
+            lambda: None,
+        )
+
+    def _on_ok(row: Mapping[str, Any], body: str, draft: Mapping[str, Any], *, better: bool) -> None:
+        success_fn(
+            memory,
+            name=get_str(record, "name"),
+            kind=get_str(row, "kind"),
+            family=get_str(draft, "family"),
+            from_tokens=first_int(analysis.get("n_tokens")),
+            to_tokens=first_int(row.get("tokens"), analysis.get("n_tokens")),
+        )
+        credit_skill(memory, row["kind"], ok=True, tokens=first_int(row.get("tokens")))
+
+        def _sidecar() -> None:
+            call_if(nested_get(memory, "nca", "sidecar_built") and sidecar_ready_fn(), sidecar_build_fn)
+
+        def _credit() -> None:
+            credit_theorem_fn(memory, get_str(record, "name"), theorem_ok=True, tokens=first_int(row.get("tokens")))
+
+        call_if(better, lambda: ignore_each(_sidecar, _credit))
+        assign_if(
+            row,
+            "best_path",
+            better and out_dir is not None,
+            lambda: text_or(write_best_body(out_dir, get_str(record, "name"), first_int(row.get("tokens")), body)),
+        )
+
+    def _on_fail(
+        row: Mapping[str, Any],
+        body: str,
+        draft: Mapping[str, Any],
+        *,
+        compiled: Mapping[str, Any],
+        kind: str,
+    ) -> None:
+        del draft
+        failure_fn(
+            memory,
+            name=get_str(record, "name"),
+            kind=text_or(kind),
+            errors=first_truthy(get_list(row, "errors"), get_list(compiled, "errors"), default=[]),
+            tactics=body,
+        )
+        credit_skill(memory, kind, ok=False)
+
+    return apply_round(
+        memory=memory,
+        name=get_str(record, "name"),
+        drafts=drafts,
+        intent=intent,
+        ranked=ranked,
+        round_i=round_i,
+        budget=lake_budget_n,
+        compile_fn=_compile_kind,
+        repair_fn=_repair,
+        error_class_fn=error_class_fn,
+        on_ok=_on_ok,
+        on_fail=_on_fail,
+        from_tokens=first_int(analysis.get("n_tokens"), default=10**9),
+        too_big=too_big,
+    )
 
 
 def apply_round(

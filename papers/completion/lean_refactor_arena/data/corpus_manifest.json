@@ -1,0 +1,26 @@
+{
+  "schema": "jevops-lean-refactor-arena-corpus/v1",
+  "corpus": {
+    "kind": "warmup",
+    "path": "papers/completion/lean_refactor_arena/data/benchmark_data_warmup.jsonl",
+    "records": 15,
+    "sha256": "6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804",
+    "source_counts": {
+      "arklib": 3,
+      "cslib": 3,
+      "physlib": 3,
+      "putnambench": 3,
+      "strata": 3
+    },
+    "optimization_ready": true
+  },
+  "full_benchmark": {
+    "status": "not_released",
+    "path": null,
+    "records": null,
+    "sha256": null,
+    "announced_release": "2026-11-01",
+    "source": "https://huggingface.co/spaces/delta-lab-ai/lean-refactor-arena",
+    "official": false
+  }
+}

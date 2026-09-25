@@ -1,0 +1,362 @@
+{
+  "schema": "jevops-trained-graph-experiment/v1",
+  "ok": false,
+  "scope": "bounded_control_experiment_not_arena_or_independent_family_holdout",
+  "epochs": 80,
+  "seed": 17,
+  "torch_version": "2.13.0+cu130",
+  "torch_threads": 1,
+  "manifest_sha256": "b67383dfe6b513f7646bb71f9a7ea3ff75ace8c5727a590e14460593d081a945",
+  "checkpoints_sha256": "1aa7628a013b5f8c34ec145630790fed100d86663696d4ad839e00e0122ba58a",
+  "graph_encoder_changed": true,
+  "frozen_encoder_unchanged": true,
+  "gates": {
+    "canary": false,
+    "holdout": false,
+    "train": false,
+    "validation": false
+  },
+  "compile_calls": 16,
+  "neural_parameter_counts": {
+    "frozen_encoder": 7053,
+    "learned_graph": 7053,
+    "node_bag": 4493
+  },
+  "summary": {
+    "canary": {
+      "drop_graph": {
+        "cross_entropy": null,
+        "expected_cosine_loss": null,
+        "loss_sample_count": 0,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "fixed_graph": {
+        "cross_entropy": 0.36083384358544535,
+        "expected_cosine_loss": 0.29682597932134136,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "frozen_encoder": {
+        "cross_entropy": 0.6916842389320386,
+        "expected_cosine_loss": 0.49924332541606575,
+        "loss_sample_count": 2,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "learned_graph": {
+        "cross_entropy": 0.691502293902262,
+        "expected_cosine_loss": 0.4991152709955214,
+        "loss_sample_count": 2,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "lexical": {
+        "cross_entropy": 0.6931618243104987,
+        "expected_cosine_loss": 0.5,
+        "loss_sample_count": 2,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "node_bag": {
+        "cross_entropy": 0.6776875689142494,
+        "expected_cosine_loss": 0.4919851530723657,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "zero_weights": {
+        "cross_entropy": null,
+        "expected_cosine_loss": null,
+        "loss_sample_count": 0,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 0,
+        "verified_shortening_count": 0
+      }
+    },
+    "holdout": {
+      "drop_graph": {
+        "cross_entropy": null,
+        "expected_cosine_loss": null,
+        "loss_sample_count": 0,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "fixed_graph": {
+        "cross_entropy": 0.36083384358544535,
+        "expected_cosine_loss": 0.29682597932134136,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "frozen_encoder": {
+        "cross_entropy": 0.6916842389320386,
+        "expected_cosine_loss": 0.49924332541606575,
+        "loss_sample_count": 2,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "learned_graph": {
+        "cross_entropy": 0.691502293902262,
+        "expected_cosine_loss": 0.4991152709955214,
+        "loss_sample_count": 2,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "lexical": {
+        "cross_entropy": 0.6931618243104987,
+        "expected_cosine_loss": 0.5,
+        "loss_sample_count": 2,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "node_bag": {
+        "cross_entropy": 0.6776875689142494,
+        "expected_cosine_loss": 0.4919851530723657,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "zero_weights": {
+        "cross_entropy": null,
+        "expected_cosine_loss": null,
+        "loss_sample_count": 0,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 0,
+        "verified_shortening_count": 0
+      }
+    },
+    "train": {
+      "drop_graph": {
+        "cross_entropy": null,
+        "expected_cosine_loss": null,
+        "loss_sample_count": 0,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "fixed_graph": {
+        "cross_entropy": 0.36083384358544535,
+        "expected_cosine_loss": 0.29682597932134136,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "frozen_encoder": {
+        "cross_entropy": 0.6916842389320386,
+        "expected_cosine_loss": 0.49924332541606575,
+        "loss_sample_count": 2,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "learned_graph": {
+        "cross_entropy": 0.691502293902262,
+        "expected_cosine_loss": 0.4991152709955214,
+        "loss_sample_count": 2,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "lexical": {
+        "cross_entropy": 0.6931618243104987,
+        "expected_cosine_loss": 0.5,
+        "loss_sample_count": 2,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "node_bag": {
+        "cross_entropy": 0.6776875689142494,
+        "expected_cosine_loss": 0.4919851530723657,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "zero_weights": {
+        "cross_entropy": null,
+        "expected_cosine_loss": null,
+        "loss_sample_count": 0,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 0,
+        "verified_shortening_count": 0
+      }
+    },
+    "validation": {
+      "drop_graph": {
+        "cross_entropy": null,
+        "expected_cosine_loss": null,
+        "loss_sample_count": 0,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "fixed_graph": {
+        "cross_entropy": 0.36083384358544535,
+        "expected_cosine_loss": 0.29682597932134136,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "frozen_encoder": {
+        "cross_entropy": 0.6916842389320386,
+        "expected_cosine_loss": 0.49924332541606575,
+        "loss_sample_count": 2,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "learned_graph": {
+        "cross_entropy": 0.691502293902262,
+        "expected_cosine_loss": 0.4991152709955214,
+        "loss_sample_count": 2,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "lexical": {
+        "cross_entropy": 0.6931618243104987,
+        "expected_cosine_loss": 0.5,
+        "loss_sample_count": 2,
+        "nonregressing_count": 1,
+        "sample_count": 2,
+        "valid_count": 1,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "node_bag": {
+        "cross_entropy": 0.6776875689142494,
+        "expected_cosine_loss": 0.4919851530723657,
+        "loss_sample_count": 2,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 16,
+        "verified_shortening_count": 1
+      },
+      "zero_weights": {
+        "cross_entropy": null,
+        "expected_cosine_loss": null,
+        "loss_sample_count": 0,
+        "nonregressing_count": 2,
+        "sample_count": 2,
+        "valid_count": 2,
+        "verified_saved_tokens": 0,
+        "verified_shortening_count": 0
+      }
+    }
+  },
+  "checkpoint_promoted": false,
+  "official_score": null,
+  "semantic_family_decontamination": false,
+  "holdout_accessed_after_freeze": true,
+  "training_losses": {
+    "before": [
+      {
+        "choice_count": 2,
+        "cross_entropy": 0.6931471805599453,
+        "expected_cosine_loss": 0.5,
+        "expected_utility": 0,
+        "label": 1,
+        "reference_kl": 0,
+        "total": 0.8681471805599452
+      },
+      {
+        "choice_count": 2,
+        "cross_entropy": 0.6931471805599453,
+        "expected_cosine_loss": 0.5,
+        "expected_utility": 0,
+        "label": 0,
+        "reference_kl": 0,
+        "total": 0.8681471805599452
+      }
+    ],
+    "after": [
+      {
+        "choice_count": 2,
+        "cross_entropy": 0.6785300769510548,
+        "expected_cosine_loss": 0.49248522920915916,
+        "expected_utility": 0,
+        "label": 1,
+        "reference_kl": 0,
+        "total": 0.8508999071742606
+      },
+      {
+        "choice_count": 2,
+        "cross_entropy": 0.7044745108534692,
+        "expected_cosine_loss": 0.5057453127818836,
+        "expected_utility": 0,
+        "label": 0,
+        "reference_kl": 0,
+        "total": 0.8814853703271285
+      }
+    ]
+  },
+  "native_run_sha256": "3b359cf9d1b912bef27c239ba9ee7e88113edd36e0e0590865b9968bf5eb3e62"
+}

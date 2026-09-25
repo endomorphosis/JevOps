@@ -1,0 +1,137 @@
+{
+  "schema": "jevops-local-premise-pilot/v1",
+  "plan_id": "5596f1345fcbc098a2b1df3a6d555e8e1e4b56d4d90123e71daf4df79026adad",
+  "status": "COMPLETE",
+  "controls": [
+    {
+      "request_id": "c52a8c18000179f6c75448afe88c5d9b49ac47aee6006eb6adeea5a1ba558a4b",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4227,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"a9783e615179237097fe7df06e6e727ddc5e2c7e29fc1150a6a158d07e30374d\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"f72c35b3f637c8c6571d353742168ab66cc22c00\",\"lean_version\":\"4.29.1\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4227,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4227570,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4227,\"reference_raw_heartbeats\":4227600,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":14005.92}"
+    },
+    {
+      "request_id": "d57890920740644c523acbaa0b7944ba77afd33e018c226e27e02f6b09b922db",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4657,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"ef41ec6fdccf261da1b0d92a5ed61e108eb546e4efda60c13c039541e3f67d20\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"db93fe1608548721853390a10cd40580fe7d22ae\",\"lean_version\":\"4.27.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4657,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4657776,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4657,\"reference_raw_heartbeats\":4657797,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":14970.299}"
+    },
+    {
+      "request_id": "1145fa08271e9b2d055d6755e6e94ce3df820c553b872207273c714d158c058d",
+      "candidate_sha256": "0bd9a59f8ee210f7aa33326b61e40934872abaced72cb270dd62288ee1cb1973",
+      "target": "Core.InitsUpdatesComm",
+      "outcome": "VERIFIED",
+      "type_preserved": true,
+      "exit_code": 0,
+      "axiom_output": "'Core.InitsUpdatesComm' depends on axioms: [Quot.sound, propext, Classical.choice]",
+      "heartbeats": 4689,
+      "reason": "",
+      "observations_json": "{\"branch_order\":\"reference-first\",\"dependency_digest\":\"cc33bc965bc4555e92f155eb4c4fc9a86f559ac57cb1059288b12f18369e1c87\",\"driver_sha256\":\"094bf7438617022467ef4160a8dc418122177969796203a9875c3e867c0c75f5\",\"lean_githash\":\"d8204c9fd894f91bbb2cdfec5912ec8196fd8562\",\"lean_version\":\"4.26.0\",\"measurement\":\"command-elaboration-internal-heartbeats-div-1000/v1\",\"report\":{\"axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"diagnostics\":[],\"heartbeats\":4689,\"outcome\":\"VERIFIED\",\"raw_heartbeats\":4689118,\"reason\":\"\",\"reference_axioms\":[\"Quot.sound\",\"propext\",\"Classical.choice\"],\"reference_heartbeats\":4689,\"reference_raw_heartbeats\":4689131,\"target_absent_before\":true,\"type_preserved\":true},\"wall_ms\":6762.895}"
+    }
+  ],
+  "screen": [],
+  "families": {
+    "fixed": {
+      "drafts": 0,
+      "cap": 1,
+      "verified": 0,
+      "status": "ABSTAINED",
+      "application_attempts": 92,
+      "roundtrip_attempts": 0,
+      "wall_seconds": 97.2719,
+      "truncated": true,
+      "search_steps_reserved": 384,
+      "search_steps_observed": 159,
+      "unknown_search_processes": 0
+    },
+    "subgoal": {
+      "drafts": 0,
+      "cap": 1,
+      "verified": 0,
+      "status": "ABSTAINED",
+      "application_attempts": 114,
+      "roundtrip_attempts": 0,
+      "wall_seconds": 100.8752,
+      "truncated": true,
+      "search_steps_reserved": 384,
+      "search_steps_observed": 201,
+      "unknown_search_processes": 0,
+      "retrievals_reserved": 128,
+      "retrievals_observed": 27
+    },
+    "deeper": {
+      "drafts": 0,
+      "cap": 1,
+      "verified": 0,
+      "status": "ABSTAINED",
+      "application_attempts": 172,
+      "roundtrip_attempts": 0,
+      "wall_seconds": 89.261,
+      "truncated": true,
+      "search_steps_reserved": 384,
+      "search_steps_observed": 304,
+      "unknown_search_processes": 0,
+      "retrievals_reserved": 128,
+      "retrievals_observed": 48
+    }
+  },
+  "all_pin_verified": [],
+  "measurement": null,
+  "evidence_mode": "trusted_local_native",
+  "os_sandbox": false,
+  "training": false,
+  "promoted": false,
+  "official_score": null,
+  "model_calls": 0,
+  "api_cost": null,
+  "electricity_cost": null,
+  "reason": "screened_fixed_candidates_no_promotion",
+  "reserved_processes": 19,
+  "native_processes": 19,
+  "charges": [
+    {
+      "label": "control-v4.29.1",
+      "units": 1
+    },
+    {
+      "label": "control-v4.27.0",
+      "units": 1
+    },
+    {
+      "label": "control-v4.26.0",
+      "units": 1
+    },
+    {
+      "label": "all-pin-inventory",
+      "units": 3
+    },
+    {
+      "label": "project-capture",
+      "units": 1
+    },
+    {
+      "label": "fixed-application-discovery",
+      "units": 4
+    },
+    {
+      "label": "subgoal-application-discovery",
+      "units": 4
+    },
+    {
+      "label": "deeper-application-discovery",
+      "units": 4
+    }
+  ],
+  "wall_seconds": 503.1259
+}

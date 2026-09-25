@@ -1,0 +1,42 @@
+{
+  "schema": "jevops-upstream-adaptation-audit/v1",
+  "root": "/home/barberb/ipfs_datasets_py",
+  "revision": "7f0d38572f92f5fc0cba7a5ddd4bef28523876f3",
+  "reviewed_paths_dirty": [],
+  "file_sha256": {
+    ".gitmodules": "8fd312de9fdd8ee55693025741e23533e0c8953392b74466040793cec34392b1",
+    "LICENSE": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef",
+    "ipfs_datasets_py/logic/hammers/premise_selection.py": "c06d81f3065fb59f9c551aa60aafcecddcf2e9f91d9efc2554eb3b78528afdea",
+    "ipfs_datasets_py/logic/hammers/learned_selector.py": "7e92a319576ce1d05843bbf29a39b4c3d32c343c43f5ce0748f9ec6a3d2750da",
+    "ipfs_datasets_py/logic/hammers/proof_cache.py": "179e29ff9b57fab10c2bbeda41ba1fb8f333b3d4405ea6a704380967b28890bb",
+    "ipfs_datasets_py/logic/hammers/portfolio.py": "d7b4f2e69a3fa35e7843d74016a50e23a661f82586834cae816fa9bb049cd5b2",
+    "ipfs_datasets_py/logic/hammers/reconstruction.py": "9c1766a575390a8ecd3d38bb510f052819a0aaa4bb0c13e5a3621c50d362f613",
+    "ipfs_datasets_py/logic/hammers/receipts.py": "9a38219c6ae93a4de039d4d01ccd75d5bbc698229384e44d9e9e487be8939dce",
+    "ipfs_datasets_py/logic/tactician/planner.py": "8952b5258803d1067075e8f4195ca2b8b25158d9e7f8a3be9fb607773d6c7d56",
+    "ipfs_datasets_py/logic/software_verification/tactician/candidate_synthesis.py": "af5292375a603f5c82f823c996d8ed046094c7d0503926d5d62cc640a1de0eaf",
+    "ipfs_datasets_py/logic/translations/planner.py": "17be0def25295eea7dcf70cee0b319c97b993483fd683e979079b02551dfaa30"
+  },
+  "probe_definitions": [
+    "_json_ready",
+    "canonical_json",
+    "canonicalize_obligation",
+    "content_digest"
+  ],
+  "checks": {
+    "raw_source_normalization_collision": true,
+    "jevops_distinguishes_exact_sources": true,
+    "upstream_non_string_key_collision": true,
+    "upstream_opaque_string_collision": true,
+    "jevops_rejects_non_string_key": true,
+    "jevops_rejects_opaque": true
+  },
+  "raw_source_pair": [
+    "theorem spaces : \"a  b\" = \"a b\" := by rfl",
+    "theorem spaces : \"a b\" = \"a b\" := by rfl"
+  ],
+  "whole_package_imported": false,
+  "solver_calls": 0,
+  "external_runtime_dependency_added": false,
+  "proof_verified": false,
+  "scope": "read-only source review and extracted pure-definition identity probes, not upstream suite or Lean verification"
+}

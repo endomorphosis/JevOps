@@ -1,0 +1,166 @@
+{
+  "schema": "jevops-arena-report-audit/v1",
+  "status": "CONSISTENT",
+  "checks": {
+    "supported_status": true,
+    "supported_schema": true,
+    "protocol_matches_report": true,
+    "plan_identity": true,
+    "implementation_reported_unchanged": true,
+    "supported_evidence_mode": true,
+    "no_promotion_or_training_claim": true,
+    "selected_matches_screen_analysis": true,
+    "screen.design": true,
+    "screen.record": true,
+    "screen.cache_disabled": true,
+    "screen.runner_identity": true,
+    "screen.mode": true,
+    "screen.receipt_claims": true,
+    "screen.sample_ids_unique": true,
+    "screen.cost_analysis": true,
+    "screen.precommitted_design": true,
+    "screen.invocation_accounting": true,
+    "screen.native_accounting": true,
+    "total_accounting": true,
+    "budget": true,
+    "no_unselected_confirmation": true,
+    "no_unconfirmed_recommendation": true
+  },
+  "phases": {
+    "screen": {
+      "scheduled": 16,
+      "observed": 16,
+      "statuses": {
+        "VERIFIED": 16
+      },
+      "reported_native_processes": 16,
+      "rows": {
+        "control": {
+          "label": "control",
+          "source_sha256": "2cc5b82de593a0cbc83f9b386cc95245e97d4b18ac4d8a89294c9d0cb0917345",
+          "tokens": 222,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              2607574,
+              2607572
+            ],
+            [
+              2607585,
+              2607585
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "incumbent": {
+          "label": "incumbent",
+          "source_sha256": "0369a36e7b002fa2c58c694c1db9d44b3be1c3288261b6cd0881aad3ac98c966",
+          "tokens": 169,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              1283749,
+              1283749
+            ],
+            [
+              1283762,
+              1283762
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "composition-0": {
+          "label": "composition-0",
+          "source_sha256": "253384dceaf4bfcf86d6cd9dfd9510af5885e42a5e1b5113f39dc6d80307238b",
+          "tokens": 181,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              1304531,
+              1304532
+            ],
+            [
+              1304544,
+              1304544
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        },
+        "composition-1": {
+          "label": "composition-1",
+          "source_sha256": "497526cf32aae34bdf01748e6cb665d0d97c72c1901cd8c3377afdf6417bdbf2",
+          "tokens": 178,
+          "admissible": true,
+          "reason": "",
+          "raw_heartbeats_by_stratum": [
+            [
+              1307677,
+              1307677
+            ],
+            [
+              1307690,
+              1307690
+            ]
+          ],
+          "axioms_by_version": {
+            "v4.26.0": [
+              "Quot.sound",
+              "propext"
+            ]
+          }
+        }
+      },
+      "strata": [
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "reference-first"
+        },
+        {
+          "lean_tag": "v4.26.0",
+          "git_commit": "451e5f047bafa010d178856db76c00029bfa4d7f",
+          "branch_order": "candidate-first"
+        }
+      ]
+    }
+  },
+  "proof_verified": false,
+  "fresh_native_processes": 0,
+  "promoted": false,
+  "training_enabled": false,
+  "official_score": null,
+  "reported_selector_status": "NO_IMPROVEMENT",
+  "errors": [],
+  "protocol_content_sha256": "18817f9e6b3816fe95dcd1a90bbb0229cf038f410616778670f531631b4a5449",
+  "report_content_sha256": "e14887e10515aee2bdc8f726c7047f6b5712a231162f063aa9bfd69bb8c3ab17",
+  "legacy_policy_defaults_used": false,
+  "problem": "CallElimCorrect.extractedOldExprInVars",
+  "selected": null,
+  "objective": "aggregate-local-v1",
+  "reason": "",
+  "reported_counts": {
+    "requests_reserved": 16,
+    "verifier_invocations": 16,
+    "native_processes": 16
+  },
+  "analysis_code_sha256": "bc1e35df92f820366430909e42a45e996b8e0befd10c9ad7bd80fa9a6b737f66",
+  "analysis_code_matches_recorded": true
+}

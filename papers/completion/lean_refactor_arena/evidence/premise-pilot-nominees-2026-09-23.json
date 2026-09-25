@@ -1,0 +1,6 @@
+[
+  {"name": "CallElimCorrect.List.Subset.app", "origin": "Strata@451e5f047bafa010d178856db76c00029bfa4d7f/prefix", "split": "library"},
+  {"name": "CallElimCorrect.List.Subset.trans", "origin": "Strata@451e5f047bafa010d178856db76c00029bfa4d7f/prefix", "split": "library"},
+  {"name": "List.Subset.refl", "origin": "Lean@v4.26.0/stdlib", "split": "library"},
+  {"name": "List.Subset.empty", "origin": "Strata@451e5f047bafa010d178856db76c00029bfa4d7f/library", "split": "library"}
+]

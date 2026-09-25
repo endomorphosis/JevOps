@@ -1,0 +1,4 @@
+MODE: contrast successful and failed earlier edits.
+Compare complete candidate sources against the same frozen reference. Separate what the successful edit preserved from what the failed edit removed or misapplied. Identify a small reusable transformation rather than copying a historical status label.
+Use rejected drafts as negative examples, not proof premises. If a candidate has mixed outcomes across versions or contexts, treat it as unresolved. Repeated receipts are not votes; a shorter draft with one failure cannot win by accumulating successes elsewhere.
+Propose a different, scope-correct tactic block that keeps the useful simplification and avoids the observed failure. If only one side of the contrast is available, do not invent the missing example.

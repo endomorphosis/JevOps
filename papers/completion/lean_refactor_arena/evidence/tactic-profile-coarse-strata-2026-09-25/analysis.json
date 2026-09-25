@@ -1,0 +1,186 @@
+{
+  "schema": "jevops-profile-historical-consistency/v1",
+  "status": "CONSISTENT",
+  "independent_proof_attestation": false,
+  "fresh_native_processes": 0,
+  "official_score": null,
+  "report_sha256": "60ee02b27d986e8ba80b53885b7bae0d76833641427a15523a42dbecf118d008",
+  "grouping": "exact untruncated simp hint and syntax kind; sum exclusive recorded cost",
+  "prefix_hint": "simp [Imperative.HasVarsPure.getVars, extractOldExprVars, Lambda.LExpr.LExpr.getVars] at *",
+  "controls_raw": {
+    "original": [
+      2607585,
+      2607574,
+      2607585,
+      2607574
+    ],
+    "incumbent": [
+      1283749,
+      1283762,
+      1283751,
+      1283762
+    ]
+  },
+  "profiles": [
+    {
+      "arm": "original",
+      "repetition": 0,
+      "command_raw": 2877327,
+      "events": 140,
+      "nodes_visited": 334,
+      "covered_raw": 2641472,
+      "unattributed_raw": 235855,
+      "prefix_events": 9,
+      "prefix_exclusive_raw": 783808,
+      "prefix_percent_instrumented": 27.240838458750083,
+      "branches_inclusive_raw": {
+        "app": [
+          728702
+        ],
+        "quant": [
+          189685
+        ],
+        "ite": [
+          409004
+        ],
+        "eq": [
+          186124
+        ]
+      }
+    },
+    {
+      "arm": "incumbent",
+      "repetition": 0,
+      "command_raw": 1389929,
+      "events": 70,
+      "nodes_visited": 172,
+      "covered_raw": 1175166,
+      "unattributed_raw": 214763,
+      "prefix_events": 9,
+      "prefix_exclusive_raw": 783808,
+      "prefix_percent_instrumented": 56.39194520007857,
+      "branches_inclusive_raw": {
+        "app": [
+          188866
+        ],
+        "quant": [
+          49140
+        ],
+        "ite": [
+          68598
+        ],
+        "eq": [
+          44958
+        ]
+      }
+    },
+    {
+      "arm": "incumbent",
+      "repetition": 1,
+      "command_raw": 1389929,
+      "events": 70,
+      "nodes_visited": 172,
+      "covered_raw": 1175166,
+      "unattributed_raw": 214763,
+      "prefix_events": 9,
+      "prefix_exclusive_raw": 783808,
+      "prefix_percent_instrumented": 56.39194520007857,
+      "branches_inclusive_raw": {
+        "app": [
+          188866
+        ],
+        "quant": [
+          49140
+        ],
+        "ite": [
+          68598
+        ],
+        "eq": [
+          44958
+        ]
+      }
+    },
+    {
+      "arm": "original",
+      "repetition": 1,
+      "command_raw": 2877329,
+      "events": 140,
+      "nodes_visited": 334,
+      "covered_raw": 2641474,
+      "unattributed_raw": 235855,
+      "prefix_events": 9,
+      "prefix_exclusive_raw": 783808,
+      "prefix_percent_instrumented": 27.24081952394043,
+      "branches_inclusive_raw": {
+        "app": [
+          728704
+        ],
+        "quant": [
+          189685
+        ],
+        "ite": [
+          409004
+        ],
+        "eq": [
+          186124
+        ]
+      }
+    },
+    {
+      "arm": "original",
+      "repetition": 2,
+      "command_raw": 2877327,
+      "events": 140,
+      "nodes_visited": 334,
+      "covered_raw": 2641472,
+      "unattributed_raw": 235855,
+      "prefix_events": 9,
+      "prefix_exclusive_raw": 783808,
+      "prefix_percent_instrumented": 27.240838458750083,
+      "branches_inclusive_raw": {
+        "app": [
+          728702
+        ],
+        "quant": [
+          189685
+        ],
+        "ite": [
+          409004
+        ],
+        "eq": [
+          186124
+        ]
+      }
+    },
+    {
+      "arm": "incumbent",
+      "repetition": 2,
+      "command_raw": 1389929,
+      "events": 70,
+      "nodes_visited": 172,
+      "covered_raw": 1175166,
+      "unattributed_raw": 214763,
+      "prefix_events": 9,
+      "prefix_exclusive_raw": 783808,
+      "prefix_percent_instrumented": 56.39194520007857,
+      "branches_inclusive_raw": {
+        "app": [
+          188866
+        ],
+        "quant": [
+          49140
+        ],
+        "ite": [
+          68598
+        ],
+        "eq": [
+          44958
+        ]
+      }
+    }
+  ],
+  "method_gap_percent": {
+    "original": 10.34477248600345,
+    "incumbent": 8.270496885701029
+  }
+}

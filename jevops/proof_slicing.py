@@ -8,8 +8,88 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 import math
+import hashlib
+import re
 import time
 from typing import Any
+
+
+def arity_repair_variants(source: str, statement: str, diagnostics: list[dict], *,
+                          diagnostics_source_sha256: str, cap: int = 2) -> list[tuple[str, str, tuple[str, ...]]]:
+    """Propose one argument/goal-block repair from a source-bound Lean error.
+
+    Restricted layout heuristic, NOT Lean syntax/dependency analysis or proof
+    admission. Supports a unique parenthesized apply/refine/exact call with a
+    trailing explicit ?_ and one dot-bullet block per explicit hole. A native
+    'Function expected at' error must match the call minus that last argument.
+    Unsupported/ambiguous syntax, other errors, or a stale source abstain.
+    Every draft still needs whole-proof checking in the current pinned context.
+    """
+    if type(cap) is not int or not 0 <= cap <= 8:
+        raise ValueError("bounded integer repair cap required")
+    if cap == 0 or not isinstance(source, str) or len(source.encode()) > 262144:
+        return []
+    if (not isinstance(statement, str) or not statement or not source.startswith(statement)
+            or hashlib.sha256(source.encode()).hexdigest() != diagnostics_source_sha256):
+        return []
+    body = source[len(statement):]
+    if (not re.match(r"\s*:=\s*by\b", body) or len(body) > 32768
+            or any(token in body for token in ('/-', '-/', '--', '"', '`', '«', '»', '\t', '\r'))):
+        return []
+    if not isinstance(diagnostics, list) or len(diagnostics) > 64:
+        return []
+    arities = []
+    for diagnostic in diagnostics:
+        if not isinstance(diagnostic, dict) or not isinstance(diagnostic.get("message"), str):
+            return []
+        message = diagnostic["message"]
+        if (len(message) > 16384 or not isinstance(diagnostic.get("severity"), str)
+                or diagnostic["severity"] not in {"error", "warning", "information"}):
+            return []
+        if diagnostic["severity"] != "error":
+            continue
+        match = re.fullmatch(r"Function expected at\n[ ]+([^\n]+)\nbut this term has type\n.+"
+                             r"\n\nNote: Expected a function because this term is being applied to the argument\n[ ]+\?_", message, re.S)
+        if match:
+            terms = match[1].strip().split()
+            terms = ["?_" if re.fullmatch(r"\?m\.\d+", term) else term for term in terms]
+            if not all(term == "?_" or re.fullmatch(r"[^\W\d][\w']*", term) for term in terms):
+                return []
+            arities.append(terms)
+        elif message.strip() != "No goals to be solved":
+            return []
+    if len(arities) != 1:
+        return []
+    lines = body.splitlines(keepends=True)
+    if len(lines) > 256:
+        return []
+    pattern = re.compile(r"^( *)(?:(?:\.|·) )?(?:apply|refine|exact) \(([^()]+)\)(?:\.[1-9][0-9]*)*\s*$")
+    matches = []
+    for index, line in enumerate(lines):
+        call = pattern.fullmatch(line)
+        if call and call[2].split() == [*arities[0], "?_"]:
+            matches.append((index, call))
+    if len(matches) != 1:
+        return []
+    index, call = matches[0]
+    indent = len(call[1])
+    end = next((j for j in range(index + 1, len(lines))
+                if lines[j].strip() and len(lines[j]) - len(lines[j].lstrip(" ")) <= indent), len(lines))
+    following = [j for j in range(index + 1, end) if lines[j].strip()]
+    if not following:
+        return []
+    child_indent = min(len(lines[j]) - len(lines[j].lstrip(" ")) for j in following)
+    children = [j for j in following if len(lines[j]) - len(lines[j].lstrip(" ")) == child_indent]
+    if (len(children) != call[2].split().count("?_")
+            or any(not re.match(r" *(?:\.|·) \S", lines[j]) for j in children)):
+        return []
+    start = children[-1]
+    args = call[2]
+    shortened = args[:args.rfind("?_")].rstrip()
+    changed = lines[index][:call.start(2)] + shortened + lines[index][call.end(2):]
+    draft = statement + "".join([*lines[:index], changed, *lines[index + 1:start], *lines[end:]]).rstrip("\n")
+    return [("repair_overapplied_hole", draft,
+             ("unverified_diagnostic_repair", f"body-call-line:{index}", f"body-goal-lines:{start}:{end}"))]
 
 
 def deletion_variants(body: str, *, cap: int = 32) -> list[tuple[str, str, tuple[str, ...]]]:
@@ -54,6 +134,53 @@ def deletion_variants(body: str, *, cap: int = 32) -> list[tuple[str, str, tuple
     for i in sorted(positions, key=lambda j: (-(spans[j] - j), j)):
         push(i, spans[i], "delete_layout_block")
     return proposals
+
+
+def deletion_spans(source: str, statement: str) -> tuple[tuple[int, int], ...]:
+    """Bounded existing slicer spans, 1-based inclusive BODY line numbers.
+
+    Deliberately accepts only the canonical newline tactic envelope. These are
+    unverified edit actions, not assertions that context entries are redundant.
+    """
+    from .arena import intake_error
+
+    if type(source) is not str or type(statement) is not str:
+        raise ValueError("source and statement text required")
+    prefix = statement + " := by\n"
+    if (not source.startswith(prefix) or len(source.encode()) > 262144 or
+            intake_error(source, statement)):
+        raise ValueError("supported intact reference envelope required")
+    body = source[len(prefix):]
+    spans = []
+    for _kind, _draft, ops in deletion_variants(body, cap=64):
+        _, start, end = ops[1].split(":")
+        span = (int(start) + 1, int(end))
+        if span not in spans:
+            spans.append(span)
+    return tuple(spans)
+
+
+def apply_deletion_span(source: str, statement: str, start: int, end: int, *,
+                        expected_source_sha256: str) -> str:
+    """Check a source-bound local edit and copy untouched bytes verbatim.
+
+    This authorizes ONLY an edit, never acceptance of the resulting theorem.
+    No generated strings, fresh declarations, whitespace repair or new imports.
+    """
+    from .arena import intake_error, source_hash
+
+    if (type(source) is not str or type(statement) is not str or
+            type(start) is not int or type(end) is not int or
+            source_hash(source) != expected_source_sha256):
+        raise ValueError("integer span and matching source identity required")
+    if (start, end) not in deletion_spans(source, statement):
+        raise ValueError("span is outside the declared deletion vocabulary")
+    prefix = statement + " := by\n"
+    lines = source[len(prefix):].splitlines(keepends=True)
+    draft = prefix + "".join(lines[:start - 1] + lines[end:])
+    if intake_error(draft, statement):
+        raise ValueError("edit broke the proof envelope")
+    return draft
 
 
 def minimize_checked(source: str, compile_fn: Callable[..., Mapping[str, Any]], *,
