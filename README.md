@@ -6,6 +6,28 @@ The Jev kernel is a **gate**, not a proof authority. Optional refactoring and
 autoencoder modules propose Lean candidates; only the consuming Lean/Lake
 verifier can admit them. The generic kernel keeps that verifier injectable.
 
+## Federal-law training roadmap
+
+The [federal-law integration plan](FEDERAL_LAW_TRAINING_PLAN.md) maps existing
+shared targets/reports, sparse checkpoint updates and Arrow-backed feature
+weights into a source-grounded U.S. Code/Constitution workflow. It distinguishes
+measured worker gains from the target-only daemon regression, and sets gates
+for semantic review, complete-package verification, durable DuckDB evidence and
+Hugging Face releases. This is a proposed integration plan, not a claim that the
+Constitution or the complete federal-law corpus has been formalized.
+
+The first [legal source-lock slice](LEGAL_SOURCE_LOCK.md) now preserves helper
+definitions and theorem headers while allowing bounded proof edits. It rejects
+helper substitution and command injection before legal admission calls Lake;
+source hashes are provenance, not proof or independent legal-fidelity evidence.
+
+The [explicit legal adapter](LEGAL_ADAPTER.md) adds opt-in caller-owned sessions,
+documents and verifier/store callbacks to the existing tools, admissions and
+Leanstral loop. It checks a declared source manifest before and after backend
+calls and fails on drift without falling back to legacy globals. Offline tests
+cover isolation and mocked generation; native backend qualification, durable
+toolchain-bound receipts and corpus/training integration remain pending.
+
 ## Layout
 
 | Module | Job |
@@ -20,6 +42,7 @@ verifier can admit them. The generic kernel keeps that verifier injectable.
 | `jevops.memory` | Success/failure/blacklist/research JSON memory, gap_report |
 | `jevops.jev` | Choice/Score/Noul projectors, truncate_middle, FixtureClient |
 | `jevops.kernel` | L0–L3 cache, CID, ARC/LRU, negative TTL, single-flight, context budget |
+| `jevops.legal_adapter` | Explicit single-owner legal backend, declared-file pins and guarded callbacks |
 | `jevops.tape` | Neural tape (window, splice, mask, pop, byte trim) |
 | `jevops.stack` | `ptr://` CALL/RETURN stack |
 | `jevops.jsonld` | JSON-LD graph interface; DuckDB optional |

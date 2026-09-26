@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from .leanstral_score import tautology_theorems
+from .legal_adapter import PinnedLegalAdapter
 from .more_rankers import call_contrastive
 from .nca import credit_skill
 from .statement_lock import legal_documents, load_autoformal, lock_statement, pattern_from_rule, render_lean, statements
@@ -149,8 +150,9 @@ def lake_check(source: str) -> dict[str, Any]:
     return {"lake_ok": ok, "error": "" if ok else errors or "build_failed"}
 
 
-def dispatch(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
-    """Run one allowlisted tool. An unknown name is an error payload, not a call."""
+def dispatch(name: str, arguments: dict[str, Any], *,
+             adapter: PinnedLegalAdapter | None = None) -> dict[str, Any]:
+    """Run one allowlisted tool; an injected adapter never falls back to globals."""
 
     if name not in _NAMES:
         return {"error": "unknown_tool", "name": name}
@@ -169,11 +171,13 @@ def dispatch(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
             }
         return {"source": source[:MAX_SOURCE], "chars": len(source)}
     if name in {"clause_get", "compile_clause", "decompile_rule", "rules_for_frame", "coverage"}:
+        if adapter is not None:
+            return adapter.dispatch(name, arguments)
         return load_autoformal().dispatch(name, arguments)
     source = arguments.get("source")
     if not isinstance(source, str):
         return {"error": "source_required"}
-    return lake_check(source)
+    return lake_check(source) if adapter is None else adapter.check_source(source)
 
 
 def run_neighbor_objective(
@@ -280,8 +284,15 @@ def admit_roundtrip_rule(
     *,
     memory: dict[str, Any] | None = None,
     repository: Any = None,
+    adapter: PinnedLegalAdapter | None = None,
 ) -> dict[str, Any]:
-    """Lake-check one round-trip rule. A changed statement is not stored."""
+    """Lake-check a source-locked rule; changed helpers/headers are not stored.
+
+    The returned source lock is non-authoritative provenance, not a complete
+    toolchain-bound verification receipt or independent legal-fidelity review.
+    ``adapter`` opts into caller-owned dependencies and declared source guards;
+    adapter infrastructure errors propagate instead of becoming proof failures.
+    """
 
     if row.get("status") != "roundtrip_ok":
         return {"lake_ok": False, "error": "not_roundtrip", "stored": False}
@@ -294,13 +305,17 @@ def admit_roundtrip_rule(
         if memory is not None:
             credit_skill(memory, str(row.get("clause_id") or ""), ok=False)
         return {"lake_ok": False, "error": locked["error"], "stored": False}
-    checked = lake_check(str(locked["source"]))
+    checker = lake_check if adapter is None else adapter.check_source
+    checked = checker(str(locked["source"]))
+    provenance = {} if adapter is None else {"source_adapter": adapter.provenance}
     lake_ok = bool(checked.get("lake_ok"))
     if memory is not None:
         credit_skill(memory, str(row.get("clause_id") or ""), ok=lake_ok)
     if not lake_ok:
-        return {"lake_ok": False, "error": checked.get("error") or "", "stored": False}
-    stored = load_autoformal().store_lake_attestation(
+        return {"lake_ok": False, "error": checked.get("error") or "", "stored": False,
+                "source_lock": locked["lock"], **provenance}
+    writer = load_autoformal().store_lake_attestation if adapter is None else adapter.store_attestation
+    stored = writer(
         clause_id=str(row.get("clause_id") or ""),
         rule_cid=str((row.get("rule") or {}).get("rule_cid") or row.get("clause_id") or ""),
         lean=str(locked["source"]),
@@ -313,44 +328,56 @@ def admit_roundtrip_rule(
         "stored": bool(stored.get("indexed")),
         "content_cid": stored.get("content_cid"),
         "repository": stored.get("repository"),
+        "source_lock": locked["lock"],
+        **provenance,
     }
 
 
-def admit_locked(document_id: str, clause_id: str, reply: str) -> dict[str, Any]:
-    """Lake-check a reply only after its statements match the harness."""
+def admit_locked(document_id: str, clause_id: str, reply: str, *,
+                 adapter: PinnedLegalAdapter | None = None) -> dict[str, Any]:
+    """Check locked proof edits using legacy or explicitly owned legal state."""
 
-    expected = _store().obligations(document_id, clause_id)
+    store = _store() if adapter is None else adapter
+    expected = store.obligations(document_id, clause_id)
     source = render_lean(expected.get("pattern"))
     if expected.get("error") or expected.get("disposition") != "pending" or not source:
         return {"ok": False, "error": expected.get("error") or expected.get("disposition") or "not_pending", "lake_ok": False}
     locked = lock_statement(source, reply)
     if not locked["ok"]:
-        _store().mark(document_id, clause_id, "failed", str(locked["error"]))
+        store.mark(document_id, clause_id, "failed", str(locked["error"]))
         return {"ok": False, "error": locked["error"], "lake_ok": False}
-    checked = lake_check(str(locked["source"]))
-    _store().mark(
+    checker = lake_check if adapter is None else adapter.check_source
+    checked = checker(str(locked["source"]))
+    store.mark(
         document_id,
         clause_id,
         "admitted" if checked.get("lake_ok") else "failed",
         str(checked.get("error") or ""),
     )
-    return {"ok": bool(checked.get("lake_ok")), "error": checked.get("error") or "", "lake_ok": bool(checked.get("lake_ok"))}
+    return {"ok": bool(checked.get("lake_ok")), "error": checked.get("error") or "",
+            "lake_ok": bool(checked.get("lake_ok")), "source_lock": locked["lock"],
+            **({} if adapter is None else {"source_adapter": adapter.provenance})}
 
 
-def run_leanstral(legal_text: str, *, rounds: int = 3) -> dict[str, Any]:
+def run_leanstral(legal_text: str, *, rounds: int = 3,
+                  adapter: PinnedLegalAdapter | None = None) -> dict[str, Any]:
     """Give Leanstral lake_check and extract_lean, then keep the last Lean file.
 
     At most `rounds` model calls. A tool result is not an admit; the last
     source is compiled again and that result is `lake_ok`.
+    The optional adapter supplies prompts, tools and verification, not a new
+    model endpoint. Generation here is not source-bound legal admission.
     """
 
     from .leanstral import chat_completion
 
     if not 1 <= rounds <= 4:
         raise ValueError("rounds must be 1..4")
+    prompts = load_autoformal().messages if adapter is None else adapter.messages
+    checker = lake_check if adapter is None else adapter.check_source
     messages = [
         {"role": "system" if item["role"] == "developer" else item["role"], "content": item["content"]}
-        for item in load_autoformal().messages(legal_text)
+        for item in prompts(legal_text)
     ]
     trace: list[dict[str, Any]] = []
     final = ""
@@ -381,7 +408,8 @@ def run_leanstral(legal_text: str, *, rounds: int = 3) -> dict[str, Any]:
         messages.append(assistant)
         if calls:
             for call in calls:
-                result = dispatch(str(call.get("name") or ""), dict(call.get("arguments") or {}))
+                result = dispatch(str(call.get("name") or ""), dict(call.get("arguments") or {}),
+                                  adapter=adapter)
                 messages.append({
                     "role": "tool",
                     "tool_call_id": str(call.get("id") or "call"),
@@ -391,7 +419,7 @@ def run_leanstral(legal_text: str, *, rounds: int = 3) -> dict[str, Any]:
         extracted = extract_lean_file(text)
         if extracted.startswith(("def ", "theorem ", "inductive ")):
             final = extracted
-            checked_now = lake_check(extracted)
+            checked_now = checker(extracted)
             example_only = "a = a" in extracted and "def " not in extracted
             repeated = tautology_theorems(extracted)
             trace[-1]["lake_ok"] = bool(checked_now.get("lake_ok")) and not example_only and not repeated
@@ -417,5 +445,6 @@ def run_leanstral(legal_text: str, *, rounds: int = 3) -> dict[str, Any]:
             "role": "user",
             "content": "tool_calls was empty or the reply was not Lean. Call lake_check with the Lean source.",
         })
-    checked = lake_check(final) if final else {"lake_ok": False, "error": "no_lean_file"}
-    return {"lake_ok": bool(checked.get("lake_ok")), "source": final, "error": checked.get("error"), "trace": trace}
+    checked = checker(final) if final else {"lake_ok": False, "error": "no_lean_file"}
+    return {"lake_ok": bool(checked.get("lake_ok")), "source": final, "error": checked.get("error"), "trace": trace,
+            **({} if adapter is None else {"source_adapter": adapter.provenance})}
