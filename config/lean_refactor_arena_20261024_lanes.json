@@ -11,8 +11,8 @@
     "rescue_execution_enabled": false,
     "allow_provider_calls": false,
     "max_incidents": 64,
-    "max_provider_calls": 0,
-    "max_rescue_executions": 0,
+    "max_provider_calls": 1,
+    "max_rescue_executions": 1,
     "circuit_breaker_failures": 2,
     "deterministic_max_attempts_per_action": 2,
     "deterministic_max_total_attempts": 8,
@@ -27,7 +27,11 @@
       "state_dir": "data/lean_refactor_arena_20261024/lane",
       "state_prefix": "jevops_lean_refactor",
       "log_path": "data/lean_refactor_arena_20261024/lane/supervisor.log",
-      "storage_paths": ["data/lean_refactor_arena_20261024", "implementation_plan/proposals", "jevops"]
+      "storage_paths": [
+        "data/lean_refactor_arena_20261024",
+        "implementation_plan/proposals",
+        "jevops"
+      ]
     }
   ]
 }

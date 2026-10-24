@@ -1,0 +1,23 @@
+{
+  "schema": "jevops.persistent-supervisor-watchdog.v1",
+  "guardian_unit": "jevops-agent-supervisor-watchdog.service",
+  "repair_unit": "jevops-agent-supervisor-repair.service",
+  "supervisor_profile": "config/lean_refactor_arena_20261024_supervisor.json",
+  "lane_manifest": "config/lean_refactor_arena_20261024_lanes.json",
+  "runtime_manifest": "data/lean_refactor_arena_20261024/bundle_lanes.json",
+  "state_root": "data/lean_refactor_arena_20261024/persistent-watchdog",
+  "repair_prompt": "config/lean_refactor_arena_20261024_repair.prompt.txt",
+  "repair_executable": "/usr/bin/codex",
+  "poll_seconds": 30,
+  "heartbeat_seconds": 120,
+  "report_seconds": 600,
+  "quiet_seconds": 900,
+  "startup_grace_seconds": 180,
+  "worker_timeout_seconds": 900,
+  "cooldown_seconds": 300,
+  "max_cooldown_seconds": 3600,
+  "max_repair_attempts": 3,
+  "repair_role": "maintenance agent; never a fallback provider for campaign tasks",
+  "activate_planned_work": false,
+  "reset_campaign_budgets": false
+}
