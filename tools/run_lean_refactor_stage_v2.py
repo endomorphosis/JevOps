@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import stat
 import subprocess
 import sys
 import time
@@ -16,12 +17,29 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import lean_refactor_execution_v2 as c
 
+def local_user_bus(*, runtime_parent=Path('/run/user'), parent_environment=None):
+    """Permit only this UID's private local user-manager socket, never remote env."""
+    parent_environment=os.environ if parent_environment is None else parent_environment
+    runtime=runtime_parent/str(os.getuid());address='unix:path='+str(runtime/'bus')
+    c.require(runtime_parent.resolve()==runtime_parent and not runtime.is_symlink(),
+              'user runtime parent/path must be canonical')
+    info=runtime.lstat();bus=(runtime/'bus').lstat()
+    c.require(stat.S_ISDIR(info.st_mode) and info.st_uid==os.getuid()
+              and stat.S_IMODE(info.st_mode)==0o700 and stat.S_ISSOCK(bus.st_mode)
+              and bus.st_uid==os.getuid(), 'owned private local user bus unavailable')
+    c.require(parent_environment.get('XDG_RUNTIME_DIR',str(runtime))==str(runtime)
+              and parent_environment.get('DBUS_SESSION_BUS_ADDRESS',address)==address,
+              'refuse noncanonical or remote user-bus environment')
+    return {'XDG_RUNTIME_DIR':str(runtime),'DBUS_SESSION_BUS_ADDRESS':address}
+
 def process(root, base, argv, directory, timeout):
     directory.mkdir(parents=True,exist_ok=False)
     command=[base['python_executable'],*argv]
     environment={'PATH':str(Path(base['python_executable']).parent)+':/usr/bin:/bin',
       'HOME':str(Path.home()),'PYTHONPATH':base['accelerator_source']+os.pathsep+str(root),
       'PYTHONDONTWRITEBYTECODE':'1','PYTEST_DISABLE_PLUGIN_AUTOLOAD':'1','IPFS_TEST_PROOF_REUSE_MODE':'off'}
+    if argv and argv[0]=='tools/lean_refactor_runtime_qualification.py' and '--qualify' in argv:
+        environment.update(local_user_bus())
     start=time.monotonic();timed_out=False
     with (directory/'stdout.json').open('xb') as out,(directory/'stderr.log').open('xb') as err:
         child=subprocess.Popen(command,cwd=root,env=environment,stdin=subprocess.DEVNULL,stdout=out,stderr=err)
@@ -73,6 +91,41 @@ def waiting(root, tid, reason, details=None):
     c.save(root/c.RUNTIME/(tid+'.result.json'),output)
     return output
 
+def qualification_identity(path):
+    if not path.exists():return None
+    info=path.lstat()
+    c.require(stat.S_ISREG(info.st_mode) and info.st_uid==os.getuid()
+              and info.st_nlink==1,'qualification must be an owned ordinary file')
+    return (info.st_dev,info.st_ino,info.st_size,info.st_mtime_ns,info.st_ctime_ns,c.sha(path))
+
+def publish_runtime_result(root, output_path, execution, before, started_at):
+    """Only the actual child's freshly published receipt may become stage output."""
+    qualification_path=root/'data/lean_refactor_runtime_20261024/qualification.json'
+    try:
+        c.require(execution['exit_code'] in (0,75),'runtime qualifier failed before an accepted receipt')
+        after=qualification_identity(qualification_path)
+        c.require(after is not None and after!=before,'runtime qualifier did not publish a new receipt')
+        envelope=c.read(root/execution['stdout'])
+        qualification=c.read(qualification_path)
+        c.require(envelope.get('receipt')==str(qualification_path)
+          and envelope.get('sha256')==c.sha(qualification_path)
+          and envelope.get('exit_code')==execution['exit_code'], 'actual child receipt envelope differs')
+        c.require(qualification.get('schema')=='jevops.lean-refactor.runtime-qualification.v1'
+          and type(qualification.get('observed_at')) in (int,float)
+          and started_at<=qualification['observed_at']<=time.time()+1
+          and qualification.get('source_sha256',{}).get('tools/lean_refactor_runtime_qualification.py')
+              ==c.sha(root/'tools/lean_refactor_runtime_qualification.py'), 'runtime qualification is stale or unbound')
+        c.require(qualification_identity(qualification_path)==after,'qualification changed during publication')
+        c.save(output_path,qualification)
+        return execution['exit_code'],None
+    except (OSError,ValueError,KeyError,TypeError) as exc:
+        error=str(exc)
+        c.save(output_path,{'schema':'jevops.lean-refactor.stage-failure.v2','task_id':'JLR-023',
+          'status':'failed','reason':error,'qualifier_exit_code':execution['exit_code'],
+          'stderr':execution['stderr'],'stderr_sha256':execution['stderr_sha256'],
+          'stale_qualification_reused':False,'observed_at':time.time(),**c.AUTH})
+        return execution['exit_code'] if execution['exit_code'] not in (0,75) else 1,error
+
 def run(root, tid):
     loaded=c.load(root);profile,base,tasks,board=loaded
     c.require(not c.held(root),'operator hold')
@@ -97,10 +150,11 @@ def run(root, tid):
                 if not probe['eligible_for_guarded_preload']:
                     waiting(root,tid,'external_gpu_or_host_resource',probe['loading_resource_blockers']);code=75
                 else:
+                    before=qualification_identity(root/'data/lean_refactor_runtime_20261024/qualification.json')
+                    qualification_started=time.time()
                     execution=process(root,base,contract['argv'],directory/'producer',contract['timeout'])
                     executions.append(execution);code=execution['exit_code']
-                    qualification=c.read(root/'data/lean_refactor_runtime_20261024/qualification.json')
-                    c.save(output_path,qualification)
+                    code,reason=publish_runtime_result(root,output_path,execution,before,qualification_started)
             elif tid=='JLR-016':
                 gate=project_probe(root)
                 if gate['concurrent_preparation']:
@@ -114,7 +168,7 @@ def run(root, tid):
                 executions.append(execution);code=execution['exit_code']
                 if code==0:
                     # Preserve the actual native stdout as the result, including every failure/unavailable row.
-                    data=c.read(root/execution['stdout']);c.save(output_path,data)
+                    data=c.stage_result(root/execution['stdout'],tid);c.save(output_path,data)
             c.require(c.binding(root,tid)==binding,'inputs or source changed during production')
         except (OSError,ValueError,KeyError,RuntimeError,subprocess.SubprocessError) as exc:
             reason=str(exc);code=code or 1

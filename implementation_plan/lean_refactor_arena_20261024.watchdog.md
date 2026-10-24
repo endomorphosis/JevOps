@@ -29,6 +29,12 @@ Execution source changes require genuine focused tests followed by `tools/lean_r
 
 To reload dispatcher code from a maintenance worker, queue `systemctl --user start --no-block jevops-agent-supervisor-reload.service` and let the worker exit. This manual oneshot waits for the native repair-presence lock and an idle worker state before restarting only the registered repair daemon. It verifies a replacement process and a fresh report after the restart returns. A maintenance worker must not restart its own parent service or wait synchronously for this oneshot.
 
+Repeated failed retries retain their original escalation clock across subsequent producer and validator invocations. Unrelated board or monitor edits cannot postpone a qualified hard failure indefinitely. Cooling failures are reported as retry waits, and a cached controller policy that differs from the current source requires source review. Neither state clears the maintenance budget or establishes recovery.
+
+The runtime qualifier receives only the validated local user-manager bus under `/run/user/<UID>`. Other experiment subprocesses retain their restricted environment. A failed launch produces a failure artifact containing its actual error evidence; it cannot copy an earlier qualification result. Completed smoke evidence remains historical: later acceptance checks current model custody, live resource guards and the same exact actor instead of expiring that evidence after five minutes or generating another response.
+
+The reviewed `gpu-release-20261024` activation permits one additional ARC-dependent preload through an exclusive phase marker. It preserves the original preload marker and model verification receipts. Repeated launches cannot create another phase or refund that attempt. The server still keeps at least 16 GiB of host memory available, limits its RSS to 48 GiB and GPU usage to 20 GiB per card, and runs in a four-hour unit with no automatic model restart. Cache reclaim is an estimate; actual runtime guards remain authoritative.
+
 Run these commands from the JevOps root:
 
 ```bash

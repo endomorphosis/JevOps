@@ -3,6 +3,7 @@
 from __future__ import annotations
 import argparse
 import json
+import math
 from pathlib import Path
 import sys
 import time
@@ -111,15 +112,29 @@ def runtime(root, data):
     c.require(data.get('schema')=='jevops.lean-refactor.runtime-qualification.v1' and
       data.get('stage023_acceptance_satisfied') is True and data.get('generation_executed') is True,
       'health/model descriptor and actual bounded inference are required')
-    c.require(0<=time.time()-data['observed_at']<300,'stale runtime qualification')
+    observed=data.get('observed_at')
+    c.require(type(observed) in (int,float) and 0<=observed<=time.time() and
+              math.isfinite(observed),'invalid runtime qualification timestamp')
+    # The original bounded response remains immutable historical evidence.
+    # Availability comes from the CURRENT guarded actor, not its receipt age.
+    packet=data.get('native_smoke')
+    c.require(isinstance(packet,dict) and packet.get('max_output_tokens')==16 and
+              isinstance(packet.get('actual_response'),dict),'native inference response missing')
+    smoke=packet['actual_response'];tokens=smoke.get('usage',{}).get('completion_tokens')
+    choices=smoke.get('choices')
+    c.require(smoke.get('model')=='Leanstral' and type(tokens) is int and 0<tokens<=16 and
+              isinstance(choices,list) and choices and
+              isinstance(choices[0],dict) and
+              isinstance(choices[0].get('message',{}).get('content'),str) and
+              choices[0]['message']['content'],'native inference response missing')
+    before=data.get('live',{}).get('owner');after=data.get('live_after_smoke',{}).get('owner')
+    c.require(isinstance(before,dict) and before and before==after,
+              'runtime actor changed during qualification')
     module,_=q.provisioner(root)
     actual=q.artifacts(module)
     c.require(actual==data['artifacts'],'model custody/runtime bytes changed')
     live=q.live_readiness(module,q.unit_properties(),root)
-    c.require(live['owner']==data['live_after_smoke']['owner'],'runtime actor changed')
-    smoke=data['native_smoke']['actual_response']
-    c.require(smoke['model']=='Leanstral' and 0<smoke['usage']['completion_tokens']<=16 and
-       smoke['choices'][0]['message']['content'],'native inference response missing')
+    c.require(live['owner']==after,'runtime actor changed')
     return {'native_inference_smoke':True,'proofs_verified':0,'official_checkpoint_ancestry_attested':False}
 
 def provenance(root, data):
@@ -178,6 +193,85 @@ def provenance(root, data):
     c.require(captures==data['native_capture_count'] and captures>0,'native adapter has no observed spans')
     return {'roundtrip_pin_records':36,'native_captures':captures,'proofs_verified':0,'training_executed':False}
 
+def metric_sample(sample, record, pin, guard):
+    """Check native observations against the current exact project and source."""
+    from jevops.arena import ArenaContext,VerificationRequest,source_hash
+    from jevops import arena_lean
+    from jevops.lean import VersionPin
+    from jevops.proof_trust import STANDARD_AXIOMS
+    raw=sample['context']
+    context=ArenaContext(**{**raw,'versions':tuple(VersionPin(**p) for p in raw['versions']),
+        'dependency_digests':tuple(raw['dependency_digests']),'allowed_axioms':tuple(raw['allowed_axioms'])})
+    c.require(context.reference_source==record['src'] and context.statement==record['statement'] and
+              context.problem==record['name'] and context.versions==(pin,), 'metric source/target/pin changed')
+    request=VerificationRequest(context,record['src'],pin);guard.validate_request(request)
+    receipt=sample['receipt'];obs=json.loads(receipt['observations_json']);report=obs['report']
+    c.require(receipt['request_id']==request.request_id and receipt['candidate_sha256']==source_hash(record['src'])
+              and receipt['target']==record['name'] and receipt['outcome']=='VERIFIED' and
+              receipt['exit_code']==0 and receipt['type_preserved'] is True,'native metric receipt not verified')
+    c.require(obs['measurement']==arena_lean.METHOD and obs['branch_order']==sample['branch_order'] and
+              obs['lean_version']==pin.lean_tag.removeprefix('v') and
+              obs['driver_sha256']==source_hash(arena_lean.DRIVER.read_text()) and
+              obs['dependency_digest']==context.dependency_digests[0], 'metric observation identity changed')
+    c.require(report['type_preserved'] is True and report['target_absent_before'] is True,
+              'metric target/type preservation missing')
+    for field in ('raw_heartbeats','reference_raw_heartbeats','heartbeats','reference_heartbeats'):
+        c.require(type(report[field]) is int and report[field]>=0,'invalid heartbeat units')
+    c.require(report['heartbeats']==report['raw_heartbeats']//1000 and
+              report['reference_heartbeats']==report['reference_raw_heartbeats']//1000 and
+              receipt['heartbeats']==report['heartbeats'], 'raw heartbeat conversion mismatch')
+    c.require(isinstance(report['axioms'],list) and isinstance(report['reference_axioms'],list) and
+              set(report['axioms'])<=set(report['reference_axioms'])<=set(STANDARD_AXIOMS),
+              'metric control axiom growth')
+
+def metric_audit(root, data):
+    from jevops import arena_lean
+    from jevops.lean import VersionPin
+    from jevops.seals import Fingerprinter
+    helper=c.module(root,'lean_refactor_metric_audit.py')
+    records=c.module(root,'lean_refactor_project_readiness.py').records()
+    baseline_path=root/c.RUNTIME/'JLR-017.result.json';prior=c.read(baseline_path)
+    expected=helper.token_rows(root,records)
+    c.require(data['schema']==helper.SCHEMA and data['token_rows']==expected and len(expected)==15,
+              'whole reference tokenizer denominator/source changed')
+    c.require(data['tokenizer_source_sha256']==c.sha(root/helper.UTILS) and
+              data['worker_manifest_sha256']==c.sha(root/helper.SPACE/'VENDOR_MANIFEST.json') and
+              data['baseline_sha256']==c.sha(baseline_path),'metric source/input drift')
+    c.require(c.read(root/helper.SPACE/'VENDOR_MANIFEST.json')['evaluation_worker_included'] is False and
+              data['worker_metric_parity']=='UNCONFIRMED' and data['official_score'] is None and
+              data['worker_blocker']['kind']=='external_worker_interface_unavailable' and
+              data['worker_blocker']['evidence']==helper.SPACE+'VENDOR_MANIFEST.json' and
+              data['worker_blocker']['retry_condition'],'unearned official worker parity')
+    c.require(data['model_calls']==0 and data['training_executed'] is False and
+              data['proof_receipt_cache_enabled'] is False and data['native_processes']==12 and
+              data['max_native_processes']==12 and data['measurement']==arena_lean.METHOD and
+              data['cache_protocol']=='fresh_process_prepared_imports','metric bounds changed')
+    for key in ('resources_before','resources_after'):
+        resource=data[key]
+        c.require(resource['eligible'] is True and resource['host_available_bytes']>=16*1024**3 and
+                  resource['disk_free_bytes']>=512*1024**2,'metric resource guard failed')
+    record,row=helper.select(prior,records);pin=VersionPin(row['lean_tag'],row['git_commit'])
+    c.require(data['target']==record['name'] and data['pin']==pin.to_dict(),'substituted native metric control')
+    ready=c.read(root/c.RUNTIME/'JLR-016.result.json')
+    project=next(p for p in prior['projects'] if (p['repository'],p['lean_tag'],p['git_commit'])==
+                 (record['url'],pin.lean_tag,pin.git_commit))
+    binding=arena_lean.project_binding(record,pin,project,Path(ready['elan_home']))
+    reader=Fingerprinter(strict=True)
+    guards={order:arena_lean.NativeLeanVerifier({pin:binding},max_processes=0,timeout=60,
+              branch_order=order,fingerprinter=reader) for order in set(helper.ORDER_BLOCK)}
+    schedule=[(repeat,slot,order) for repeat in range(3) for slot,order in enumerate(helper.ORDER_BLOCK)]
+    c.require(len(data['samples'])==len(schedule)==12,'three complete ABBA repeats required')
+    c.require(c.read(root/c.RUNTIME/'JLR-018.partial.json')=={'samples':data['samples'],**c.AUTH},
+              'durable samples differ from final observations')
+    for sample,(repeat,slot,order) in zip(data['samples'],schedule):
+        c.require((sample['repetition'],sample['slot'],sample['branch_order'])==(repeat,slot,order) and
+                  sample['cache_label']=='fresh_process_prepared_imports','unbalanced or mixed-cache controls')
+        metric_sample(sample,record,pin,guards[order])
+    return {'reference_token_matches':sum(r['local_tokens']==r['published_tokens'] for r in expected),
+            'upstream_token_matches':sum(r['upstream_tokens']==r['published_tokens'] for r in expected),
+            'reference_count':15,'native_abba_samples':12,'official_worker_parity':False,
+            'official_score':None}
+
 def receipt_binding(root, tid, receipt, loaded):
     actual=receipt['binding']
     if actual==c.binding(root,tid,loaded):return
@@ -219,9 +313,13 @@ def validate(root, tid):
     for execution in executions:
         for field in ('stdout','stderr'):
             c.require(c.sha(root/execution[field])==execution[field+'_sha256'],'actual subprocess log changed')
-    data=c.read(root/c.RUNTIME/(tid+'.result.json'))
-    if tid in ('JLR-017','JLR-026'):c.require(c.read(root/executions[-1]['stdout'])==data,'result differs from raw native stdout')
-    result={'JLR-016':readiness,'JLR-017':baseline,'JLR-023':runtime,'JLR-026':provenance}[tid](root,data)
+    data=c.stage_result(root/c.RUNTIME/(tid+'.result.json'),tid)
+    if tid in ('JLR-017','JLR-018','JLR-019','JLR-020','JLR-026'):
+        c.require(c.stage_result(root/executions[-1]['stdout'],tid)==data,'result differs from raw native stdout')
+    checks={'JLR-016':readiness,'JLR-017':baseline,'JLR-018':metric_audit,'JLR-023':runtime,'JLR-026':provenance,
+            'JLR-019':lambda r,d:c.module(r,'validate_lean_refactor_simp_pilot.py').validate(r,d),
+            'JLR-020':lambda r,d:c.module(r,'validate_lean_refactor_coupled_pilot.py').validate(r,d)}
+    result=checks[tid](root,data)
     return {'valid':True,'task_id':tid,**result,**c.AUTH}
 
 def refresh_wait_probe(root, tid):

@@ -33,9 +33,14 @@ def sha(path):
 def canonical(value):
     return json.dumps(value, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()
 
-def read(path):
-    require(path.stat().st_size < 8*1024**2 and not path.is_symlink(), 'bounded ordinary JSON required')
+def read(path, *, max_bytes=8*1024**2):
+    require(path.stat().st_size < max_bytes and not path.is_symlink(), 'bounded ordinary JSON required')
     return json.loads(path.read_text())
+
+def stage_result(path, tid):
+    # Native DAGs are repeated in the capture and subprocess observation. Keep
+    # metadata at 8 MiB; admit only this registered trace envelope up to 32 MiB.
+    return read(path, max_bytes=32*1024**2 if tid in ('JLR-020','JLR-026') else 8*1024**2)
 
 def save(path, value):
     atomic(path, json.dumps(value, indent=2, sort_keys=True, allow_nan=False)+'\n')
@@ -73,6 +78,15 @@ def definitions():
         'argv':['-m','jevops.arena_lean','--baseline','--projects',RUNTIME+'/JLR-016.result.projects.json',
                 '--max-processes','12','--timeout','60'],
         'outputs':[RUNTIME+'/JLR-017.result.json']},
+      'JLR-018': {'action':'metric_audit','timeout':900,
+        'argv':['tools/lean_refactor_metric_audit.py','--produce'],
+        'outputs':[RUNTIME+'/JLR-018.result.json',RUNTIME+'/JLR-018.partial.json']},
+      'JLR-019': {'action':'simp_support_pilot','timeout':900,
+        'argv':['tools/lean_refactor_simp_pilot.py','--produce'],
+        'outputs':[RUNTIME+'/JLR-019.result.json',RUNTIME+'/JLR-019.partial.json']},
+      'JLR-020': {'action':'coupled_deletion_pilot','timeout':900,
+        'argv':['tools/lean_refactor_coupled_pilot.py','--produce'],
+        'outputs':[RUNTIME+'/JLR-020.result.json',RUNTIME+'/JLR-020.partial.json']},
       'JLR-023': {'action':'runtime_qualification','timeout':600,
         'argv':['tools/lean_refactor_runtime_qualification.py','--qualify','--start-if-needed',
                 '--inference-smoke','--wait-seconds','180'],
@@ -86,6 +100,8 @@ def sources(root):
       'tools/check_lean_refactor_stage_v2.py','tests/test_lean_refactor_execution_v2.py',
       'tools/lean_refactor_project_readiness.py','tools/lean_refactor_runtime_qualification.py',
       'tests/test_lean_refactor_project_readiness.py','tests/test_lean_refactor_runtime_qualification.py',
+      'tests/test_lean_refactor_runtime_lease.py',
+      'tests/test_leanstral_provision_20261024.py',
       'tools/provision_leanstral_20261024.py','tools/leanstral-inference-20261024.json',
       'jevops/arena_prepare.py','jevops/arena_lean.py','jevops/arena.py','jevops/arena_isolation.py',
       'jevops/arena_staging.py','jevops/seals.py','jevops/lean.py','jevops/proof_ca.py',
@@ -93,6 +109,18 @@ def sources(root):
     names += ['tools/lean_refactor_span_provenance.py','tests/test_lean_refactor_span_provenance.py',
               'jevops/arena_local.py','jevops/proof_replay.py','jevops/proof_state.py',
               'jevops/premise_search.py','jevops/lean/ProofState.lean','jevops/lean/ArenaLocal.lean']
+    names += ['tools/lean_refactor_metric_audit.py','tests/test_lean_refactor_metric_audit.py',
+              'papers/completion/lean_refactor_arena/upstream/lean_refactor/utils.py',
+              'papers/completion/lean_refactor_arena/upstream/VENDOR_MANIFEST.json',
+              'papers/completion/lean_refactor_arena/space/VENDOR_MANIFEST.json',
+              'papers/completion/lean_refactor_arena/space/leaderboard.py',
+              'papers/completion/lean_refactor_arena/space/benchmark_data_warmup.jsonl',
+              'papers/completion/lean_refactor_arena/space/benchmark_heartbeats.jsonl']
+    names += ['tools/lean_refactor_simp_pilot.py','tools/validate_lean_refactor_simp_pilot.py',
+              'tests/test_lean_refactor_simp_pilot.py','jevops/solver_feedback.py','jevops/rewrite_policy.py',
+              'papers/completion/lean_refactor_arena/evidence/prefix-reference-strata-2026-09-25/solver-0.json']
+    names += ['tools/lean_refactor_coupled_pilot.py','tools/validate_lean_refactor_coupled_pilot.py',
+              'tests/test_lean_refactor_coupled_pilot.py']
     base=read(root/BASE)
     names += ['tests/test_lean_refactor_continuation.py',
               'tests/test_lean_refactor_baseline_context.py',
@@ -280,7 +308,8 @@ def refresh(root, junit, *, source_only=False):
     for name in ('test_lean_refactor_execution_v2','test_lean_refactor_project_readiness',
                  'test_lean_refactor_runtime_qualification','test_lean_refactor_continuation',
                  'test_lean_refactor_span_provenance', 'test_lean_refactor_baseline_context',
-                 'test_lean_refactor_source_refresh'):
+                 'test_lean_refactor_source_refresh', 'test_lean_refactor_metric_audit',
+                 'test_lean_refactor_simp_pilot','test_lean_refactor_coupled_pilot'):
         require(any(name in case.get('classname','') for case in cases),'focused suite missing: '+name)
     snapshot=sources(root)
     for relative in (PROFILE,old['tests_receipt'],RUNTIME+'/materialization.json',RUNTIME+'/activation.json'):
@@ -301,12 +330,17 @@ def refresh(root, junit, *, source_only=False):
             changed=re.sub(r'- Implementation timeout seconds: .*','- Implementation timeout seconds: '+str(contract['timeout']),changed)
         if '- Execution inputs:' not in changed:
             changed=changed.rstrip()+'\n- Execution inputs: '+PROFILE+'\n\n'
+        if tid=='JLR-020':
+            changed=re.sub(r'- Execution inputs: .*','- Execution inputs: '+PROFILE+', '+
+                RUNTIME+'/JLR-016.result.json, '+RUNTIME+'/JLR-017.result.json',changed)
+        changed=re.sub(r'- Implementation timeout seconds: .*',
+                       '- Implementation timeout seconds: '+str(contract['timeout']),changed)
         outputs=list(contract['outputs'])
         if tid=='JLR-016':outputs.append(RUNTIME+'/project-gate.json')
         if tid=='JLR-023':outputs.append(RUNTIME+'/resource-gate.json')
         changed=re.sub(r'- Outputs: .*','- Outputs: '+', '.join(outputs),changed)
         changed=re.sub(r'- Predicted files: .*','- Predicted files: '+', '.join(outputs),changed)
-        if tid in ('JLR-016','JLR-023') and '- Retry on changed evidence:' not in changed:
+        if tid in ('JLR-016','JLR-020','JLR-023') and '- Retry on changed evidence:' not in changed:
             changed=changed.rstrip()+'\n- Retry on changed evidence: true\n\n'
         text=text.replace(previous,changed,1)
     if not source_only:

@@ -221,6 +221,21 @@ def test_explicit_wait_budget_rejects_unbounded_and_boolean():
         with pytest.raises(RuntimeError, match='Bounded'): m.qualify(wait_seconds=wait)
 
 
+def test_start_never_reuses_the_consumed_fixed_arc_phase(artifact,monkeypatch):
+    snapshot=resources();snapshot['resources']['mem_available_bytes']=32*GIB
+    marker=artifact.ROOT/'arc-aware-preload-attempt-gpu-release-20261024.json'
+    marker.write_text('actual consumed private phase')
+    artifact.arc_preload_target=Mock(return_value=(marker,'gpu-release-20261024','prior-sha'))
+    artifact.check_resources=Mock()
+    monkeypatch.setattr(m,'resource_snapshot',lambda module:snapshot)
+    launch=Mock(side_effect=AssertionError('consumed phase must not start any unit'))
+    monkeypatch.setattr(m.subprocess,'run',launch)
+    with pytest.raises(RuntimeError,match='already consumed'):
+        m.start_owned(artifact,{'actual_header':{'estimated_cpu_tensor_bytes':34*GIB}})
+    launch.assert_not_called()
+    assert marker.read_text()=='actual consumed private phase'
+
+
 @pytest.mark.parametrize('payload', [
     '<testsuites><testsuite/></testsuites>',
     '<testsuites><testsuite><testcase name="x"><skipped/></testcase></testsuite></testsuites>',

@@ -29,6 +29,8 @@ MODEL_NAME = 'Leanstral-1.5-119B-A6B-Q4_K_M.gguf'
 MODEL_SHA = '8d7bdbfa733c3fcde4c9ce527ba3d4aa3a49af77e7767b3ed5ae649e6c92b902'
 MODEL_BYTES = 72159246080
 REVISION = '929d4958b79a5625d189addd7c25be362748aed4'
+ARC_PRELOAD_PHASE = 'gpu-release-20261024'
+PRIOR_ARC_ATTEMPT_SHA = '2076ebd08f788fd6731bd7628cad796e881c25419202c5d2f76f6a9dce10eb7a'
 MODEL_URL = f'https://huggingface.co/GZGavinZhao/Leanstral-1.5-119B-A6B-GGUF/resolve/{REVISION}/{MODEL_NAME}'
 RUNTIME = ROOT/'runtime-b11850/llama-b11850'
 CUDA_LIB = ROOT/'runtime-b11850/cudart-llama-b11850-bin-ubuntu-cuda-12.8-x64'
@@ -203,6 +205,32 @@ def direct_io_probe(model):
     return {'requested_direct_io':True,'actual_O_DIRECT_read_bytes':4096,'header_magic':'GGUF'}
 
 
+def arc_preload_target():
+    """One reviewed GPU-release activation, never a fresh phase per retry."""
+    original=ROOT/'arc-aware-preload-attempt.json'
+    if not original.exists() and not original.is_symlink():
+        return original,'initial-preload',None
+    before=identity(original)
+    require(digest(original)==PRIOR_ARC_ATTEMPT_SHA and identity(original)==before,
+            'Prior ARC attempt custody differs; explicit review required')
+    return ROOT/('arc-aware-preload-attempt-'+ARC_PRELOAD_PHASE+'.json'),ARC_PRELOAD_PHASE,PRIOR_ARC_ATTEMPT_SHA
+
+
+def reserve_arc_preload(assessment, observation, dio):
+    marker,phase,prior=arc_preload_target()
+    descriptor=os.open(marker,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600)
+    with os.fdopen(descriptor,'w') as stream:
+        json.dump({'authorized_attempt':1,'preload_phase':phase,'actor_pid':os.getpid(),'observed_at':time.time(),
+                   'authorization_kind':'fixed-reviewed-phase' if prior else 'original-initial-attempt',
+                   'prior_attempt_sha256':prior,'provisioner_source_sha256':digest(Path(__file__)),
+                   'capacity_assessment':assessment,'raw_resources':observation,'direct_io':dio,**FALSE},stream,indent=2)
+        stream.flush();os.fsync(stream.fileno())
+    directory=os.open(ROOT,os.O_RDONLY|os.O_DIRECTORY)
+    try:os.fsync(directory)
+    finally:os.close(directory)
+    return marker
+
+
 def serve():
     verified=json.loads((ROOT/'weights-verified.json').read_text());model=ROOT/MODEL_NAME
     require(verified['sha256']==MODEL_SHA and identity(model)==verified['identity'],'Verify full model once before serving; changed files refuse')
@@ -222,13 +250,9 @@ def serve():
         r=resources();assessment=check_resources(r,loading=True,cpu_weight_bytes=verified['actual_header']['estimated_cpu_tensor_bytes'])
         dio=direct_io_probe(model)
         if assessment['arc_credit_bytes']:
-            marker=ROOT/'arc-aware-preload-attempt.json'
-            # Exactly one explicitly authorized ARC-dependent attempt. Failure
-            # is retained; there is no automatic load/restart loop.
-            with marker.open('x') as stream:
-                json.dump({'authorized_attempt':1,'actor_pid':os.getpid(),'observed_at':time.time(),
-                           'capacity_assessment':assessment,'raw_resources':r,'direct_io':dio,**FALSE},stream,indent=2)
-                stream.flush();os.fsync(stream.fileno())
+            # Preserve the initial attempt. The explicitly reviewed fixed
+            # GPU-release phase has its own single-use budget across retries.
+            reserve_arc_preload(assessment,r,dio)
         with socket.socket() as probe:probe.bind(('127.0.0.1',PORT))
         env={k:v for k,v in os.environ.items() if not k.startswith('LLAMA_ARG_') and k!='LD_PRELOAD'}
         env['LD_LIBRARY_PATH']=str(CUDA_LIB)+':'+str(RUNTIME)

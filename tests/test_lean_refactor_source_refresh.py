@@ -16,7 +16,8 @@ import lean_refactor_execution_v2 as c
 SUITES=('test_lean_refactor_execution_v2','test_lean_refactor_project_readiness',
         'test_lean_refactor_runtime_qualification','test_lean_refactor_continuation',
         'test_lean_refactor_span_provenance','test_lean_refactor_baseline_context',
-        'test_lean_refactor_source_refresh')
+        'test_lean_refactor_source_refresh','test_lean_refactor_metric_audit','test_lean_refactor_simp_pilot',
+        'test_lean_refactor_coupled_pilot')
 
 
 def junit(path, *, count=35, fault=None, omit=None):

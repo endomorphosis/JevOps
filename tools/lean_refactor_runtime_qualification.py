@@ -30,7 +30,7 @@ SELF = 'tools/lean_refactor_runtime_qualification.py'
 UNIT = 'jevops-leanstral-20261024.service'
 PROVISIONER = 'tools/provision_leanstral_20261024.py'
 DESCRIPTOR = 'tools/leanstral-inference-20261024.json'
-PINS = {PROVISIONER: '6784c88d332c8dcd4aa213fabc620261c7d624f93800031ac8bfaf6e4ffc95fe',
+PINS = {PROVISIONER: 'c0966f980c93c541658984a077b692e9aaf50328f93520708647b11ed7c316bd',
         DESCRIPTOR: '304700c24a8f4dec1948734c8022b8d8a438230d1c8435e1d5db0c67a3fe3f5e'}
 WEIGHTS_RECEIPT_SHA = 'ee7e6983528a112a539ecddcd9f7cea50124b9067fda3a2786ff85d91058f750'
 RUNTIME_RECEIPT_SHA = 'd89ff826c7910b4f8a052129d46c17017f94416f6cece6ba14331b7fcab09c81'
@@ -260,10 +260,12 @@ def start_owned(module, artifact, root=ROOT):
     require(not resource_blockers(snapshot), 'Current resources are owned/unavailable; refuse launch')
     module.check_resources(snapshot['resources'], loading=True,
                            cpu_weight_bytes=artifact['actual_header']['estimated_cpu_tensor_bytes'])
-    # The original one-shot ARC exception is not silently reset by qualification.
+    # No marker is erased or invented per retry. The provisioner owns the
+    # actual exclusive reservation of its reviewed fixed preload phase.
     if snapshot['resources']['mem_available_bytes'] < 48 * 1024**3:
-        require(not (module.ROOT / 'arc-aware-preload-attempt.json').exists(),
-                'Prior one-shot ARC preload attempt already consumed; no automatic repeat')
+        marker,_,_=module.arc_preload_target()
+        require(not marker.exists() and not marker.is_symlink(),
+                'Reviewed ARC preload phase already consumed; no automatic repeat')
     args = ['systemd-run', '--user', '--unit=' + UNIT.removesuffix('.service'), '--collect',
             '--property=RuntimeMaxSec=14400', '--property=MemoryHigh=48G', '--property=MemoryMax=64G',
             '--property=MemorySwapMax=0', '--property=CPUQuota=800%', '--property=TasksMax=128',

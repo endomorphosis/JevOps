@@ -520,7 +520,8 @@ Measured fields: verified token count, raw heartbeats by exact pin, compatibilit
 
 ## JLR-017 Recheck all reference proofs and retained incumbents
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T18:39:31Z
 - Priority: P2
 - Track: research
 - Depends on: JLR-016
@@ -551,21 +552,22 @@ Measured fields: verified token count, raw heartbeats by exact pin, compatibilit
 
 ## JLR-018 Establish tokenizer and heartbeat worker parity
 
-- Status: planned
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T19:29:32Z
 - Priority: P2
 - Track: research
 - Depends on: JLR-006, JLR-017
 - Goal id: JLR-G002
-- Outputs: data/lean_refactor_campaign_20261024/JLR-018.result.json
-- Deterministic command: python3 tools/run_lean_refactor_campaign.py --task-id JLR-018
-- Validation: python3 tools/check_lean_refactor_plan.py --validate-task JLR-018
+- Outputs: data/lean_refactor_arena_20261024/execution-v2/JLR-018.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-018.partial.json
+- Deterministic command: python3 tools/run_lean_refactor_stage_v2.py --task-id JLR-018
+- Validation: python3 tools/check_lean_refactor_stage_v2.py --validate-task JLR-018
 - Board namespace: jevops-lean-refactor-20261024
 - Bundle: jevops/lean-refactor/JLR-G002
 - Parallel lane: jlr-planning
 - Resource class: cpu-lean
 - Provider role: deterministic
 - Implementation timeout seconds: 900
-- Predicted files: data/lean_refactor_campaign_20261024/JLR-018.result.json
+- Predicted files: data/lean_refactor_arena_20261024/execution-v2/JLR-018.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-018.partial.json
 - Conflict policy: Own only declared outputs; do not change trusted validators, task history, credentials or unrelated jobs.
 - Acceptance: Report parity proven only for available worker interfaces; distinguish local tokenizer, raw heartbeats and official metrics.
 
@@ -577,24 +579,26 @@ Budget/stop rule: Balanced ABBA ordering; matched cold/warm cache labels; at lea
 Hypothesis: A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Establish tokenizer and heartbeat worker parity.
 
 Measured fields: verified token count, raw heartbeats by exact pin, compatibility across required pins, verified candidate rate, model calls and token usage, wall time and peak memory.
+- Execution inputs: config/lean_refactor_arena_20261024_execution_v2.json
+
 
 ## JLR-019 Implement profile-guided simplifier support minimization
 
-- Status: planned
+- Status: pending
 - Priority: P2
 - Track: research
 - Depends on: JLR-011, JLR-017
 - Goal id: JLR-G004
-- Outputs: data/lean_refactor_campaign_20261024/JLR-019.result.json
-- Deterministic command: python3 tools/run_lean_refactor_campaign.py --task-id JLR-019
-- Validation: python3 tools/check_lean_refactor_plan.py --validate-task JLR-019
+- Outputs: data/lean_refactor_arena_20261024/execution-v2/JLR-019.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-019.partial.json
+- Deterministic command: python3 tools/run_lean_refactor_stage_v2.py --task-id JLR-019
+- Validation: python3 tools/check_lean_refactor_stage_v2.py --validate-task JLR-019
 - Board namespace: jevops-lean-refactor-20261024
 - Bundle: jevops/lean-refactor/JLR-G004
 - Parallel lane: jlr-planning
 - Resource class: cpu-lean
 - Provider role: deterministic
 - Implementation timeout seconds: 900
-- Predicted files: data/lean_refactor_campaign_20261024/JLR-019.result.json
+- Predicted files: data/lean_refactor_arena_20261024/execution-v2/JLR-019.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-019.partial.json
 - Conflict policy: Own only declared outputs; do not change trusted validators, task history, credentials or unrelated jobs.
 - Acceptance: Actual shorter all-pin-valid body beats freshly rechecked incumbent; no axiom growth or unpaid helper declarations.
 
@@ -606,24 +610,26 @@ Budget/stop rule: Matched deterministic controls, capped12 candidates and24 veri
 Hypothesis: A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Implement profile-guided simplifier support minimization.
 
 Measured fields: verified token count, raw heartbeats by exact pin, compatibility across required pins, verified candidate rate, model calls and token usage, wall time and peak memory.
+- Execution inputs: config/lean_refactor_arena_20261024_execution_v2.json
+
 
 ## JLR-020 Implement coupled deletion and induction-context repair
 
-- Status: planned
+- Status: pending
 - Priority: P2
 - Track: research
 - Depends on: JLR-011, JLR-017
 - Goal id: JLR-G004
-- Outputs: data/lean_refactor_campaign_20261024/JLR-020.result.json
-- Deterministic command: python3 tools/run_lean_refactor_campaign.py --task-id JLR-020
-- Validation: python3 tools/check_lean_refactor_plan.py --validate-task JLR-020
+- Outputs: data/lean_refactor_arena_20261024/execution-v2/JLR-020.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-020.partial.json
+- Deterministic command: python3 tools/run_lean_refactor_stage_v2.py --task-id JLR-020
+- Validation: python3 tools/check_lean_refactor_stage_v2.py --validate-task JLR-020
 - Board namespace: jevops-lean-refactor-20261024
 - Bundle: jevops/lean-refactor/JLR-G004
 - Parallel lane: jlr-planning
 - Resource class: cpu-lean
 - Provider role: deterministic
 - Implementation timeout seconds: 900
-- Predicted files: data/lean_refactor_campaign_20261024/JLR-020.result.json
+- Predicted files: data/lean_refactor_arena_20261024/execution-v2/JLR-020.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-020.partial.json
 - Conflict policy: Own only declared outputs; do not change trusted validators, task history, credentials or unrelated jobs.
 - Acceptance: Whole theorem survives all pins and exact target; count all coupled edits and final proof source.
 
@@ -635,6 +641,9 @@ Budget/stop rule: Compare isolated deletion versus coupled repair under identica
 Hypothesis: A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Implement coupled deletion and induction-context repair.
 
 Measured fields: verified token count, raw heartbeats by exact pin, compatibility across required pins, verified candidate rate, model calls and token usage, wall time and peak memory.
+- Execution inputs: config/lean_refactor_arena_20261024_execution_v2.json, data/lean_refactor_arena_20261024/execution-v2/JLR-016.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-017.result.json
+- Retry on changed evidence: true
+
 
 ## JLR-021 Implement search-then-extract explicit proof terms
 
@@ -697,7 +706,7 @@ Measured fields: verified token count, raw heartbeats by exact pin, compatibilit
 ## JLR-023 Qualify downloaded Leanstral weights, runtime and resource ownership
 
 - Status: pending
-- Priority: P2
+- Priority: P1
 - Track: research
 - Depends on: JLR-013, JLR-015
 - Goal id: JLR-G005

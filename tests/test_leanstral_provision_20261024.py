@@ -1,5 +1,7 @@
 """Offline guards; no model download, inference, CUDA allocation or service."""
 import importlib.util
+import hashlib
+import json
 from pathlib import Path
 
 import pytest
@@ -81,3 +83,59 @@ def test_arc_never_weakens_actual_loading_or_running_reserve():
     r['zfs_arc']={'size':90*m.GIB,'c_min':4*m.GIB,'data_size':76*m.GIB,'mru_evictable_data':48*m.GIB,'mfu_evictable_data':24*m.GIB}
     for loading in (True,False):
         with pytest.raises(RuntimeError,match='reserve'):m.check_resources(r,loading=loading,cpu_weight_bytes=34*m.GIB)
+
+
+def old_arc_fixture(tmp_path,monkeypatch):
+    monkeypatch.setattr(m,'ROOT',tmp_path)
+    original=tmp_path/'arc-aware-preload-attempt.json'
+    original.write_text('{"authorized_attempt":1,"actual_prior_attempt":"private fixture"}\n')
+    monkeypatch.setattr(m,'PRIOR_ARC_ATTEMPT_SHA',hashlib.sha256(original.read_bytes()).hexdigest())
+    return original
+
+
+def test_explicit_fixed_phase_preserves_old_marker_and_reserves_once(tmp_path,monkeypatch):
+    original=old_arc_fixture(tmp_path,monkeypatch)
+    before=m.identity(original);raw=original.read_bytes()
+    marker,phase,prior=m.arc_preload_target()
+    assert phase=='gpu-release-20261024' and marker.name=='arc-aware-preload-attempt-gpu-release-20261024.json'
+    result=m.reserve_arc_preload({'arc_credit_bytes':34*m.GIB},{'fixture_resources':True},{'header_magic':'GGUF'})
+    value=json.loads(result.read_text())
+    assert value['preload_phase']==phase and value['authorized_attempt']==1
+    assert value['prior_attempt_sha256']==prior and value['authorization_kind']=='fixed-reviewed-phase'
+    assert value['provisioner_source_sha256']==m.digest(Path(m.__file__))
+    assert result.stat().st_mode&0o777==0o600
+    assert m.identity(original)==before and original.read_bytes()==raw
+    new_bytes=result.read_bytes()
+    with pytest.raises(FileExistsError):m.reserve_arc_preload({}, {}, {})
+    assert result.read_bytes()==new_bytes and original.read_bytes()==raw
+
+
+def test_consumed_phase_survives_reload_and_cannot_be_renamed_by_environment(tmp_path,monkeypatch):
+    original=old_arc_fixture(tmp_path,monkeypatch)
+    marker=m.reserve_arc_preload({}, {}, {})
+    monkeypatch.setenv('JEVOPS_LEANSTRAL_PRELOAD_PHASE','invented-new-attempt')
+    spec2=importlib.util.spec_from_file_location('fresh_provisioner_phase_guard',PATH)
+    fresh=importlib.util.module_from_spec(spec2);spec2.loader.exec_module(fresh)
+    fresh.ROOT=tmp_path;fresh.PRIOR_ARC_ATTEMPT_SHA=hashlib.sha256(original.read_bytes()).hexdigest()
+    assert fresh.arc_preload_target()[0]==marker
+    with pytest.raises(FileExistsError):fresh.reserve_arc_preload({}, {}, {})
+    assert not (tmp_path/'arc-aware-preload-attempt-invented-new-attempt.json').exists()
+
+
+def test_unreviewed_or_symlinked_old_attempt_never_authorizes_new_phase(tmp_path,monkeypatch):
+    original=old_arc_fixture(tmp_path,monkeypatch)
+    original.write_text('{"changed":"unreviewed attempt"}\n')
+    with pytest.raises(RuntimeError,match='custody'):m.arc_preload_target()
+    original.unlink();other=tmp_path/'foreign';other.write_text('unchanged foreign bytes')
+    original.symlink_to(other)
+    with pytest.raises(RuntimeError,match='ordinary'):m.arc_preload_target()
+    assert not (tmp_path/'arc-aware-preload-attempt-gpu-release-20261024.json').exists()
+    assert other.read_text()=='unchanged foreign bytes'
+
+
+def test_fresh_store_retains_single_original_initial_attempt(tmp_path,monkeypatch):
+    monkeypatch.setattr(m,'ROOT',tmp_path)
+    marker,phase,prior=m.arc_preload_target()
+    assert marker.name=='arc-aware-preload-attempt.json' and phase=='initial-preload' and prior is None
+    m.reserve_arc_preload({}, {}, {})
+    with pytest.raises(RuntimeError,match='custody'):m.arc_preload_target()
