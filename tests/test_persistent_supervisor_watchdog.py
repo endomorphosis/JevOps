@@ -36,6 +36,8 @@ class PersistentWatchdogTests(unittest.TestCase):
         self.write_profiles()
         (self.root / self.cfg['repair_prompt']).write_text(
             (ROOT / self.cfg['repair_prompt']).read_text())
+        (self.root / 'tools').mkdir()
+        (self.root / 'tools/reload_supervisor_when_idle.py').write_text('# Private nonexecuting path fixture\n')
         self.manifest = self.root / self.cfg['runtime_manifest']
         self.manifest.parent.mkdir(parents=True)
         self.proc = self.base / 'private-proc'
@@ -101,7 +103,8 @@ class PersistentWatchdogTests(unittest.TestCase):
 
     def test_units_persist_but_preserve_native_child_lifecycle_and_limits(self):
         _, _, units = watcher.render(self.root)
-        for content in units.values():
+        for name in (self.cfg['guardian_unit'], self.cfg['repair_unit']):
+            content = units[name]
             for literal in ('Restart=always\n', 'StartLimitIntervalSec=0\n', 'KillMode=process\n',
                             'WantedBy=default.target\n', 'StandardOutput=journal\n',
                             'CPUAccounting=yes\n', 'MemoryAccounting=yes\n',
@@ -120,6 +123,18 @@ class PersistentWatchdogTests(unittest.TestCase):
         self.assertIn('"--worker-argv-json"', repair)
         self.assertIn('"--python"', units[self.cfg['guardian_unit']])
         self.assertEqual(self.lanes['lanes'][0]['max_resume_seconds'], 14400)
+
+    def test_third_reload_unit_is_bounded_manual_oneshot_without_install_target(self):
+        units = watcher.render(self.root)[2]
+        self.assertEqual(set(units), {self.cfg['guardian_unit'], self.cfg['repair_unit'], watcher.RELOAD_UNIT})
+        text = units[watcher.RELOAD_UNIT]
+        for literal in ('Type=oneshot\n', 'Restart=no\n', 'SuccessExitStatus=75\n',
+                        'TimeoutStartSec=1810s\n', 'KillMode=control-group\n', 'MemoryMax=512M\n',
+                        'TasksMax=32\n', '"--timeout" "1800"', 'reload_supervisor_when_idle.py'):
+            self.assertIn(literal, text)
+        self.assertNotIn('[Install]', text)
+        self.assertNotIn('WantedBy=', text)
+        self.assertNotIn('Requires=', text)
 
     def test_systemd_dollars_are_escaped_only_in_execstart(self):
         value = 'space % literal$ROOT "quote" \\ path'
@@ -304,7 +319,71 @@ class PersistentWatchdogTests(unittest.TestCase):
         self.assertIs(first['planned_work_activated'], False)
         self.assertEqual(second['provider_calls'], 0)
         self.assertTrue(any(a[:3] == ['systemctl', '--user', 'enable'] for a in calls))
+        for argv in calls:
+            if argv[:3] in (['systemctl', '--user', 'enable'], ['systemctl', '--user', 'start']):
+                self.assertEqual(argv[3:], [self.cfg['guardian_unit'], self.cfg['repair_unit']])
+            if argv[:3] == ['systemd-analyze', '--user', 'verify']:
+                self.assertEqual({Path(p).name for p in argv[3:]}, set(before))
+        self.assertEqual(first['manual_units_not_enabled_or_started'], [watcher.RELOAD_UNIT])
         self.assertFalse((self.root / self.cfg['state_root'] / 'unit-backups').exists())
+
+    def test_reviewed_static_reload_adoption_is_exact_scoped_backed_up_and_manual(self):
+        legacy = '# Explicit previously reviewed operator reload unit\n[Service]\nType=oneshot\n'
+        digest = __import__('hashlib').sha256(legacy.encode()).hexdigest()
+        target = self.home / '.config/systemd/user' / watcher.RELOAD_UNIT
+        target.parent.mkdir(parents=True); target.write_text(legacy)
+        calls = []
+        def fake_command(argv, **kwargs):
+            calls.append(argv); return SimpleNamespace(returncode=0, stdout='', stderr='')
+        with patch.object(watcher.Path, 'home', return_value=self.home), \
+                patch.object(watcher, 'LEGACY_RELOAD_UNIT_SHA256', digest), \
+                patch.object(watcher, 'command', side_effect=fake_command):
+            report = watcher.install(self.root)
+        self.assertTrue(target.read_text().startswith('# Managed by JevOps tools/manage_supervisor_watchdog.py'))
+        backup = self.root / self.cfg['state_root'] / 'unit-backups' / (watcher.RELOAD_UNIT + '.' + digest)
+        self.assertEqual(backup.read_text(), legacy)
+        self.assertEqual(report['manual_units_not_enabled_or_started'], [watcher.RELOAD_UNIT])
+        for argv in calls:
+            if argv[:3] in (['systemctl', '--user', 'enable'], ['systemctl', '--user', 'start']):
+                self.assertNotIn(watcher.RELOAD_UNIT, argv)
+
+    def test_other_operator_reload_bytes_are_not_adopted(self):
+        target = self.home / '.config/systemd/user' / watcher.RELOAD_UNIT
+        target.parent.mkdir(parents=True); target.write_text('# Unreviewed operator unit\n')
+        with patch.object(watcher.Path, 'home', return_value=self.home), \
+                patch.object(watcher, 'command', return_value=SimpleNamespace(returncode=0, stdout='', stderr='')) as call:
+            with self.assertRaisesRegex(ValueError, 'unmanaged'):
+                watcher.install(self.root)
+        self.assertFalse(any(c.args[0][:3] == ['systemctl', '--user', 'start'] for c in call.call_args_list))
+        self.assertEqual(target.read_text(), '# Unreviewed operator unit\n')
+
+    def test_static_reload_adoption_pins_raw_bytes_without_newline_normalization(self):
+        legacy = '# Reviewed operator reload\n[Service]\nType=oneshot\n'
+        digest = __import__('hashlib').sha256(legacy.encode()).hexdigest()
+        target = self.home / '.config/systemd/user' / watcher.RELOAD_UNIT
+        target.parent.mkdir(parents=True); target.write_bytes(legacy.replace('\n', '\r\n').encode())
+        original = target.read_bytes()
+        with patch.object(watcher.Path, 'home', return_value=self.home), \
+                patch.object(watcher, 'LEGACY_RELOAD_UNIT_SHA256', digest), \
+                patch.object(watcher, 'command', return_value=SimpleNamespace(returncode=0, stdout='', stderr='')):
+            with self.assertRaisesRegex(ValueError, 'unmanaged'):
+                watcher.install(self.root)
+        self.assertEqual(target.read_bytes(), original)
+
+    def test_execution_v2_profile_preflight_is_preserved_and_unknown_profile_refused(self):
+        self.lanes['execution_profile'] = 'config/lean_refactor_arena_20261024_execution_v2.json'
+        self.write_profiles()
+        with patch.object(watcher.Path, 'home', return_value=self.home), \
+                patch.object(watcher, 'command', return_value=SimpleNamespace(returncode=0, stdout='', stderr='')) as call:
+            watcher.install(self.root)
+        matches = [c for c in call.call_args_list if str(self.root / 'tools/lean_refactor_execution_v2.py') in c.args[0]]
+        self.assertEqual(len(matches), 1)
+        self.assertEqual(matches[0].kwargs['timeout'], 90)
+        self.lanes['execution_profile'] = 'config/unreviewed_execution.json'; self.write_profiles()
+        with patch.object(watcher, 'command', return_value=SimpleNamespace(returncode=0, stdout='', stderr='')) as call:
+            with self.assertRaisesRegex(ValueError, 'Unknown research execution profile'):
+                watcher.install(self.root)
+        self.assertFalse(any(c.args[0][:2] == ['systemctl', '--user'] for c in call.call_args_list))
 
     def test_install_refuses_unmanaged_unit_without_starting_or_signaling(self):
         destination = self.home / '.config/systemd/user' / self.cfg['guardian_unit']

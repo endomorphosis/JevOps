@@ -23,6 +23,8 @@ ROOT = Path(__file__).resolve().parents[1]
 CONFIG = 'config/lean_refactor_arena_20261024_watchdog.json'
 GUARDIAN = 'ipfs_accelerate_py.agent_supervisor.rescue.watchdog_guardian'
 DISPATCHER = 'ipfs_accelerate_py.agent_supervisor.rescue.repair_dispatcher'
+RELOAD_UNIT = 'jevops-agent-supervisor-reload.service'
+LEGACY_RELOAD_UNIT_SHA256 = 'e5420fa30d16db2136229cb8357100beebc21270d4b26c3074698cc98ba099a9'
 
 
 def require(ok, message):
@@ -105,6 +107,7 @@ def profile(root):
         require(cfg[key].startswith('jevops-agent-supervisor-') and cfg[key].endswith('.service')
                 and '/' not in cfg[key] and '\n' not in cfg[key], 'Unexpected unit scope')
     require(cfg['guardian_unit'] != cfg['repair_unit'], 'Distinct units required')
+    require(RELOAD_UNIT not in {cfg['guardian_unit'], cfg['repair_unit']}, 'Reload must be a distinct manual unit')
     return cfg, supervisor
 
 
@@ -166,6 +169,22 @@ def render(root):
             'WantedBy=default.target', ''])
     units = {cfg['guardian_unit']: unit(cfg['guardian_unit'], guardian, 'JevOps agent supervisor watchdog and guardian'),
              cfg['repair_unit']: unit(cfg['repair_unit'], repair, 'JevOps bounded supervisor stall repair dispatcher')}
+    require((root / 'tools/reload_supervisor_when_idle.py').is_file(), 'Reviewed idle reloader missing')
+    reload_argv = [python, '-B', str(root / 'tools/reload_supervisor_when_idle.py'),
+                   '--repo-root', str(root), '--timeout', '1800']
+    # A maintenance worker queues this separate oneshot and exits. It is not
+    # a third automatic supervision loop and is never enabled or auto-started.
+    units[RELOAD_UNIT] = '\n'.join([
+        '# Managed by JevOps tools/manage_supervisor_watchdog.py', '[Unit]',
+        'Description=Reload the JevOps repair dispatcher only after its worker exits', '', '[Service]',
+        'Type=oneshot', 'WorkingDirectory=' + systemd_path(root),
+        'Environment=' + systemd_arg('PYTHONPATH=' + source), 'Environment=PYTHONDONTWRITEBYTECODE=1',
+        'Environment=PYTHONUNBUFFERED=1',
+        'ExecStart=' + ' '.join(systemd_arg(arg, exec_start=True) for arg in reload_argv),
+        'Restart=no', 'SuccessExitStatus=75', 'TimeoutStartSec=1810s', 'KillMode=control-group',
+        'MemoryMax=512M', 'TasksMax=32', 'CPUQuota=100%', 'UMask=0077',
+        'StandardOutput=journal', 'StandardError=journal', 'SyslogIdentifier=jevops-idle-reload',
+        'LogRateLimitIntervalSec=30s', 'LogRateLimitBurst=50', ''])
     return cfg, supervisor, units
 
 
@@ -239,6 +258,11 @@ def _install_locked(root):
     cfg, supervisor, units = render(root)
     state = root / cfg['state_root']; state.mkdir(parents=True, exist_ok=True)
     command([supervisor['python_executable'], str(root / 'tools/check_lean_refactor_plan.py'), '--check-all'])
+    registered = read_json(root / cfg['lane_manifest']).get('execution_profile')
+    if registered:
+        require(registered == 'config/lean_refactor_arena_20261024_execution_v2.json',
+                'Unknown research execution profile')
+        command([supervisor['python_executable'], str(root / 'tools/lean_refactor_execution_v2.py')], timeout=90)
     command(['systemctl', '--user', 'show-environment'])  # Never print its environment.
     manifest = root / cfg['runtime_manifest']
     # Only the lane manifest is refreshed; completed task/model contracts retain
@@ -252,20 +276,26 @@ def _install_locked(root):
         destination = user_units / name
         if destination.exists():
             require(not destination.is_symlink() and destination.stat().st_uid == os.getuid(), 'Unexpected unit owner/type')
-            old = destination.read_text()
-            require(old.startswith('# Managed by JevOps tools/manage_supervisor_watchdog.py'), 'Refuse replacing an unmanaged unit')
+            old_bytes = destination.read_bytes()
+            old = old_bytes.decode('utf-8')
+            reviewed_static_reload = (name == RELOAD_UNIT and
+                hashlib.sha256(old_bytes).hexdigest() == LEGACY_RELOAD_UNIT_SHA256)
+            require(old.startswith('# Managed by JevOps tools/manage_supervisor_watchdog.py')
+                    or reviewed_static_reload, 'Refuse replacing an unmanaged unit')
             if old != text:
                 backup = state / 'unit-backups' / (name + '.' + hashlib.sha256(old.encode()).hexdigest())
                 if not backup.exists(): atomic(backup, old)
         atomic(destination, text, 0o644)
     command(['systemctl', '--user', 'daemon-reload'])
-    command(['systemctl', '--user', 'enable', *units])
+    daemon_units = [cfg['guardian_unit'], cfg['repair_unit']]
+    command(['systemctl', '--user', 'enable', *daemon_units])
     active = command(['systemctl', '--user', 'is-active', cfg['guardian_unit']], allowed=(0, 3, 4))
     migration = {'already_managed': True, 'watchdog_signaled': False}
     if active.returncode != 0: migration = migrate_guardian(root, cfg, supervisor)
-    command(['systemctl', '--user', 'start', *units])
+    command(['systemctl', '--user', 'start', *daemon_units])
     report = {'schema': 'jevops.persistent-watchdog-installation.v1', 'installed_at': time.time(),
-              'units': list(units), 'migration': migration, 'systemd_verification_stderr': verified.stderr,
+              'units': list(units), 'manual_units_not_enabled_or_started': [RELOAD_UNIT],
+              'migration': migration, 'systemd_verification_stderr': verified.stderr,
               'source_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
               'task_states_changed': False, 'planned_work_activated': False, 'provider_calls': 0}
     save(state / 'installation.json', report)
@@ -296,7 +326,7 @@ def status(root):
     pending = [r[0] for r in rows if r[3].get('status') in {'pending', 'todo', 'ready', 'failed', 'blocked', 'in_progress'}]
     ready = [r[0] for r in rows if r[0] in pending and all(d.strip() in completed_set for d in str(r[3].get('depends_on', '')).split(',') if d.strip())]
     units = {}
-    for name in [cfg['guardian_unit'], cfg['repair_unit']]:
+    for name in [cfg['guardian_unit'], cfg['repair_unit'], RELOAD_UNIT]:
         result = command(['systemctl', '--user', 'show', name, '--property=ActiveState,SubState,MainPID,UnitFileState,KillMode,FragmentPath'], allowed=(0, 1))
         units[name] = dict(line.split('=', 1) for line in result.stdout.splitlines() if '=' in line)
     report = {'schema': 'jevops.persistent-watchdog-status.v1', 'observed_at': time.time(),
