@@ -60,3 +60,24 @@ def test_foreign_model_symlink_is_not_modified_or_adopted(tmp_path,monkeypatch):
     before=other.stat().st_mode
     with pytest.raises(RuntimeError,match='ordinary'):m.verify()
     assert other.read_bytes()==b'untouched' and other.stat().st_mode==before
+
+
+def test_arc_preload_estimate_is_explicit_and_not_guaranteed_memory():
+    r=resources();r['mem_available_bytes']=28*m.GIB
+    r['zfs_arc']={'size':90*m.GIB,'c_min':4*m.GIB,'data_size':76*m.GIB,'mru_evictable_data':48*m.GIB,'mfu_evictable_data':24*m.GIB}
+    assessment=m.check_resources(r,loading=True,cpu_weight_bytes=34*m.GIB)
+    assert assessment['raw_mem_available_bytes']==28*m.GIB
+    assert assessment['arc_credit_bytes']==34*m.GIB and assessment['arc_reclaim_guaranteed'] is False
+
+
+@pytest.mark.parametrize('arc',[None,{}, {'size':100}, {'size':90,'c_min':4,'data_size':76,'mru_evictable_data':-1,'mfu_evictable_data':24}])
+def test_missing_or_invalid_arc_cannot_authorize_capacity(arc):
+    r=resources();r.update(mem_available_bytes=28*m.GIB,zfs_arc=arc)
+    with pytest.raises(RuntimeError,match='ARC'):m.check_resources(r,loading=True,cpu_weight_bytes=34*m.GIB)
+
+
+def test_arc_never_weakens_actual_loading_or_running_reserve():
+    r=resources();r['mem_available_bytes']=15*m.GIB
+    r['zfs_arc']={'size':90*m.GIB,'c_min':4*m.GIB,'data_size':76*m.GIB,'mru_evictable_data':48*m.GIB,'mfu_evictable_data':24*m.GIB}
+    for loading in (True,False):
+        with pytest.raises(RuntimeError,match='reserve'):m.check_resources(r,loading=loading,cpu_weight_bytes=34*m.GIB)

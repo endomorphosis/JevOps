@@ -67,7 +67,8 @@ class RouterTaskTests(unittest.TestCase):
                  'cmd': [cfg['grok_executable'], '--model', 'grok-4.7', '--tools', '']}
         (directory / 'grok_cli_trace.jsonl').write_text(json.dumps(trace) + '\n')
         return self.proposal(), {'child': {'effective_provider': 'grok_cli', 'status': 'ok', 'exit_code': 0},
-                                 'requested_model': 'grok-4.7', 'actual_trace': trace, **worker.AUTH}
+                                 'requested_model': 'grok-4.7', 'requested_max_output_tokens': cfg['max_output_tokens'],
+                                 'actual_trace': trace, **worker.AUTH}
 
     def test_native_parser_reads_exact_id_dependencies_and_predicted_paths(self):
         packet, _, _ = self.packet()
@@ -151,6 +152,9 @@ class RouterTaskTests(unittest.TestCase):
         self.assertFalse(self.output.exists())
         budget = json.loads((self.root / self.cfg['runtime_root'] / 'router-budget.json').read_text())
         self.assertEqual(budget['calls'], 3)
+        failures = list((self.root / self.cfg['runtime_root'] / 'router-calls').glob('*/failure.json'))
+        self.assertEqual(len(failures), 3)
+        self.assertTrue(all(json.loads(path.read_text())['reason_code'] == 'router_invocation_failed' for path in failures))
 
     def test_native_dependency_and_goal_dag_mismatch_refuse_before_call(self):
         path = self.root / self.cfg['taskboard']
@@ -270,6 +274,28 @@ class RouterTaskTests(unittest.TestCase):
             worker.run(self.root, 'JLR-002', parser=parse_todo_blocks, caller=self.fake_call)
         self.assertTrue(injected)
         self.assertEqual(self.output.read_text(), 'concurrent user source')
+
+    def test_task_token_bound_reduces_request_without_changing_global_config(self):
+        before = (self.root / worker.CONFIG).read_bytes()
+        self.dag['tasks'][0]['bounds'] = {'max_output_tokens': 1024}
+        (self.root / self.cfg['goals']).write_text(json.dumps(self.dag))
+        seen = []
+        def caller(prompt, cfg, directory):
+            seen.append(cfg['max_output_tokens'])
+            return self.complete_fake_call(prompt, cfg, directory)
+        worker.run(self.root, 'JLR-002', parser=parse_todo_blocks, caller=caller)
+        self.assertEqual(seen, [1024])
+        receipt = worker.verify_task_receipt(self.root, 'JLR-002')
+        request = json.loads((Path(receipt['result_path']).parent / 'request.json').read_text())
+        self.assertEqual(request['max_output_tokens'], 1024)
+        self.assertEqual((self.root / worker.CONFIG).read_bytes(), before)
+
+    def test_invalid_task_token_bound_refuses_before_reserving_call(self):
+        self.dag['tasks'][0]['bounds'] = {'max_output_tokens': 0}
+        (self.root / self.cfg['goals']).write_text(json.dumps(self.dag))
+        with self.assertRaisesRegex(ValueError, 'positive integer'):
+            worker.run(self.root, 'JLR-002', parser=parse_todo_blocks, caller=self.fake_call)
+        self.assertFalse((self.root / self.cfg['runtime_root']).exists())
 
 
 if __name__ == '__main__':

@@ -53,7 +53,7 @@ Measured fields: host identity, MemAvailable bytes, GPU allocated bytes, storage
 - Track: planning
 - Depends on: JLR-001
 - Goal id: JLR-G001
-- Inputs: implementation_plan/lean_refactor_arena_20261024.objectives.md, implementation_plan/lean_refactor_arena_20261024.research.md, data/lean_refactor_campaign_20261024/JLR-001.inventory.json
+- Inputs: implementation_plan/lean_refactor_arena_20261024.objectives.md, implementation_plan/lean_refactor_arena_20261024.bootstrap-context.md, data/lean_refactor_campaign_20261024/JLR-001.inventory.json
 - Outputs: implementation_plan/proposals/JLR-002.review.json
 - Deterministic command: python3 tools/run_lean_refactor_router_task.py --task-id JLR-002
 - Validation: python3 tools/check_lean_refactor_plan.py --validate-task JLR-002
@@ -68,7 +68,7 @@ Measured fields: host identity, MemAvailable bytes, GPU allocated bytes, storage
 - Conflict policy: Own only declared outputs; do not change trusted validators, task history, credentials or unrelated jobs.
 - Acceptance: Real strict provider/model receipt plus a bounded advisory JSON review; no fixture, hidden fallback or self-declared proof success.
 
-Review the inventory and research plan, identify concrete risks and prioritize the next bounded changes.
+Review the actual inventory and compact research context. Produce only three concise engineering risks, actions and acceptance boundaries in the supplied advisory JSON schema; entire response under3000characters. This startup review does not execute experiments or certify Lean proofs.
 
 Budget/stop rule: Stop at the task budget; record failures without inventing successful evidence.
 

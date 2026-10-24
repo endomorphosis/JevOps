@@ -210,6 +210,12 @@ def validate_proposal(raw, task_id, packet, cfg):
     return result
 
 
+def effective_call_config(packet, cfg):
+    bound = packet['goal_task'].get('bounds', {}).get('max_output_tokens', cfg['max_output_tokens'])
+    require(type(bound) is int and bound > 0, 'Task output-token bound must be a positive integer')
+    return {**cfg, 'max_output_tokens': min(cfg['max_output_tokens'], bound)}
+
+
 def invoke(prompt, cfg, directory):
     source = Path(cfg['accelerator_source']).resolve(strict=True)
     sys.path.insert(0, str(source))
@@ -249,6 +255,7 @@ def invoke(prompt, cfg, directory):
             '--tools' in command and command[command.index('--tools') + 1] == '',
             'Actual router CLI trace must bind exact model and tool-free proposal generation')
     return text, {'child': receipt.to_dict(), 'requested_model': 'grok-4.7',
+                  'requested_max_output_tokens': cfg['max_output_tokens'],
                   'actual_trace': traces[0], 'adapter_sha256': digest(regular(Path(llm.__file__))), **AUTH}
 
 
@@ -261,6 +268,7 @@ def run(root, task_id, *, preflight=False, parser=None, caller=invoke):
         from ipfs_accelerate_py.agent_supervisor.task_sources.todo_vector_index import parse_todo_blocks
         parser = parse_todo_blocks
     packet, prompt, contract = task_packet(root, cfg, task_id, parser)
+    call_cfg = effective_call_config(packet, cfg)
     if preflight:
         return {'valid': True, 'task_id': task_id, 'contract': contract, 'provider_calls': 0, **AUTH}
     runtime = checked_path(root, cfg['runtime_root'])
@@ -278,10 +286,22 @@ def run(root, task_id, *, preflight=False, parser=None, caller=invoke):
         directory.mkdir(parents=True, mode=0o700)
         write_json(directory / 'request.json', {'task_id': task_id, 'contract': contract, 'prompt_sha256': digest(prompt.encode()),
                                                'provider': 'grok_cli', 'model': 'grok-4.7', 'attempt': budget['contracts'][contract],
-                                               'call_ordinal': budget['calls'], **AUTH})
+                                               'call_ordinal': budget['calls'], 'max_output_tokens': call_cfg['max_output_tokens'], **AUTH})
         write_json(directory / 'packet.json', packet)
         print(json.dumps({'phase': 'router_request', 'task_id': task_id, 'attempt': budget['contracts'][contract]}), flush=True)
-        text, route = caller(prompt, cfg, directory)
+        started = time.monotonic()
+        try:
+            text, route = caller(prompt, call_cfg, directory)
+        except Exception as exc:
+            # Keep bounded operational diagnostics even when the adapter's
+            # stderr tail is truncated. Never archive credentials/config bodies.
+            write_json(directory / 'failure.json', {'task_id': task_id, 'contract': contract,
+                'phase': 'router_invocation', 'exception_type': type(exc).__name__,
+                'reason_code': 'provider_timeout' if 'timeout' in str(exc).lower() or 'timed out' in str(exc).lower() else 'router_invocation_failed',
+                'diagnostic_sha256': digest(str(exc).encode()), 'elapsed_seconds': time.monotonic() - started,
+                'requested_model': 'grok-4.7', 'requested_provider': 'grok_cli',
+                'max_output_tokens': call_cfg['max_output_tokens'], **AUTH})
+            raise
         atomic(directory / 'response.json', text.encode())
         write_json(directory / 'route.json', route)
         proposal = validate_proposal(text, task_id, packet, cfg)
@@ -304,6 +324,7 @@ def run(root, task_id, *, preflight=False, parser=None, caller=invoke):
                 require(now == old and now_identity == identity, 'Target CAS changed before replace')
             atomic(path, row['content'].encode(), before_replace=recheck)
         result = {'schema': 'jevops.lean-refactor.router-task-result.v1', 'task_id': task_id, 'contract': contract, 'route': route,
+                  'max_output_tokens': call_cfg['max_output_tokens'],
                   'files': {row['path']: digest(row['content'].encode()) for row, _, _, _ in destinations},
                   'artifact_sha256': {name: digest(regular(directory / name)) for name in
                                      ('request.json', 'packet.json', 'response.json', 'route.json', 'proposal.json', 'before.json', 'grok_cli_trace.jsonl')
@@ -322,6 +343,7 @@ def verify_task_receipt(root: Path, task_id: str) -> dict:
     sys.path.insert(0, str(source))
     from ipfs_accelerate_py.agent_supervisor.task_sources.todo_vector_index import parse_todo_blocks
     current_packet, _, contract = task_packet(root, cfg, task_id, parse_todo_blocks, allow_completed=True)
+    call_cfg = effective_call_config(current_packet, cfg)
     calls = checked_path(root, cfg['runtime_root']) / 'router-calls'
     candidates = []
     if calls.exists():
@@ -358,6 +380,8 @@ def verify_task_receipt(root: Path, task_id: str) -> dict:
     actual_traces = [decode(line) for line in regular(directory / 'grok_cli_trace.jsonl').decode().splitlines()]
     require(actual_traces == [trace], 'Actual CLI trace archive differs')
     require(request.get('provider') == 'grok_cli' and request.get('model') == 'grok-4.7', 'Requested route differs')
+    require(request.get('max_output_tokens') == result.get('max_output_tokens') ==
+            route.get('requested_max_output_tokens') == call_cfg['max_output_tokens'], 'Actual requested token bound differs')
     expected_files = {row['path']: digest(row['content'].encode()) for row in proposal['files']}
     require(result.get('files') == expected_files, 'Result output manifest differs')
     for path, sha in expected_files.items():

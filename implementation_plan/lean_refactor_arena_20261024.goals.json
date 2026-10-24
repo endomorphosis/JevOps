@@ -170,17 +170,17 @@
       "bounds": {
         "timeout_seconds": 600,
         "router_calls": 3,
-        "max_output_tokens": 4096
+        "max_output_tokens": 1024
       },
       "work_package": {
         "action": "feature_contract",
         "hypothesis": "Strict source-bound Grok4.7 reviews can be produced through llm_router without provider fallback.",
         "inputs": [
           "implementation_plan/lean_refactor_arena_20261024.objectives.md",
-          "implementation_plan/lean_refactor_arena_20261024.research.md",
+          "implementation_plan/lean_refactor_arena_20261024.bootstrap-context.md",
           "data/lean_refactor_campaign_20261024/JLR-001.inventory.json"
         ],
-        "experiment": "Review the inventory and research plan, identify concrete risks and prioritize the next bounded changes.",
+        "experiment": "Review the actual inventory and compact research context. Produce only three concise engineering risks, actions and acceptance boundaries in the supplied advisory JSON schema; entire response under3000characters. This startup review does not execute experiments or certify Lean proofs.",
         "metrics": [
           "exact effective provider/model",
           "source-bound response receipt",

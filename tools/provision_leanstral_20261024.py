@@ -11,6 +11,7 @@ import argparse
 import fcntl
 import hashlib
 import json
+import mmap
 import os
 from pathlib import Path
 import re
@@ -140,7 +141,17 @@ def resources():
     rows=subprocess.run(['nvidia-smi','--query-gpu=index,memory.used,memory.free,utilization.gpu','--format=csv,noheader,nounits'],
                         check=True,capture_output=True,text=True,timeout=10).stdout.splitlines()
     devices=[dict(zip(('index','used_mib','free_mib','utilization_percent'),[int(x.strip()) for x in row.split(',')])) for row in rows]
-    return {'mem_available_bytes':mem['MemAvailable'],'swap_free_bytes':mem.get('SwapFree'),
+    arc=None;stats=Path('/proc/spl/kstat/zfs/arcstats')
+    if stats.exists():
+        fields={}
+        try:
+            for line in stats.read_text().splitlines()[2:]:
+                parts=line.split()
+                if len(parts)==3 and parts[0] in {'size','c_min','data_size','mru_evictable_data','mfu_evictable_data'}:
+                    fields[parts[0]]=int(parts[2])
+            arc=fields
+        except (OSError,ValueError):arc=None
+    return {'mem_available_bytes':mem['MemAvailable'],'swap_free_bytes':mem.get('SwapFree'),'zfs_arc':arc,
             'storage_available_bytes':os.statvfs(ROOT).f_bavail*os.statvfs(ROOT).f_frsize,'gpus':devices}
 
 
@@ -160,14 +171,36 @@ def process_rss(pid):
     return 0
 
 
-def check_resources(observation, *, rss=0, loading=False):
+def check_resources(observation, *, rss=0, loading=False, cpu_weight_bytes=None):
     require(type(rss) is int and 0<=rss<=48*GIB,'Owned server RSS ceiling reached')
-    minimum=48*GIB if loading else 16*GIB
-    require(observation['mem_available_bytes']>=minimum,'Host available-memory reserve reached')
+    raw=observation['mem_available_bytes'];require(raw>=16*GIB,'Host available-memory reserve reached')
+    estimate=raw;credit=0
+    if loading and raw<48*GIB:
+        arc=observation.get('zfs_arc');keys={'size','c_min','data_size','mru_evictable_data','mfu_evictable_data'}
+        require(type(arc) is dict and set(arc)==keys and all(type(v) is int and v>=0 for v in arc.values())
+                and 0<arc['c_min']<arc['size'] and arc['data_size']<=arc['size']
+                and arc['mru_evictable_data']+arc['mfu_evictable_data']<=arc['data_size'],
+                'ARC-dependent preload requires valid actual evictable-cache diagnostics')
+        require(type(cpu_weight_bytes) is int and 0<cpu_weight_bytes<=MODEL_BYTES,'Actual CPU tensor budget required')
+        credit=min(arc['size']-arc['c_min'],arc['mru_evictable_data']+arc['mfu_evictable_data'],cpu_weight_bytes)
+        estimate+=credit
+    if loading:require(estimate>=48*GIB,'Conservative preload-capacity estimate insufficient')
     require(observation['storage_available_bytes']>=16*GIB,'Storage headroom guard')
     require(len(observation['gpus'])==2 and all(g['used_mib']<=20*1024 for g in observation['gpus']), 'Per-card GPU ceiling reached')
     if loading:
         require(all(g['free_mib']>=22*1024 and g['utilization_percent']<=10 for g in observation['gpus']), 'Do not compete with existing GPU work')
+    return {'raw_mem_available_bytes':raw,'arc_credit_bytes':credit,'preload_capacity_estimate_bytes':estimate,
+            'arc_reclaim_guaranteed':False,'actual_runtime_reserve_bytes':16*GIB}
+
+
+def direct_io_probe(model):
+    descriptor=os.open(model,os.O_RDONLY|os.O_DIRECT)
+    try:
+        with mmap.mmap(-1,4096) as buffer:
+            count=os.preadv(descriptor,[buffer],0)
+            require(count==4096 and buffer[:4]==b'GGUF','DirectIO model-header probe failed')
+    finally:os.close(descriptor)
+    return {'requested_direct_io':True,'actual_O_DIRECT_read_bytes':4096,'header_magic':'GGUF'}
 
 
 def serve():
@@ -186,16 +219,26 @@ def serve():
     try:
         for name in ('operator','gpu0','gpu1'):
             handle=(ROOT/(name+'.lock')).open('a+');fcntl.flock(handle,fcntl.LOCK_EX|fcntl.LOCK_NB);held.append(handle)
-        r=resources();check_resources(r,loading=True)
+        r=resources();assessment=check_resources(r,loading=True,cpu_weight_bytes=verified['actual_header']['estimated_cpu_tensor_bytes'])
+        dio=direct_io_probe(model)
+        if assessment['arc_credit_bytes']:
+            marker=ROOT/'arc-aware-preload-attempt.json'
+            # Exactly one explicitly authorized ARC-dependent attempt. Failure
+            # is retained; there is no automatic load/restart loop.
+            with marker.open('x') as stream:
+                json.dump({'authorized_attempt':1,'actor_pid':os.getpid(),'observed_at':time.time(),
+                           'capacity_assessment':assessment,'raw_resources':r,'direct_io':dio,**FALSE},stream,indent=2)
+                stream.flush();os.fsync(stream.fileno())
         with socket.socket() as probe:probe.bind(('127.0.0.1',PORT))
         env={k:v for k,v in os.environ.items() if not k.startswith('LLAMA_ARG_') and k!='LD_PRELOAD'}
         env['LD_LIBRARY_PATH']=str(CUDA_LIB)+':'+str(RUNTIME)
         env['CUDA_VISIBLE_DEVICES']='0,1';env['OMP_NUM_THREADS']='8'
         command=[str(binary),'--model',str(model),'--alias','Leanstral','--host','127.0.0.1','--port',str(PORT),
                  '--ctx-size','2048','--parallel','1','--threads','8','--threads-batch','8','--batch-size','64','--ubatch-size','32',
-                 '--n-gpu-layers','18','--split-mode','layer','--tensor-split','1,1','--fit','off','--load-mode','none',
+                 '--n-gpu-layers','18','--split-mode','layer','--tensor-split','1,1','--fit','off','--load-mode','dio',
                  '--flash-attn','off','--jinja','--reasoning','off','--no-warmup']
         save('launch-intent.json',{'schema':'jevops.leanstral-launch-intent.v1','command':command,'baseline_resources':r,
+                                  'preload_capacity_assessment':assessment,'actual_direct_io_probe':dio,
                                   'model_sha256':MODEL_SHA,'runtime_sha256':runtime['server_sha256'],'partial_gpu_offload':True,
                                   'rss_limit_bytes':48*GIB,'gpu_used_limit_mib_each':20*1024,'minimum_host_available_bytes':16*GIB,
                                   'owner_pid':os.getpid(),'preexisting_jobs_interrupted':False,**FALSE})
