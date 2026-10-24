@@ -33,5 +33,18 @@
         "jevops"
       ]
     }
-  ]
+  ],
+  "planned_work_policy": {
+    "enabled": true,
+    "grace_seconds": 60,
+    "goals_path": "implementation_plan/lean_refactor_arena_20261024.goals.json",
+    "deferred_tasks": {
+      "JLR-035": {
+        "kind": "not_before",
+        "not_before_utc": "2026-11-01T00:00:00Z",
+        "reason": "The full benchmark cohort is announced for1November; check actual release metadata at that point.",
+        "evidence_path": "implementation_plan/lean_refactor_arena_20261024.research.md"
+      }
+    }
+  }
 }

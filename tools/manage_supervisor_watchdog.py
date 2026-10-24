@@ -88,7 +88,11 @@ def profile(root):
                           ('max_cooldown_seconds', 14400), ('max_repair_attempts', 3)]:
         require(type(cfg[name]) is int and 0 < cfg[name] <= ceiling, 'Invalid bounded ' + name)
     require(cfg['activate_planned_work'] is False and cfg['reset_campaign_budgets'] is False,
-            'Monitoring cannot activate experiments or reset campaign budgets')
+            'Monitoring cannot activate experiments by status alone or reset campaign budgets')
+    require(type(cfg.get('materialize_planned_work', False)) is bool, 'Explicit materialization policy required')
+    if cfg.get('materialize_planned_work'):
+        require(cfg.get('planned_work_mode') == 'implement_validate_then_activate',
+                'Planned work requires implementation and validation before activation')
     for name in ['supervisor_profile', 'lane_manifest', 'runtime_manifest', 'state_root', 'repair_prompt']:
         relative = Path(cfg[name])
         require(not relative.is_absolute() and '..' not in relative.parts and
@@ -114,6 +118,9 @@ def render(root):
     lane_manifest = read_json(root / cfg['lane_manifest'])
     require(len(lane_manifest['lanes']) == 1 and lane_manifest.get('allow_bounded_task_implement') is False,
             'Expected isolated deterministic lane')
+    if cfg.get('materialize_planned_work'):
+        require(lane_manifest.get('planned_work_policy', {}).get('enabled') is True,
+                'Planned-work recovery must be enabled in the actual manifest')
     lane = lane_manifest['lanes'][0]
     common = [python, '-m']
     guardian = [*common, GUARDIAN, '--manifest-path', str(manifest), '--repo-root', str(root),
@@ -133,7 +140,8 @@ def render(root):
                         ('max_cooldown_seconds', 'max-cooldown-seconds'), ('max_repair_attempts', 'max-attempts')]:
         repair.extend(['--' + option, str(cfg[key])])
     for relative in ['rescue/watchdog_guardian.py', 'rescue/supervisor_watchdog.py',
-                     'rescue/lane_resume.py', 'rescue/repair_dispatcher.py', 'todo_daemon/llm.py']:
+                     'rescue/lane_resume.py', 'rescue/repair_dispatcher.py',
+                     'rescue/planned_work_watchdog.py', 'todo_daemon/llm.py']:
         repair.extend(['--evidence-path', str(Path(source) / 'ipfs_accelerate_py/agent_supervisor' / relative)])
     for relative in [CONFIG, cfg['repair_prompt'], 'tools/run_lean_refactor_router_task.py',
                      'tools/check_lean_refactor_plan.py']:
@@ -292,12 +300,23 @@ def status(root):
         result = command(['systemctl', '--user', 'show', name, '--property=ActiveState,SubState,MainPID,UnitFileState,KillMode,FragmentPath'], allowed=(0, 1))
         units[name] = dict(line.split('=', 1) for line in result.stdout.splitlines() if '=' in line)
     report = {'schema': 'jevops.persistent-watchdog-status.v1', 'observed_at': time.time(),
-              'work_state': 'planned_backlog_not_activated' if not pending and planned else 'eligible_work' if ready else 'dependency_wait' if pending else 'complete',
+              'work_state': 'unfinished_planned_work' if not pending and planned and cfg.get('materialize_planned_work') else 'planned_backlog_not_activated' if not pending and planned else 'eligible_work' if ready else 'dependency_wait' if pending else 'complete',
               'completed_tasks': completed, 'planned_tasks': planned, 'pending_tasks': pending, 'ready_tasks': ready,
               'units': units, 'campaign_budget': read_json(manifest.parent / 'router-budget.json'),
               'guardian': read_json(manifest.parent / 'watchdog-guardian-status.json'),
               'repair': read_json(root / cfg['state_root'] / 'repair-dispatcher/status.json') if (root / cfg['state_root'] / 'repair-dispatcher/status.json').exists() else None,
               'completion_authority': False, 'full_campaign_complete': False}
+    ledger = root / cfg['state_root'] / 'repair-dispatcher/state.json'
+    if ledger.exists():
+        active = read_json(ledger).get('active_worker')
+        if isinstance(active, dict) and active.get('pid'):
+            from ipfs_accelerate_py.agent_supervisor.rescue.repair_dispatcher import probe_process
+            observed = probe_process(int(active['pid']))
+            verified = observed.get('alive') is True and observed.get('start_ticks') == active.get('start_ticks')
+            report['maintenance_worker'] = {'pid': active['pid'], 'identity_verified': verified,
+                                             'deadline': active.get('deadline')}
+            if verified:
+                report['work_state'] = 'materialization_or_repair_running'
     save(root / cfg['state_root'] / 'status.json', report)
     return report
 

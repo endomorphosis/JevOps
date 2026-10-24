@@ -200,7 +200,7 @@ def test_only_fresh_independent_progress_can_clear_incident_without_completing_t
     assert len(rig['counter'].read_text().splitlines()) == 1
 
 
-def test_actual_fifteen_complete_twenty_three_planned_board_never_invokes_fixture_worker(rig):
+def test_default_disabled_policy_leaves_planned_board_unactivated(rig):
     canonical = (ROOT / 'implementation_plan/lean_refactor_arena_20261024.todo.md').read_bytes()
     assert canonical.count(b'- Status: completed') == 15 and canonical.count(b'- Status: planned') == 23
     rig['board'].write_bytes(canonical)
@@ -213,6 +213,31 @@ def test_actual_fifteen_complete_twenty_three_planned_board_never_invokes_fixtur
     assert result['pending_task_ids'] == result['selectable_task_ids'] == []
     assert not state.get('attempts') and not rig['counter'].exists()
     assert rig['board'].read_bytes() == canonical
+    assert result['completion_authority'] is result['work_complete'] is False
+
+
+def test_enabled_campaign_policy_materializes_planned_frontier_with_real_bounded_worker(rig):
+    canonical = (ROOT / 'implementation_plan/lean_refactor_arena_20261024.todo.md').read_bytes()
+    rig['board'].write_bytes(canonical)
+    rig['live'].update({rig['owner_pid']: False, rig['lane_pid']: False})
+    rig['status'](state='stopped', phase='lane_resume_exited', active_task_id='', active_lease_count=0,
+                  terminal_reason='resume_duration_elapsed')
+    (rig['root'] / 'goals.json').write_bytes(
+        (ROOT / 'implementation_plan/lean_refactor_arena_20261024.goals.json').read_bytes())
+    manifest = json.loads(rig['config'].manifest_path.read_text())
+    manifest['planned_work_policy'] = {'enabled': True, 'grace_seconds': 1, 'goals_path': 'goals.json'}
+    write_json(rig['config'].manifest_path, manifest)
+    state = {}
+    first = dispatcher.tick(rig['config'], state, apply=True, now=rig['now'], probe=rig['probe'])
+    assert not first['incidents'] and not rig['counter'].exists()
+    result = dispatcher.tick(rig['config'], state, apply=True, now=rig['now'] + 2, probe=rig['probe'])
+    assert result['action'] == 'worker_finished'
+    assert 'planned_work_unmaterialized' in incident_kinds(result)
+    assert result['planned_work']['materialization_task_ids'] == ['JLR-016', 'JLR-023']
+    assert result['worker']['outcome'] == 'awaiting_observation'
+    assert rig['board'].read_bytes() == canonical
+    calls = [json.loads(line) for line in rig['counter'].read_text().splitlines()]
+    assert len(calls) == 1 and 'planned_work_unmaterialized' in calls[0]['incident_kinds']
     assert result['completion_authority'] is result['work_complete'] is False
 
 
@@ -232,8 +257,10 @@ def test_registered_configuration_and_prompt_keep_maintenance_separate_from_camp
     prompt = (ROOT / cfg['repair_prompt']).read_text()
     assert cfg['max_repair_attempts'] == 3 and 0 < cfg['worker_timeout_seconds'] <= 900
     assert cfg['activate_planned_work'] is cfg['reset_campaign_budgets'] is False
+    assert cfg['materialize_planned_work'] is True
+    assert cfg['planned_work_mode'] == 'implement_validate_then_activate'
     assert cfg['guardian_unit'] != cfg['repair_unit']
-    for rule in ('Do not activate those tickets', 'Honor every operator HOLD/OPERATOR_STOP marker',
-                 'use a pidfd', 'Never print credential values', 'a spawned PID or worker exit zero is not recovery'):
+    for rule in ('Do not blindly change planned to pending or completed', 'Honor operator HOLD/OPERATOR_STOP markers',
+                 'use a pidfd', 'Do not weaken proof tests', 'Exit0 does not establish recovery'):
         assert rule in prompt
-    assert 'Do not change SwissKnife, VDG, VOG' in prompt
+    assert 'Preserve concurrent edits and work in other lanes/repositories' in prompt

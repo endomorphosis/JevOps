@@ -17,7 +17,9 @@
   "cooldown_seconds": 300,
   "max_cooldown_seconds": 3600,
   "max_repair_attempts": 3,
-  "repair_role": "maintenance agent; never a fallback provider for campaign tasks",
+  "repair_role": "maintenance and planned-work materialization agent; campaign proposals retain strict Grok4.7",
   "activate_planned_work": false,
-  "reset_campaign_budgets": false
+  "reset_campaign_budgets": false,
+  "materialize_planned_work": true,
+  "planned_work_mode": "implement_validate_then_activate"
 }
