@@ -1,0 +1,41 @@
+{
+  "schema": "jevops.lean-refactor-supervisor.v1",
+  "profile": "lean-refactor-arena-20261024",
+  "taskboard": "implementation_plan/lean_refactor_arena_20261024.todo.md",
+  "goals": "implementation_plan/lean_refactor_arena_20261024.goals.json",
+  "task_header_prefix": "## JLR-",
+  "runtime_root": "data/lean_refactor_arena_20261024",
+  "accelerator_source": "/home/barberb/lift_coding/external/ipfs_accelerate",
+  "python_executable": "/home/barberb/lift_coding/external/ipfs_datasets/.venv/bin/python",
+  "grok_executable": "/home/barberb/.local/bin/grok",
+  "provider": "grok_cli",
+  "model": "grok-4.7",
+  "allow_local_fallback": false,
+  "allow_cross_provider_fallback": false,
+  "max_calls": 24,
+  "max_task_calls_per_contract": 3,
+  "provider_timeout_seconds": 120,
+  "max_output_tokens": 4096,
+  "max_prompt_bytes": 60000,
+  "max_response_bytes": 65536,
+  "max_file_bytes": 49152,
+  "max_files": 8,
+  "max_owner_seconds": 14400,
+  "competition_eligible": false,
+  "competition_note": "Grok CLI research and development; closed-track OpenRouter eligibility and spend accounting remain separate gates.",
+  "protected_paths": [
+    "implementation_plan/lean_refactor_arena_20261024.objectives.md",
+    "implementation_plan/lean_refactor_arena_20261024.todo.md",
+    "implementation_plan/lean_refactor_arena_20261024.research.md",
+    "implementation_plan/lean_refactor_arena_20261024.goals.json",
+    "config",
+    "tools/run_lean_refactor_router_task.py",
+    "tools/start_lean_refactor_supervisor.py",
+    "tools/check_lean_refactor_plan.py",
+    "tests/test_lean_refactor_router_task.py"
+  ],
+  "allowed_output_prefixes": [
+    "jevops",
+    "implementation_plan/proposals"
+  ]
+}

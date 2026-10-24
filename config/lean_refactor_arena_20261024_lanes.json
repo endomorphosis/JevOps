@@ -1,0 +1,33 @@
+{
+  "schema": "ipfs_accelerate_py.agent_supervisor.jevops_lean_refactor.watchdog@1",
+  "report_path": "data/lean_refactor_arena_20261024/watchdog-report.json",
+  "unstall_repair_dir": "data/lean_refactor_arena_20261024/unstall-repair",
+  "todo_path": "implementation_plan/lean_refactor_arena_20261024.todo.md",
+  "task_header_prefix": "## JLR-",
+  "allow_bounded_task_implement": false,
+  "autonomous_unstall_policy": {
+    "enabled": true,
+    "rescue_preview_enabled": false,
+    "rescue_execution_enabled": false,
+    "allow_provider_calls": false,
+    "max_incidents": 64,
+    "max_provider_calls": 0,
+    "max_rescue_executions": 0,
+    "circuit_breaker_failures": 2,
+    "deterministic_max_attempts_per_action": 2,
+    "deterministic_max_total_attempts": 8,
+    "deterministic_max_actions": 8,
+    "cooldown_ms": 30000,
+    "deadline_ms": 120000
+  },
+  "lanes": [
+    {
+      "bundle_key": "jevops-lean-refactor-20261024",
+      "max_resume_seconds": 14400,
+      "state_dir": "data/lean_refactor_arena_20261024/lane",
+      "state_prefix": "jevops_lean_refactor",
+      "log_path": "data/lean_refactor_arena_20261024/lane/supervisor.log",
+      "storage_paths": ["data/lean_refactor_arena_20261024", "implementation_plan/proposals", "jevops"]
+    }
+  ]
+}
