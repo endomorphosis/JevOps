@@ -1,0 +1,84 @@
+{
+  "actual_validation_feedback": {
+    "error": "advisory review schema/authority mismatch",
+    "failed_content_sha256": "58c1462c723e70e8dcf8ab0bfe8032191cddb1d5094b08fec26a210baed8dae3",
+    "preserve_no_unknown_fields": true,
+    "required_fields_were_present": true,
+    "source_proposal_path": "data/lean_refactor_arena_20261024/router-calls/JLR-012-2cddafb5de244c8d943c068fa8c7aa56/proposal.json",
+    "source_proposal_sha256": "c817c311aa620b7254812c24b5d4927a5a6e711f6b123bb147699d09030e2f2c",
+    "task_id": "JLR-012",
+    "unexpected_top_level_keys": [
+      "hypothesis",
+      "metrics",
+      "record_contract",
+      "scope",
+      "semantics",
+      "split_contract",
+      "stop_rule",
+      "title"
+    ]
+  },
+  "completion_authority": false,
+  "instruction": "This is an INPUT contract, not the requested output. In the bridge file-proposal wire envelope, replace the ENTIRE declared review file content with one compact JSON object matching output_schema. Do not copy keys from the previous invalid file. Put all scope, record, split, semantics, metrics and stop-rule details INSIDE strings in the three existing arrays. Return at most 3000 content characters.",
+  "output_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "acceptance_boundaries": {
+        "items": {
+          "maxLength": 650,
+          "minLength": 1,
+          "type": "string"
+        },
+        "maxItems": 3,
+        "minItems": 1,
+        "type": "array"
+      },
+      "actions": {
+        "items": {
+          "maxLength": 650,
+          "minLength": 1,
+          "type": "string"
+        },
+        "maxItems": 3,
+        "minItems": 1,
+        "type": "array"
+      },
+      "needs_native_verification": {
+        "const": true
+      },
+      "proposal_only": {
+        "const": true
+      },
+      "risks": {
+        "items": {
+          "maxLength": 650,
+          "minLength": 1,
+          "type": "string"
+        },
+        "maxItems": 3,
+        "minItems": 1,
+        "type": "array"
+      },
+      "schema": {
+        "const": "jevops.lean-refactor.review.v1"
+      },
+      "task_id": {
+        "description": "Exactly the current task id, not the prior feedback task id.",
+        "pattern": "^JLR-[0-9]{3}$",
+        "type": "string"
+      }
+    },
+    "required": [
+      "schema",
+      "task_id",
+      "risks",
+      "actions",
+      "acceptance_boundaries",
+      "proposal_only",
+      "needs_native_verification"
+    ],
+    "type": "object"
+  },
+  "proof_authority": false,
+  "schema": "jevops.lean-refactor.review-output-contract.v1"
+}

@@ -600,20 +600,21 @@
       ],
       "deterministic_command": "python3 tools/run_lean_refactor_router_task.py --task-id JLR-012",
       "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-012",
-      "acceptance": "Real Grok router receipt and schema-valid advisory review with concrete risks/actions/acceptance boundaries. This task completes a design artifact, not the proposed implementation or an experiment.",
+      "acceptance": "Real Grok router receipt and schema-valid advisory review with concrete risks/actions/acceptance boundaries. This task completes a design artifact, not the proposed implementation or an experiment. The inner review must contain exactly the seven required fields from the review-contract input, with no extra keys; all detailed sections belong only in strings in risks/actions/acceptance_boundaries. Replace the entire prior invalid inner JSON instead of preserving unknown fields; at most three concise items per list and 3000 content characters.",
       "bounds": {
         "timeout_seconds": 600,
         "router_calls": 3,
-        "max_output_tokens": 4096
+        "max_output_tokens": 1024
       },
       "work_package": {
         "action": "feature_contract",
         "hypothesis": "Existing span provenance and lightweight encoder interfaces can transfer to Lean with explicit binder and project identities.",
         "inputs": [
           "implementation_plan/lean_refactor_arena_20261024.objectives.md",
-          "implementation_plan/lean_refactor_arena_20261024.research.md"
+          "implementation_plan/lean_refactor_arena_20261024.research.md",
+          "implementation_plan/lean_refactor_arena_20261024.review-contract.json"
         ],
-        "experiment": "Map Lean parser/goal/source/pin records to existing CPU sparse encoder and Datasets source-custody interfaces; exclude environment failures and frozen holdout data from training.",
+        "experiment": "Map Lean parser/goal/source/pin records to existing CPU sparse encoder and Datasets source-custody interfaces; exclude environment failures and frozen holdout data from training. Follow implementation_plan/lean_refactor_arena_20261024.review-contract.json exactly. Produce ONLY the seven required inner review keys: schema, task_id, risks, actions, acceptance_boundaries, proposal_only, needs_native_verification. No title, hypothesis, scope, record_contract, split_contract, semantics, metrics or stop_rule top-level keys. Carry their substantive details only in strings in the existing three arrays. Replace the whole old inner JSON; keep content below 3000 characters and at most three items per list.",
         "metrics": [
           "provenance dimensions",
           "group split boundaries",
@@ -643,20 +644,21 @@
       ],
       "deterministic_command": "python3 tools/run_lean_refactor_router_task.py --task-id JLR-013",
       "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-013",
-      "acceptance": "Real Grok router receipt and schema-valid advisory review with concrete risks/actions/acceptance boundaries. This task completes a design artifact, not the proposed implementation or an experiment.",
+      "acceptance": "Real Grok router receipt and schema-valid advisory review with concrete risks/actions/acceptance boundaries. This task completes a design artifact, not the proposed implementation or an experiment. The inner review must contain exactly the seven required fields from the review-contract input, with no extra keys; all detailed sections belong only in strings in risks/actions/acceptance_boundaries. Replace the entire prior invalid inner JSON instead of preserving unknown fields; at most three concise items per list and 3000 content characters.",
       "bounds": {
         "timeout_seconds": 600,
         "router_calls": 3,
-        "max_output_tokens": 4096
+        "max_output_tokens": 1024
       },
       "work_package": {
         "action": "feature_contract",
         "hypothesis": "Bounded compiler-feedback prompts can be evaluated with frozen quantized Leanstral before any training.",
         "inputs": [
           "implementation_plan/lean_refactor_arena_20261024.objectives.md",
-          "implementation_plan/lean_refactor_arena_20261024.research.md"
+          "implementation_plan/lean_refactor_arena_20261024.research.md",
+          "implementation_plan/lean_refactor_arena_20261024.review-contract.json"
         ],
-        "experiment": "Use the verified community Q4 artifact and actual localhost endpoint only after resource readiness; compare original-proof, goal-state and retrieved-context prompts, with explicit rfl protocol smoke separate from proof improvement.",
+        "experiment": "Use the verified community Q4 artifact and actual localhost endpoint only after resource readiness; compare original-proof, goal-state and retrieved-context prompts, with explicit rfl protocol smoke separate from proof improvement. Follow implementation_plan/lean_refactor_arena_20261024.review-contract.json exactly. Produce ONLY the seven required inner review keys: schema, task_id, risks, actions, acceptance_boundaries, proposal_only, needs_native_verification. No title, hypothesis, scope, record_contract, split_contract, semantics, metrics or stop_rule top-level keys. Carry their substantive details only in strings in the existing three arrays. Replace the whole old inner JSON; keep content below 3000 characters and at most three items per list.",
         "metrics": [
           "context tokens",
           "inference deadline",
@@ -686,11 +688,11 @@
       ],
       "deterministic_command": "python3 tools/run_lean_refactor_router_task.py --task-id JLR-014",
       "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-014",
-      "acceptance": "Real Grok router receipt and schema-valid advisory review with concrete risks/actions/acceptance boundaries. This task completes a design artifact, not the proposed implementation or an experiment.",
+      "acceptance": "Real Grok router receipt and schema-valid advisory review with concrete risks/actions/acceptance boundaries. This task completes a design artifact, not the proposed implementation or an experiment. The inner review must contain exactly the seven required fields from the review-contract input, with no extra keys; all detailed sections belong only in strings in risks/actions/acceptance_boundaries. Replace the entire prior invalid inner JSON instead of preserving unknown fields; at most three concise items per list and 3000 content characters.",
       "bounds": {
         "timeout_seconds": 600,
         "router_calls": 3,
-        "max_output_tokens": 4096
+        "max_output_tokens": 1024
       },
       "work_package": {
         "action": "feature_contract",
@@ -698,9 +700,10 @@
         "inputs": [
           "implementation_plan/lean_refactor_arena_20261024.objectives.md",
           "implementation_plan/lean_refactor_arena_20261024.research.md",
-          "implementation_plan/proposals/JLR-012.review.json"
+          "implementation_plan/proposals/JLR-012.review.json",
+          "implementation_plan/lean_refactor_arena_20261024.review-contract.json"
         ],
-        "experiment": "Do not full-finetune119B. Specify matched CPU-encoder/lexical baselines and a later small-model LoRA memory/holdout gate; inference GGUF is not automatically a trainable checkpoint.",
+        "experiment": "Do not full-finetune119B. Specify matched CPU-encoder/lexical baselines and a later small-model LoRA memory/holdout gate; inference GGUF is not automatically a trainable checkpoint. Follow implementation_plan/lean_refactor_arena_20261024.review-contract.json exactly. Produce ONLY the seven required inner review keys: schema, task_id, risks, actions, acceptance_boundaries, proposal_only, needs_native_verification. No title, hypothesis, scope, record_contract, split_contract, semantics, metrics or stop_rule top-level keys. Carry their substantive details only in strings in the existing three arrays. Replace the whole old inner JSON; keep content below 3000 characters and at most three items per list.",
         "metrics": [
           "measured memory prerequisite",
           "holdout gate",
@@ -730,20 +733,21 @@
       ],
       "deterministic_command": "python3 tools/run_lean_refactor_router_task.py --task-id JLR-015",
       "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-015",
-      "acceptance": "Real Grok router receipt and schema-valid advisory review with concrete risks/actions/acceptance boundaries. This task completes a design artifact, not the proposed implementation or an experiment.",
+      "acceptance": "Real Grok router receipt and schema-valid advisory review with concrete risks/actions/acceptance boundaries. This task completes a design artifact, not the proposed implementation or an experiment. The inner review must contain exactly the seven required fields from the review-contract input, with no extra keys; all detailed sections belong only in strings in risks/actions/acceptance_boundaries. Replace the entire prior invalid inner JSON instead of preserving unknown fields; at most three concise items per list and 3000 content characters.",
       "bounds": {
         "timeout_seconds": 600,
         "router_calls": 3,
-        "max_output_tokens": 4096
+        "max_output_tokens": 1024
       },
       "work_package": {
         "action": "feature_contract",
         "hypothesis": "Explicit failure bounds and owned-process recovery can prevent silent waiting and false task completion.",
         "inputs": [
           "implementation_plan/lean_refactor_arena_20261024.objectives.md",
-          "implementation_plan/lean_refactor_arena_20261024.research.md"
+          "implementation_plan/lean_refactor_arena_20261024.research.md",
+          "implementation_plan/lean_refactor_arena_20261024.review-contract.json"
         ],
-        "experiment": "Enumerate bounded failure probes for provider timeout/quota, malformed JSON, changed output inode, missing native environment, occupiedGPU, disk pressure and dead owner; define observable recovery and honest planned-backlog activation.",
+        "experiment": "Enumerate bounded failure probes for provider timeout/quota, malformed JSON, changed output inode, missing native environment, occupiedGPU, disk pressure and dead owner; define observable recovery and honest planned-backlog activation. Follow implementation_plan/lean_refactor_arena_20261024.review-contract.json exactly. Produce ONLY the seven required inner review keys: schema, task_id, risks, actions, acceptance_boundaries, proposal_only, needs_native_verification. No title, hypothesis, scope, record_contract, split_contract, semantics, metrics or stop_rule top-level keys. Carry their substantive details only in strings in the existing three arrays. Replace the whole old inner JSON; keep content below 3000 characters and at most three items per list.",
         "metrics": [
           "bounded attempts",
           "observable failure reason",
@@ -1520,7 +1524,7 @@
         "inputs": [
           "data/lean_refactor_campaign_20261024/JLR-030.result.json"
         ],
-        "experiment": "Only if explicitly enabled, use a licensed compatible1\u20133B base already provisioned and framework-supported.",
+        "experiment": "Only if explicitly enabled, use a licensed compatible1–3B base already provisioned and framework-supported.",
         "metrics": [
           "verified token count",
           "raw heartbeats by exact pin",
@@ -1823,7 +1827,7 @@
           "model calls and token usage",
           "wall time and peak memory"
         ],
-        "stop_rule": "Report Approach/Models/Budget accounting/Reproduction sections,3\u20139pages if current rules unchanged.",
+        "stop_rule": "Report Approach/Models/Budget accounting/Reproduction sections,3–9pages if current rules unchanged.",
         "activation_requires": [
           "fresh final verifier receipts"
         ]
