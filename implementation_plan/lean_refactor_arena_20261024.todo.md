@@ -68,7 +68,7 @@ Measured fields: host identity, MemAvailable bytes, GPU allocated bytes, storage
 - Conflict policy: Own only declared outputs; do not change trusted validators, task history, credentials or unrelated jobs.
 - Acceptance: Real strict provider/model receipt plus a bounded advisory JSON review; no fixture, hidden fallback or self-declared proof success.
 
-Review the actual inventory and compact research context. Produce only three concise engineering risks, actions and acceptance boundaries in the supplied advisory JSON schema; entire response under3000characters. This startup review does not execute experiments or certify Lean proofs.
+Review the actual inventory and compact research context. Produce only three concise engineering risks, actions and acceptance boundaries in the supplied advisory JSON schema; entire response under3000characters. This startup review does not execute experiments or certify Lean proofs. Bootstrap reasoning effort is low and the actual provider trace must attest that policy.
 
 Budget/stop rule: Stop at the task budget; record failures without inventing successful evidence.
 

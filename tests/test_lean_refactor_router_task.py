@@ -64,10 +64,11 @@ class RouterTaskTests(unittest.TestCase):
 
     def complete_fake_call(self, prompt, cfg, directory):
         trace = {'provider': 'grok_cli', 'model': 'grok-4.7',
-                 'cmd': [cfg['grok_executable'], '--model', 'grok-4.7', '--tools', '']}
+                 'cmd': [cfg['grok_executable'], '--model', 'grok-4.7', '--tools', '', '--reasoning-effort', 'low']}
         (directory / 'grok_cli_trace.jsonl').write_text(json.dumps(trace) + '\n')
         return self.proposal(), {'child': {'effective_provider': 'grok_cli', 'status': 'ok', 'exit_code': 0},
                                  'requested_model': 'grok-4.7', 'requested_max_output_tokens': cfg['max_output_tokens'],
+                                 'requested_reasoning_effort': 'low',
                                  'actual_trace': trace, **worker.AUTH}
 
     def test_native_parser_reads_exact_id_dependencies_and_predicted_paths(self):
@@ -172,8 +173,10 @@ class RouterTaskTests(unittest.TestCase):
         def adapter(prompt, invocation):
             seen.append(invocation)
             self.assertEqual(__import__('os').environ.get('ipfs_accelerate_py_ROUTER_RESPONSE_CACHE'), '0')
+            self.assertEqual(__import__('os').environ.get('ipfs_accelerate_py_GROK_CLI_REASONING_EFFORT'), 'low')
+            self.assertEqual(__import__('os').environ.get('IPFS_ACCELERATE_PY_GROK_CLI_REASONING_EFFORT'), 'low')
             (directory / 'grok_cli_trace.jsonl').write_text(json.dumps({'provider': 'grok_cli', 'model': 'grok-4.7',
-                'cmd': [self.cfg['grok_executable'], '--model', 'grok-4.7', '--tools', '']}) + '\n')
+                'cmd': [self.cfg['grok_executable'], '--model', 'grok-4.7', '--tools', '', '--reasoning-effort', 'low']}) + '\n')
             return '{}', SimpleNamespace(status='ok', exit_code=0, effective_provider='grok_cli', to_dict=lambda: {'effective_provider': 'grok_cli'})
         with patch.object(llm, 'call_llm_router_with_receipt', adapter):
             worker.invoke('actual bounded prompt', self.cfg, directory)
@@ -184,6 +187,7 @@ class RouterTaskTests(unittest.TestCase):
         self.assertFalse(invocation.allow_cross_provider_fallback)
         self.assertFalse(invocation.allow_local_fallback)
         self.assertEqual(invocation.python_executable, self.cfg['python_executable'])
+        self.assertEqual(invocation.reasoning_effort, 'low')
 
     def test_actual_trace_wrong_model_fails(self):
         from ipfs_accelerate_py.agent_supervisor.todo_daemon import llm
@@ -296,6 +300,16 @@ class RouterTaskTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'positive integer'):
             worker.run(self.root, 'JLR-002', parser=parse_todo_blocks, caller=self.fake_call)
         self.assertFalse((self.root / self.cfg['runtime_root']).exists())
+
+    def test_actual_trace_must_confirm_low_reasoning_effort(self):
+        from ipfs_accelerate_py.agent_supervisor.todo_daemon import llm
+        directory = self.root / 'call'; directory.mkdir()
+        def adapter(*args):
+            (directory / 'grok_cli_trace.jsonl').write_text(json.dumps({'provider': 'grok_cli', 'model': 'grok-4.7',
+                'cmd': [self.cfg['grok_executable'], '--model', 'grok-4.7', '--tools', '', '--reasoning-effort', 'high']}) + '\n')
+            return '{}', SimpleNamespace(status='ok', exit_code=0, effective_provider='grok_cli')
+        with patch.object(llm, 'call_llm_router_with_receipt', adapter), self.assertRaisesRegex(ValueError, 'low effort'):
+            worker.invoke('actual bounded prompt', self.cfg, directory)
 
 
 if __name__ == '__main__':

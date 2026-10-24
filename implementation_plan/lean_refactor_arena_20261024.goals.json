@@ -180,7 +180,7 @@
           "implementation_plan/lean_refactor_arena_20261024.bootstrap-context.md",
           "data/lean_refactor_campaign_20261024/JLR-001.inventory.json"
         ],
-        "experiment": "Review the actual inventory and compact research context. Produce only three concise engineering risks, actions and acceptance boundaries in the supplied advisory JSON schema; entire response under3000characters. This startup review does not execute experiments or certify Lean proofs.",
+        "experiment": "Review the actual inventory and compact research context. Produce only three concise engineering risks, actions and acceptance boundaries in the supplied advisory JSON schema; entire response under3000characters. This startup review does not execute experiments or certify Lean proofs. Bootstrap reasoning effort is low and the actual provider trace must attest that policy.",
         "metrics": [
           "exact effective provider/model",
           "source-bound response receipt",

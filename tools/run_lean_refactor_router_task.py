@@ -227,12 +227,15 @@ def invoke(prompt, cfg, directory):
         required_effective_providers=('grok_cli',), timeout_seconds=cfg['provider_timeout_seconds'],
         timeout_grace_seconds=10, max_new_tokens=cfg['max_output_tokens'],
         max_prompt_chars=cfg['max_prompt_bytes'], temperature=0.0,
+        reasoning_effort='low',
         python_executable=cfg['python_executable'], trace=True, trace_dir=directory,
         request_id=directory.name, env_prefix='JEVOPS_REFACTOR_LLM',
         backend_env_name='JEVOPS_REFACTOR_LLM_BACKEND')
     denied = 'call_mcp_tool,list_mcp_resources,read_mcp_resource,spawn_subagent,run_terminal_command,workflow,scheduler_create'
     overlay = {'ipfs_accelerate_py_GROK_CLI_CMD': shlex.join([cfg['grok_executable'], '--disallowed-tools', denied]),
                'ipfs_accelerate_py_ROUTER_RESPONSE_CACHE': '0',
+               'ipfs_accelerate_py_GROK_CLI_REASONING_EFFORT': 'low',
+               'IPFS_ACCELERATE_PY_GROK_CLI_REASONING_EFFORT': 'low',
                'ipfs_accelerate_py_GROK_CLI_TOOLS': '', 'IPFS_ACCELERATE_PY_GROK_CLI_TOOLS': '',
                'ipfs_accelerate_py_GROK_CLI_MAX_TURNS': '1', 'IPFS_ACCELERATE_PY_GROK_CLI_MAX_TURNS': '1',
                'PYTHONDONTWRITEBYTECODE': '1'}
@@ -252,10 +255,12 @@ def invoke(prompt, cfg, directory):
     command = traces[0].get('cmd')
     require(isinstance(command, list) and command[0] == cfg['grok_executable'] and
             '--model' in command and command[command.index('--model') + 1] == 'grok-4.7' and
-            '--tools' in command and command[command.index('--tools') + 1] == '',
-            'Actual router CLI trace must bind exact model and tool-free proposal generation')
+            '--tools' in command and command[command.index('--tools') + 1] == '' and
+            '--reasoning-effort' in command and command[command.index('--reasoning-effort') + 1] == 'low',
+            'Actual router CLI trace must bind exact model, low effort and tool-free proposal generation')
     return text, {'child': receipt.to_dict(), 'requested_model': 'grok-4.7',
                   'requested_max_output_tokens': cfg['max_output_tokens'],
+                  'requested_reasoning_effort': 'low',
                   'actual_trace': traces[0], 'adapter_sha256': digest(regular(Path(llm.__file__))), **AUTH}
 
 
@@ -379,6 +384,10 @@ def verify_task_receipt(root: Path, task_id: str) -> dict:
             and trace.get('provider') == 'grok_cli' and trace.get('model') == 'grok-4.7', 'Actual strict router route differs')
     actual_traces = [decode(line) for line in regular(directory / 'grok_cli_trace.jsonl').decode().splitlines()]
     require(actual_traces == [trace], 'Actual CLI trace archive differs')
+    command = trace.get('cmd', [])
+    require(isinstance(command, list) and '--reasoning-effort' in command and
+            command[command.index('--reasoning-effort') + 1] == route.get('requested_reasoning_effort') == 'low',
+            'Actual bootstrap reasoning-effort policy differs')
     require(request.get('provider') == 'grok_cli' and request.get('model') == 'grok-4.7', 'Requested route differs')
     require(request.get('max_output_tokens') == result.get('max_output_tokens') ==
             route.get('requested_max_output_tokens') == call_cfg['max_output_tokens'], 'Actual requested token bound differs')
