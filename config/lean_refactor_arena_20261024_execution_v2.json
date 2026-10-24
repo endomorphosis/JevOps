@@ -1,0 +1,145 @@
+{
+  "base_profile_sha256": "4856dc59ebcdf4dd36f9096e6e0a764af8c9aeaeedfd28f080e9026e178b4d75",
+  "board": "implementation_plan/lean_refactor_arena_20261024.execution-v2.todo.md",
+  "contracts": {
+    "JLR-016": {
+      "action": "project_readiness",
+      "argv": [
+        "tools/lean_refactor_project_readiness.py",
+        "--provision",
+        "--build-imports",
+        "--source",
+        "strata",
+        "--tag",
+        "v4.26.0",
+        "--timeout-seconds",
+        "720",
+        "--output",
+        "data/lean_refactor_arena_20261024/execution-v2/JLR-016.result.json"
+      ],
+      "outputs": [
+        "data/lean_refactor_arena_20261024/execution-v2/JLR-016.result.json",
+        "data/lean_refactor_arena_20261024/execution-v2/JLR-016.result.projects.json"
+      ],
+      "timeout": 900
+    },
+    "JLR-017": {
+      "action": "native_baseline",
+      "argv": [
+        "-m",
+        "jevops.arena_lean",
+        "--baseline",
+        "--projects",
+        "data/lean_refactor_arena_20261024/execution-v2/JLR-016.result.projects.json",
+        "--max-processes",
+        "12",
+        "--timeout",
+        "60"
+      ],
+      "outputs": [
+        "data/lean_refactor_arena_20261024/execution-v2/JLR-017.result.json"
+      ],
+      "timeout": 900
+    },
+    "JLR-023": {
+      "action": "runtime_qualification",
+      "argv": [
+        "tools/lean_refactor_runtime_qualification.py",
+        "--qualify",
+        "--start-if-needed",
+        "--inference-smoke",
+        "--wait-seconds",
+        "180"
+      ],
+      "outputs": [
+        "data/lean_refactor_arena_20261024/execution-v2/JLR-023.result.json"
+      ],
+      "timeout": 600
+    },
+    "JLR-026": {
+      "action": "span_provenance",
+      "argv": [
+        "tools/lean_refactor_span_provenance.py",
+        "--produce"
+      ],
+      "outputs": [
+        "data/lean_refactor_arena_20261024/execution-v2/JLR-026.result.json"
+      ],
+      "timeout": 240
+    }
+  },
+  "goals_sha256": "a976be0b625707a92aafa97e3019df6db45662a54ef51f49fac5866f95f336e0",
+  "phase_budget": {
+    "calls": 0,
+    "max_calls": 0,
+    "previous_usage": {
+      "calls": 22,
+      "contracts": {
+        "09463227fbf4a6ba49a9c7338c6e6a8f339d7e0ccca88d1ab091dd60ac3f85fc": 1,
+        "0a0350d9114c86b7c0863c8899a6deaaad6352452b04a8e456c915268723c3d4": 1,
+        "11387b216f17147ff3e69e6fda1f8ca057a49112a466db8787c713258f0e40d7": 3,
+        "7e1a56aa1b51032e1823deabf6a0ae8d8b04e3d08796a5c87ac835fc1c7ae3d7": 1,
+        "9cb9e42431d35f0e9495c828e46129eabcc59c5f64048fae619a564817937925": 1,
+        "a1fa7d6d238927f4c22213bbaeb6e689a250efb8e38a992b31d588aa1bae470e": 1,
+        "a40746711dc368d43074ec61dcfdc865be28dc0980dfd01621ab67268aa1959d": 3,
+        "ac3d14d6df87605f2d29096df62b7184cf538e39eff549da54bf7ab82d2b399b": 1,
+        "b3844130180c0dc1a1f55018ac175f023e62ba4714b572a10945aea92f608346": 1,
+        "e272d2aeee427666209a6625ff54692efe0ee1c665562c5d6e856b44ae36a6a7": 3,
+        "e6327f1d2fe3becba08467dcb5f70aaec704ac17548ba959b0e3d3ebfc1836a1": 1,
+        "ee005628eb32eed4b9812ee253541d831200a8ded44499271a3e0839b9b8980f": 1,
+        "f77457c64e1364b7d530761fad0888d398d40dfec64b4a7d01302159ac14d7ec": 3,
+        "ffc322551217b82e104f0afa70735a284ed1ad08095b6f21fb5bbda994665fce": 1
+      }
+    },
+    "previous_usage_path": "data/lean_refactor_arena_20261024/router-budget.json"
+  },
+  "previous_profiles": {
+    "907be640fc339581ac25a3122a3722898859e02c37e729413ddf5ee48086d4f6": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.907be640fc339581ac25a3122a3722898859e02c37e729413ddf5ee48086d4f6",
+    "94139c5d81ee0a089d07da4b3b0a31207de689dc6fad54af28331bcd1161608e": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.94139c5d81ee0a089d07da4b3b0a31207de689dc6fad54af28331bcd1161608e"
+  },
+  "schema": "jevops.lean-refactor.execution.v2",
+  "scientific_route": {
+    "actual_llm_router_required": true,
+    "allow_cross_provider_fallback": false,
+    "allow_local_fallback": false,
+    "model": "grok-4.7",
+    "provider": "grok_cli"
+  },
+  "source_sha256": {
+    "/home/barberb/lift_coding/external/ipfs_accelerate/ipfs_accelerate_py/agent_supervisor/rescue/lane_resume.py": "1fffe8f85ecb6df3954c585273e4cb5e4d1f65380e02164548d2f789b42dc97d",
+    "/home/barberb/lift_coding/external/ipfs_accelerate/ipfs_accelerate_py/agent_supervisor/rescue/planned_work_watchdog.py": "fe9fd56f6c206eb1c04ef15e5960d8f707c929853f6ba9b93942e2529e8ca206",
+    "/home/barberb/lift_coding/external/ipfs_accelerate/ipfs_accelerate_py/agent_supervisor/rescue/supervisor_watchdog.py": "ec9672bcd1242246ed9fd9c0f6ac0b44e5d07e763a4c6718da61f0749ab2f21c",
+    "jevops/arena.py": "e1ba89358f25828d3cabd7acca049cfcaa6ab2cee8901ca01add7bb4dc5789ca",
+    "jevops/arena_isolation.py": "15e4d44accc4df4d556349ea603b3e746b28cf9f0b7b1772b94fba412fef6038",
+    "jevops/arena_lean.py": "3cc0e2535aaa92d3f87b87ab78bfa7734ec6416c18a1240fab0df772eeda3be0",
+    "jevops/arena_local.py": "5271c0409da7f11351d6eec4f55efdd5e611a152190f4c129754db69b6b9bf83",
+    "jevops/arena_prepare.py": "a145e2fa85fb960756f16dcc2374928fb1ada984c9b45be55eda063030d4a84f",
+    "jevops/arena_staging.py": "d3033c12fe2fc0991c91ec6af53caf0a6f70b2f4ba0292d48ffa39610345b2c2",
+    "jevops/lean.py": "63bc4c8eea7d0d4049704978158a76741de1ab31605f588aff425884f63ef416",
+    "jevops/lean/ArenaCheck.lean": "b16f672f2d3e088021ec61d31ad70c4b5c8f0a1fde9b320eed8f30c36f38b23a",
+    "jevops/lean/ArenaLocal.lean": "5061b19a16a79fa8a0f3a58b2c7e2318f1d7071b0ff805cb1c0bb75cc2a43ae7",
+    "jevops/lean/ProofState.lean": "17690bee6bf665d383df7b7ba5c45ab64e61ea0a85f9bc36384d55e328b2428c",
+    "jevops/premise_search.py": "520f1db03abae35c930ec9d2dd7aafd393d3a440904a6f38994db2864bbb32c3",
+    "jevops/proof_ca.py": "0feecbc7726982e89c1dd4971c82ab0c8ec56d2027d5f2ecd488a28980e423a3",
+    "jevops/proof_replay.py": "61b5b5d8225499bf8e4d26244692e6298b1ea7233602e42d01294731be0a51da",
+    "jevops/proof_state.py": "e17c3687bdf49a59735d97a1624a581ca61e508cfe3709a67aed53419c124f29",
+    "jevops/proof_trust.py": "59f798c49e605eb991a8530b713961b1993e1edd61b635d781a4ddededcb5109",
+    "jevops/seals.py": "2b16dc6ed38f920ab12576064f71b46ef11b4c4c0abde868d9d08e4f7b8fcc5b",
+    "tests/test_lean_refactor_baseline_context.py": "b00124c4726d4c234218f69d12f8ab1feac2c2fb2d57ce214dc8a47fec434590",
+    "tests/test_lean_refactor_continuation.py": "cacec95b6167e5375da0a6e17f11c2fd7256cc7495cd525f03df10968ab95b8c",
+    "tests/test_lean_refactor_execution_v2.py": "1689b9352275eaf4e7515e1ea0acfc947726ab4b100ba03edd1154a15f722970",
+    "tests/test_lean_refactor_project_readiness.py": "c0f16aa73216326d1876e05e97a65a8f47a1d8b58ba694994742d5f4787eda5b",
+    "tests/test_lean_refactor_runtime_qualification.py": "8875167f96c2fa72fb18b08aa3c1f59fb73ffb1e54723bbf0cf81b9b500bff92",
+    "tests/test_lean_refactor_source_refresh.py": "cf1591ef025697122e0c28ba520c9a635cff7c07719da8ee66b43973f8d8b81d",
+    "tests/test_lean_refactor_span_provenance.py": "b5c4cc3c50e4ff40860064050ad8f416e492277424480babeab8cc6a3e6df08e",
+    "tools/check_lean_refactor_stage_v2.py": "127481861faef9e3cc154367d4f1e62f584a85e0869bbb4b9ee73e2ad620982c",
+    "tools/lean_refactor_execution_v2.py": "2d4b156f94adb2e9abcfa5c845a72bf2eee0e462d92a830dc3f01c0bb327cee2",
+    "tools/lean_refactor_project_readiness.py": "9632f1c1a722a83cfb58a78554b93ad47e130638a07c1b9c9d578eee3c39c827",
+    "tools/lean_refactor_runtime_qualification.py": "44f13a82b6555a276ba1c8aa8473136183447dabd8f5eef3ec7b2879120f1ec3",
+    "tools/lean_refactor_span_provenance.py": "1f3a04d69faa1f1d5d64b8cdf654c036937d56050978608d57f7e340c0bdacc9",
+    "tools/leanstral-inference-20261024.json": "304700c24a8f4dec1948734c8022b8d8a438230d1c8435e1d5db0c67a3fe3f5e",
+    "tools/provision_leanstral_20261024.py": "6784c88d332c8dcd4aa213fabc620261c7d624f93800031ac8bfaf6e4ffc95fe",
+    "tools/run_lean_refactor_stage_v2.py": "95062f0a778474c9ea058b9c92c1a9df24c1c31e84d4070f98f6c260ca19b195"
+  },
+  "tests_receipt": "data/lean_refactor_arena_20261024/execution-v2/focused-tests.json"
+}

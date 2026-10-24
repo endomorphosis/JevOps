@@ -2,7 +2,7 @@
   "schema": "ipfs_accelerate_py.agent_supervisor.jevops_lean_refactor.watchdog@1",
   "report_path": "data/lean_refactor_arena_20261024/watchdog-report.json",
   "unstall_repair_dir": "data/lean_refactor_arena_20261024/unstall-repair",
-  "todo_path": "implementation_plan/lean_refactor_arena_20261024.todo.md",
+  "todo_path": "implementation_plan/lean_refactor_arena_20261024.execution-v2.todo.md",
   "task_header_prefix": "## JLR-",
   "allow_bounded_task_implement": false,
   "autonomous_unstall_policy": {
@@ -45,6 +45,8 @@
         "reason": "The full benchmark cohort is announced for1November; check actual release metadata at that point.",
         "evidence_path": "implementation_plan/lean_refactor_arena_20261024.research.md"
       }
-    }
-  }
+    },
+    "materialize_independent_frontier": true
+  },
+  "execution_profile": "config/lean_refactor_arena_20261024_execution_v2.json"
 }

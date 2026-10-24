@@ -1,0 +1,24 @@
+# Managed by JevOps tools/manage_supervisor_watchdog.py
+[Unit]
+Description=Reload the JevOps repair dispatcher only after its worker exits
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/barberb/lift_coding/JevOps
+Environment="PYTHONPATH=/home/barberb/lift_coding/external/ipfs_accelerate"
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=PYTHONUNBUFFERED=1
+ExecStart="/home/barberb/lift_coding/external/ipfs_datasets/.venv/bin/python" "-B" "/home/barberb/lift_coding/JevOps/tools/reload_supervisor_when_idle.py" "--repo-root" "/home/barberb/lift_coding/JevOps" "--timeout" "1800"
+Restart=no
+SuccessExitStatus=75
+TimeoutStartSec=1810s
+KillMode=control-group
+MemoryMax=512M
+TasksMax=32
+CPUQuota=100%
+UMask=0077
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=jevops-idle-reload
+LogRateLimitIntervalSec=30s
+LogRateLimitBurst=50

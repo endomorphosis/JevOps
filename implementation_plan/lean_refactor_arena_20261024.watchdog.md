@@ -21,6 +21,14 @@ The fifteen bootstrap tasks have completed; the remaining twenty-three research 
 
 Future release dates use explicit UTC not-before gates with source evidence. Occupied GPU resources produce a real blocker and a cheap retry condition, while independent CPU work continues. Neither a planned label nor a fresh monitoring heartbeat establishes campaign completion. The watchdog preserves call history and exact-pin proof checks throughout continuation.
 
+Research producers and their protected validators are registered in `config/lean_refactor_arena_20261024_execution_v2.json` and the separate `implementation_plan/lean_refactor_arena_20261024.execution-v2.todo.md` board. The original bootstrap contracts and receipts remain intact. The first registered stages prepare exact-pin projects, measure native baselines, qualify Leanstral resources and collect native span provenance. Missing projects, compiler timeouts and occupied GPUs remain explicit partial results or waits; they do not become proof successes.
+
+Resource retries distinguish evidence consumed by an actual producer from observations made by a validation probe. A probe that first notices free resources cannot consume the producer's retry eligibility. Real producer refusals retain bounded backoff, and unchanged resource evidence cannot create a retry storm. The planned-work policy can materialize independent work during an evidenced resource wait, while actual producer and validation children prevent concurrent materialization.
+
+Execution source changes require genuine focused tests followed by `tools/lean_refactor_execution_v2.py --refresh-tests <JUnit path>`. A source-only repair under a temporary integration hold uses `--source-only`, which requires a fresh paused lane acknowledgement, identical producer contracts and no active work. It archives prior approvals, rechecks semantic acceptance and preserves taskboard bytes. It cannot activate an additional stage or reset model budgets.
+
+To reload dispatcher code from a maintenance worker, queue `systemctl --user start --no-block jevops-agent-supervisor-reload.service` and let the worker exit. This manual oneshot waits for the native repair-presence lock and an idle worker state before restarting only the registered repair daemon. It verifies a replacement process and a fresh report after the restart returns. A maintenance worker must not restart its own parent service or wait synchronously for this oneshot.
+
 Run these commands from the JevOps root:
 
 ```bash
