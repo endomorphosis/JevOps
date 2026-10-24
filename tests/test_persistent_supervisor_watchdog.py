@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -237,6 +238,54 @@ class PersistentWatchdogTests(unittest.TestCase):
         self.assertEqual(report['migrated_pid'], 41)
         self.assertIs(report['watchdog_signaled'], False)
         self.assertEqual((watchdog / 'untouched').read_bytes(), b'healthy watchdog')
+
+    def test_migration_waits_for_kernel_lock_after_guardian_identity_disappears(self):
+        directory = self.guardian()
+        lock = (self.manifest.parent / 'watchdog-guardian.lock').open('a+')
+        self.addCleanup(lock.close)
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        fd = os.open(self.base / 'private-pidfd', os.O_CREAT | os.O_RDONLY, 0o600)
+        blocked = threading.Event()
+        released = threading.Event()
+        real_flock = fcntl.flock
+        attempts = []
+
+        def actual_lock_attempt(descriptor, operation):
+            try:
+                return real_flock(descriptor, operation)
+            except BlockingIOError:
+                attempts.append('kernel-lock-still-owned')
+                blocked.set()
+                raise
+
+        def kernel_finishes_exit():
+            # Keep the real flock until migration actually observes contention,
+            # rather than depending on a sleep or a mocked successful flock.
+            if blocked.wait(2):
+                lock.close()
+                released.set()
+
+        release_thread = threading.Thread(target=kernel_finishes_exit)
+        release_thread.start()
+        try:
+            def identity_disappears(actual_fd, actual_signal):
+                self.assertEqual(actual_fd, fd)
+                self.assertEqual(actual_signal, watcher.signal.SIGTERM)
+                shutil.rmtree(directory)
+                self.assertFalse(lock.closed)
+
+            with self.migration_context(), patch.object(watcher.os, 'pidfd_open', return_value=fd), \
+                    patch.object(watcher.signal, 'pidfd_send_signal', side_effect=identity_disappears) as sent, \
+                    patch.object(watcher.fcntl, 'flock', side_effect=actual_lock_attempt):
+                result = watcher.migrate_guardian(self.root, self.cfg, self.supervisor)
+        finally:
+            release_thread.join(timeout=3)
+        self.assertFalse(release_thread.is_alive())
+        self.assertTrue(released.is_set())
+        self.assertGreaterEqual(len(attempts), 1)
+        sent.assert_called_once()
+        self.assertEqual(result['migrated_pid'], 41)
+        self.assertIs(result['watchdog_signaled'], False)
 
     def test_repeat_install_keeps_same_unit_bytes_and_does_not_migrate_managed_guardian(self):
         calls = []

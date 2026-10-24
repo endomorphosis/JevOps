@@ -215,7 +215,15 @@ def migrate_guardian(root, cfg, supervisor):
         os.close(fd)
     lock_path = manifest.parent / 'watchdog-guardian.lock'
     with lock_path.open('a+') as handle:
-        fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        # /proc identity can disappear just before the kernel releases the
+        # exiting process's file locks. Wait for that final handoff as well.
+        while True:
+            try:
+                fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                require(time.monotonic() < deadline, 'Old guardian ownership lock did not close before migration deadline')
+                time.sleep(.1)
     return {'migrated_pid': pid, 'identity': identity, 'watchdog_signaled': False}
 
 
