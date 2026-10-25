@@ -620,7 +620,7 @@ Measured fields: verified token count, raw heartbeats by exact pin, compatibilit
 - Track: research
 - Depends on: JLR-011, JLR-017
 - Goal id: JLR-G004
-- Outputs: data/lean_refactor_arena_20261024/execution-v2/JLR-020.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-020.partial.json
+- Outputs: data/lean_refactor_arena_20261024/execution-v2/JLR-020.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-020.partial.json, data/lean_refactor_arena_20261024/execution-v2/native-pin-gate.json
 - Deterministic command: python3 tools/run_lean_refactor_stage_v2.py --task-id JLR-020
 - Validation: python3 tools/check_lean_refactor_stage_v2.py --validate-task JLR-020
 - Board namespace: jevops-lean-refactor-20261024
@@ -629,7 +629,7 @@ Measured fields: verified token count, raw heartbeats by exact pin, compatibilit
 - Resource class: cpu-lean
 - Provider role: deterministic
 - Implementation timeout seconds: 900
-- Predicted files: data/lean_refactor_arena_20261024/execution-v2/JLR-020.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-020.partial.json
+- Predicted files: data/lean_refactor_arena_20261024/execution-v2/JLR-020.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-020.partial.json, data/lean_refactor_arena_20261024/execution-v2/native-pin-gate.json
 - Conflict policy: Own only declared outputs; do not change trusted validators, task history, credentials or unrelated jobs.
 - Acceptance: Whole theorem survives all pins and exact target; count all coupled edits and final proof source.
 
@@ -641,7 +641,7 @@ Budget/stop rule: Compare isolated deletion versus coupled repair under identica
 Hypothesis: A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Implement coupled deletion and induction-context repair.
 
 Measured fields: verified token count, raw heartbeats by exact pin, compatibility across required pins, verified candidate rate, model calls and token usage, wall time and peak memory.
-- Execution inputs: config/lean_refactor_arena_20261024_execution_v2.json, data/lean_refactor_arena_20261024/execution-v2/JLR-016.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-017.result.json
+- Execution inputs: config/lean_refactor_arena_20261024_execution_v2.json, data/lean_refactor_arena_20261024/execution-v2/JLR-016.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-017.result.json, data/lean_refactor_arena_20261024/execution-v2/native-pin-frontier.json, data/lean_refactor_arena_20261024/execution-v2/native-pin-gate.json
 - Retry on changed evidence: true
 
 
@@ -705,7 +705,8 @@ Measured fields: verified token count, raw heartbeats by exact pin, compatibilit
 
 ## JLR-023 Qualify downloaded Leanstral weights, runtime and resource ownership
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T20:43:36Z
 - Priority: P1
 - Track: research
 - Depends on: JLR-013, JLR-015
@@ -738,21 +739,21 @@ Measured fields: verified token count, raw heartbeats by exact pin, compatibilit
 
 ## JLR-024 Run bounded frozen-Leanstral iterative shortening
 
-- Status: planned
-- Priority: P2
+- Status: pending
+- Priority: P1
 - Track: research
 - Depends on: JLR-017, JLR-018, JLR-023
 - Goal id: JLR-G005
-- Outputs: data/lean_refactor_campaign_20261024/JLR-024.result.json
-- Deterministic command: python3 tools/run_lean_refactor_campaign.py --task-id JLR-024
-- Validation: python3 tools/check_lean_refactor_plan.py --validate-task JLR-024
+- Outputs: data/lean_refactor_arena_20261024/execution-v2/JLR-024.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-024.partial.json, data/lean_refactor_arena_20261024/execution-v2/iterative-v1-ledger.json, data/lean_refactor_arena_20261024/execution-v2/iterative-admission-gate.json
+- Deterministic command: python3 tools/run_lean_refactor_stage_v2.py --task-id JLR-024
+- Validation: python3 tools/check_lean_refactor_stage_v2.py --validate-task JLR-024
 - Board namespace: jevops-lean-refactor-20261024
 - Bundle: jevops/lean-refactor/JLR-G005
 - Parallel lane: jlr-planning
 - Resource class: gpu-inference
 - Provider role: deterministic
-- Implementation timeout seconds: 600
-- Predicted files: data/lean_refactor_campaign_20261024/JLR-024.result.json
+- Implementation timeout seconds: 900
+- Predicted files: data/lean_refactor_arena_20261024/execution-v2/JLR-024.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-024.partial.json, data/lean_refactor_arena_20261024/execution-v2/iterative-v1-ledger.json, data/lean_refactor_arena_20261024/execution-v2/iterative-admission-gate.json
 - Conflict policy: Own only declared outputs; do not change trusted validators, task history, credentials or unrelated jobs.
 - Acceptance: All-pin Lean acceptance and original-source replacement required; response text and model confidence have zero proof authority.
 
@@ -764,6 +765,9 @@ Budget/stop rule: Start2 requests,<=1024 input/256 outputtokens,90s each,<=240s 
 Hypothesis: A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Run bounded frozen-Leanstral iterative shortening.
 
 Measured fields: verified token count, raw heartbeats by exact pin, compatibility across required pins, verified candidate rate, model calls and token usage, wall time and peak memory.
+- Execution inputs: config/lean_refactor_arena_20261024_execution_v2.json, data/lean_refactor_arena_20261024/execution-v2/iterative-v1-ledger.json
+- Retry on changed evidence: true
+
 
 ## JLR-025 Ablate prompt context and retrieval independently
 
@@ -796,7 +800,8 @@ Measured fields: verified token count, raw heartbeats by exact pin, compatibilit
 
 ## JLR-026 Implement Lean-specific span provenance adapter
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T21:19:16Z
 - Priority: P2
 - Track: research
 - Depends on: JLR-012, JLR-017
@@ -1059,21 +1064,21 @@ Measured fields: verified token count, raw heartbeats by exact pin, compatibilit
 
 ## JLR-035 Refresh full benchmark inventory at release
 
-- Status: planned
+- Status: pending
 - Priority: P2
 - Track: research
 - Depends on: JLR-017
 - Goal id: JLR-G009
-- Outputs: data/lean_refactor_campaign_20261024/JLR-035.result.json
-- Deterministic command: python3 tools/run_lean_refactor_campaign.py --task-id JLR-035
-- Validation: python3 tools/check_lean_refactor_plan.py --validate-task JLR-035
+- Outputs: data/lean_refactor_arena_20261024/execution-v2/JLR-035.result.json, data/lean_refactor_arena_20261024/execution-v2/release-gate.json
+- Deterministic command: python3 tools/run_lean_refactor_stage_v2.py --task-id JLR-035
+- Validation: python3 tools/check_lean_refactor_stage_v2.py --validate-task JLR-035
 - Board namespace: jevops-lean-refactor-20261024
 - Bundle: jevops/lean-refactor/JLR-G009
 - Parallel lane: jlr-planning
 - Resource class: cpu-lean
 - Provider role: deterministic
-- Implementation timeout seconds: 900
-- Predicted files: data/lean_refactor_campaign_20261024/JLR-035.result.json
+- Implementation timeout seconds: 120
+- Predicted files: data/lean_refactor_arena_20261024/execution-v2/JLR-035.result.json, data/lean_refactor_arena_20261024/execution-v2/release-gate.json
 - Conflict policy: Own only declared outputs; do not change trusted validators, task history, credentials or unrelated jobs.
 - Acceptance: No unreleased/full benchmark claims; exact corpus/version digest and complete denominators.
 
@@ -1085,6 +1090,9 @@ Budget/stop rule: Small metadata requests; no submission or model calls as side 
 Hypothesis: A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Refresh full benchmark inventory at release.
 
 Measured fields: verified token count, raw heartbeats by exact pin, compatibility across required pins, verified candidate rate, model calls and token usage, wall time and peak memory.
+- Execution inputs: config/lean_refactor_arena_20261024_execution_v2.json, data/lean_refactor_arena_20261024/execution-v2/release-gate.json
+- Retry on changed evidence: true
+
 
 ## JLR-036 Run full budget-accounted final evaluation
 

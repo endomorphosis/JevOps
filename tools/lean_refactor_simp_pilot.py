@@ -24,6 +24,7 @@ from jevops.seals import Fingerprinter
 SEED='papers/completion/lean_refactor_arena/evidence/prefix-reference-strata-2026-09-25/solver-0.json'
 TARGET='CallElimCorrect.extractedOldExprInVars'
 SCHEMA='jevops.lean-refactor.simp-pilot.v1'
+PROFILE_TIMEOUT=180
 
 def proposals(record, source, profile):
     c.require(arena.intake_error(source,record['statement']) is None,'incumbent theorem envelope changed')
@@ -83,7 +84,7 @@ def produce(root=ROOT):
     report['initial']=measure(incumbent,'reference-first');persist()
     if report['initial']['receipt']['outcome']!='VERIFIED':
         report['status']='BLOCKED_INCUMBENT';persist();return report
-    guard=arena_lean.NativeLeanVerifier({pin:binding},max_processes=0,timeout=60,fingerprinter=reader)
+    guard=arena_lean.NativeLeanVerifier({pin:binding},max_processes=0,timeout=PROFILE_TIMEOUT,fingerprinter=reader)
     runtime=arena_local.ArenaLocalRuntime(guard,record,max_processes=1,node_budget=20000,event_budget=256)
     report['profile']=runtime.profile(pin,source=incumbent,threshold_raw=100);persist()
     if not report['profile']['ok']:

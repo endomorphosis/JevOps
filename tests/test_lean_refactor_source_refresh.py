@@ -1,7 +1,9 @@
 """Private artifact tests for held source review; never refresh a live owner."""
 import copy
 import json
+import os
 from pathlib import Path
+import subprocess
 import sys
 import time
 from types import SimpleNamespace
@@ -17,7 +19,8 @@ SUITES=('test_lean_refactor_execution_v2','test_lean_refactor_project_readiness'
         'test_lean_refactor_runtime_qualification','test_lean_refactor_continuation',
         'test_lean_refactor_span_provenance','test_lean_refactor_baseline_context',
         'test_lean_refactor_source_refresh','test_lean_refactor_metric_audit','test_lean_refactor_simp_pilot',
-        'test_lean_refactor_coupled_pilot')
+        'test_lean_refactor_coupled_pilot','test_lean_refactor_iterative_pilot','test_lean_refactor_release_inventory',
+        'test_lean_refactor_native_pin_frontier')
 
 
 def junit(path, *, count=35, fault=None, omit=None):
@@ -79,7 +82,7 @@ def campaign(tmp_path,monkeypatch):
     archive_originals={relative:(root/relative).read_bytes() for relative in
         (c.PROFILE,test_receipt,c.RUNTIME+'/materialization.json',c.RUNTIME+'/activation.json')}
     preflights=[]
-    def protected_fixture_preflight(selected_root):
+    def protected_fixture_preflight(selected_root, *, profile=None, board_text=None):
         # This seam replaces bootstrap/native re-execution only AFTER the real
         # refresh implementation has archived and rebound its actual files.
         assert selected_root==root
@@ -87,7 +90,10 @@ def campaign(tmp_path,monkeypatch):
             digest=__import__('hashlib').sha256(raw).hexdigest()
             archive=root/c.RUNTIME/'history'/(Path(relative).name+'.'+digest)
             assert archive.read_bytes()==raw
-        updated=c.read(root/c.PROFILE);approval=c.read(root/test_receipt)
+        # The new owner and board must still be unpublished while acceptance
+        # runs. A rejection must never expose executable, unreviewed stages.
+        assert (root/c.PROFILE).read_bytes()==archive_originals[c.PROFILE]
+        updated=profile;approval=c.read(root/test_receipt)
         assert updated['source_sha256']==c.sources(root)!=old_source
         assert approval['passed'] is True and approval['source_sha256']==updated['source_sha256']
         assert approval['junit_sha256']==c.sha(actual_junit)
@@ -192,5 +198,187 @@ def test_source_only_cli_requires_refresh_mode_before_any_write(campaign,monkeyp
     f=campaign;monkeypatch.setattr(c,'ROOT',f.root)
     monkeypatch.setattr(sys,'argv',['lean_refactor_execution_v2.py','--source-only'])
     before=file_snapshot(f.root)
+    with pytest.raises(SystemExit) as error:c.main()
+    assert error.value.code==2 and file_snapshot(f.root)==before
+
+
+@pytest.mark.parametrize('source_only',[False,True])
+def test_rejected_semantic_preflight_never_publishes_owner_or_taskboard(campaign,monkeypatch,source_only):
+    f=campaign
+    if not source_only:f.hold.unlink()
+    profile=(f.root/c.PROFILE).read_bytes();board=f.board.read_bytes()
+    def reject(root,**proposed):
+        assert proposed['profile']['source_sha256']==c.sources(root)
+        assert (root/c.PROFILE).read_bytes()==profile and f.board.read_bytes()==board
+        raise ValueError('current protected native acceptance rejected')
+    monkeypatch.setattr(c,'preflight',reject)
+    with pytest.raises(ValueError,match='protected native acceptance'):
+        c.refresh(f.root,f.junit,source_only=source_only)
+    assert (f.root/c.PROFILE).read_bytes()==profile and f.board.read_bytes()==board
+
+
+def test_refresh_never_overwrites_concurrent_taskboard_edit(campaign,monkeypatch):
+    f=campaign;f.hold.unlink();profile=(f.root/c.PROFILE).read_bytes()
+    original=c.preflight
+    def concurrent_edit(root,**proposed):
+        report=original(root,**proposed)
+        f.board.write_text(f.board.read_text()+'\nConcurrent operator evidence\n')
+        return report
+    monkeypatch.setattr(c,'preflight',concurrent_edit)
+    with pytest.raises(ValueError,match='concurrent execution owner/taskboard'):
+        c.refresh(f.root,f.junit)
+    assert (f.root/c.PROFILE).read_bytes()==profile
+    assert f.board.read_text().endswith('Concurrent operator evidence\n')
+
+
+@pytest.fixture
+def quiescent_owner(campaign,monkeypatch):
+    """Real canonical native owner, in an owned HOLD-only private repository."""
+    f=campaign;root=f.root
+    accelerator='/home/barberb/lift_coding/external/ipfs_accelerate'
+    base=c.read(root/c.BASE);base.update(python_executable=sys.executable,accelerator_source=accelerator)
+    c.save(root/c.BASE,base);f.old['base_profile_sha256']=c.sha(root/c.BASE)
+    c.save(root/c.PROFILE,f.old);f.originals[c.PROFILE]=(root/c.PROFILE).read_bytes()
+    c.save(root/'data/lean_refactor_arena_20261024/router-budget.json',f.old['phase_budget']['previous_usage'])
+    manifest={'todo_path':c.BOARD,'task_header_prefix':'## JLR-','execution_profile':c.PROFILE,
+              'lanes':[{'bundle_key':'private-quiescent-registration','state_dir':'data/private-lane','state_prefix':'fixture'}]}
+    c.save(root/c.LANES,manifest)
+    cfg={'schema':'jevops.persistent-supervisor-watchdog.v1','materialize_planned_work':True,
+         'activate_planned_work':False,'reset_campaign_budgets':False,
+         'planned_work_mode':'implement_validate_then_activate','supervisor_profile':c.BASE,
+         'lane_manifest':c.LANES,'runtime_manifest':'data/live-private-lanes.json'}
+    c.save(root/'config/lean_refactor_arena_20261024_watchdog.json',cfg)
+    c.save(root/cfg['runtime_manifest'],manifest)
+    pid_path=f.status.with_name('fixture_bundle_supervisor.pid')
+    argv=[sys.executable,'-B','-m','ipfs_accelerate_py.agent_supervisor.rescue.lane_resume',
+          '--repo-root',str(root),'--todo-path',c.BOARD,'--task-header-prefix','## JLR-',
+          '--status-path',str(f.status),'--pid-path',str(pid_path),'--log-path',str(root/'native.log'),
+          '--bundle-key','private-quiescent-registration','--max-seconds','60']
+    environment={'PATH':str(Path(sys.executable).parent)+':/usr/bin:/bin','HOME':str(root),
+                 'PYTHONPATH':accelerator,'PYTHONDONTWRITEBYTECODE':'1'}
+    with (root/'native-output.log').open('wb') as log:
+        child=subprocess.Popen(argv,cwd=root,env=environment,stdin=subprocess.DEVNULL,
+                               stdout=log,stderr=log,start_new_session=True)
+        try:
+            deadline=time.monotonic()+10
+            while time.monotonic()<deadline:
+                if child.poll() is not None:raise AssertionError((root/'native-output.log').read_text())
+                try:
+                    current=c.read(f.status)
+                    if current.get('pid')==child.pid and current.get('phase')=='operator_hold':break
+                except (OSError,ValueError):pass
+                time.sleep(.03)
+            else:raise AssertionError('private native fixture did not acknowledge HOLD')
+            f.child=child;f.cfg=cfg;f.pid_path=pid_path
+            original_preflight=c.preflight
+            def proposed(root,**kwargs):
+                result=original_preflight(root,**kwargs)
+                result['implemented']=list(kwargs['profile']['contracts'])
+                return result
+            monkeypatch.setattr(c,'preflight',proposed)
+            # Domain acceptance above is deliberately fixture-only. This seam
+            # checks that actual publication preceded actual activation.
+            def published(root):
+                profile=c.read(root/c.PROFILE)
+                assert profile['source_sha256']==c.sources(root)
+                assert profile['contracts']==c.definitions()
+                return profile,base,{},{}
+            monkeypatch.setattr(c,'load',published)
+            yield f
+        finally:
+            if child.poll() is None:child.terminate()
+            try:child.wait(timeout=5)
+            except subprocess.TimeoutExpired:child.kill();child.wait(timeout=5)
+
+
+def test_explicit_quiescent_review_uses_real_paused_owner_and_keeps_hold(quiescent_owner):
+    f=quiescent_owner;fence=c.quiescent_maintenance_fence(f.root)
+    assert fence['pid']==f.child.pid and fence['start_ticks']
+    hold=f.hold.read_bytes();marker=f.hold.stat();prior_manifest=(f.root/c.LANES).read_bytes()
+    result=c.refresh(f.root,f.junit,quiescent_maintenance=True)
+    assert result['valid'] is True and f.hold.read_bytes()==hold
+    assert f.hold.stat().st_ino==marker.st_ino and f.child.poll() is None
+    assert (f.root/c.LANES).read_bytes()==prior_manifest
+    assert c.read(f.root/f.cfg['runtime_manifest'])==c.read(f.root/c.LANES)
+    activation=c.read(f.root/c.RUNTIME/'activation.json')
+    assert activation['quiescent_maintenance_review'] and activation['operator_hold_retained']
+    assert activation['router_calls_added']==0
+    assert c.read(f.root/c.RUNTIME/'materialization.json')['quiescent_maintenance_review']
+
+
+def test_quiescent_review_can_materialize_a_reviewed_planned_definition_only(quiescent_owner):
+    f=quiescent_owner;tid='JLR-035'
+    f.old['contracts'].pop(tid);c.save(f.root/c.PROFILE,f.old)
+    f.originals[c.PROFILE]=(f.root/c.PROFILE).read_bytes()
+    original=f.board.read_text();header='## '+tid+' '
+    begin=original.index(header);end=original.find('\n## JLR-',begin)
+    if end<0:end=len(original)
+    block=original[begin:end].replace('- Status: pending','- Status: planned',1)
+    block+='- Deterministic command: planned-producer-not-yet-activated\n'
+    block+='- Validation: planned-validator-not-yet-activated\n'
+    block+='- Implementation timeout seconds: 1\n'
+    f.board.write_text(original[:begin]+block+original[end:])
+    previous=f.board.read_bytes();old_profile=(f.root/c.PROFILE).read_bytes()
+    c.refresh(f.root,f.junit,quiescent_maintenance=True)
+    assert '- Status: pending' in f.board.read_text()[begin:]
+    assert 'python3 tools/run_lean_refactor_stage_v2.py --task-id '+tid in f.board.read_text()
+    archive=f.root/c.RUNTIME/'history'/(f.board.name+'.'+__import__('hashlib').sha256(previous).hexdigest())
+    assert archive.read_bytes()==previous
+    assert old_profile in [p.read_bytes() for p in (f.root/c.RUNTIME/'history').iterdir()]
+    assert f.hold.exists() and f.child.poll() is None
+
+
+@pytest.mark.parametrize('fault',['materialize_false','activation_true','budgets_reset','wrong_mode','scope'])
+def test_quiescent_review_requires_existing_narrow_user_authorization(campaign,fault):
+    f=campaign;path=f.root/'config/lean_refactor_arena_20261024_watchdog.json'
+    cfg={'materialize_planned_work':True,'activate_planned_work':False,'reset_campaign_budgets':False,
+         'planned_work_mode':'implement_validate_then_activate','supervisor_profile':c.BASE,'lane_manifest':c.LANES}
+    if fault=='materialize_false':cfg['materialize_planned_work']=False
+    elif fault=='activation_true':cfg['activate_planned_work']=True
+    elif fault=='budgets_reset':cfg['reset_campaign_budgets']=True
+    elif fault=='wrong_mode':cfg['planned_work_mode']='activate_only'
+    else:cfg['lane_manifest']='other.json'
+    c.save(path,cfg);before=file_snapshot(f.root)
+    with pytest.raises(ValueError,match='authorization'):c.refresh(f.root,f.junit,quiescent_maintenance=True)
+    # The real private owner may emit a new heartbeat; protected data stays exact.
+    for name in (c.PROFILE,c.BOARD,f.old['tests_receipt']):assert (f.root/name).read_bytes()==before[name]
+
+
+def test_quiescent_review_rechecks_kernel_children(quiescent_owner,monkeypatch):
+    f=quiescent_owner;path=Path('/proc')/str(f.child.pid)/'task'/str(f.child.pid)/'children'
+    original=Path.read_text
+    monkeypatch.setattr(Path,'read_text',lambda self,*a,**kw:'123456\n' if self==path else original(self,*a,**kw))
+    with pytest.raises(ValueError,match='still has children'):c.quiescent_maintenance_fence(f.root)
+
+
+def test_quiescent_review_refuses_recycled_or_foreign_pidfile(quiescent_owner):
+    f=quiescent_owner;f.pid_path.write_text(str(os.getpid()))
+    with pytest.raises(ValueError,match='PID/status'):c.quiescent_maintenance_fence(f.root)
+
+
+def test_quiescent_review_refuses_active_stale_missing_or_forged_ack(quiescent_owner,monkeypatch):
+    f=quiescent_owner;read=c.read;original=read(f.status)
+    for change in ({'active_task_id':'JLR-024'},{'active_lease_count':1},
+                   {'active_leases':[{'task_id':'JLR-024'}]},{'heartbeat_at_ms':0},
+                   {'active_lease_count':False},{'pid':os.getpid()}):
+        value={**original,**change}
+        with monkeypatch.context() as local:
+            local.setattr(c,'read',lambda path,**kw:value if path==f.status else read(path,**kw))
+            with pytest.raises(ValueError):c.quiescent_maintenance_fence(f.root)
+
+
+def test_quiescent_review_hold_loss_during_acceptance_never_publishes(quiescent_owner,monkeypatch):
+    f=quiescent_owner;profile=(f.root/c.PROFILE).read_bytes();board=f.board.read_bytes()
+    original=c.preflight
+    def lose_hold(root,**kwargs):
+        result=original(root,**kwargs);f.hold.unlink();return result
+    monkeypatch.setattr(c,'preflight',lose_hold)
+    with pytest.raises(ValueError,match='operator hold'):c.refresh(f.root,f.junit,quiescent_maintenance=True)
+    assert (f.root/c.PROFILE).read_bytes()==profile and f.board.read_bytes()==board
+
+
+@pytest.mark.parametrize('argv',[['--quiescent-maintenance'],['--source-only','--quiescent-maintenance','--refresh-tests','x.xml']])
+def test_explicit_maintenance_cli_needs_refresh_and_cannot_mix_review_modes(campaign,monkeypatch,argv):
+    f=campaign;monkeypatch.setattr(c,'ROOT',f.root);monkeypatch.setattr(sys,'argv',['review.py',*argv]);before=file_snapshot(f.root)
     with pytest.raises(SystemExit) as error:c.main()
     assert error.value.code==2 and file_snapshot(f.root)==before

@@ -12,7 +12,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import lean_refactor_execution_v2 as c
 
-class GateWait(ValueError):pass
+GateWait = c.GateWait
 
 def population(rows):
     return {(r['name'],tag,commit) for r in rows for version in r['version_info'] for tag,commit in version.items()}
@@ -107,7 +107,13 @@ def baseline(root, data):
             'all_pin_baseline':verified==36,'retained_incumbent':'original_fallback',
             'official_metric_parity':False}
 
-def runtime(root, data):
+def validate_runtime_history(root, data):
+    """Validate immutable qualification evidence, never current availability.
+
+    The enclosing stage validator verifies the archived execution, source/input
+    binding and raw stdout SHA before passing this packet. Expiry does not
+    undo that execution. New requests still require a separate live capability.
+    """
     q=c.module(root,'lean_refactor_runtime_qualification.py')
     c.require(data.get('schema')=='jevops.lean-refactor.runtime-qualification.v1' and
       data.get('stage023_acceptance_satisfied') is True and data.get('generation_executed') is True,
@@ -115,14 +121,17 @@ def runtime(root, data):
     observed=data.get('observed_at')
     c.require(type(observed) in (int,float) and 0<=observed<=time.time() and
               math.isfinite(observed),'invalid runtime qualification timestamp')
-    # The original bounded response remains immutable historical evidence.
-    # Availability comes from the CURRENT guarded actor, not its receipt age.
+    c.require(data.get('proof_authority') is False and data.get('completion_authority') is False
+              and data.get('training_executed') is False and data.get('weights_officially_attested') is False
+              and data.get('conversion_quality_measured') is False, 'qualification cannot grant proof authority')
     packet=data.get('native_smoke')
     c.require(isinstance(packet,dict) and packet.get('max_output_tokens')==16 and
               isinstance(packet.get('actual_response'),dict),'native inference response missing')
     smoke=packet['actual_response'];tokens=smoke.get('usage',{}).get('completion_tokens')
     choices=smoke.get('choices')
     c.require(smoke.get('model')=='Leanstral' and type(tokens) is int and 0<tokens<=16 and
+              type(smoke.get('usage',{}).get('prompt_tokens')) is int
+              and 0<smoke['usage']['prompt_tokens']<=1024 and
               isinstance(choices,list) and choices and
               isinstance(choices[0],dict) and
               isinstance(choices[0].get('message',{}).get('content'),str) and
@@ -133,9 +142,39 @@ def runtime(root, data):
     module,_=q.provisioner(root)
     actual=q.artifacts(module)
     c.require(actual==data['artifacts'],'model custody/runtime bytes changed')
+    c.require(type(after.get('supervisor_pid')) is int and after['supervisor_pid']>0
+              and type(after.get('server_pid')) is int and after['server_pid']>0
+              and isinstance(after.get('server_start_ticks'),str) and after['server_start_ticks'].isdigit()
+              and int(after['server_start_ticks'])>0,'captured runtime owner identity missing')
+    for key in ('live','live_after_smoke'):
+        captured=data[key]
+        # These are the REAL unit/resource observations captured before and
+        # after the bounded call, not fabricated current process checks.
+        q.validate_unit(captured['unit'])
+        c.require(captured.get('ready') is True and captured['unit'].get('MainPID')==str(after['supervisor_pid'])
+                  and isinstance(captured['unit'].get('ControlGroup'),str) and captured['unit']['ControlGroup']
+                  and captured.get('health',{}).get('status')=='ok'
+                  and any(row.get('id')=='Leanstral' for row in captured.get('models',{}).get('data',[]))
+                  and captured.get('actual_context_tokens')==2048
+                  and captured.get('reported_model_basename')==module.MODEL_NAME,
+                  'captured unit/model ownership observations differ')
+        c.require(type(captured.get('server_rss_bytes')) is int and captured['server_rss_bytes']>0,
+                  'captured RSS observation missing')
+        module.check_resources(captured['resources'],rss=captured['server_rss_bytes'])
+    return {'native_inference_smoke':True,'qualification_scope':'historical',
+            'current_runtime_readiness_checked':False,'proofs_verified':0,
+            'official_checkpoint_ancestry_attested':False}
+
+def runtime(root, data):
+    return validate_runtime_history(root,data)
+
+def current_runtime_capability(root, expected_owner=None):
+    """Read-only current actor guard for inference callers; never start/renew."""
+    q=c.module(root,'lean_refactor_runtime_qualification.py');module,_=q.provisioner(root)
     live=q.live_readiness(module,q.unit_properties(),root)
-    c.require(live['owner']==after,'runtime actor changed')
-    return {'native_inference_smoke':True,'proofs_verified':0,'official_checkpoint_ancestry_attested':False}
+    if expected_owner is not None:
+        c.require(live['owner']==expected_owner,'qualified current runtime actor changed')
+    return live
 
 def provenance(root, data):
     import hashlib
@@ -290,8 +329,9 @@ def receipt_binding(root, tid, receipt, loaded):
     c.require(actual==c.binding(root,tid,(historical,base,tasks,board),profile_digest=digest),
               'historical input/task/source binding changed')
 
-def validate(root, tid):
-    loaded=c.load(root);profile,base,tasks,board=loaded
+def validate(root, tid, *, loaded=None):
+    loaded=c.load(root) if loaded is None else loaded
+    profile,base,tasks,board=loaded
     c.require(tid in profile['contracts'],'unimplemented planned experiment')
     path=root/c.RUNTIME/(tid+'.receipt.json')
     if not path.exists():raise GateWait('no executed stage receipt')
@@ -314,17 +354,25 @@ def validate(root, tid):
         for field in ('stdout','stderr'):
             c.require(c.sha(root/execution[field])==execution[field+'_sha256'],'actual subprocess log changed')
     data=c.stage_result(root/c.RUNTIME/(tid+'.result.json'),tid)
-    if tid in ('JLR-017','JLR-018','JLR-019','JLR-020','JLR-026'):
+    if tid in ('JLR-017','JLR-018','JLR-019','JLR-020','JLR-024','JLR-026','JLR-035'):
         c.require(c.stage_result(root/executions[-1]['stdout'],tid)==data,'result differs from raw native stdout')
     checks={'JLR-016':readiness,'JLR-017':baseline,'JLR-018':metric_audit,'JLR-023':runtime,'JLR-026':provenance,
             'JLR-019':lambda r,d:c.module(r,'validate_lean_refactor_simp_pilot.py').validate(r,d),
-            'JLR-020':lambda r,d:c.module(r,'validate_lean_refactor_coupled_pilot.py').validate(r,d)}
+            'JLR-020':lambda r,d:c.module(r,'validate_lean_refactor_coupled_pilot.py').validate(r,d),
+            'JLR-024':lambda r,d:c.module(r,'validate_lean_refactor_iterative_pilot.py').validate(r,d),
+            'JLR-035':lambda r,d:c.module(r,'validate_lean_refactor_release_inventory.py').validate(r,d)}
     result=checks[tid](root,data)
     return {'valid':True,'task_id':tid,**result,**c.AUTH}
 
 def refresh_wait_probe(root, tid):
     # A failed acceptance probe remains failure. New real guards are exposed to
     # the opt-in native evidence retry; no validator success stands in for work.
+    if tid=='JLR-035':
+        c.module(root,'lean_refactor_release_inventory.py').probe(root)
+        return
+    if tid=='JLR-020':
+        c.module(root,'validate_lean_refactor_native_pin_frontier.py').probe(root)
+        return
     if tid not in ('JLR-016','JLR-023'):return
     import run_lean_refactor_stage_v2 as runner
     if tid=='JLR-016':

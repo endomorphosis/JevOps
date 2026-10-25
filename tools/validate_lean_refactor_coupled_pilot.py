@@ -75,7 +75,8 @@ def validate(root,data):
     for draft in drafts:edit_check(record,draft)
     pins=[VersionPin(t,v) for version in record['version_info'] for t,v in version.items()]
     c.require([r['pin'] for r in data['rows']]==[p.to_dict() for p in pins],'required all-pin denominator differs')
-    prior=c.read(root/c.RUNTIME/'JLR-017.result.json');ready=c.read(root/c.RUNTIME/'JLR-016.result.json')
+    from lean_refactor_native_pin_frontier import effective_inputs
+    prior,ready=effective_inputs(root,data.get('pin_frontier'))
     processes=0;capture_processes=0;waiting=False;reader=Fingerprinter(strict=True)
     for row,pin in zip(data['rows'],pins):
         original=next(r for r in prior['rows'] if (r['name'],r['lean_tag'],r['git_commit'])==
@@ -88,7 +89,7 @@ def validate(root,data):
         c.require(original['status']=='VERIFIED','native attempt lacks baseline')
         project=next(p for p in prior['projects'] if (p['repository'],p['lean_tag'],p['git_commit'])==
                      (record['url'],pin.lean_tag,pin.git_commit))
-        binding=arena_lean.project_binding(record,pin,project,Path(ready['elan_home']))
+        binding=arena_lean.project_binding(record,pin,project,Path(project.get('elan_home',ready['elan_home'])))
         guards={o:arena_lean.NativeLeanVerifier({pin:binding},max_processes=0,timeout=60,
                   branch_order=o,fingerprinter=reader) for o in m.ORDERS}
         sample_check(row['initial'],record,pin,guards[m.ORDERS[0]],record['src'],required=True);processes+=1
@@ -119,7 +120,8 @@ def validate(root,data):
                       'winner failed a screening pin')
     c.require(data['native_processes']==processes<=24 and data['capture_processes']==capture_processes,
               'coupled actual process accounting differs')
-    c.require(c.read(root/c.RUNTIME/'JLR-020.partial.json')==data,'durable coupled observations differ')
+    c.require(c.stage_result(root/c.RUNTIME/'JLR-020.partial.json','JLR-020')==data,
+              'durable coupled observations differ')
     # These samples have already passed exact source/pin/request validation.
     # Preserve every missing row, but never hide a definite coupled rejection
     # behind a resource-only wait that cannot repair the rejected proof.

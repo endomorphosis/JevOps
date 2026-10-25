@@ -38,7 +38,8 @@ def process(root, base, argv, directory, timeout):
     environment={'PATH':str(Path(base['python_executable']).parent)+':/usr/bin:/bin',
       'HOME':str(Path.home()),'PYTHONPATH':base['accelerator_source']+os.pathsep+str(root),
       'PYTHONDONTWRITEBYTECODE':'1','PYTEST_DISABLE_PLUGIN_AUTOLOAD':'1','IPFS_TEST_PROOF_REUSE_MODE':'off'}
-    if argv and argv[0]=='tools/lean_refactor_runtime_qualification.py' and '--qualify' in argv:
+    if argv and (argv[0]=='tools/lean_refactor_iterative_pilot.py' or
+                 argv[0]=='tools/lean_refactor_runtime_qualification.py' and '--qualify' in argv):
         environment.update(local_user_bus())
     start=time.monotonic();timed_out=False
     with (directory/'stdout.json').open('xb') as out,(directory/'stderr.log').open('xb') as err:
@@ -98,6 +99,29 @@ def qualification_identity(path):
               and info.st_nlink==1,'qualification must be an owned ordinary file')
     return (info.st_dev,info.st_ino,info.st_size,info.st_mtime_ns,info.st_ctime_ns,c.sha(path))
 
+def iterative_admission(root,tid):
+    """Refuse a consumed phase before expensive prerequisite/custody checks.
+
+    Refusals have their own archive and never replace actual scientific runs.
+    """
+    if tid!='JLR-024':return None
+    import lean_refactor_iterative_pilot as pilot
+    path=root/pilot.LEDGER
+    if not path.exists():return None
+    ledger=pilot.budget(root)
+    if not ledger['attempts']:return None
+    gate={'schema':'jevops.lean-refactor.phase-admission.v1','task_id':tid,
+          'reason':'phase_already_attempted','ledger_sha256':c.sha(path),
+          'reserved_attempts':len(ledger['attempts']),'max_calls':pilot.LIMITS['max_calls'],
+          'retry_condition':'explicit separately reviewed bounded phase retaining all prior usage',**c.AUTH}
+    c.save(root/c.RUNTIME/'iterative-admission-gate.json',gate)
+    directory=root/c.RUNTIME/'runs'/('JLR-024-admission-'+uuid.uuid4().hex)
+    receipt={**gate,'exit_code':75,'observed_at':time.time(),
+             'scientific_run_receipt_preserved':True,
+             'archive_path':str((directory/'receipt.json').relative_to(root))}
+    c.save(directory/'receipt.json',receipt)
+    return receipt
+
 def publish_runtime_result(root, output_path, execution, before, started_at):
     """Only the actual child's freshly published receipt may become stage output."""
     qualification_path=root/'data/lean_refactor_runtime_20261024/qualification.json'
@@ -132,6 +156,8 @@ def run(root, tid):
     c.require(tid in profile['contracts'],'unimplemented experiment remains planned')
     c.require(board[tid]['status'] in ('pending','ready','in_progress'),'stage is not executable')
     c.require(all(board[d]['status']=='completed' for d in tasks[tid]['depends_on']),'dependency not complete')
+    refused=iterative_admission(root,tid)
+    if refused is not None:return refused
     # Native completion alone is insufficient for a research prerequisite.
     for dep in tasks[tid]['depends_on']:
         if dep in profile['contracts']:

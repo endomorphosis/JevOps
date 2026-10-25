@@ -6,6 +6,7 @@ import os
 import socket
 from pathlib import Path
 import sys
+import runpy
 from types import SimpleNamespace
 import pytest
 
@@ -15,6 +16,20 @@ import lean_refactor_execution_v2 as c
 import run_lean_refactor_stage_v2 as runner
 import check_lean_refactor_stage_v2 as validator
 
+def test_direct_cli_catches_wait_from_separately_loaded_protected_validator(monkeypatch,capsys):
+    # The production subprocess runs as __main__, while the coupled validator
+    # imports check_lean_refactor_stage_v2 by name. These must share one class.
+    direct=runpy.run_path(str(ROOT/'tools/check_lean_refactor_stage_v2.py'),run_name='_private_cli')
+    assert direct['GateWait'] is validator.GateWait is c.GateWait
+    monkeypatch.setattr(sys,'argv',['check_lean_refactor_stage_v2.py','--validate-task','JLR-020'])
+    def wait(*args):raise validator.GateWait('exact native pins unavailable')
+    direct['main'].__globals__['validate']=wait
+    direct['main'].__globals__['refresh_wait_probe']=lambda *args:None
+    assert direct['main']()==75
+    result=json.loads(capsys.readouterr().out)
+    assert result['waiting'] is True and result['valid'] is False
+    assert result['proof_authority'] is False and result['completion_authority'] is False
+
 @pytest.fixture(autouse=True)
 def canonical_framework_path(monkeypatch):
     # Datasets may prepend its vendored fork during import. Qualify the source
@@ -23,7 +38,7 @@ def canonical_framework_path(monkeypatch):
     monkeypatch.syspath_prepend(source)
 
 def test_unimplemented_stages_have_no_registered_action():
-    assert set(c.definitions())=={'JLR-016','JLR-017','JLR-018','JLR-019','JLR-020','JLR-023','JLR-026'}
+    assert set(c.definitions())=={'JLR-016','JLR-017','JLR-018','JLR-019','JLR-020','JLR-023','JLR-024','JLR-026','JLR-035'}
     assert 'JLR-038' not in c.definitions()
 
 def test_closed_provisioning_is_pinned_bounded_and_separate():
@@ -37,6 +52,32 @@ def test_runtime_cannot_enable_hash_poll_or_training():
     args=c.definitions()['JLR-023']['argv']
     assert '--inference-smoke' in args and '--start-if-needed' in args
     assert '--rehash-model' not in args and 'train' not in args
+
+def test_iterative_outer_deadline_covers_acceptance_without_expanding_science_budget():
+    import lean_refactor_iterative_pilot as pilot
+    assert c.definitions()['JLR-024']['timeout']==900
+    assert pilot.LIMITS['total_seconds']==240 and pilot.LIMITS['max_calls']==2
+    assert pilot.LIMITS['request_timeout_seconds']==90
+
+def test_reviewed_activation_reuses_executed_preflight_across_json_key_order(tmp_path,monkeypatch):
+    contracts=c.definitions()
+    monkeypatch.setattr(c,'load',lambda root:({'contracts':dict(reversed(list(contracts.items())))},{},{},{}))
+    def no_repeat(root):
+        raise AssertionError('same actual acceptance must not be needlessly repeated')
+    monkeypatch.setattr(c,'preflight',no_repeat)
+    c.save(tmp_path/c.PROFILE,{'private_fixture':True})
+    c.atomic(tmp_path/c.BOARD,'private fixture board\n')
+    c.save(tmp_path/'data/lean_refactor_arena_20261024/router-budget.json',{'calls':22})
+    c.save(tmp_path/'config/lean_refactor_arena_20261024_watchdog.json',{
+        'activate_planned_work':False,'materialize_planned_work':True,
+        'planned_work_mode':'implement_validate_then_activate','runtime_manifest':'data/manifest.json'})
+    c.save(tmp_path/c.LANES,{'lanes':[{'bundle_key':'private-fixture-owner'}],
+        'execution_profile':c.PROFILE,'todo_path':c.BOARD})
+    preflight={'valid':True,'implemented':list(contracts)}
+    receipt=c.activate_reviewed(tmp_path,preflight)
+    assert receipt['preflight']==preflight and receipt['router_calls_added']==0
+    assert receipt['bootstrap_usage_retained']=={'calls':22}
+    assert receipt['awaiting_independent_dispatcher_observation'] is True
 
 @pytest.mark.parametrize('marker',['HOLD','OPERATOR_STOP','data/lean_refactor_arena_20261024/lane/HOLD',
     'data/lean_refactor_arena_20261024/lane/OPERATOR_STOP'])

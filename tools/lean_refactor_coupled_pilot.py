@@ -40,20 +40,24 @@ def proposals(record):
     if induction is None:return []
     declarations=list(re.finditer(r'(?m)^  have ([^\W\d][\w\']*) := ([^\n]+)\n',source[:induction.start()]))
     sites=list(re.finditer(r'(?m)^( +)\. apply \(([^ ()]+) ([^\n()]+) \?_ \?_\)\.2\.2\n'
-        r'\1  \. [^\n]+\n\1  \. [^\n]+(?:\n|$)',source))
+        r'(\1  \. [^\n]+\n)\1  \. [^\n]+(?:\n|$)',source))
     if len(sites)!=1:return []
     site=sites[0];prefix=source[:site.start()]
     case=re.findall(r'(?m)^  case [^\n]+ =>$',prefix)
     if not case or case[-1].split()[-2]!=site[2]:return []
     drafts=[]
     for declaration in declarations:
+        # Only the last prefix binder is nominated. Removing one generalized
+        # hypothesis removes one trailing IH argument/goal, not both. Native
+        # whole-source checking still decides whether that nomination is sound.
+        if declaration!=declarations[-1]:continue
         name=declaration[1]
         # Exact explicit uses disqualify deletion. Implicit context effects
         # remain a native experiment, including simp_all and IH arity.
         if re.search(r'(?<![\w\'])'+re.escape(name)+r'(?![\w\'])',source[declaration.end():]):continue
         first={'start':declaration.start(),'end':declaration.end(),'replacement':'',
                'original':declaration[0]}
-        replacement=site[1]+'. apply ('+site[2]+' '+site[3]+').2.2\n'
+        replacement=site[1]+'. apply ('+site[2]+' '+site[3]+' ?_).2.2\n'+site[4]
         repair={'start':site.start(),'end':site.end(),'replacement':replacement,'original':site[0]}
         for arm,edits in (('isolated',[first]),('coupled',[first,repair])):
             candidate=apply_edits(source,edits)
@@ -93,10 +97,13 @@ def produce(root=ROOT):
     c.require(before['eligible'] and not c.held(root),'CPU resource or operator gate')
     record=next(r for r in c.module(root,'lean_refactor_project_readiness.py').records() if r['name']==TARGET)
     drafts=proposals(record);c.require(len(drafts)==2,'no supported matched coupled edit')
-    prior=c.read(root/c.RUNTIME/'JLR-017.result.json');ready=c.read(root/c.RUNTIME/'JLR-016.result.json')
+    import lean_refactor_native_pin_frontier as frontier
+    pin_frontier=frontier.produce(root)
+    prior,ready=frontier.effective_inputs(root,pin_frontier)
     report={'schema':SCHEMA,'target':TARGET,'source_sha256':arena.source_hash(record['src']),
         'baseline_sha256':c.sha(root/c.RUNTIME/'JLR-017.result.json'),
         'readiness_sha256':c.sha(root/c.RUNTIME/'JLR-016.result.json'),
+        'pin_frontier':pin_frontier,
         'drafts':drafts,'rows':[],'native_processes':0,'capture_processes':0,'max_native_processes':24,
         'status':'RUNNING','winner':None,'original_fallback':record['src'],
         'model_calls':0,'training_executed':False,'promoted':False,'official_score':None,
@@ -126,7 +133,7 @@ def produce(root=ROOT):
             if original['status']!='VERIFIED':continue
             project=next(p for p in prior['projects'] if (p['repository'],p['lean_tag'],p['git_commit'])==
                          (record['url'],tag,commit))
-            binding=arena_lean.project_binding(record,pin,project,Path(ready['elan_home']))
+            binding=arena_lean.project_binding(record,pin,project,Path(project.get('elan_home',ready['elan_home'])))
             per_order={o:arena_lean.NativeLeanVerifier({pin:binding},max_processes=24,timeout=60,
                        branch_order=o,fingerprinter=reader) for o in ORDERS}
             guards.extend(per_order.values())
@@ -153,7 +160,7 @@ def produce(root=ROOT):
         pin=VersionPin(**row['pin'])
         project=next(p for p in prior['projects'] if (p['repository'],p['lean_tag'],p['git_commit'])==
                      (record['url'],pin.lean_tag,pin.git_commit))
-        binding=arena_lean.project_binding(record,pin,project,Path(ready['elan_home']))
+        binding=arena_lean.project_binding(record,pin,project,Path(project.get('elan_home',ready['elan_home'])))
         for order in ORDERS:
             guard=arena_lean.NativeLeanVerifier({pin:binding},max_processes=1,timeout=60,
                        branch_order=order,fingerprinter=reader);guards.append(guard)

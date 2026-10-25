@@ -19,7 +19,9 @@ def test_real_corpus_has_matched_binder_and_induction_goal_repair():
     assert all(d['binder']=='Hlen2' and d['ih_binder']=='ih' for d in drafts)
     assert drafts[0]['edits'][0]==drafts[1]['edits'][0]
     assert 'have Hlen2' not in drafts[0]['source'] and '(ih Hinit ?_ ?_)' in drafts[0]['source']
-    assert '(ih Hinit).2.2' in drafts[1]['source']
+    assert '(ih Hinit ?_).2.2' in drafts[1]['source']
+    assert '. simp [isDefined] at * <;> simp_all' in drafts[1]['edits'][1]['replacement']
+    assert drafts[1]['edits'][1]['replacement'].count('\n')==2
     for draft in drafts:
         assert m.apply_edits(r['src'],draft['edits'])==v.edit_check(r,draft)
         assert m.arena.intake_error(draft['source'],r['statement']) is None
@@ -91,6 +93,9 @@ def test_protected_all_pin_and_resource_gates_reject_fabricated_completion(unava
 
 
 def test_producer_admits_single_pin_context_without_erasing_required_report_pins(tmp_path,monkeypatch):
+    import lean_refactor_native_pin_frontier as frontier
+    # This isolated context-boundary test must never provision real projects.
+    monkeypatch.setattr(frontier,'produce',lambda root:None)
     r=record();c=m.c
     pins=[(tag,commit) for version in r['version_info'] for tag,commit in version.items()]
     assert len(pins)==3
@@ -212,3 +217,20 @@ def test_semantic_failure_still_cannot_drop_a_required_pin(guarded_report):
     root,data,publish,checked=guarded_report;data['rows'].pop(0);publish()
     with pytest.raises(ValueError,match='all-pin denominator') as result:v.validate(root,data)
     assert not isinstance(result.value,GateWait)
+
+
+def test_large_durable_native_trace_uses_stage_bound_before_semantic_refusal(guarded_report):
+    root,data,publish,checked=guarded_report
+    data['trace_padding']='x'*(9*1024**2)
+    publish()
+    with pytest.raises(ValueError,match='semantic repair required') as result:v.validate(root,data)
+    assert not isinstance(result.value,GateWait)
+    assert checked.count('sample')==5
+
+
+def test_coupled_repair_removes_one_argument_and_retains_first_goal_under_renaming():
+    r=record();r={**r,'src':r['src'].replace('Hlen2','finalFact').replace('Hinit','initProof')}
+    draft=m.proposals(r)[1]
+    assert '(ih initProof ?_).2.2' in draft['source']
+    assert draft['edits'][1]['replacement'].endswith('. simp [isDefined] at * <;> simp_all\n')
+    assert '(ih initProof).2.2' not in draft['source']

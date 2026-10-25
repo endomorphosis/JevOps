@@ -92,6 +92,19 @@
       ],
       "timeout": 600
     },
+    "JLR-024": {
+      "action": "frozen_iterative_pilot",
+      "argv": [
+        "tools/lean_refactor_iterative_pilot.py",
+        "--produce"
+      ],
+      "outputs": [
+        "data/lean_refactor_arena_20261024/execution-v2/JLR-024.result.json",
+        "data/lean_refactor_arena_20261024/execution-v2/JLR-024.partial.json",
+        "data/lean_refactor_arena_20261024/execution-v2/iterative-v1-ledger.json"
+      ],
+      "timeout": 900
+    },
     "JLR-026": {
       "action": "span_provenance",
       "argv": [
@@ -102,6 +115,17 @@
         "data/lean_refactor_arena_20261024/execution-v2/JLR-026.result.json"
       ],
       "timeout": 240
+    },
+    "JLR-035": {
+      "action": "official_release_inventory",
+      "argv": [
+        "tools/lean_refactor_release_inventory.py",
+        "--produce"
+      ],
+      "outputs": [
+        "data/lean_refactor_arena_20261024/execution-v2/JLR-035.result.json"
+      ],
+      "timeout": 120
     }
   },
   "goals_sha256": "a976be0b625707a92aafa97e3019df6db45662a54ef51f49fac5866f95f336e0",
@@ -130,15 +154,19 @@
     "previous_usage_path": "data/lean_refactor_arena_20261024/router-budget.json"
   },
   "previous_profiles": {
+    "00923699510c5aacdf8baab6e5820b8b840a212a180cdb1cc92dca0229dacb10": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.00923699510c5aacdf8baab6e5820b8b840a212a180cdb1cc92dca0229dacb10",
     "0e5e9fe747bf212fa4f304c9573d8ac32dd2d5f6c10c598e39245f9344022e16": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.0e5e9fe747bf212fa4f304c9573d8ac32dd2d5f6c10c598e39245f9344022e16",
     "14165e84bb9b2b776ae0ddcedd4d2d104116e77b910c62583b8fa3b850999283": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.14165e84bb9b2b776ae0ddcedd4d2d104116e77b910c62583b8fa3b850999283",
+    "4a42e970f5ae377a13d8ad086ac52fda62065c3b5217e99088ff163095a404bc": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.4a42e970f5ae377a13d8ad086ac52fda62065c3b5217e99088ff163095a404bc",
     "553e783b07926b924a6a2596f8ba074d44e8a69b98ff1cf6b9bc69dd38501608": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.553e783b07926b924a6a2596f8ba074d44e8a69b98ff1cf6b9bc69dd38501608",
     "62e8b87bcd74a4083b50f11d807292536f41b35b634e73f2c5b0708ec4df7ce4": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.62e8b87bcd74a4083b50f11d807292536f41b35b634e73f2c5b0708ec4df7ce4",
     "6ed496e8901d2d80af392f975cd2f0980d3d3e29c55bf442cdb56cc455380298": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.6ed496e8901d2d80af392f975cd2f0980d3d3e29c55bf442cdb56cc455380298",
     "907be640fc339581ac25a3122a3722898859e02c37e729413ddf5ee48086d4f6": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.907be640fc339581ac25a3122a3722898859e02c37e729413ddf5ee48086d4f6",
     "94139c5d81ee0a089d07da4b3b0a31207de689dc6fad54af28331bcd1161608e": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.94139c5d81ee0a089d07da4b3b0a31207de689dc6fad54af28331bcd1161608e",
     "a354a24598973fd788ec097efec4381ef644c28788228118870dff27682b16b4": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.a354a24598973fd788ec097efec4381ef644c28788228118870dff27682b16b4",
-    "ec8192e58de3b7f289a6b9e66449430a3bfe9ba4085070ea9f5e614f3e05e752": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.ec8192e58de3b7f289a6b9e66449430a3bfe9ba4085070ea9f5e614f3e05e752"
+    "e320ddca65adac8d19ddec743c4e2aacea433798f92b84fb38e8e5dd3cc3f633": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.e320ddca65adac8d19ddec743c4e2aacea433798f92b84fb38e8e5dd3cc3f633",
+    "ec8192e58de3b7f289a6b9e66449430a3bfe9ba4085070ea9f5e614f3e05e752": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.ec8192e58de3b7f289a6b9e66449430a3bfe9ba4085070ea9f5e614f3e05e752",
+    "f161068c21979f9e0667820c11a3bd182fc10c2b5601ab20619633b9c569e43d": "data/lean_refactor_arena_20261024/execution-v2/history/lean_refactor_arena_20261024_execution_v2.json.f161068c21979f9e0667820c11a3bd182fc10c2b5601ab20619633b9c569e43d"
   },
   "schema": "jevops.lean-refactor.execution.v2",
   "scientific_route": {
@@ -149,9 +177,10 @@
     "provider": "grok_cli"
   },
   "source_sha256": {
-    "/home/barberb/lift_coding/external/ipfs_accelerate/ipfs_accelerate_py/agent_supervisor/rescue/lane_resume.py": "b649a95ee96e7a5db33fd1b9fe0592405b5aabd7e25c2c8aeaca8cc28283cb51",
+    "/home/barberb/lift_coding/external/ipfs_accelerate/ipfs_accelerate_py/agent_supervisor/rescue/lane_resume.py": "714517a05802ad5857ff0cc1b36f40cd8c09d93fe88d1c7a5d8b19238e06b071",
     "/home/barberb/lift_coding/external/ipfs_accelerate/ipfs_accelerate_py/agent_supervisor/rescue/planned_work_watchdog.py": "fe9fd56f6c206eb1c04ef15e5960d8f707c929853f6ba9b93942e2529e8ca206",
     "/home/barberb/lift_coding/external/ipfs_accelerate/ipfs_accelerate_py/agent_supervisor/rescue/supervisor_watchdog.py": "ec9672bcd1242246ed9fd9c0f6ac0b44e5d07e763a4c6718da61f0749ab2f21c",
+    "/home/barberb/lift_coding/external/ipfs_accelerate/ipfs_accelerate_py/llm_router.py": "52dd27f773ec4d475a6affc115e86583853bb1a8392754ae035a1c7fe5c14f24",
     "jevops/arena.py": "e1ba89358f25828d3cabd7acca049cfcaa6ab2cee8901ca01add7bb4dc5789ca",
     "jevops/arena_isolation.py": "15e4d44accc4df4d556349ea603b3e746b28cf9f0b7b1772b94fba412fef6038",
     "jevops/arena_lean.py": "3cc0e2535aaa92d3f87b87ab78bfa7734ec6416c18a1240fab0df772eeda3be0",
@@ -179,28 +208,37 @@
     "papers/completion/lean_refactor_arena/upstream/lean_refactor/utils.py": "94933cbf4891f1df963111c5466f074267c40ee08ef05b7f79122a4c1740e55e",
     "tests/test_lean_refactor_baseline_context.py": "b00124c4726d4c234218f69d12f8ab1feac2c2fb2d57ce214dc8a47fec434590",
     "tests/test_lean_refactor_continuation.py": "cacec95b6167e5375da0a6e17f11c2fd7256cc7495cd525f03df10968ab95b8c",
-    "tests/test_lean_refactor_coupled_pilot.py": "c952577289b67d81218df42188c3f8ec8abea9ee45e902ad6232992657113b58",
-    "tests/test_lean_refactor_execution_v2.py": "3aeab92a83f99900bf061f3077c8c586c3c187145bd600a1d13dc2ed355acce8",
+    "tests/test_lean_refactor_coupled_pilot.py": "dd7671050503bb4b495011233e6c952105f793a1e70114159e7bab23d0795528",
+    "tests/test_lean_refactor_execution_v2.py": "5b1d1de426d5dd224638b9e444e2e64a11c822fc6e22f3d96e21cf14ac26752c",
+    "tests/test_lean_refactor_iterative_pilot.py": "afceaed9024650a9043586a089cd7dea4b435cee77cfb9840cc84aa29f10bde6",
     "tests/test_lean_refactor_metric_audit.py": "197403a9e2ba8b6df4a0c273b55d971780199c6c2674e94ffc9a1084ea04a0f4",
+    "tests/test_lean_refactor_native_pin_frontier.py": "a035fab889d81b51cccf0a03a850a889d0504666024782ac165ebd13fdaf9d5d",
     "tests/test_lean_refactor_project_readiness.py": "c0f16aa73216326d1876e05e97a65a8f47a1d8b58ba694994742d5f4787eda5b",
-    "tests/test_lean_refactor_runtime_lease.py": "03c09f8ba2c77c93daa9ab5430917dbd81fe0c72f093e7b0337c240a0ff6cf93",
+    "tests/test_lean_refactor_release_inventory.py": "d003fc5a4016991fe1040a53b9c338fe0ed967fa9925442d41dc652b90a3bbf6",
+    "tests/test_lean_refactor_runtime_lease.py": "d1b8d395b23bab262b47044d857fc660a446ecbc70c95fbe2e0225adfb041c20",
     "tests/test_lean_refactor_runtime_qualification.py": "a34064605d91f617b11a058dbdd87a55b05e0954d27b4b1e3c40d77239cad6ee",
     "tests/test_lean_refactor_simp_pilot.py": "d2e29f6d546893a47c19e43bee04703462bc665eb4cb0e3b4c63f9a7b7d1e2ea",
-    "tests/test_lean_refactor_source_refresh.py": "9268db11d993321c8b72eabda3ecf8c7f4d542b2708d3eada7b2b2e4b976fcbf",
+    "tests/test_lean_refactor_source_refresh.py": "b6385e1154a38aef41bcfb23eccac1663e2f8b37a91a6910d1976fa7e27b9440",
     "tests/test_lean_refactor_span_provenance.py": "b5c4cc3c50e4ff40860064050ad8f416e492277424480babeab8cc6a3e6df08e",
     "tests/test_leanstral_provision_20261024.py": "86d34220f064a66ed55a7e25830625668bffcc0df8b0d349485e1da6d7700686",
-    "tools/check_lean_refactor_stage_v2.py": "288296c64799a3c3373dba4829bbf3c908e2bb12b2f7d76e49c66b43523196f1",
-    "tools/lean_refactor_coupled_pilot.py": "efc6eb7f2cfd6e6b0df501878d893d3cc897eaaace82b20c7667065732b2a5fc",
-    "tools/lean_refactor_execution_v2.py": "094dc936c7503dd92f58406066a4f2c2b48b869de7bc35717e0ea0667d940635",
+    "tools/check_lean_refactor_stage_v2.py": "a6bb779ea9322e24f163f21182fa020c5d7b58297f2a90c4c8fb0185ed96b24b",
+    "tools/lean_refactor_coupled_pilot.py": "fb7995b847fecd8632f571f4c9b1bf0479a3ebdbc72cdfbaa6eb7fe149803787",
+    "tools/lean_refactor_execution_v2.py": "90523266d03ae11b4fe3b52dee3374a8335f22237e4e1c40167735b78d9a9c93",
+    "tools/lean_refactor_iterative_pilot.py": "94161f3d9d2178b2362ccb9f53bc2224caa5cc31b1092241b7ad78250b7721a4",
     "tools/lean_refactor_metric_audit.py": "176eeccc33c5cce35b32711ba28407757d8af53f68eba70bc15a71d7d1d529ee",
+    "tools/lean_refactor_native_pin_frontier.py": "a45e129b6bef7c3ff1db52cb9bba59dd25004bbf6fecfc334f85875797c8030e",
     "tools/lean_refactor_project_readiness.py": "9632f1c1a722a83cfb58a78554b93ad47e130638a07c1b9c9d578eee3c39c827",
+    "tools/lean_refactor_release_inventory.py": "fb9977e39333e909227b3b040c1343420549160fabff907fe1502b9a4ad79302",
     "tools/lean_refactor_runtime_qualification.py": "be6913a387ab2f6816589e9feaf9d452cd16811768eeea006cbe9f11fd92d5e1",
-    "tools/lean_refactor_simp_pilot.py": "ece9b505777fd3ec3192d1ec4c97bdea93b7f572856959da2c05fe0db62d9bb9",
+    "tools/lean_refactor_simp_pilot.py": "ed0bd73f0206da43f299db0c986f92cd667f9929e23a758abeb41ec9faea29a3",
     "tools/lean_refactor_span_provenance.py": "1f3a04d69faa1f1d5d64b8cdf654c036937d56050978608d57f7e340c0bdacc9",
     "tools/leanstral-inference-20261024.json": "304700c24a8f4dec1948734c8022b8d8a438230d1c8435e1d5db0c67a3fe3f5e",
     "tools/provision_leanstral_20261024.py": "c0966f980c93c541658984a077b692e9aaf50328f93520708647b11ed7c316bd",
-    "tools/run_lean_refactor_stage_v2.py": "99f4261a1df974797064ca321ab4d7835bf2478b7e7125f2cb004eb09c354a2e",
-    "tools/validate_lean_refactor_coupled_pilot.py": "ac83865a6517455c4026a77eeef2cb2b283bb020ec71ea5e1dd9147e7acba1f7",
+    "tools/run_lean_refactor_stage_v2.py": "b5f3293066a4f940388559bb1f9d9758fa28ec8b19ac9a952151482c6565f0ed",
+    "tools/validate_lean_refactor_coupled_pilot.py": "a8f177df9925c7e1496a1aea8c42cb97e01bb688954c8c8d634e83269ca857fb",
+    "tools/validate_lean_refactor_iterative_pilot.py": "c3bcefe3d6e76927cb66f6c6fa0cae0aa0dbe13d10908ae03a919a6ac87faea7",
+    "tools/validate_lean_refactor_native_pin_frontier.py": "c7f92f3458044e1d1142b6c790a0eebcb39704297ae41b0dd2510b821578f5df",
+    "tools/validate_lean_refactor_release_inventory.py": "45bacbbee83ee7be21ddf26c74809076e4fd5e95438e4a1cae22ff0a7b5b2fdb",
     "tools/validate_lean_refactor_simp_pilot.py": "781cbbbed02e8ca9033240dbbe13f672daae09bc4b404689ffb67af88a0500fe"
   },
   "tests_receipt": "data/lean_refactor_arena_20261024/execution-v2/focused-tests.json"

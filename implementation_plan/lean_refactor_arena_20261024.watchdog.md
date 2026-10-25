@@ -35,6 +35,14 @@ The runtime qualifier receives only the validated local user-manager bus under `
 
 The reviewed `gpu-release-20261024` activation permits one additional ARC-dependent preload through an exclusive phase marker. It preserves the original preload marker and model verification receipts. Repeated launches cannot create another phase or refund that attempt. The server still keeps at least 16 GiB of host memory available, limits its RSS to 48 GiB and GPU usage to 20 GiB per card, and runs in a four-hour unit with no automatic model restart. Cache reclaim is an estimate; actual runtime guards remain authoritative.
 
+The repair service also has a 120-second systemd watchdog. Notifications follow completed control-loop observations or real bounded worker polls, with no independent heartbeat thread. Status distinguishes the control heartbeat from the last full lane observation, so an active maintenance job does not fabricate campaign progress. On a watchdog timeout, systemd kills only the unresponsive dispatcher and restarts it; an active worker retains its original identity, shared exclusion marker, deadline and attempt count for adoption. Normal administrative reloads still use the idle-only oneshot.
+
+A normal four-hour lane expiry receives a bounded native-restart grace before a code-repair worker is dispatched. The grace normally lasts 180 seconds, requires a verified responsive native watchdog, and is anchored to the exited process rather than refreshed polling timestamps. Failed restarts, crashes and stale watchdogs do not receive that grace.
+
+Reviewed source extensions can use `tools/lean_refactor_execution_v2.py --refresh-tests <JUnit> --quiescent-maintenance` while the existing lane is held and has no active task or children. This checks actual process ownership, the unchanged registered scope and the exact hold before publication. Prepare source changes first, retain backups, and complete or roll back the bounded integration before releasing only its own hold. The source-only mode retains its stricter prohibition on contract and taskboard changes.
+
+Completed runtime qualification is checked against its immutable response, captured ownership/resource guards and current artifact custody. It does not require an expired service to keep running. Current inference capability remains a separate live ownership check; neither historical evidence nor service renewal refunds a consumed experiment budget. Negative experiments remain recorded without completing tickets whose acceptance requires a verified improvement.
+
 Run these commands from the JevOps root:
 
 ```bash

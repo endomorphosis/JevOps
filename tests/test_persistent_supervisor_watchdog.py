@@ -113,7 +113,12 @@ class PersistentWatchdogTests(unittest.TestCase):
             self.assertNotIn('CPUQuota=', content)
             self.assertNotIn('MemoryMax=', content)
             self.assertNotIn('ConditionPathExists=', content)
-            self.assertNotIn('WatchdogSec=', content)
+            if name == self.cfg['repair_unit']:
+                self.assertIn('WatchdogSec=120s\n', content)
+                self.assertIn('NotifyAccess=main\n', content)
+                self.assertIn('WatchdogSignal=SIGKILL\n', content)
+            else:
+                self.assertNotIn('WatchdogSec=', content)
         repair = units[self.cfg['repair_unit']]
         self.assertIn(watcher.DISPATCHER, repair)
         for argument, value in [('worker-timeout', 900), ('max-attempts', 3),
@@ -123,6 +128,34 @@ class PersistentWatchdogTests(unittest.TestCase):
         self.assertIn('"--worker-argv-json"', repair)
         self.assertIn('"--python"', units[self.cfg['guardian_unit']])
         self.assertEqual(self.lanes['lanes'][0]['max_resume_seconds'], 14400)
+
+    def test_service_watchdog_requires_one_explicit_native_capability_without_executing_code(self):
+        source = self.base / 'private-framework'
+        path = source / 'ipfs_accelerate_py/agent_supervisor/rescue/repair_dispatcher.py'
+        path.parent.mkdir(parents=True)
+        sentinel = self.base / 'must-not-execute'
+        path.write_text('SERVICE_WATCHDOG_VERSION = 1\n'
+                        + 'from pathlib import Path\nPath(' + repr(str(sentinel)) + ').touch()\n')
+        watcher.require_native_service_watchdog(source)
+        self.assertFalse(sentinel.exists())
+        for value in ('', 'SERVICE_WATCHDOG_VERSION = True\n',
+                      'SERVICE_WATCHDOG_VERSION = 0\n', 'SERVICE_WATCHDOG_VERSION = "1"\n',
+                      'SERVICE_WATCHDOG_VERSION = 1\nSERVICE_WATCHDOG_VERSION = 2\n'):
+            with self.subTest(value=value):
+                path.write_text(value)
+                with self.assertRaises(ValueError):
+                    watcher.require_native_service_watchdog(source)
+
+    def test_install_refuses_missing_native_notification_before_any_control_or_unit_write(self):
+        before = {str(p): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        with patch.object(watcher, 'require_native_service_watchdog',
+                          side_effect=ValueError('notification support missing')) as guard, \
+             patch.object(watcher, 'command') as command:
+            with self.assertRaisesRegex(ValueError, 'notification support'):
+                watcher._install_locked(self.root)
+        guard.assert_called_once_with(self.supervisor['accelerator_source'])
+        command.assert_not_called()
+        self.assertEqual(before, {str(p): p.read_bytes() for p in self.root.rglob('*') if p.is_file()})
 
     def test_third_reload_unit_is_bounded_manual_oneshot_without_install_target(self):
         units = watcher.render(self.root)[2]

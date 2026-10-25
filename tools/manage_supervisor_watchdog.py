@@ -8,6 +8,7 @@ No task, model, training job or planned experiment is started by installation.
 from __future__ import annotations
 
 import argparse
+import ast
 import fcntl
 import hashlib
 import json
@@ -23,6 +24,19 @@ ROOT = Path(__file__).resolve().parents[1]
 CONFIG = 'config/lean_refactor_arena_20261024_watchdog.json'
 GUARDIAN = 'ipfs_accelerate_py.agent_supervisor.rescue.watchdog_guardian'
 DISPATCHER = 'ipfs_accelerate_py.agent_supervisor.rescue.repair_dispatcher'
+REPAIR_SERVICE_WATCHDOG_SECONDS = 120
+
+
+def require_native_service_watchdog(source):
+    """Do not install a timer against a dispatcher that cannot notify it."""
+    path = Path(source) / 'ipfs_accelerate_py/agent_supervisor/rescue/repair_dispatcher.py'
+    module = ast.parse(path.read_text(), filename=str(path))
+    declarations = [node for node in module.body if isinstance(node, ast.Assign)
+                    and any(isinstance(target, ast.Name) and target.id == 'SERVICE_WATCHDOG_VERSION'
+                            for target in node.targets)]
+    supported = (len(declarations) == 1 and isinstance(declarations[0].value, ast.Constant)
+                 and type(declarations[0].value.value) is int and declarations[0].value.value == 1)
+    require(supported, 'Native repair dispatcher lacks reviewed service-watchdog notification support')
 RELOAD_UNIT = 'jevops-agent-supervisor-reload.service'
 LEGACY_RELOAD_UNIT_SHA256 = 'e5420fa30d16db2136229cb8357100beebc21270d4b26c3074698cc98ba099a9'
 
@@ -163,6 +177,10 @@ def render(root):
             'Environment=' + systemd_arg('PATH=' + str(Path(python).parent) + ':' + str(Path.home() / '.local/bin') + ':/usr/local/bin:/usr/bin:/bin'),
             'ExecStart=' + ' '.join(systemd_arg(a, exec_start=True) for a in argv),
             'Restart=always', 'RestartSec=15s', 'KillMode=process', 'TimeoutStopSec=30s',
+            *(['NotifyAccess=main', 'WatchdogSec=' + str(REPAIR_SERVICE_WATCHDOG_SECONDS) + 's',
+               # A watchdog recovery must skip the interrupted Python cleanup:
+               # durable worker identity/deadline lets its replacement adopt it.
+               'WatchdogSignal=SIGKILL'] if name == cfg['repair_unit'] else []),
             'CPUAccounting=yes', 'MemoryAccounting=yes', 'TasksAccounting=yes',
             'StandardOutput=journal', 'StandardError=journal', 'SyslogIdentifier=' + name[:-8],
             'LogRateLimitIntervalSec=30s', 'LogRateLimitBurst=100', '', '[Install]',
@@ -256,6 +274,7 @@ def migrate_guardian(root, cfg, supervisor):
 
 def _install_locked(root):
     cfg, supervisor, units = render(root)
+    require_native_service_watchdog(supervisor['accelerator_source'])
     state = root / cfg['state_root']; state.mkdir(parents=True, exist_ok=True)
     command([supervisor['python_executable'], str(root / 'tools/check_lean_refactor_plan.py'), '--check-all'])
     registered = read_json(root / cfg['lane_manifest']).get('execution_profile')
