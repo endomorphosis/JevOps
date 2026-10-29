@@ -2,6 +2,9 @@
 """Source-bound research registration, separate from immutable bootstrap contracts."""
 from __future__ import annotations
 import argparse
+import copy
+from contextlib import contextmanager
+from contextvars import ContextVar
 import fcntl
 import hashlib
 import importlib.util
@@ -22,6 +25,10 @@ RUNTIME = 'data/lean_refactor_arena_20261024/execution-v2'
 BASE = 'config/lean_refactor_arena_20261024_supervisor.json'
 GOALS = 'implementation_plan/lean_refactor_arena_20261024.goals.json'
 LANES = 'config/lean_refactor_arena_20261024_lanes.json'
+CONTROL_MODULES = ('lane_resume.py','supervisor_watchdog.py','planned_work_watchdog.py')
+CONTINUATION_PLAN = 'implementation_plan/lean_refactor_arena_20261025.continuation-plan.json'
+CONTINUATION_GOALS = 'implementation_plan/lean_refactor_arena_20261025.continuation.goals.json'
+CONTINUATION_OVERRIDES = {'JLR-033':['JLR-015'],'JLR-021':['JLR-017','JLR-011']}
 AUTH = {'completion_authority': False, 'proof_authority': False, 'full_campaign_complete': False}
 
 class GateWait(ValueError):
@@ -91,6 +98,9 @@ def definitions():
       'JLR-020': {'action':'coupled_deletion_pilot','timeout':900,
         'argv':['tools/lean_refactor_coupled_pilot.py','--produce'],
         'outputs':[RUNTIME+'/JLR-020.result.json',RUNTIME+'/JLR-020.partial.json']},
+      'JLR-021': {'action':'bounded_search_then_extract','timeout':900,
+        'argv':['tools/lean_refactor_search_extract.py','--produce'],
+        'outputs':[RUNTIME+'/JLR-021.result.json',RUNTIME+'/JLR-021.partial.json']},
       'JLR-024': {'action':'frozen_iterative_pilot','timeout':900,
         'argv':['tools/lean_refactor_iterative_pilot.py','--produce'],
         'outputs':[RUNTIME+'/JLR-024.result.json',RUNTIME+'/JLR-024.partial.json',
@@ -102,6 +112,12 @@ def definitions():
       'JLR-026': {'action':'span_provenance','timeout':240,
         'argv':['tools/lean_refactor_span_provenance.py','--produce'],
         'outputs':[RUNTIME+'/JLR-026.result.json']},
+      'JLR-033': {'action':'operational_fault_qualification','timeout':600,
+        'argv':['tools/lean_refactor_operational_faults.py','--produce'],
+        'outputs':[RUNTIME+'/JLR-033.result.json']},
+      'JLR-034': {'action':'reviewed_activation_audit','timeout':600,
+        'argv':['tools/lean_refactor_activation_audit.py','--produce'],
+        'outputs':[RUNTIME+'/JLR-034.result.json']},
       'JLR-035': {'action':'official_release_inventory','timeout':120,
         'argv':['tools/lean_refactor_release_inventory.py','--produce'],
         'outputs':[RUNTIME+'/JLR-035.result.json']}}
@@ -138,20 +154,151 @@ def sources(root):
               'tests/test_lean_refactor_iterative_pilot.py']
     names += ['tools/lean_refactor_release_inventory.py','tools/validate_lean_refactor_release_inventory.py',
               'tests/test_lean_refactor_release_inventory.py']
+    names += ['tools/lean_refactor_operational_faults.py','tools/validate_lean_refactor_operational_faults.py',
+              'tests/test_lean_refactor_operational_faults.py',
+              'tests/test_lean_refactor_admission_waits.py']
+    names += ['tools/lean_refactor_search_extract.py','tools/validate_lean_refactor_search_extract.py',
+              'tests/test_lean_refactor_search_extract.py','jevops/structural_training.py']
+    names += ['jevops/arena_compiled.py', 'tests/test_arena_compiled.py', 'jevops/lean/ArenaAuditCheck.lean']
+    names += ['tools/lean_refactor_activation_audit.py','tools/validate_lean_refactor_activation_audit.py',
+              'tests/test_lean_refactor_activation_audit.py']
     base=read(root/BASE)
     names.append(str(Path(base['accelerator_source'])/'ipfs_accelerate_py/llm_router.py'))
+    names.append('config/lean_refactor_arena_20261026_provider_freeze.json')
+    names += [str(Path(base['accelerator_source'])/name) for name in (
+        'ipfs_accelerate_py/agent_supervisor/todo_daemon/llm.py',
+        'ipfs_accelerate_py/agent_supervisor/todo_daemon/budget_policy.py',
+        'test/api/test_agent_supervisor_llm_budget_policy.py')]
     names += ['tests/test_lean_refactor_continuation.py',
               'tests/test_lean_refactor_baseline_context.py',
               'tests/test_lean_refactor_source_refresh.py']
-    names += [str(Path(base['accelerator_source'])/'ipfs_accelerate_py/agent_supervisor/rescue'/name)
-              for name in ('lane_resume.py','supervisor_watchdog.py','planned_work_watchdog.py')]
-    return {p:sha(root/p) for p in names}
+    return {**{p:sha(root/p) for p in names},
+            **module(root,'lean_refactor_compiled_registry_v1.py').sources(root)}
+
+def control_plane_observation(root):
+    """Current operational provenance, explicitly outside proof source identity.
+
+    Only these three scheduler modules are separated. The actual LLM route,
+    all mathematical/native/model guards, producers and checkers stay strict.
+    Missing source files still refuse observation; no stored digest is called
+    current, and native command/API validation remains mandatory in preflight.
+    """
+    base=read(root/BASE)
+    paths=[Path(base['accelerator_source'])/'ipfs_accelerate_py/agent_supervisor/rescue'/name
+           for name in CONTROL_MODULES]
+    return {'schema':'jevops.lean-refactor.control-plane-observation.v1',
+            'on_disk_observed_at':time.time(),'source_sha256':{str(path):sha(path) for path in paths},
+            'loaded_module_identity_attested':False,
+            'binding_policy':'operational_provenance_only_not_scientific_acceptance',
+            'scientific_acceptance_authority':False,**AUTH}
+
+def continuation_metadata(root, path, original_goals_sha256):
+    """Verify this one reviewed dependency overlay, never a general plan editor."""
+    relative=Path(path)
+    if relative.is_absolute():relative=relative.relative_to(root.resolve())
+    require(relative.as_posix()==CONTINUATION_PLAN,'unreviewed continuation plan path')
+    plan_path=root/relative
+    require(plan_path.resolve().is_relative_to(root.resolve()),'continuation plan escapes repository')
+    plan=read(plan_path)
+    require(set(plan)=={'schema','original_goals_sha256','derived_goals_path','derived_goals_sha256',
+                       'dependency_overrides','review_receipts'}
+            and plan['schema']=='jevops.lean-refactor.continuation-plan.v1','continuation plan schema')
+    require(plan['original_goals_sha256']==original_goals_sha256==sha(root/GOALS),
+            'immutable original goals changed')
+    require(plan['derived_goals_path']==CONTINUATION_GOALS and
+            plan['dependency_overrides']==CONTINUATION_OVERRIDES,'unreviewed dependency overrides')
+    derived=root/CONTINUATION_GOALS
+    require(derived.resolve().is_relative_to(root.resolve()) and sha(derived)==plan['derived_goals_sha256'],
+            'derived continuation goals changed')
+    original=read(root/GOALS);expected=copy.deepcopy(original)
+    rows={task['id']:task for task in expected['tasks']}
+    require(len(rows)==len(expected['tasks'])==38,'continuation task population differs')
+    for tid,deps in CONTINUATION_OVERRIDES.items():
+        require(rows[tid]['initial_status']=='planned','only originally planned dependencies may change')
+        rows[tid]['depends_on']=deps
+    require(read(derived)==expected,'continuation changed task meaning, bounds, policy or original plan')
+    reviews=plan['review_receipts']
+    require(set(reviews)=={'JLR-011','JLR-015'},'continuation requires both original Grok reviews')
+    for tid,item in reviews.items():
+        require(set(item)=={'path','sha256'} and item['path']=='implementation_plan/proposals/'+tid+'.review.json'
+                and sha(root/item['path'])==item['sha256'],'original reviewed advisory receipt changed')
+    return {'path':CONTINUATION_PLAN,'sha256':sha(plan_path),
+            'derived_goals_path':CONTINUATION_GOALS,'derived_goals_sha256':sha(derived)}
+
+
+def effective_goals(root, profile):
+    metadata=profile.get('continuation_plan')
+    if metadata is None:return read(root/GOALS)
+    require(type(metadata) is dict and set(metadata)=={'path','sha256','derived_goals_path','derived_goals_sha256'},
+            'registered continuation metadata differs')
+    require(continuation_metadata(root,metadata['path'],profile['goals_sha256'])==metadata,
+            'registered continuation source binding changed')
+    return read(root/metadata['derived_goals_path'])
+
+
+def continuation_manifest_binding(root, metadata):
+    cfg=read(root/'config/lean_refactor_arena_20261024_watchdog.json')
+    live=Path(cfg['runtime_manifest'])
+    require(not live.is_absolute() and '..' not in live.parts,'invalid continuation live manifest path')
+    for path in (root/LANES,root/live):
+        require(read(path).get('planned_work_policy',{}).get('goals_path')==metadata['derived_goals_path'],
+                'registered helper must observe the reviewed derived goals')
+
+
+def task_blocks(text):
+    return {match.group(1):match.group(0) for match in re.finditer(
+        r'^## (JLR-\d+) [^\n]*\n.*?(?=^## JLR-|\Z)',text,re.M|re.S)}
+
+
+def continuation_board(text, root):
+    """Change only the two unexecuted planned dependency fields."""
+    blocks=task_blocks(text)
+    for tid,deps in CONTINUATION_OVERRIDES.items():
+        block=blocks[tid]
+        require(len(re.findall(r'^- Status: planned$',block,re.M))==1,
+                'continuation may change only currently planned work: '+tid)
+        require(not (root/RUNTIME/(tid+'.receipt.json')).exists()
+                and not (root/RUNTIME/(tid+'.result.json')).exists(),
+                'continuation cannot rewrite an executed stage: '+tid)
+        require(len(re.findall(r'^- Depends on: .*$',block,re.M))==1,'ambiguous dependency field: '+tid)
+        amended=re.sub(r'^- Depends on: .*$', '- Depends on: '+', '.join(deps),block,flags=re.M)
+        text=text.replace(block,amended,1)
+    return text
+
+_PREFLIGHT_VIEW = ContextVar('lean_refactor_preflight_view', default=None)
+
+
+@contextmanager
+def _review_profile(root, loaded, board_text):
+    """Give nested in-process validators the SAME closed, unpublished review.
+
+    Every load still executes all source, route, goal, dependency and budget
+    checks. No environment variable, disk profile, historical receipt or public
+    loader exception authorizes this view. It ends before publication.
+    """
+    root=root.resolve()
+    view={'root':root,'profile':copy.deepcopy(loaded[0]),
+          'board_text':(root/BOARD).read_text() if board_text is None else board_text,
+          'registered_profile_sha256':sha(root/PROFILE)}
+    token=_PREFLIGHT_VIEW.set(view)
+    try:
+        yield
+    finally:
+        _PREFLIGHT_VIEW.reset(token)
+
 
 def load(root=ROOT, *, profile=None, board_text=None):
+    view=_PREFLIGHT_VIEW.get()
+    if profile is None and view is not None and root.resolve()==view['root']:
+        require(sha(root/PROFILE)==view['registered_profile_sha256'],
+                'registered owner changed during protected review')
+        profile=copy.deepcopy(view['profile'])
+        if board_text is None:board_text=view['board_text']
     profile=read(root/PROFILE) if profile is None else profile
     require(profile['schema']=='jevops.lean-refactor.execution.v2','execution profile schema')
     require(profile['contracts']==definitions(),'closed producer registration changed')
     require(profile['source_sha256']==sources(root),'execution source drift; revalidate before materializing')
+    control_plane_observation(root)  # Availability is checked; version equality is not scientific authority.
     require(profile['goals_sha256']==sha(root/GOALS),'research goals changed')
     require(profile['base_profile_sha256']==sha(root/BASE),'bootstrap profile changed')
     base=read(root/BASE)
@@ -165,7 +312,7 @@ def load(root=ROOT, *, profile=None, board_text=None):
     rows=parse_todo_blocks((root/BOARD).read_text() if board_text is None else board_text,
                           task_header_prefix='## JLR-')
     board={row[0]:row[3] for row in rows}
-    tasks={t['id']:t for t in read(root/GOALS)['tasks']}
+    tasks={t['id']:t for t in effective_goals(root,profile)['tasks']}
     require(len(board)==len(rows)==len(tasks)==38,'all original dependencies must remain registered')
     for tid,t in tasks.items():
         require(tid in board and [s.strip() for s in board[tid].get('depends_on','').split(',') if s.strip()]==t['depends_on'],
@@ -181,6 +328,8 @@ def load(root=ROOT, *, profile=None, board_text=None):
             if tid=='JLR-035':outputs.append(RUNTIME+'/release-gate.json')
             if tid=='JLR-024':outputs.append(RUNTIME+'/iterative-admission-gate.json')
             if tid=='JLR-020':outputs.append(RUNTIME+'/native-pin-gate.json')
+            if tid=='JLR-019':outputs.append(RUNTIME+'/simp-admission-gate.json')
+            if tid=='JLR-021':outputs.append(RUNTIME+'/search-admission-gate.json')
             require([s.strip() for s in board[tid]['outputs'].split(',')]==outputs,'declared stage outputs differ')
             require(board[tid].get('provider_role')=='deterministic','research producer role differs')
             require(board[tid].get('implementation_timeout_seconds')==str(profile['contracts'][tid]['timeout']),
@@ -238,9 +387,11 @@ def preflight(root=ROOT, *, profile=None, board_text=None):
     # Re-run the protected semantic checks, including historical run bindings.
     # A new infrastructure registration cannot inherit success from exit codes.
     validator=module(root,'check_lean_refactor_stage_v2.py')
-    accepted={tid:validator.validate(root,tid,loaded=loaded) for tid in profile['contracts']
-              if board[tid]['status']=='completed'}
-    return {'valid':True,'verified_bootstrap':verified,'verified_research':accepted,
+    with _review_profile(root,loaded,board_text):
+        accepted={tid:validator.validate(root,tid,loaded=loaded) for tid in profile['contracts']
+                  if board[tid]['status']=='completed'}
+    return {'valid':True,'control_plane_observation':control_plane_observation(root),
+            'verified_bootstrap':verified,'verified_research':accepted,
             'implemented':list(profile['contracts']),
             'ready':[tid for tid in profile['contracts'] if board[tid]['status'] in ('pending','ready') and
                      all(board[d]['status']=='completed' for d in tasks[tid]['depends_on'])],**AUTH}
@@ -274,7 +425,8 @@ def freeze(root, junit):
     save(root/receipt_path,{'passed':True,'source_sha256':snapshot,'junit_path':str(junit.relative_to(root)),
                            'junit_sha256':sha(junit),'observed_at':time.time(),**AUTH})
     profile={'schema':'jevops.lean-refactor.execution.v2','board':BOARD,'contracts':definitions(),
-             'source_sha256':snapshot,'goals_sha256':sha(root/GOALS),'base_profile_sha256':sha(root/BASE),
+             'source_sha256':snapshot,'control_plane_observation':control_plane_observation(root),
+             'goals_sha256':sha(root/GOALS),'base_profile_sha256':sha(root/BASE),
              'tests_receipt':receipt_path,'phase_budget':{'max_calls':0,'calls':0,
              'previous_usage':ledger,'previous_usage_path':'data/lean_refactor_arena_20261024/router-budget.json'},
              'scientific_route':{'provider':'grok_cli','model':'grok-4.7','actual_llm_router_required':True,
@@ -404,15 +556,26 @@ def quiescent_maintenance_fence(root):
     require(not (proc/'task'/str(pid)/'children').read_text().strip(),
             'native maintenance owner still has children')
     require(identity()==(start,raw,argv),'native maintenance owner changed during observation')
+    declared_goal=Path(manifest.get('planned_work_policy',{}).get('goals_path',GOALS))
+    require(not declared_goal.is_absolute() and '..' not in declared_goal.parts and
+            (root/declared_goal).resolve().is_relative_to(root),'invalid helper goals path')
     return {'pid':pid,'start_ticks':start,'uid':os.getuid(),'cmdline_sha256':hashlib.sha256(raw).hexdigest(),
-            'holds':sorted(markers),'controls':{str(p):sha(p) for p in (cfg_path,root/BASE,root/GOALS,root/LANES,live_manifest)}}
+            'holds':sorted(markers),'controls':{str(p):sha(p) for p in (cfg_path,root/BASE,root/GOALS,root/LANES,live_manifest,root/declared_goal)}}
 
-def refresh(root, junit, *, source_only=False, quiescent_maintenance=False):
+def refresh(root, junit, *, source_only=False, quiescent_maintenance=False, continuation_plan=None):
     """Extend the existing owner after actual tests, retaining every old binding."""
     require(not (source_only and quiescent_maintenance),'review modes are mutually exclusive')
+    require(continuation_plan is None or quiescent_maintenance and not source_only,
+            'continuation plan requires explicit quiescent maintenance refresh')
     require(source_only or quiescent_maintenance or not held(root),'operator hold')
     fence=quiescent_maintenance_fence(root) if quiescent_maintenance else None
+    reviewed_continuation=None
+    original_goals_digest=None
     def guard():
+        if reviewed_continuation is not None:
+            require(continuation_metadata(root,reviewed_continuation['path'],original_goals_digest)==reviewed_continuation,
+                    'continuation changed during publication')
+            continuation_manifest_binding(root,reviewed_continuation)
         if fence is not None:
             require(quiescent_maintenance_fence(root)==fence,'maintenance ownership changed')
     def publish(path,text):
@@ -421,6 +584,11 @@ def refresh(root, junit, *, source_only=False, quiescent_maintenance=False):
         guard();save(path,value)
     old=read(root/PROFILE)
     old_digest=sha(root/PROFILE)
+    original_goals_digest=old['goals_sha256']
+    if continuation_plan is not None:
+        reviewed_continuation=continuation_metadata(root,continuation_plan,original_goals_digest)
+        require(old.get('continuation_plan') in (None,reviewed_continuation),'a different continuation is already registered')
+        continuation_manifest_binding(root,reviewed_continuation)
     original_text=(root/BOARD).read_text()
     require(old['schema']=='jevops.lean-refactor.execution.v2','unknown execution owner')
     if source_only:
@@ -449,7 +617,9 @@ def refresh(root, junit, *, source_only=False, quiescent_maintenance=False):
                  'test_lean_refactor_source_refresh', 'test_lean_refactor_metric_audit',
                  'test_lean_refactor_simp_pilot','test_lean_refactor_coupled_pilot',
                  'test_lean_refactor_iterative_pilot','test_lean_refactor_release_inventory',
-                 'test_lean_refactor_native_pin_frontier'):
+                 'test_lean_refactor_native_pin_frontier','test_lean_refactor_operational_faults',
+                 'test_lean_refactor_admission_waits','test_lean_refactor_search_extract',
+                 'test_lean_refactor_activation_audit'):
         require(any(name in case.get('classname','') for case in cases),'focused suite missing: '+name)
     snapshot=sources(root)
     for relative in (PROFILE,old['tests_receipt'],RUNTIME+'/materialization.json',RUNTIME+'/activation.json',
@@ -458,7 +628,7 @@ def refresh(root, junit, *, source_only=False, quiescent_maintenance=False):
         if path.exists():
             archived=root/RUNTIME/'history'/(path.name+'.'+sha(path))
             if not archived.exists():publish(archived,path.read_text())
-    text=original_text
+    text=continuation_board(original_text,root) if reviewed_continuation is not None and old.get('continuation_plan') is None else original_text
     for tid,contract in definitions().items():
         pattern=r'(## '+tid+r' .*?)(?=\n## JLR-|\Z)'
         previous=re.search(pattern,text,re.S).group(1)
@@ -479,6 +649,12 @@ def refresh(root, junit, *, source_only=False, quiescent_maintenance=False):
             changed=re.sub(r'- Execution inputs: .*','- Execution inputs: '+PROFILE+', '+
                 RUNTIME+'/JLR-016.result.json, '+RUNTIME+'/JLR-017.result.json, '+
                 RUNTIME+'/native-pin-frontier.json, '+RUNTIME+'/native-pin-gate.json',changed)
+        if tid=='JLR-021':
+            changed=re.sub(r'- Execution inputs: .*','- Execution inputs: '+PROFILE+', '+
+                RUNTIME+'/search-admission-gate.json',changed)
+        if tid=='JLR-019':
+            changed=re.sub(r'- Execution inputs: .*','- Execution inputs: '+PROFILE+', '+
+                RUNTIME+'/simp-admission-gate.json',changed)
         if tid=='JLR-024':
             changed=re.sub(r'- Execution inputs: .*','- Execution inputs: '+PROFILE+', '+
                 RUNTIME+'/iterative-v1-ledger.json',changed)
@@ -493,16 +669,23 @@ def refresh(root, junit, *, source_only=False, quiescent_maintenance=False):
         if tid=='JLR-035':outputs.append(RUNTIME+'/release-gate.json')
         if tid=='JLR-024':outputs.append(RUNTIME+'/iterative-admission-gate.json')
         if tid=='JLR-020':outputs.append(RUNTIME+'/native-pin-gate.json')
+        if tid=='JLR-019':outputs.append(RUNTIME+'/simp-admission-gate.json')
+        if tid=='JLR-021':outputs.append(RUNTIME+'/search-admission-gate.json')
         changed=re.sub(r'- Outputs: .*','- Outputs: '+', '.join(outputs),changed)
         changed=re.sub(r'- Predicted files: .*','- Predicted files: '+', '.join(outputs),changed)
-        if tid in ('JLR-016','JLR-020','JLR-023','JLR-024','JLR-035') and '- Retry on changed evidence:' not in changed:
+        if tid in ('JLR-016','JLR-019','JLR-020','JLR-021','JLR-023','JLR-024','JLR-035') and '- Retry on changed evidence:' not in changed:
             changed=changed.rstrip()+'\n- Retry on changed evidence: true\n\n'
         text=text.replace(previous,changed,1)
+    for tid,block in (task_blocks(original_text).items() if not source_only else ()):
+        if re.search(r'^- Status: completed$',block,re.M):
+            require(task_blocks(text).get(tid)==block,'completed task history cannot change: '+tid)
     publish_json(root/old['tests_receipt'],{'passed':True,'source_sha256':snapshot,
         'junit_path':str(junit.relative_to(root)),'junit_sha256':sha(junit),'observed_at':time.time(),**AUTH})
     previous_profiles={**old.get('previous_profiles',{}),sha(root/PROFILE):
                        RUNTIME+'/history/'+Path(PROFILE).name+'.'+sha(root/PROFILE)}
-    profile={**old,'contracts':definitions(),'source_sha256':snapshot,'previous_profiles':previous_profiles}
+    profile={**old,'contracts':definitions(),'source_sha256':snapshot,'previous_profiles':previous_profiles,
+             'control_plane_observation':control_plane_observation(root)}
+    if reviewed_continuation is not None:profile['continuation_plan']=reviewed_continuation
     # Validate the proposed registration in memory before making any newly
     # materialized task executable. Failed acceptance leaves the owner intact.
     report=preflight(root,profile=profile,board_text=original_text if source_only else text)
@@ -535,7 +718,10 @@ def main():
         help='Review source updates while held; preserve the taskboard and all producer contracts')
     modes.add_argument('--quiescent-maintenance',action='store_true',
         help='Explicitly materialize reviewed definitions while the registered native owner is held and childless')
+    p.add_argument('--continuation-plan',type=Path,help='Explicit reviewed immutable dependency overlay; maintenance refresh only')
     args=p.parse_args()
+    if args.continuation_plan is not None and not (args.refresh_tests and args.quiescent_maintenance):
+        p.error('--continuation-plan requires --refresh-tests and --quiescent-maintenance')
     if args.source_only and not args.refresh_tests:
         p.error('--source-only requires --refresh-tests')
     if args.quiescent_maintenance and not args.refresh_tests:
@@ -544,9 +730,14 @@ def main():
         with (ROOT/'data/lean_refactor_arena_20261024/execution-v2-registration.lock').open('a+') as lock:
             fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
             result=refresh(ROOT,args.refresh_tests.resolve(),source_only=args.source_only,
-                quiescent_maintenance=args.quiescent_maintenance) if args.refresh_tests else freeze(ROOT,args.freeze_tests.resolve()) if args.freeze_tests else register(ROOT) if args.register else preflight(ROOT)
+                quiescent_maintenance=args.quiescent_maintenance,continuation_plan=args.continuation_plan) if args.refresh_tests else freeze(ROOT,args.freeze_tests.resolve()) if args.freeze_tests else register(ROOT) if args.register else preflight(ROOT)
         print(json.dumps(result,sort_keys=True));return 0
     except (OSError,ValueError,KeyError,RuntimeError,subprocess.SubprocessError) as exc:
         print(json.dumps({'valid':False,'reason':str(exc),**AUTH}),file=sys.stderr);return 1
 
-if __name__=='__main__':raise SystemExit(main())
+if __name__=='__main__':
+    require('lean_refactor_execution_v2' not in sys.modules or
+            sys.modules['lean_refactor_execution_v2'] is sys.modules[__name__],
+            'ambiguous execution review module identity')
+    sys.modules['lean_refactor_execution_v2']=sys.modules[__name__]
+    raise SystemExit(main())

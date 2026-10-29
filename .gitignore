@@ -8,3 +8,9 @@ build/
 # Local experiment runtime state (not published).
 /.improve-watch/
 /refactor-memory.json
+
+# Generated experiment state and local test output.
+/data/
+.pytest_cache/
+/transaction-tests.log
+/transaction-tests.xml

@@ -37,7 +37,7 @@
   "planned_work_policy": {
     "enabled": true,
     "grace_seconds": 60,
-    "goals_path": "implementation_plan/lean_refactor_arena_20261024.goals.json",
+    "goals_path": "implementation_plan/lean_refactor_arena_20261025.continuation.goals.json",
     "deferred_tasks": {
       "JLR-035": {
         "kind": "not_before",

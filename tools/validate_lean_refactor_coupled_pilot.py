@@ -55,6 +55,8 @@ def sample_check(sample,record,pin,guard,expected_source,*,required=False):
               report['reference_heartbeats']==report['reference_raw_heartbeats']//1000,'heartbeat units differ')
 
 def validate(root,data):
+    if data.get('schema')=='jevops.lean-refactor.canonical-coupled-result.v1':
+        return c.module(root,'lean_refactor_compiled_replay_v1.py').protect(root,data)
     from jevops import arena,arena_lean,arena_local,proof_replay
     from jevops.lean import VersionPin
     from jevops.seals import Fingerprinter

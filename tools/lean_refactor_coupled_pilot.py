@@ -93,6 +93,10 @@ def screening_status(rows):
     return 'SCREENED_ALL_PINS'
 
 def produce(root=ROOT):
+    if (root/c.PROFILE).is_file():
+        profile=c.load(root)[0]
+        if 'tools/lean_refactor_compiled_coupled_v1.py' in profile['source_sha256']:
+            return c.module(root,'lean_refactor_compiled_coupled_v1.py').produce(root)
     started=time.monotonic();before=resource_snapshot(root)
     c.require(before['eligible'] and not c.held(root),'CPU resource or operator gate')
     record=next(r for r in c.module(root,'lean_refactor_project_readiness.py').records() if r['name']==TARGET)

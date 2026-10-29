@@ -1,0 +1,39 @@
+{
+  "schema": "ipfs_accelerate_py/agent-supervisor/provider-budget-freeze@1",
+  "env_prefix": "JEVOPS_REFACTOR_LLM",
+  "campaign_root": "/home/barberb/lift_coding/JevOps",
+  "new_calls_allowed": false,
+  "original_goals": {
+    "path": "implementation_plan/lean_refactor_arena_20261024.goals.json",
+    "sha256": "a976be0b625707a92aafa97e3019df6db45662a54ef51f49fac5866f95f336e0",
+    "router_calls_total": 24
+  },
+  "ledgers": [
+    {
+      "path": "data/lean_refactor_arena_20261024/router-budget.json",
+      "sha256": "5ea99cc33dbcdad8d166f1a2ec2d286115a7cd5d982f99ebc6517c2e8aab0d20",
+      "schema": null,
+      "calls": 22
+    },
+    {
+      "path": "data/lean_refactor_arena_20261024/execution-v2/maintenance-2341/scientific-strategy-phase/ledger.json",
+      "sha256": "ba9581aeddbcf8c0a46bb0194aa09946026c13dcbfd236d35a2c2dc1ed3f67e7",
+      "schema": "jevops.lean-refactor.additive-scientific-review-ledger.v1",
+      "calls": 1
+    },
+    {
+      "path": "data/lean_refactor_arena_20261024/execution-v2/maintenance-0302/compact-review/scientific-strategy-phase/ledger.json",
+      "sha256": "bd8dd4ab170b1c7dce3314daa88c70a5494f72d0828b81a3ad3ccd01911c29e4",
+      "schema": "jevops.lean-refactor.additive-scientific-review-ledger.v1",
+      "calls": 1
+    },
+    {
+      "path": "data/lean_refactor_arena_20261024/execution-v2/maintenance-0412/strategy-review/scientific-strategy-phase/ledger.json",
+      "sha256": "1eaccdbf17121cf05f948ca6d8a3f2673d9cc23bce343dcf8b08cd2bd45faebd",
+      "schema": "jevops.lean-refactor.scientific-review-ledger.v1",
+      "calls": 1
+    }
+  ],
+  "aggregate_reserved": 25,
+  "reason": "operator_provider_freeze"
+}

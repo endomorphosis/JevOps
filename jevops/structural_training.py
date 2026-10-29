@@ -51,7 +51,7 @@ def _envelope(source: str, target: str) -> str:
         raise ValueError("ambiguous_theorem_envelope")
     # No uncounted helper definitions, axioms, attributes or option changes.
     for line in prefix[:start.start()].splitlines():
-        if line.strip() and not re.fullmatch(r"[ \t]*(?:import|universe)\s+[\w'. ]+", line):
+        if line.strip() and not re.fullmatch(r"[ \t]*(?:(?:import|universe)\s+[\w'. ]+|open\s+[A-Za-z_][A-Za-z0-9_'.]*(?:\s+[A-Za-z_][A-Za-z0-9_'.]*)*\s+in)", line):
             raise ValueError("unsupported_theorem_prelude")
     if re.search(r"\b(?:axiom|def|instance|attribute|set_option|unsafe|elab|macro|syntax)\b", prefix[start.start():]):
         raise ValueError("unsupported_theorem_header")

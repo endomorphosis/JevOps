@@ -7,13 +7,14 @@
   "runtime_manifest": "data/lean_refactor_arena_20261024/bundle_lanes.json",
   "state_root": "data/lean_refactor_arena_20261024/persistent-watchdog",
   "repair_prompt": "config/lean_refactor_arena_20261024_repair.prompt.txt",
+  "provider_budget_policy": "config/lean_refactor_arena_20261026_provider_freeze.json",
   "repair_executable": "/usr/bin/codex",
   "poll_seconds": 30,
   "heartbeat_seconds": 120,
   "report_seconds": 600,
   "quiet_seconds": 900,
   "startup_grace_seconds": 180,
-  "worker_timeout_seconds": 900,
+  "worker_timeout_seconds": 1800,
   "cooldown_seconds": 300,
   "max_cooldown_seconds": 3600,
   "max_repair_attempts": 3,
@@ -21,5 +22,6 @@
   "activate_planned_work": false,
   "reset_campaign_budgets": false,
   "materialize_planned_work": true,
-  "planned_work_mode": "implement_validate_then_activate"
+  "planned_work_mode": "implement_validate_then_activate",
+  "worker_minimum_free_bytes": 2147483648
 }

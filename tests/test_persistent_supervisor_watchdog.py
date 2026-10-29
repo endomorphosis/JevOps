@@ -34,6 +34,7 @@ class PersistentWatchdogTests(unittest.TestCase):
         self.supervisor = json.loads((ROOT / self.cfg['supervisor_profile']).read_text())
         self.lanes = json.loads((ROOT / self.cfg['lane_manifest']).read_text())
         self.write_profiles()
+        (self.root / self.cfg['provider_budget_policy']).write_text(json.dumps({'new_calls_allowed': False}))
         (self.root / self.cfg['repair_prompt']).write_text(
             (ROOT / self.cfg['repair_prompt']).read_text())
         (self.root / 'tools').mkdir()
@@ -121,7 +122,7 @@ class PersistentWatchdogTests(unittest.TestCase):
                 self.assertNotIn('WatchdogSec=', content)
         repair = units[self.cfg['repair_unit']]
         self.assertIn(watcher.DISPATCHER, repair)
-        for argument, value in [('worker-timeout', 900), ('max-attempts', 3),
+        for argument, value in [('worker-timeout', self.cfg['worker_timeout_seconds']), ('max-attempts', 3),
                                 ('heartbeat-seconds', 120), ('report-seconds', 600)]:
             self.assertIn(f'"--{argument}" "{value}"', repair)
         self.assertIn('"--hold-path"', repair)
@@ -156,6 +157,136 @@ class PersistentWatchdogTests(unittest.TestCase):
         guard.assert_called_once_with(self.supervisor['accelerator_source'])
         command.assert_not_called()
         self.assertEqual(before, {str(p): p.read_bytes() for p in self.root.rglob('*') if p.is_file()})
+
+    def test_provider_freeze_requires_actual_adapter_capability_without_executing_code(self):
+        source = self.base / 'private-framework'
+        path = source / 'ipfs_accelerate_py/agent_supervisor/todo_daemon/llm.py'
+        path.parent.mkdir(parents=True)
+        sentinel = self.base / 'must-not-execute-budget-adapter'
+        path.write_text('PROVIDER_BUDGET_POLICY_VERSION = 1\n'
+                        + 'from pathlib import Path\nPath(' + repr(str(sentinel)) + ').touch()\n')
+        watcher.require_native_provider_budget_policy(source)
+        self.assertFalse(sentinel.exists())
+        for value in ('', 'PROVIDER_BUDGET_POLICY_VERSION = True\n',
+                      'PROVIDER_BUDGET_POLICY_VERSION = 0\n',
+                      'PROVIDER_BUDGET_POLICY_VERSION = "1"\n',
+                      'PROVIDER_BUDGET_POLICY_VERSION = 1\nPROVIDER_BUDGET_POLICY_VERSION = 2\n'):
+            with self.subTest(value=value):
+                path.write_text(value)
+                with self.assertRaises(ValueError):
+                    watcher.require_native_provider_budget_policy(source)
+
+    def test_install_refuses_unenforceable_provider_freeze_before_any_unit_write(self):
+        before = {str(p): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        with patch.object(watcher, 'require_native_service_watchdog'), \
+             patch.object(watcher, 'require_native_provider_budget_policy',
+                          side_effect=ValueError('provider-budget freeze support missing')) as guard, \
+             patch.object(watcher, 'command') as command:
+            with self.assertRaisesRegex(ValueError, 'provider-budget freeze support'):
+                watcher._install_locked(self.root)
+        guard.assert_called_once_with(self.supervisor['accelerator_source'])
+        command.assert_not_called()
+        self.assertEqual(before, {str(p): p.read_bytes() for p in self.root.rglob('*') if p.is_file()})
+
+    def test_render_scopes_provider_freeze_to_managed_daemons(self):
+        units = watcher.render(self.root)[2]
+        expected = 'JEVOPS_REFACTOR_LLM_BUDGET_POLICY=' + str(self.root / self.cfg['provider_budget_policy'])
+        for name in (self.cfg['guardian_unit'], self.cfg['repair_unit']):
+            self.assertIn('Environment=' + watcher.systemd_arg(expected) + '\n', units[name])
+        self.assertNotIn('JEVOPS_REFACTOR_LLM_BUDGET_POLICY', units[watcher.RELOAD_UNIT])
+
+    def test_render_requires_observed_lane_policy_on_the_repair_service(self):
+        units = watcher.render(self.root)[2]
+        expected = watcher.systemd_arg('--required-lane-env',exec_start=True)+' '+watcher.systemd_arg('JEVOPS_REFACTOR_LLM_BUDGET_POLICY',exec_start=True)
+        self.assertIn(expected,units[self.cfg['repair_unit']])
+        self.assertNotIn('--required-lane-env',units[self.cfg['guardian_unit']])
+        self.assertNotIn('--required-lane-env',units[watcher.RELOAD_UNIT])
+
+    def test_maintenance_storage_reserve_is_validated_before_rendering(self):
+        for value in (None, True, 0, -1, '2147483648', 64 * 1024 * 1024 - 1, 8 * 1024 ** 3 + 1):
+            with self.subTest(value=value):
+                self.cfg['worker_minimum_free_bytes'] = value
+                self.write_profiles()
+                with self.assertRaisesRegex(ValueError, 'storage reserve'):
+                    watcher.render(self.root)
+        for value in (64 * 1024 * 1024, 2 * 1024 ** 3, 8 * 1024 ** 3):
+            with self.subTest(value=value):
+                self.cfg['worker_minimum_free_bytes'] = value
+                self.write_profiles()
+                units = watcher.render(self.root)[2]
+                expected = watcher.systemd_arg('--worker-min-free-bytes', exec_start=True) + ' ' + watcher.systemd_arg(value, exec_start=True)
+                self.assertIn(expected, units[self.cfg['repair_unit']])
+                self.assertNotIn('--worker-min-free-bytes', units[self.cfg['guardian_unit']])
+                self.assertNotIn('--worker-min-free-bytes', units[watcher.RELOAD_UNIT])
+
+    def test_worker_storage_admission_capability_is_static_and_exact(self):
+        source = self.base / 'private-worker-storage-framework'
+        path = source / 'ipfs_accelerate_py/agent_supervisor/rescue/repair_dispatcher.py'
+        path.parent.mkdir(parents=True)
+        sentinel = self.base / 'must-not-execute-storage-adapter'
+        path.write_text('WORKER_STORAGE_ADMISSION_VERSION = 1\n'
+                        + 'from pathlib import Path\nPath(' + repr(str(sentinel)) + ').touch()\n')
+        watcher.require_native_worker_storage_admission(source)
+        self.assertFalse(sentinel.exists())
+        for value in ('', 'WORKER_STORAGE_ADMISSION_VERSION = True\n',
+                      'WORKER_STORAGE_ADMISSION_VERSION = 0\n',
+                      'WORKER_STORAGE_ADMISSION_VERSION = "1"\n',
+                      'WORKER_STORAGE_ADMISSION_VERSION = 1\nWORKER_STORAGE_ADMISSION_VERSION = 2\n'):
+            with self.subTest(value=value):
+                path.write_text(value)
+                with self.assertRaises(ValueError):
+                    watcher.require_native_worker_storage_admission(source)
+
+    def test_install_refuses_missing_worker_storage_admission_before_unit_writes(self):
+        before = {str(p): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        with patch.object(watcher, 'require_native_service_watchdog'), \
+             patch.object(watcher, 'require_native_provider_budget_policy'), \
+             patch.object(watcher, 'require_native_lane_environment_guard'), \
+             patch.object(watcher, 'require_native_worker_storage_admission', side_effect=ValueError('worker-storage support missing')) as guard, \
+             patch.object(watcher, 'command') as command:
+            with self.assertRaisesRegex(ValueError, 'worker-storage support'):
+                watcher._install_locked(self.root)
+        guard.assert_called_once_with(self.supervisor['accelerator_source'])
+        command.assert_not_called()
+        self.assertEqual(before, {str(p): p.read_bytes() for p in self.root.rglob('*') if p.is_file()})
+
+    def test_lane_environment_capability_is_static_and_exact(self):
+        source = self.base / 'private-lane-environment-framework'
+        path = source / 'ipfs_accelerate_py/agent_supervisor/rescue/repair_dispatcher.py'
+        path.parent.mkdir(parents=True)
+        sentinel = self.base / 'must-not-execute-lane-environment-adapter'
+        path.write_text('LANE_ENVIRONMENT_GUARD_VERSION = 1\n'
+                        + 'from pathlib import Path\nPath(' + repr(str(sentinel)) + ').touch()\n')
+        watcher.require_native_lane_environment_guard(source)
+        self.assertFalse(sentinel.exists())
+        for value in ('', 'LANE_ENVIRONMENT_GUARD_VERSION = True\n',
+                      'LANE_ENVIRONMENT_GUARD_VERSION = 0\n',
+                      'LANE_ENVIRONMENT_GUARD_VERSION = "1"\n',
+                      'LANE_ENVIRONMENT_GUARD_VERSION = 1\nLANE_ENVIRONMENT_GUARD_VERSION = 2\n'):
+            with self.subTest(value=value):
+                path.write_text(value)
+                with self.assertRaises(ValueError):
+                    watcher.require_native_lane_environment_guard(source)
+
+    def test_install_refuses_unobserved_lane_environment_before_any_unit_write(self):
+        before = {str(p):p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        with patch.object(watcher,'require_native_service_watchdog'), \
+             patch.object(watcher,'require_native_provider_budget_policy'), \
+             patch.object(watcher,'require_native_lane_environment_guard',side_effect=ValueError('lane-environment support missing')) as guard, \
+             patch.object(watcher,'command') as command:
+            with self.assertRaisesRegex(ValueError,'lane-environment support'):
+                watcher._install_locked(self.root)
+        guard.assert_called_once_with(self.supervisor['accelerator_source'])
+        command.assert_not_called()
+        self.assertEqual(before,{str(p):p.read_bytes() for p in self.root.rglob('*') if p.is_file()})
+
+    def test_invalid_provider_freeze_cannot_be_rendered(self):
+        policy = self.root / self.cfg['provider_budget_policy']
+        for value in ({}, {'new_calls_allowed': True}, {'new_calls_allowed': 0}):
+            with self.subTest(value=value):
+                policy.write_text(json.dumps(value))
+                with self.assertRaisesRegex(ValueError, 'provider freeze'):
+                    watcher.render(self.root)
 
     def test_third_reload_unit_is_bounded_manual_oneshot_without_install_target(self):
         units = watcher.render(self.root)[2]
@@ -411,7 +542,7 @@ class PersistentWatchdogTests(unittest.TestCase):
             watcher.install(self.root)
         matches = [c for c in call.call_args_list if str(self.root / 'tools/lean_refactor_execution_v2.py') in c.args[0]]
         self.assertEqual(len(matches), 1)
-        self.assertEqual(matches[0].kwargs['timeout'], 90)
+        self.assertEqual(matches[0].kwargs['timeout'], 1200)
         self.lanes['execution_profile'] = 'config/unreviewed_execution.json'; self.write_profiles()
         with patch.object(watcher, 'command', return_value=SimpleNamespace(returncode=0, stdout='', stderr='')) as call:
             with self.assertRaisesRegex(ValueError, 'Unknown research execution profile'):

@@ -1,0 +1,28 @@
+{
+  "schema": "jevops.lean-refactor.review.v1",
+  "task_id": "JLR-011",
+  "proposal_only": true,
+  "needs_native_verification": true,
+  "actions": [
+    "On the JLR-005 schedule (15 problems, sources strata/physlib/cslib/arklib/putnambench, protocol LRA/v1, warmup sha256 6209680cf00cde0765b77b24834cd72c64dd585b2f7e3f2a58209980ab59a804, n_scheduled 15, official_score null, proof_authority false), pre-register three retrieval arms at one matched compiler budget: lexical ranking, typed-head ranking, and version-filtered strategy examples.",
+    "Hold generation tokens, native-check count, problem order, and original/candidate check order fixed across arms. Count rejected branches and infrastructure misses inside that budget. Do not add an embedding arm or a Leanstral context expansion inside this contract.",
+    "Bind every retrieved premise or strategy span to source project, import scope, target identity, and listed_tags. Admit a span for a pin only when its toolchain tags intersect that pin. Multi-tag problems (Core.InitsUpdatesComm; Cslib progress, diamond, and choice; Binius fold/gap lemmas; Putnam 1964 A4/B2 and 1995 A3) stay grouped by theorem family so near-duplicate proofs across versions are not independent wins.",
+    "Record the prior typed-premise and dynamic-subgoal/depth pilots as a historical neutral control: they changed suggestions and did not yield a shorter accepted proof, and explicit proof-term replay stayed at four tokens. Do not rescore those arms, or a repeated typed-premise or depth condition, as a new win for version-aware retrieval.",
+    "Primary readout is useful suggestions that become shorter kernel-checked proofs under the length-first contract (unchanged statement, imports, prefix, and permitted axioms). Name strict-dual and official-score results separately. Keep the verified incumbent and the original proof as fallback. Stop at the declared budget and log failures without filling missing pins or scores."
+  ],
+  "risks": [
+    "listed_tags are schedule labels, not elaboration evidence. Tag intersection can keep a declaration that fails on the pin or drop one that would check.",
+    "Cross-version duplicates in cslib, arklib, strata, and putnambench can inflate an apparent retrieval gain if splits ignore theorem family, aliases, and dependency closure.",
+    "A version filter that only changes suggestion text, with no shorter accepted proof, repeats the prior neutral retrieval outcome if it is reported as a win.",
+    "Unequal compiler spend from retries or missing pins confounds the ablation. Historical full-matrix coverage (26 of 36 pins, nine of fifteen problems fully checked) and ArkLib source-binding or Putnam toolchain gaps are infrastructure failures, not semantic negatives and not evidence a theorem is false.",
+    "Header-bearing Putnam items (header_chars 77, 93, and 85) and headerless strata/physlib/cslib/arklib items are different context shapes. Truncating a statement or importing Mathlib into a Core-only pin would invalidate the arm.",
+    "This review does not run Lean, does not write arena scores (writes_arena_scores false, imports_law_to_action_verify_batch false), and cannot confirm the hypothesis that version-aware retrieval improves useful suggestions beyond the neutral typed-premise pilot."
+  ],
+  "acceptance_boundaries": [
+    "Actual tests and Lean compilation are separate evidence.",
+    "JLR-011 completes only this design artifact. It does not implement retrieval, execute the ablation, or establish a shorter verified proof.",
+    "Hypothesis confirmation requires fresh source-bound checks on every required pin, matched compiler budgets, and an independent fixed-winner confirmation. A model review, a schedule pass, or a smoke check is not that evidence.",
+    "Environment failures stay out of semantic negative labels and out of the length-first win column. Unresolved projects remain in the cohort denominator.",
+    "Prior neutral typed-premise and depth results stay historical non-improvements. They are not support for the version-filtered arm and are not recomputed here as new wins."
+  ]
+}

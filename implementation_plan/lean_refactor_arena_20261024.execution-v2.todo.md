@@ -589,7 +589,7 @@ Measured fields: verified token count, raw heartbeats by exact pin, compatibilit
 - Track: research
 - Depends on: JLR-011, JLR-017
 - Goal id: JLR-G004
-- Outputs: data/lean_refactor_arena_20261024/execution-v2/JLR-019.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-019.partial.json
+- Outputs: data/lean_refactor_arena_20261024/execution-v2/JLR-019.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-019.partial.json, data/lean_refactor_arena_20261024/execution-v2/simp-admission-gate.json
 - Deterministic command: python3 tools/run_lean_refactor_stage_v2.py --task-id JLR-019
 - Validation: python3 tools/check_lean_refactor_stage_v2.py --validate-task JLR-019
 - Board namespace: jevops-lean-refactor-20261024
@@ -598,7 +598,7 @@ Measured fields: verified token count, raw heartbeats by exact pin, compatibilit
 - Resource class: cpu-lean
 - Provider role: deterministic
 - Implementation timeout seconds: 900
-- Predicted files: data/lean_refactor_arena_20261024/execution-v2/JLR-019.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-019.partial.json
+- Predicted files: data/lean_refactor_arena_20261024/execution-v2/JLR-019.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-019.partial.json, data/lean_refactor_arena_20261024/execution-v2/simp-admission-gate.json
 - Conflict policy: Own only declared outputs; do not change trusted validators, task history, credentials or unrelated jobs.
 - Acceptance: Actual shorter all-pin-valid body beats freshly rechecked incumbent; no axiom growth or unpaid helper declarations.
 
@@ -610,12 +610,14 @@ Budget/stop rule: Matched deterministic controls, capped12 candidates and24 veri
 Hypothesis: A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Implement profile-guided simplifier support minimization.
 
 Measured fields: verified token count, raw heartbeats by exact pin, compatibility across required pins, verified candidate rate, model calls and token usage, wall time and peak memory.
-- Execution inputs: config/lean_refactor_arena_20261024_execution_v2.json
+- Execution inputs: config/lean_refactor_arena_20261024_execution_v2.json, data/lean_refactor_arena_20261024/execution-v2/simp-admission-gate.json
+- Retry on changed evidence: true
 
 
 ## JLR-020 Implement coupled deletion and induction-context repair
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-26T19:36:55Z
 - Priority: P2
 - Track: research
 - Depends on: JLR-011, JLR-017
@@ -647,21 +649,22 @@ Measured fields: verified token count, raw heartbeats by exact pin, compatibilit
 
 ## JLR-021 Implement search-then-extract explicit proof terms
 
-- Status: planned
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-25T20:28:41Z
 - Priority: P2
 - Track: research
-- Depends on: JLR-017, JLR-019
+- Depends on: JLR-017, JLR-011
 - Goal id: JLR-G004
-- Outputs: data/lean_refactor_campaign_20261024/JLR-021.result.json
-- Deterministic command: python3 tools/run_lean_refactor_campaign.py --task-id JLR-021
-- Validation: python3 tools/check_lean_refactor_plan.py --validate-task JLR-021
+- Outputs: data/lean_refactor_arena_20261024/execution-v2/JLR-021.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-021.partial.json, data/lean_refactor_arena_20261024/execution-v2/search-admission-gate.json
+- Deterministic command: python3 tools/run_lean_refactor_stage_v2.py --task-id JLR-021
+- Validation: python3 tools/check_lean_refactor_stage_v2.py --validate-task JLR-021
 - Board namespace: jevops-lean-refactor-20261024
 - Bundle: jevops/lean-refactor/JLR-G004
 - Parallel lane: jlr-planning
 - Resource class: cpu-lean
 - Provider role: deterministic
 - Implementation timeout seconds: 900
-- Predicted files: data/lean_refactor_campaign_20261024/JLR-021.result.json
+- Predicted files: data/lean_refactor_arena_20261024/execution-v2/JLR-021.result.json, data/lean_refactor_arena_20261024/execution-v2/JLR-021.partial.json, data/lean_refactor_arena_20261024/execution-v2/search-admission-gate.json
 - Conflict policy: Own only declared outputs; do not change trusted validators, task history, credentials or unrelated jobs.
 - Acceptance: Final emitted proof is independently cold-replayed with export growth bounds; discovery script length is not final length.
 
@@ -673,6 +676,9 @@ Budget/stop rule: Original/native tactics only; no importing unavailable Mathlib
 Hypothesis: A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Implement search-then-extract explicit proof terms.
 
 Measured fields: verified token count, raw heartbeats by exact pin, compatibility across required pins, verified candidate rate, model calls and token usage, wall time and peak memory.
+- Execution inputs: config/lean_refactor_arena_20261024_execution_v2.json, data/lean_refactor_arena_20261024/execution-v2/search-admission-gate.json
+- Retry on changed evidence: true
+
 
 ## JLR-022 Run a fixed-winner deterministic portfolio comparison
 
@@ -1006,21 +1012,22 @@ Measured fields: verified token count, raw heartbeats by exact pin, compatibilit
 
 ## JLR-033 Fault-test the running supervisor without corrupting proofs
 
-- Status: planned
-- Priority: P2
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-25T06:05:10Z
+- Priority: P0
 - Track: research
-- Depends on: JLR-015, JLR-022
+- Depends on: JLR-015
 - Goal id: JLR-G008
-- Outputs: data/lean_refactor_campaign_20261024/JLR-033.result.json
-- Deterministic command: python3 tools/run_lean_refactor_campaign.py --task-id JLR-033
-- Validation: python3 tools/check_lean_refactor_plan.py --validate-task JLR-033
+- Outputs: data/lean_refactor_arena_20261024/execution-v2/JLR-033.result.json
+- Deterministic command: python3 tools/run_lean_refactor_stage_v2.py --task-id JLR-033
+- Validation: python3 tools/check_lean_refactor_stage_v2.py --validate-task JLR-033
 - Board namespace: jevops-lean-refactor-20261024
 - Bundle: jevops/lean-refactor/JLR-G008
 - Parallel lane: jlr-planning
 - Resource class: cpu-small
 - Provider role: deterministic
 - Implementation timeout seconds: 600
-- Predicted files: data/lean_refactor_campaign_20261024/JLR-033.result.json
+- Predicted files: data/lean_refactor_arena_20261024/execution-v2/JLR-033.result.json
 - Conflict policy: Own only declared outputs; do not change trusted validators, task history, credentials or unrelated jobs.
 - Acceptance: Real bounded recovery or explicit triaged blocker; only changed evidence rearms gates; no fabricated heartbeat/completion.
 
@@ -1032,24 +1039,27 @@ Budget/stop rule: 3attempts,15min cooldown, source-aware gate limits; never kill
 Hypothesis: A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Fault-test the running supervisor without corrupting proofs.
 
 Measured fields: verified token count, raw heartbeats by exact pin, compatibility across required pins, verified candidate rate, model calls and token usage, wall time and peak memory.
+- Execution inputs: config/lean_refactor_arena_20261024_execution_v2.json
+
 
 ## JLR-034 Activate measured campaign stages from verified prerequisites
 
-- Status: planned
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-25T10:10:06Z
 - Priority: P2
 - Track: research
 - Depends on: JLR-017, JLR-018, JLR-023, JLR-033
 - Goal id: JLR-G008
-- Outputs: data/lean_refactor_campaign_20261024/JLR-034.result.json
-- Deterministic command: python3 tools/run_lean_refactor_campaign.py --task-id JLR-034
-- Validation: python3 tools/check_lean_refactor_plan.py --validate-task JLR-034
+- Outputs: data/lean_refactor_arena_20261024/execution-v2/JLR-034.result.json
+- Deterministic command: python3 tools/run_lean_refactor_stage_v2.py --task-id JLR-034
+- Validation: python3 tools/check_lean_refactor_stage_v2.py --validate-task JLR-034
 - Board namespace: jevops-lean-refactor-20261024
 - Bundle: jevops/lean-refactor/JLR-G008
 - Parallel lane: jlr-planning
 - Resource class: cpu-small
 - Provider role: deterministic
 - Implementation timeout seconds: 600
-- Predicted files: data/lean_refactor_campaign_20261024/JLR-034.result.json
+- Predicted files: data/lean_refactor_arena_20261024/execution-v2/JLR-034.result.json
 - Conflict policy: Own only declared outputs; do not change trusted validators, task history, credentials or unrelated jobs.
 - Acceptance: Unknown action/argv remains nonselectable planned backlog; no file-existence-only feature completion; preserve task history.
 
@@ -1061,6 +1071,8 @@ Budget/stop rule: One owner, one GPU job and bounded model calls; source-bound a
 Hypothesis: A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Activate measured campaign stages from verified prerequisites.
 
 Measured fields: verified token count, raw heartbeats by exact pin, compatibility across required pins, verified candidate rate, model calls and token usage, wall time and peak memory.
+- Execution inputs: config/lean_refactor_arena_20261024_execution_v2.json
+
 
 ## JLR-035 Refresh full benchmark inventory at release
 

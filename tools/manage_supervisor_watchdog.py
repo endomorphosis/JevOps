@@ -12,6 +12,7 @@ import ast
 import fcntl
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import signal
@@ -25,6 +26,43 @@ CONFIG = 'config/lean_refactor_arena_20261024_watchdog.json'
 GUARDIAN = 'ipfs_accelerate_py.agent_supervisor.rescue.watchdog_guardian'
 DISPATCHER = 'ipfs_accelerate_py.agent_supervisor.rescue.repair_dispatcher'
 REPAIR_SERVICE_WATCHDOG_SECONDS = 120
+PROTECTED_PREFLIGHT_TIMEOUT_SECONDS = 1200
+
+
+def require_native_lane_environment_guard(source):
+    """Require actual observer support before installing the opt-in flag."""
+    path = Path(source) / 'ipfs_accelerate_py/agent_supervisor/rescue/repair_dispatcher.py'
+    module = ast.parse(path.read_text(), filename=str(path))
+    declarations = [node for node in module.body if isinstance(node, ast.Assign)
+                    and any(isinstance(target, ast.Name) and target.id == 'LANE_ENVIRONMENT_GUARD_VERSION'
+                            for target in node.targets)]
+    require(len(declarations) == 1 and isinstance(declarations[0].value, ast.Constant)
+            and type(declarations[0].value.value) is int and declarations[0].value.value == 1,
+            'Native repair dispatcher lacks reviewed lane-environment verification support')
+
+
+def require_native_worker_storage_admission(source):
+    """Require native support before installing a maintenance storage reserve."""
+    path = Path(source) / 'ipfs_accelerate_py/agent_supervisor/rescue/repair_dispatcher.py'
+    module = ast.parse(path.read_text(), filename=str(path))
+    declarations = [node for node in module.body if isinstance(node, ast.Assign)
+                    and any(isinstance(target, ast.Name) and target.id == 'WORKER_STORAGE_ADMISSION_VERSION'
+                            for target in node.targets)]
+    require(len(declarations) == 1 and isinstance(declarations[0].value, ast.Constant)
+            and type(declarations[0].value.value) is int and declarations[0].value.value == 1,
+            'Native repair dispatcher lacks reviewed worker-storage admission support')
+
+
+def require_native_provider_budget_policy(source):
+    """Refuse a provider freeze that the installed adapter cannot enforce."""
+    path = Path(source) / 'ipfs_accelerate_py/agent_supervisor/todo_daemon/llm.py'
+    module = ast.parse(path.read_text(), filename=str(path))
+    declarations = [node for node in module.body if isinstance(node, ast.Assign)
+                    and any(isinstance(target, ast.Name) and target.id == 'PROVIDER_BUDGET_POLICY_VERSION'
+                            for target in node.targets)]
+    require(len(declarations) == 1 and isinstance(declarations[0].value, ast.Constant)
+            and type(declarations[0].value.value) is int and declarations[0].value.value == 1,
+            'Native router adapter lacks reviewed provider-budget freeze support')
 
 
 def require_native_service_watchdog(source):
@@ -98,6 +136,9 @@ def systemd_path(value):
 def profile(root):
     cfg = read_json(root / CONFIG)
     require(cfg['schema'] == 'jevops.persistent-supervisor-watchdog.v1', 'Unknown watchdog configuration')
+    reserve = cfg.get('worker_minimum_free_bytes')
+    require(type(reserve) is int and 64 * 1024 * 1024 <= reserve <= 8 * 1024 ** 3,
+            'Maintenance worker storage reserve must be 64 MiB to 8 GiB')
     for name, ceiling in [('poll_seconds', 60), ('heartbeat_seconds', 600), ('report_seconds', 1800),
                           ('quiet_seconds', 3600), ('startup_grace_seconds', 600),
                           ('worker_timeout_seconds', 1800), ('cooldown_seconds', 3600),
@@ -109,10 +150,13 @@ def profile(root):
     if cfg.get('materialize_planned_work'):
         require(cfg.get('planned_work_mode') == 'implement_validate_then_activate',
                 'Planned work requires implementation and validation before activation')
-    for name in ['supervisor_profile', 'lane_manifest', 'runtime_manifest', 'state_root', 'repair_prompt']:
+    for name in ['supervisor_profile', 'lane_manifest', 'runtime_manifest', 'state_root', 'repair_prompt',
+                 'provider_budget_policy']:
         relative = Path(cfg[name])
         require(not relative.is_absolute() and '..' not in relative.parts and
                 (root / relative).resolve().is_relative_to(root), 'Unsafe configured path')
+    require(read_json(root / cfg['provider_budget_policy']).get('new_calls_allowed') is False,
+            'An explicit closed provider freeze is required for the exhausted campaign')
     supervisor = read_json(root / cfg['supervisor_profile'])
     require(supervisor['provider'] == 'grok_cli' and supervisor['model'] == 'grok-4.7'
             and supervisor['allow_local_fallback'] is False
@@ -146,6 +190,8 @@ def render(root):
                    '--sandbox', 'danger-full-access', '-C', str(root), '--json', '-']
     require(Path(repair_argv[0]).is_file() and (root / cfg['repair_prompt']).is_file(), 'Actual repair worker/prompt missing')
     repair = [*common, DISPATCHER, '--manifest-path', str(manifest), '--repo-root', str(root),
+              '--required-lane-env', 'JEVOPS_REFACTOR_LLM_BUDGET_POLICY',
+              '--worker-min-free-bytes', str(cfg['worker_minimum_free_bytes']),
               '--state-dir', str(state / 'repair-dispatcher'), '--repair-lock-path', str(state / 'fixer.lock'),
               '--prompt-path', str(root / cfg['repair_prompt']), '--worker-argv-json', json.dumps(repair_argv),
               '--hold-path', str(manifest.parent / 'HOLD'),
@@ -158,9 +204,9 @@ def render(root):
         repair.extend(['--' + option, str(cfg[key])])
     for relative in ['rescue/watchdog_guardian.py', 'rescue/supervisor_watchdog.py',
                      'rescue/lane_resume.py', 'rescue/repair_dispatcher.py',
-                     'rescue/planned_work_watchdog.py', 'todo_daemon/llm.py']:
+                     'rescue/planned_work_watchdog.py', 'todo_daemon/llm.py', 'todo_daemon/budget_policy.py']:
         repair.extend(['--evidence-path', str(Path(source) / 'ipfs_accelerate_py/agent_supervisor' / relative)])
-    for relative in [CONFIG, cfg['repair_prompt'], 'tools/run_lean_refactor_router_task.py',
+    for relative in [CONFIG, cfg['repair_prompt'], cfg['provider_budget_policy'], 'tools/run_lean_refactor_router_task.py',
                      'tools/check_lean_refactor_plan.py']:
         repair.extend(['--evidence-path', str(root / relative)])
 
@@ -174,6 +220,7 @@ def render(root):
             'WorkingDirectory=' + systemd_path(root),
             'Environment=' + systemd_arg('PYTHONPATH=' + source),
             'Environment=PYTHONDONTWRITEBYTECODE=1',
+            'Environment=' + systemd_arg('JEVOPS_REFACTOR_LLM_BUDGET_POLICY=' + str(root / cfg['provider_budget_policy'])),
             'Environment=' + systemd_arg('PATH=' + str(Path(python).parent) + ':' + str(Path.home() / '.local/bin') + ':/usr/local/bin:/usr/bin:/bin'),
             'ExecStart=' + ' '.join(systemd_arg(a, exec_start=True) for a in argv),
             'Restart=always', 'RestartSec=15s', 'KillMode=process', 'TimeoutStopSec=30s',
@@ -275,13 +322,17 @@ def migrate_guardian(root, cfg, supervisor):
 def _install_locked(root):
     cfg, supervisor, units = render(root)
     require_native_service_watchdog(supervisor['accelerator_source'])
+    require_native_provider_budget_policy(supervisor['accelerator_source'])
+    require_native_lane_environment_guard(supervisor['accelerator_source'])
+    require_native_worker_storage_admission(supervisor['accelerator_source'])
     state = root / cfg['state_root']; state.mkdir(parents=True, exist_ok=True)
     command([supervisor['python_executable'], str(root / 'tools/check_lean_refactor_plan.py'), '--check-all'])
     registered = read_json(root / cfg['lane_manifest']).get('execution_profile')
     if registered:
         require(registered == 'config/lean_refactor_arena_20261024_execution_v2.json',
                 'Unknown research execution profile')
-        command([supervisor['python_executable'], str(root / 'tools/lean_refactor_execution_v2.py')], timeout=90)
+        command([supervisor['python_executable'], str(root / 'tools/lean_refactor_execution_v2.py')],
+                timeout=PROTECTED_PREFLIGHT_TIMEOUT_SECONDS)
     command(['systemctl', '--user', 'show-environment'])  # Never print its environment.
     manifest = root / cfg['runtime_manifest']
     # Only the lane manifest is refreshed; completed task/model contracts retain
@@ -334,6 +385,104 @@ def install(root):
         return _install_locked(root)
 
 
+
+# This inspection never grants controller, worker, or completion authority.
+_STATUS_PROC_ROOT = Path('/proc')
+
+
+def _status_actor(pid, role, root, manifest, cfg, supervisor):
+    from ipfs_accelerate_py.agent_supervisor.rescue.watchdog_guardian import _python_entrypoint
+    try:
+        require(type(pid) is int and pid > 0, 'No current service owner')
+        directory = _STATUS_PROC_ROOT / str(pid)
+        require(directory.stat().st_uid == os.getuid(), 'Foreign service owner')
+        raw = (directory / 'cmdline').read_bytes()
+        argv = raw.rstrip(b'\0').decode().split('\0')
+        mode, entry, index = _python_entrypoint(argv)
+        require(mode == 'module' and entry == role and argv[index] == '-m'
+                and all(v in {'-B', '-u', '-E', '-s', '-S', '-I', '-O', '-OO'} for v in argv[1:index]),
+                'Different service entrypoint')
+        require((directory / 'exe').resolve() == Path(supervisor['python_executable']).resolve()
+                and (directory / 'cwd').resolve() == root.resolve(), 'Different executable or repository')
+        args = argv[index + 2:]
+        require(args.count('--apply') == 1 and '--once' not in args, 'Not a persistent applying service')
+        def option(name):
+            values = [args[i + 1] if i + 1 < len(args) else None for i, v in enumerate(args) if v == name]
+            values += [v[len(name) + 1:] for v in args if v.startswith(name + '=')]
+            require(len(values) == 1 and values[0] is not None and Path(values[0]).is_absolute(), 'Ambiguous service scope')
+            return Path(values[0]).resolve()
+        require(option('--manifest-path') == manifest.resolve() and option('--repo-root') == root.resolve(),
+                'Different service scope')
+        if role == DISPATCHER:
+            require(option('--state-dir') == (root / cfg['state_root'] / 'repair-dispatcher').resolve()
+                    and option('--repair-lock-path') == (root / cfg['state_root'] / 'fixer.lock').resolve(),
+                    'Different repair custody')
+        fields = (directory / 'stat').read_text().rsplit(')', 1)[1].split()
+        require(fields[0] not in {'Z', 'X', 'x'}, 'Exited service owner')
+        ticks = int(fields[19])
+        uptime = float((_STATUS_PROC_ROOT / 'uptime').read_text().split()[0])
+        born = time.time() - uptime + ticks / os.sysconf('SC_CLK_TCK')
+        require(math.isfinite(born), 'Invalid process birth')
+        require((directory / 'cmdline').read_bytes() == raw
+                and (directory / 'stat').read_text().rsplit(')', 1)[1].split()[19] == str(ticks),
+                'Service identity changed')
+        return {'pid': pid, 'start_ticks': ticks, 'command_sha256': hashlib.sha256(raw).hexdigest(),
+                'born_at': born}
+    except (OSError, ValueError, IndexError, KeyError, UnicodeError):
+        return None
+
+
+def _status_observation(path, role, unit, root, manifest, cfg, supervisor):
+    from ipfs_accelerate_py.agent_supervisor.rescue.storage_pressure import read_emergency_status
+    primary = read_json(path) if path.exists() else None
+    try:
+        pid = int(unit.get('MainPID', '0')) if unit.get('ActiveState') == 'active' else 0
+    except (TypeError, ValueError):
+        pid = 0
+    actor = _status_actor(pid, role, root, manifest, cfg, supervisor)
+    emergency = None
+    def same_actor(candidate):
+        current = _status_actor(candidate, role, root, manifest, cfg, supervisor)
+        return current is not None and all(current[key] == actor[key] for key in ('pid', 'start_ticks', 'command_sha256'))
+    if actor:
+        emergency = read_emergency_status(path, expected_pid=pid,
+            identity_check=same_actor)
+    current = False
+    stamp = None
+    if actor and isinstance(primary, dict):
+        if role == DISPATCHER:
+            bound = primary.get('control_pid') == pid and primary.get('control_start_ticks') == actor['start_ticks']
+            stamp = primary.get('control_heartbeat_at')
+        else:
+            bound = (primary.get('guardian_pid') == pid and primary.get('manifest_path') == str(manifest.resolve())
+                     and primary.get('repo_root') == str(root.resolve()))
+            value = primary.get('observed_at_ms')
+            try:
+                stamp = value / 1000 if type(value) in (int, float) else None
+            except OverflowError:
+                stamp = None
+        try:
+            stamp = float(stamp) if type(stamp) in (int, float) else None
+        except OverflowError:
+            stamp = None
+        current = (bound and type(stamp) in (int, float) and math.isfinite(stamp)
+                   and actor['born_at'] - 5 <= stamp <= time.time() + 5)
+    # A lingering emergency record must never override newer durable recovery.
+    use_emergency = emergency is not None and (not current or emergency['observed_at_ms'] / 1000 > stamp)
+    value = emergency['payload'] if use_emergency else primary
+    selected_stamp = emergency['observed_at_ms'] / 1000 if use_emergency else stamp
+    age = time.time() - selected_stamp if type(selected_stamp) in (int, float) and math.isfinite(selected_stamp) else None
+    return value, {'source': 'authenticated_emergency' if use_emergency else 'disk_snapshot',
+                   'current_service_identity_verified': bool(actor),
+                   'current_owner_observation': bool(use_emergency or current),
+                   'owner_binding_basis': ('native_emergency_pid_start_ticks_command_sha256' if use_emergency
+                       else 'primary_pid_start_ticks' if current and role == DISPATCHER
+                       else 'primary_pid_scope_and_boot_time_estimate' if current else 'unverified_disk_snapshot'),
+                   'observed_at': selected_stamp, 'age_seconds': age,
+                   'fresh': bool((use_emergency or current) and age is not None and -5 <= age <= 120),
+                   'completion_authority': False}
+
+
 def status(root):
     cfg, supervisor = profile(root); manifest = root / cfg['runtime_manifest']
     sys.path.insert(0, supervisor['accelerator_source'])
@@ -348,13 +497,20 @@ def status(root):
     for name in [cfg['guardian_unit'], cfg['repair_unit'], RELOAD_UNIT]:
         result = command(['systemctl', '--user', 'show', name, '--property=ActiveState,SubState,MainPID,UnitFileState,KillMode,FragmentPath'], allowed=(0, 1))
         units[name] = dict(line.split('=', 1) for line in result.stdout.splitlines() if '=' in line)
+    guardian, guardian_observation = _status_observation(
+        manifest.parent / 'watchdog-guardian-status.json', GUARDIAN, units[cfg['guardian_unit']], root, manifest, cfg, supervisor)
+    repair, repair_observation = _status_observation(
+        root / cfg['state_root'] / 'repair-dispatcher/status.json', DISPATCHER, units[cfg['repair_unit']], root, manifest, cfg, supervisor)
     report = {'schema': 'jevops.persistent-watchdog-status.v1', 'observed_at': time.time(),
               'work_state': 'unfinished_planned_work' if not pending and planned and cfg.get('materialize_planned_work') else 'planned_backlog_not_activated' if not pending and planned else 'eligible_work' if ready else 'dependency_wait' if pending else 'complete',
               'completed_tasks': completed, 'planned_tasks': planned, 'pending_tasks': pending, 'ready_tasks': ready,
               'units': units, 'campaign_budget': read_json(manifest.parent / 'router-budget.json'),
-              'guardian': read_json(manifest.parent / 'watchdog-guardian-status.json'),
-              'repair': read_json(root / cfg['state_root'] / 'repair-dispatcher/status.json') if (root / cfg['state_root'] / 'repair-dispatcher/status.json').exists() else None,
+              'guardian': guardian, 'repair': repair,
+              'observations': {'guardian': guardian_observation, 'repair': repair_observation},
               'completion_authority': False, 'full_campaign_complete': False}
+    report['storage_wait'] = any(isinstance(value, dict) and value.get('storage_pressure') is True
+                                 and observation['fresh']
+                                 for value, observation in ((guardian, guardian_observation), (repair, repair_observation)))
     ledger = root / cfg['state_root'] / 'repair-dispatcher/state.json'
     if ledger.exists():
         active = read_json(ledger).get('active_worker')
@@ -366,7 +522,25 @@ def status(root):
                                              'deadline': active.get('deadline')}
             if verified:
                 report['work_state'] = 'materialization_or_repair_running'
-    save(root / cfg['state_root'] / 'status.json', report)
+    # A disk action is an observation; only a matching live worker birth is running.
+    if isinstance(report['repair'], dict) and report['repair'].get('action') == 'worker_running':
+        if not report.get('maintenance_worker', {}).get('identity_verified'):
+            report['repair'] = {**report['repair'], 'reported_action': 'worker_running',
+                                'action': 'unverified_worker_snapshot'}
+    if report['storage_wait']:
+        report['work_state'] = 'storage_wait'
+    destination = root / cfg['state_root'] / 'status.json'
+    report['status_snapshot_persisted'] = True
+    try:
+        save(destination, report)
+    except OSError as error:
+        from ipfs_accelerate_py.agent_supervisor.rescue.storage_pressure import is_storage_pressure
+        if not is_storage_pressure(error):
+            raise
+        report['status_snapshot_persisted'] = False
+        report['persistence_error'] = {'errno': error.errno, 'path': str(destination), 'message': str(error)}
+        report['storage_wait'] = True
+        report['work_state'] = 'storage_wait'
     return report
 
 

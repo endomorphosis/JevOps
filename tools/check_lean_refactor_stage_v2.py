@@ -329,10 +329,15 @@ def receipt_binding(root, tid, receipt, loaded):
     c.require(actual==c.binding(root,tid,(historical,base,tasks,board),profile_digest=digest),
               'historical input/task/source binding changed')
 
-def validate(root, tid, *, loaded=None):
+def execution_evidence(root, tid, *, loaded=None):
+    """Authenticate an actual immutable producer run, without claiming acceptance."""
     loaded=c.load(root) if loaded is None else loaded
     profile,base,tasks,board=loaded
     c.require(tid in profile['contracts'],'unimplemented planned experiment')
+    import run_lean_refactor_stage_v2 as runner
+    admission=runner.current_admission_wait(root,tid,profile)
+    if admission is not None:
+        raise GateWait('current admission wait: '+admission['reason']+'; '+admission['retry_condition'])
     path=root/c.RUNTIME/(tid+'.receipt.json')
     if not path.exists():raise GateWait('no executed stage receipt')
     receipt=c.read(path)
@@ -354,12 +359,20 @@ def validate(root, tid, *, loaded=None):
         for field in ('stdout','stderr'):
             c.require(c.sha(root/execution[field])==execution[field+'_sha256'],'actual subprocess log changed')
     data=c.stage_result(root/c.RUNTIME/(tid+'.result.json'),tid)
-    if tid in ('JLR-017','JLR-018','JLR-019','JLR-020','JLR-024','JLR-026','JLR-035'):
+    if tid in ('JLR-017','JLR-018','JLR-019','JLR-020','JLR-021','JLR-024','JLR-026','JLR-033','JLR-034','JLR-035'):
         c.require(c.stage_result(root/executions[-1]['stdout'],tid)==data,'result differs from raw native stdout')
+    return data,receipt
+
+def validate(root, tid, *, loaded=None):
+    loaded=c.load(root) if loaded is None else loaded
+    data,receipt=execution_evidence(root,tid,loaded=loaded)
     checks={'JLR-016':readiness,'JLR-017':baseline,'JLR-018':metric_audit,'JLR-023':runtime,'JLR-026':provenance,
             'JLR-019':lambda r,d:c.module(r,'validate_lean_refactor_simp_pilot.py').validate(r,d),
             'JLR-020':lambda r,d:c.module(r,'validate_lean_refactor_coupled_pilot.py').validate(r,d),
             'JLR-024':lambda r,d:c.module(r,'validate_lean_refactor_iterative_pilot.py').validate(r,d),
+            'JLR-021':lambda r,d:c.module(r,'validate_lean_refactor_search_extract.py').validate(r,d),
+            'JLR-034':lambda r,d:c.module(r,'validate_lean_refactor_activation_audit.py').validate(r,d),
+            'JLR-033':lambda r,d:c.module(r,'validate_lean_refactor_operational_faults.py').validate(r,d),
             'JLR-035':lambda r,d:c.module(r,'validate_lean_refactor_release_inventory.py').validate(r,d)}
     result=checks[tid](root,data)
     return {'valid':True,'task_id':tid,**result,**c.AUTH}
@@ -371,7 +384,15 @@ def refresh_wait_probe(root, tid):
         c.module(root,'lean_refactor_release_inventory.py').probe(root)
         return
     if tid=='JLR-020':
-        c.module(root,'validate_lean_refactor_native_pin_frontier.py').probe(root)
+        import run_lean_refactor_stage_v2 as runner
+        profile,_,_,_=c.load(root)
+        admission=runner.frontier_failure_admission(root,tid,profile,publish=False)
+        if admission is not None:
+            # A clock tick cannot repair a source-bound software failure.
+            # Keep this evidence stable until the reviewed implementation or
+            # an actual native input changes; it never grants proof authority.
+            c.save(root/c.RUNTIME/'native-pin-gate.json',admission)
+        else:c.module(root,'validate_lean_refactor_native_pin_frontier.py').probe(root)
         return
     if tid not in ('JLR-016','JLR-023'):return
     import run_lean_refactor_stage_v2 as runner

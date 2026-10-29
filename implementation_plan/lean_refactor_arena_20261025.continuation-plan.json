@@ -1,0 +1,25 @@
+{
+  "dependency_overrides": {
+    "JLR-021": [
+      "JLR-017",
+      "JLR-011"
+    ],
+    "JLR-033": [
+      "JLR-015"
+    ]
+  },
+  "derived_goals_path": "implementation_plan/lean_refactor_arena_20261025.continuation.goals.json",
+  "derived_goals_sha256": "ff7b1700f799e4072ef78b04b7eea5908d6f6db094d240c6a1803b6b07c351e3",
+  "original_goals_sha256": "a976be0b625707a92aafa97e3019df6db45662a54ef51f49fac5866f95f336e0",
+  "review_receipts": {
+    "JLR-011": {
+      "path": "implementation_plan/proposals/JLR-011.review.json",
+      "sha256": "bc563327d9b55c765123aa352a627db43d25570c051682fe3d80aefe2a946284"
+    },
+    "JLR-015": {
+      "path": "implementation_plan/proposals/JLR-015.review.json",
+      "sha256": "c1884cf93091f7b94ecfdf5e64082f0a99f58d5c69ad7677ed4f306d0e61218f"
+    }
+  },
+  "schema": "jevops.lean-refactor.continuation-plan.v1"
+}

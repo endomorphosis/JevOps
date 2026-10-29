@@ -19,7 +19,8 @@ Program decision: **IN_PROGRESS**. Bootstrap startup is not proof optimization o
 
 ## JLR-001 Record current source, host, storage and compiler inventory
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T06:40:24Z
 - Priority: P0
 - Track: planning
 - Depends on:
@@ -48,7 +49,8 @@ Measured fields: host identity, MemAvailable bytes, GPU allocated bytes, storage
 
 ## JLR-002 Obtain the first strict Grok4.7 engineering review through llm_router
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T07:03:59Z
 - Priority: P0
 - Track: planning
 - Depends on: JLR-001
@@ -79,7 +81,8 @@ Measured fields: exact effective provider/model, source-bound response receipt, 
 
 ## JLR-003 Calibrate the existing offline evaluator protocol
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T06:45:36Z
 - Priority: P0
 - Track: planning
 - Depends on: JLR-001
@@ -108,7 +111,8 @@ Measured fields: actual calibration exit status, calibration fields, source rece
 
 ## JLR-004 Check frozen warm-up protocol without network or a model
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T06:46:16Z
 - Priority: P0
 - Track: planning
 - Depends on: JLR-001
@@ -137,7 +141,8 @@ Measured fields: actual offline self-check exit status, protocol checks.
 
 ## JLR-005 Inventory the exact local benchmark/version schedule
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T06:46:36Z
 - Priority: P0
 - Track: planning
 - Depends on: JLR-001
@@ -166,7 +171,8 @@ Measured fields: problem count, version count, pin schedule.
 
 ## JLR-006 Regression-check official-score arithmetic and missing-case treatment
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T06:47:07Z
 - Priority: P0
 - Track: planning
 - Depends on: JLR-003
@@ -195,7 +201,8 @@ Measured fields: independent scoring cases checked, rounding agreement, missing-
 
 ## JLR-007 Implement a fail-closed proof-result policy filter
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T07:04:29Z
 - Priority: P0
 - Track: planning
 - Depends on: JLR-002
@@ -226,7 +233,8 @@ Measured fields: strict Boolean and malformed-input cases, source-bound route re
 
 ## JLR-008 Implement shortest-verified candidate selection
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T07:05:09Z
 - Priority: P0
 - Track: planning
 - Depends on: JLR-002
@@ -257,7 +265,8 @@ Measured fields: length-first selection cases, invalid-row rejection, tie-break 
 
 ## JLR-009 Implement environment-complete source cache identities
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T07:05:50Z
 - Priority: P0
 - Track: planning
 - Depends on: JLR-002
@@ -288,7 +297,8 @@ Measured fields: canonical digest parity, source and environment mutation sensit
 
 ## JLR-010 Run an actual Lean4.31 kernel smoke on a non-Arena theorem
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T07:06:25Z
 - Priority: P0
 - Track: planning
 - Depends on: JLR-004, JLR-007
@@ -317,7 +327,8 @@ Measured fields: actual compiler identity, reference and candidate VERIFIED/MEAS
 
 ## JLR-011 Design the version-aware retrieval and strategy ablation
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T07:07:10Z
 - Priority: P1
 - Track: planning
 - Depends on: JLR-005, JLR-008, JLR-009
@@ -348,7 +359,8 @@ Measured fields: matched compiler budget, proposed ablations, prior neutral cont
 
 ## JLR-012 Design the verified span/autoencoder data adapter
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T07:14:37Z
 - Priority: P1
 - Track: planning
 - Depends on: JLR-002, JLR-009
@@ -379,7 +391,8 @@ Measured fields: provenance dimensions, group split boundaries, environment-fail
 
 ## JLR-013 Design bounded Leanstral context and iterative repair experiments
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T07:15:08Z
 - Priority: P1
 - Track: planning
 - Depends on: JLR-002, JLR-007
@@ -410,7 +423,8 @@ Measured fields: context tokens, inference deadline, native-verifier boundary.
 
 ## JLR-014 Design the limited-compute training decision
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T07:15:37Z
 - Priority: P1
 - Track: planning
 - Depends on: JLR-002, JLR-012
@@ -441,7 +455,8 @@ Measured fields: measured memory prerequisite, holdout gate, no full119B trainin
 
 ## JLR-015 Review supervisor recovery and campaign activation criteria
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-10-24T07:16:18Z
 - Priority: P1
 - Track: planning
 - Depends on: JLR-002, JLR-010

@@ -16,6 +16,103 @@ import lean_refactor_execution_v2 as c
 import run_lean_refactor_stage_v2 as runner
 import check_lean_refactor_stage_v2 as validator
 
+
+@pytest.mark.parametrize('configured',[False,True])
+def test_owned_stage_child_preserves_only_the_campaign_provider_freeze(tmp_path,monkeypatch,configured):
+    key='JEVOPS_REFACTOR_LLM_BUDGET_POLICY'
+    monkeypatch.delenv(key,raising=False)
+    policy=str(tmp_path/'owned-policy.json')
+    if configured:monkeypatch.setenv(key,policy)
+    monkeypatch.setenv('PRIVATE_TEST_SHOULD_NOT_FORWARD','synthetic-owned-fixture')
+    script='import json,os; print(json.dumps({"policy":os.environ.get("JEVOPS_REFACTOR_LLM_BUDGET_POLICY"),"other":os.environ.get("PRIVATE_TEST_SHOULD_NOT_FORWARD")}))'
+    execution=runner.process(tmp_path,{'python_executable':sys.executable,'accelerator_source':str(tmp_path)},
+                             ['-c',script],tmp_path/'actual-child',10)
+    assert execution['exit_code']==0 and execution['timed_out'] is False
+    assert c.read(tmp_path/execution['stdout'])=={'policy':policy if configured else None,'other':None}
+
+@pytest.fixture
+def retained_negative_trial(tmp_path):
+    import lean_refactor_simp_pilot as pilot
+    tid='JLR-019';contract=c.definitions()[tid]
+    names=('jevops/lean.py','tools/lean_refactor_simp_pilot.py','tools/validate_lean_refactor_simp_pilot.py')
+    for name in names:c.atomic(tmp_path/name,'private scientific source\n')
+    c.atomic(tmp_path/pilot.SEED,'private frozen incumbent\n')
+    inp=c.RUNTIME+'/JLR-017.result.json';c.save(tmp_path/inp,{'baseline':'native fixture'})
+    c.save(tmp_path/c.BASE,{'python_executable':sys.executable})
+    profile={'contracts':{tid:contract},'source_sha256':{n:c.sha(tmp_path/n) for n in names}}
+    data={'status':'NO_SHORTER_WINNER','winner':None,'model_calls':0,'promoted':False,
+          'seed_sha256':c.sha(tmp_path/pilot.SEED)}
+    for output in contract['outputs']:c.save(tmp_path/output,data)
+    stdout=c.RUNTIME+'/runs/private-native/stdout.json';stderr=c.RUNTIME+'/runs/private-native/stderr.log'
+    c.save(tmp_path/stdout,data);c.atomic(tmp_path/stderr,'')
+    receipt={'schema':'jevops.lean-refactor.stage-run.v2','task_id':tid,'exit_code':0,'error':None,
+             'archive_path':c.RUNTIME+'/runs/private-native/receipt.json',
+             'outputs':{o:c.sha(tmp_path/o) for o in contract['outputs']},
+             'binding':{'source_sha256':profile['source_sha256'],'inputs':{inp:c.sha(tmp_path/inp)}},
+             'executions':[{'argv':[sys.executable,*contract['argv']],'exit_code':0,'timed_out':False,
+                'stdout':stdout,'stdout_sha256':c.sha(tmp_path/stdout),
+                'stderr':stderr,'stderr_sha256':c.sha(tmp_path/stderr)}],**c.AUTH}
+    c.save(tmp_path/receipt['archive_path'],receipt)
+    c.save(tmp_path/c.RUNTIME/(tid+'.receipt.json'),receipt)
+    originals={str(p.relative_to(tmp_path)):p.read_bytes() for p in tmp_path.rglob('*') if p.is_file()}
+    return tmp_path,profile,receipt,originals
+
+def test_simp_admission_preserves_native_trial_and_stable_gate(retained_negative_trial):
+    root,profile,receipt,originals=retained_negative_trial
+    first=runner.simp_admission(root,'JLR-019',profile)
+    gate=root/c.RUNTIME/'simp-admission-gate.json';before=gate.read_bytes()
+    second=runner.simp_admission(root,'JLR-019',profile)
+    assert first['exit_code']==second['exit_code']==75
+    assert first['acceptance_satisfied'] is False and first['proof_authority'] is False
+    assert gate.read_bytes()==before and first['archive_path']!=second['archive_path']
+    assert all((root/n).read_bytes()==raw for n,raw in originals.items())
+
+def test_simp_admission_precedes_expensive_prerequisites(retained_negative_trial,monkeypatch):
+    root,profile,_,_=retained_negative_trial
+    tasks={'JLR-019':{'depends_on':['JLR-017']}}
+    board={'JLR-019':{'status':'pending'},'JLR-017':{'status':'completed'}}
+    monkeypatch.setattr(c,'load',lambda selected:(profile,{},tasks,board))
+    def forbidden(*args,**kwargs):raise AssertionError('unchanged trial must not relaunch native work')
+    monkeypatch.setattr(c,'module',forbidden);monkeypatch.setattr(runner,'process',forbidden)
+    assert runner.run(root,'JLR-019')['exit_code']==75
+
+def test_simp_admission_retains_failed_outer_handoff_after_real_trial(retained_negative_trial):
+    root,profile,receipt,_=retained_negative_trial
+    receipt={**receipt,'exit_code':1,'error':'execution source drift; revalidate before materializing'}
+    c.save(root/receipt['archive_path'],receipt)
+    path=root/c.RUNTIME/'JLR-019.receipt.json';c.save(path,receipt);before=path.read_bytes()
+    gate=runner.simp_admission(root,'JLR-019',profile)
+    assert gate['exit_code']==75 and gate['stage_run_exit_code']==1
+    assert gate['stage_run_error']==receipt['error'] and path.read_bytes()==before
+    assert gate['acceptance_satisfied'] is False
+
+def test_simp_admission_does_not_hide_a_producer_crash(retained_negative_trial):
+    root,profile,receipt,_=retained_negative_trial
+    receipt={**receipt,'exit_code':1,'error':'actual producer crash'}
+    c.save(root/receipt['archive_path'],receipt)
+    c.save(root/c.RUNTIME/'JLR-019.receipt.json',receipt)
+    assert runner.simp_admission(root,'JLR-019',profile) is None
+    assert not (root/c.RUNTIME/'simp-admission-gate.json').exists()
+
+@pytest.mark.parametrize('change',['source','baseline','seed'])
+def test_simp_admission_allows_changed_scientific_evidence(retained_negative_trial,change):
+    import lean_refactor_simp_pilot as pilot
+    root,profile,_,_=retained_negative_trial;profile=copy.deepcopy(profile)
+    if change=='source':profile['source_sha256']['tools/lean_refactor_simp_pilot.py']='b'*64
+    else:c.atomic(root/(pilot.SEED if change=='seed' else c.RUNTIME+'/JLR-017.result.json'),'changed\n')
+    assert runner.simp_admission(root,'JLR-019',profile) is None
+    assert not (root/c.RUNTIME/'simp-admission-gate.json').exists()
+
+@pytest.mark.parametrize('change',['archive','stdout','result'])
+def test_simp_admission_refuses_damaged_evidence_without_relaunch(retained_negative_trial,change):
+    root,profile,receipt,_=retained_negative_trial
+    name=receipt['archive_path'] if change=='archive' else receipt['executions'][0]['stdout'] if change=='stdout' else c.RUNTIME+'/JLR-019.result.json'
+    if change=='result':
+        data=c.read(root/name);data['winner']='invented';c.save(root/name,data)
+    else:c.atomic(root/name,'{}\n')
+    with pytest.raises(ValueError):runner.simp_admission(root,'JLR-019',profile)
+    assert not (root/c.RUNTIME/'simp-admission-gate.json').exists()
+
 def test_direct_cli_catches_wait_from_separately_loaded_protected_validator(monkeypatch,capsys):
     # The production subprocess runs as __main__, while the coupled validator
     # imports check_lean_refactor_stage_v2 by name. These must share one class.
@@ -30,15 +127,51 @@ def test_direct_cli_catches_wait_from_separately_loaded_protected_validator(monk
     assert result['waiting'] is True and result['valid'] is False
     assert result['proof_authority'] is False and result['completion_authority'] is False
 
+def registered_framework(monkeypatch):
+    """Import the actual registered control package, including cached modules."""
+    import importlib
+    source=Path(c.read(ROOT/c.BASE)['accelerator_source']).resolve()
+    monkeypatch.syspath_prepend(str(source))
+    prefix='ipfs_accelerate_py.agent_supervisor'
+    # A prior scientific import can cache a vendored fork even after sys.path
+    # is repaired. Evict only foreign control modules and their parent aliases.
+    for name in sorted(list(sys.modules),key=lambda key:key.count('.'),reverse=True):
+        if name!=prefix and not name.startswith(prefix+'.'):continue
+        module=sys.modules.get(name);filename=getattr(module,'__file__',None)
+        if filename and not Path(filename).resolve().is_relative_to(source):
+            parent,_,leaf=name.rpartition('.')
+            if parent in sys.modules and getattr(sys.modules[parent],leaf,None) is module:
+                monkeypatch.delattr(sys.modules[parent],leaf)
+            monkeypatch.delitem(sys.modules,name)
+    root=importlib.import_module('ipfs_accelerate_py')
+    monkeypatch.setattr(root,'__path__',[str(source/'ipfs_accelerate_py')])
+    for name in (prefix,prefix+'.rescue'):
+        package=importlib.import_module(name)
+        expected=source/Path(*name.split('.'))
+        assert Path(package.__file__).resolve()==expected/'__init__.py'
+        monkeypatch.setattr(package,'__path__',[str(expected)])
+    actual=importlib.import_module(prefix+'.rescue.lane_resume')
+    assert Path(actual.__file__).resolve()==source/'ipfs_accelerate_py/agent_supervisor/rescue/lane_resume.py'
+    return actual
+
+
 @pytest.fixture(autouse=True)
 def canonical_framework_path(monkeypatch):
-    # Datasets may prepend its vendored fork during import. Qualify the source
-    # configured by this campaign after test collection has imported producers.
-    source=c.read(ROOT/c.BASE)['accelerator_source']
-    monkeypatch.syspath_prepend(source)
+    registered_framework(monkeypatch)
+
+
+def test_registered_control_origin_replaces_a_previously_cached_vendored_module(tmp_path,monkeypatch):
+    import types
+    name='ipfs_accelerate_py.agent_supervisor.rescue.lane_resume'
+    parent=sys.modules[name.rpartition('.')[0]]
+    foreign=types.ModuleType(name);foreign.__file__=str(tmp_path/'vendored/lane_resume.py')
+    monkeypatch.setitem(sys.modules,name,foreign);monkeypatch.setattr(parent,'lane_resume',foreign)
+    actual=registered_framework(monkeypatch)
+    assert actual is not foreign and actual is sys.modules[name]
+    assert callable(actual.run_resume_cycle)
 
 def test_unimplemented_stages_have_no_registered_action():
-    assert set(c.definitions())=={'JLR-016','JLR-017','JLR-018','JLR-019','JLR-020','JLR-023','JLR-024','JLR-026','JLR-035'}
+    assert set(c.definitions())=={'JLR-016','JLR-017','JLR-018','JLR-019','JLR-020','JLR-021','JLR-023','JLR-024','JLR-026','JLR-033','JLR-034','JLR-035'}
     assert 'JLR-038' not in c.definitions()
 
 def test_closed_provisioning_is_pinned_bounded_and_separate():
@@ -256,6 +389,62 @@ def test_exit0_and_self_report_cannot_bypass_protected_validation(tmp_path,monke
 def test_wait_receipt_is_never_an_acceptance_pass(tmp_path,monkeypatch):
     tid,r,run,publish=receipt_fixture(tmp_path,monkeypatch);r['exit_code']=75;publish()
     with pytest.raises(validator.GateWait):validator.validate(tmp_path,tid)
+
+def test_execution_evidence_authentication_is_not_semantic_acceptance(tmp_path,monkeypatch):
+    tid,receipt,run,publish=receipt_fixture(tmp_path,monkeypatch)
+    data,checked=validator.execution_evidence(tmp_path,tid)
+    assert checked==receipt and data=={'status':'fixture-only'}
+    source_module=c.module
+    monkeypatch.setattr(c,'module',lambda selected,name:source_module(
+        Path('/home/barberb/lift_coding/JevOps'),name))
+    with pytest.raises((ValueError,KeyError)):
+        validator.validate(tmp_path,tid)
+
+def test_retained_actual_search_producer_is_not_reexecuted_or_relabelled(tmp_path,monkeypatch):
+    # Exercise the real archived campaign producer bytes and raw subprocess
+    # evidence. Only task selectability is private; acceptance is still pending.
+    root=Path('/home/barberb/lift_coding/JevOps')
+    # A maintenance test reviews installed candidate bytes in memory before
+    # protected registration; it never publishes a profile or acceptance.
+    # The actual refresh archives the registered owner before reviewing the
+    # extended source snapshot. Keep that historical link in a private fixture
+    # so this test also exercises the post-extension receipt path under HOLD.
+    historical=tmp_path/'registered-owner.json'
+    historical.write_bytes((root/c.PROFILE).read_bytes())
+    registered=c.read(root/c.PROFILE)
+    proposal={**registered,'source_sha256':c.sources(root),
+              'previous_profiles':{**registered.get('previous_profiles',{}),
+                                   c.sha(historical):str(historical)}}
+    loaded=c.load(root,profile=proposal)
+    profile,base,tasks,board=loaded;board=copy.deepcopy(board)
+    board['JLR-021']['status']='pending'
+    monkeypatch.setattr(c,'load',lambda selected:(profile,base,tasks,board))
+    original_module=c.module
+    monkeypatch.setattr(c,'module',lambda selected,name:validator if name=='check_lean_refactor_stage_v2.py'
+                        else original_module(selected,name))
+    def forbidden(*args,**kwargs):raise AssertionError('frozen producer must not run or claim acceptance')
+    monkeypatch.setattr(runner,'process',forbidden)
+    monkeypatch.setattr(validator,'validate',forbidden)
+    names=[c.PROFILE,c.BOARD,'data/lean_refactor_arena_20261024/router-budget.json',
+           *[c.RUNTIME+'/'+name for name in ('JLR-021.result.json','JLR-021.partial.json',
+                                            'JLR-021.receipt.json','iterative-v1-ledger.json')]]
+    before={name:c.sha(root/name) for name in names}
+    original=c.read(root/c.RUNTIME/'JLR-021.receipt.json')
+    # Authenticate the retained run directly. Calling the production runner
+    # from canonical maintenance tests must still refuse the real lane hold.
+    actual=runner.retained_search_run(root,'JLR-021',(profile,base,tasks,board))
+    assert actual==original and actual['completion_authority'] is False
+    assert all(c.sha(root/name)==digest for name,digest in before.items())
+
+def test_operator_hold_precedes_retained_positive_handoff(tmp_path,monkeypatch):
+    monkeypatch.setattr(c,'load',lambda selected:({}, {}, {}, {}))
+    (tmp_path/'HOLD').write_text('owned fixture marker\n')
+    def forbidden(*args,**kwargs):raise AssertionError('a retained producer cannot bypass the operator hold')
+    monkeypatch.setattr(runner,'retained_search_run',forbidden)
+    monkeypatch.setattr(runner,'process',forbidden)
+    with pytest.raises(ValueError,match='operator hold'):
+        runner.run(tmp_path,'JLR-021')
+    assert (tmp_path/'HOLD').read_text()=='owned fixture marker\n'
 
 @pytest.mark.parametrize('opt_in',[False,True])
 def test_native_changed_resource_guard_retries_actual_producer_only_when_registered(tmp_path,opt_in):

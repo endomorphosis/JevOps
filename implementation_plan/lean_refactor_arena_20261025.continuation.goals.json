@@ -1,0 +1,1882 @@
+{
+  "schema": "jevops.lean-refactor.campaign.v1",
+  "created_at": "2026-10-24T06:31:41.577705+00:00",
+  "root_goal_id": "JLR-G000",
+  "profile_id": "lean-refactor-arena-20261024",
+  "policy": {
+    "provider": "grok_cli",
+    "model": "grok-4.7",
+    "strict_provider": true,
+    "allow_local_fallback": false,
+    "allow_cross_provider_fallback": false,
+    "max_task_attempts": 3,
+    "max_inflight_gpu": 1,
+    "automatic_promotion": false,
+    "model_proof_authority": false
+  },
+  "budgets": {
+    "router_calls_total": 24,
+    "router_calls_per_task": 3,
+    "provider_timeout_seconds": 120,
+    "max_output_tokens": 4096,
+    "owner_duration_seconds": 14400,
+    "max_parallel_tasks": 1,
+    "native_processes_per_pilot": 12,
+    "native_timeout_seconds": 60,
+    "gpu_jobs": 1,
+    "gpu_limit_gib_each": 20,
+    "host_min_available_gib": 16,
+    "inference_rss_limit_gib": 48,
+    "full_leanstral_finetuning_enabled": false,
+    "automatic_training_enabled": false,
+    "automatic_submission_enabled": false
+  },
+  "execution_scope": {
+    "bootstrap_pending": "JLR-001 through JLR-015",
+    "research_backlog": "JLR-016 through JLR-038 are planned and nonselectable until exact execution contracts and prerequisites are reviewed; planned is never complete.",
+    "progress_claim": "Starting this campaign is not evidence of a shorter Arena proof."
+  },
+  "goals": [
+    {
+      "id": "JLR-G000",
+      "parent_goal_id": null,
+      "title": "Shortest verified Lean refactors within the measured budget",
+      "objective": "Find shorter proof source while preserving the exact theorem and computation specification; report best found, not global minimality.",
+      "acceptance": "Current native checks on every required pin; unchanged statement/type/allowed axioms; reproducible token metrics and budgets; no fabricated improvement."
+    },
+    {
+      "id": "JLR-G001",
+      "parent_goal_id": "JLR-G000",
+      "title": "Reproducible campaign and live strict router",
+      "objective": "Establish current hardware, source, route and budget; start an owned supervisor.",
+      "acceptance": "Real Grok4.7 through llm_router, actual receipts, healthy owner and guardian, no silent fallback."
+    },
+    {
+      "id": "JLR-G002",
+      "parent_goal_id": "JLR-G000",
+      "title": "Correctness and measurement contract",
+      "objective": "Freeze length-first, strict-dual and official-score policies without confusing their objectives.",
+      "acceptance": "Protected policy tests and actual native canary; official score only after metric parity and all required inputs."
+    },
+    {
+      "id": "JLR-G003",
+      "parent_goal_id": "JLR-G000",
+      "title": "Native project readiness and incumbent baseline",
+      "objective": "Prepare exact Lean/Lake/dependency environments and recheck originals and retained incumbents.",
+      "acceptance": "Every required pin has fresh source-bound proof/type/axiom outcomes; environment failures never become proof failures."
+    },
+    {
+      "id": "JLR-G004",
+      "parent_goal_id": "JLR-G000",
+      "title": "Deterministic and compiler-guided shortening",
+      "objective": "Improve measured proof length using dependency-aware deletion, simp-support minimization and extracted terms.",
+      "acceptance": "Equal-budget controls, all-pin full-source replay and independent fixed-winner confirmation."
+    },
+    {
+      "id": "JLR-G005",
+      "parent_goal_id": "JLR-G000",
+      "title": "Frozen Leanstral generation",
+      "objective": "Use a verified compatible local quantization to propose bounded edits and repair with actual diagnostics.",
+      "acceptance": "Verified artifact/runtime/resource receipts, no server alias as weight attestation, real candidate verification."
+    },
+    {
+      "id": "JLR-G006",
+      "parent_goal_id": "JLR-G000",
+      "title": "Span retrieval and small encoders",
+      "objective": "Reuse source-bound caches and the existing CPU autoencoder to improve candidate ranking per unit compute.",
+      "acceptance": "Grouped splits; no benchmark leakage; actual model predictions separated from verified-search teachers."
+    },
+    {
+      "id": "JLR-G007",
+      "parent_goal_id": "JLR-G000",
+      "title": "Training decision gate",
+      "objective": "Consider small adapters only after inference/retrieval establish a measurable bottleneck.",
+      "acceptance": "Full119B finetuning disabled; optional small LoRA requires compatible checkpoint, memory smoke and frozen holdout gain."
+    },
+    {
+      "id": "JLR-G008",
+      "parent_goal_id": "JLR-G000",
+      "title": "Operational resilience",
+      "objective": "Keep progress bounded, source-aware and observable without turning waits or model output into completion.",
+      "acceptance": "Owned leases, durable heartbeats, finite retries/cooldowns, explicit capability blockers, no unrelated process termination."
+    },
+    {
+      "id": "JLR-G009",
+      "parent_goal_id": "JLR-G000",
+      "title": "Evaluation and release",
+      "objective": "Produce a reproducible best-known portfolio and an honestly eligible release candidate.",
+      "acceptance": "All-pin correctness, declared budgets, source-provenance and exact scorer parity; external submission is separate."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "JLR-001",
+      "title": "Record current source, host, storage and compiler inventory",
+      "goal_id": "JLR-G001",
+      "depends_on": [],
+      "mode": "deterministic",
+      "resource_class": "cpu-small",
+      "priority": "P0",
+      "initial_status": "pending",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-001.inventory.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-001.inventory.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-001",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-001",
+      "acceptance": "Actual current host and available tools are recorded with source identity; missing environments are explicitly unavailable, never verified.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "host_inventory",
+        "hypothesis": "Current host capabilities can be measured without claiming historical proof environments still exist.",
+        "inputs": [],
+        "experiment": "Probe actual host, tool binaries, compiler version and writable storage with bounded commands; retain unavailable results.",
+        "metrics": [
+          "host identity",
+          "MemAvailable bytes",
+          "GPU allocated bytes",
+          "storage free bytes",
+          "actual Lean/Lake versions"
+        ],
+        "stop_rule": "Stop at the task budget; record failures without inventing successful evidence."
+      }
+    },
+    {
+      "id": "JLR-002",
+      "title": "Obtain the first strict Grok4.7 engineering review through llm_router",
+      "goal_id": "JLR-G001",
+      "depends_on": [
+        "JLR-001"
+      ],
+      "mode": "router",
+      "resource_class": "cpu-small",
+      "priority": "P0",
+      "initial_status": "pending",
+      "outputs": [
+        "implementation_plan/proposals/JLR-002.review.json"
+      ],
+      "predicted_files": [
+        "implementation_plan/proposals/JLR-002.review.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_router_task.py --task-id JLR-002",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-002",
+      "acceptance": "Real strict provider/model receipt plus a bounded advisory JSON review; no fixture, hidden fallback or self-declared proof success.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 3,
+        "max_output_tokens": 1024
+      },
+      "work_package": {
+        "action": "feature_contract",
+        "hypothesis": "Strict source-bound Grok4.7 reviews can be produced through llm_router without provider fallback.",
+        "inputs": [
+          "implementation_plan/lean_refactor_arena_20261024.objectives.md",
+          "implementation_plan/lean_refactor_arena_20261024.bootstrap-context.md",
+          "data/lean_refactor_campaign_20261024/JLR-001.inventory.json"
+        ],
+        "experiment": "Review the actual inventory and compact research context. Produce only three concise engineering risks, actions and acceptance boundaries in the supplied advisory JSON schema; entire response under3000characters. This startup review does not execute experiments or certify Lean proofs. Bootstrap reasoning effort is low and the actual provider trace must attest that policy.",
+        "metrics": [
+          "exact effective provider/model",
+          "source-bound response receipt",
+          "advisory schema validity"
+        ],
+        "stop_rule": "Stop at the task budget; record failures without inventing successful evidence.",
+        "contract": "proposal_review_v1"
+      }
+    },
+    {
+      "id": "JLR-003",
+      "title": "Calibrate the existing offline evaluator protocol",
+      "goal_id": "JLR-G002",
+      "depends_on": [
+        "JLR-001"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-small",
+      "priority": "P0",
+      "initial_status": "pending",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-003.calibration.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-003.calibration.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-003",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-003",
+      "acceptance": "The actual calibration command succeeds; fixture/calibration results remain explicitly non-official.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "command",
+        "hypothesis": "The existing evaluator calibration protocol remains internally consistent on the current checkout.",
+        "inputs": [],
+        "experiment": "Run the allowlisted offline calibration subprocess and preserve source identity, raw output and exit status.",
+        "metrics": [
+          "actual calibration exit status",
+          "calibration fields",
+          "source receipt"
+        ],
+        "stop_rule": "Stop at the task budget; record failures without inventing successful evidence.",
+        "command": [
+          "python3",
+          "-m",
+          "jevops.arena",
+          "--calibrate"
+        ]
+      }
+    },
+    {
+      "id": "JLR-004",
+      "title": "Check frozen warm-up protocol without network or a model",
+      "goal_id": "JLR-G002",
+      "depends_on": [
+        "JLR-001"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-small",
+      "priority": "P0",
+      "initial_status": "pending",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-004.offline-protocol.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-004.offline-protocol.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-004",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-004",
+      "acceptance": "Offline self-check exercises healthy/down fixtures and retains rejected proofs; no fixture is labeled native.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "command",
+        "hypothesis": "The frozen warmup protocol can be validated offline independently of inference or native proof claims.",
+        "inputs": [],
+        "experiment": "Run only the frozen --offline-self-check command, with no endpoint contact or model call.",
+        "metrics": [
+          "actual offline self-check exit status",
+          "protocol checks"
+        ],
+        "stop_rule": "Stop at the task budget; record failures without inventing successful evidence.",
+        "command": [
+          "python3",
+          "papers/completion/lean_refactor_arena/harness/run_warmup.py",
+          "--offline-self-check"
+        ]
+      }
+    },
+    {
+      "id": "JLR-005",
+      "title": "Inventory the exact local benchmark/version schedule",
+      "goal_id": "JLR-G003",
+      "depends_on": [
+        "JLR-001"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-small",
+      "priority": "P0",
+      "initial_status": "pending",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-005.schedule.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-005.schedule.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-005",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-005",
+      "acceptance": "Actual schedule and corpus digest are recorded; historical15/36 or current upstream counts are not silently substituted.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "command",
+        "hypothesis": "The local historical benchmark exposes an auditable problem-by-version schedule distinct from the upcoming full release.",
+        "inputs": [],
+        "experiment": "Run the existing --schedule command and preserve the exact historical problem/version matrix.",
+        "metrics": [
+          "problem count",
+          "version count",
+          "pin schedule"
+        ],
+        "stop_rule": "Stop at the task budget; record failures without inventing successful evidence.",
+        "command": [
+          "python3",
+          "papers/completion/lean_refactor_arena/tools/verify_lra_batch.py",
+          "--schedule"
+        ]
+      }
+    },
+    {
+      "id": "JLR-006",
+      "title": "Regression-check official-score arithmetic and missing-case treatment",
+      "goal_id": "JLR-G002",
+      "depends_on": [
+        "JLR-003"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-small",
+      "priority": "P0",
+      "initial_status": "pending",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-006.scorer-parity.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-006.scorer-parity.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-006",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-006",
+      "acceptance": "Known scorer fixtures match authoritative rounding, all-case denominators and missing-heartbeat treatment; tokenizer/worker parity remains separately unconfirmed.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "scoring_parity",
+        "hypothesis": "The local score arithmetic agrees with independently generated fixtures including missing and invalid cases.",
+        "inputs": [],
+        "experiment": "Exercise independent arithmetic fixtures, rounding and whole-corpus aggregation against actual local scorer functions.",
+        "metrics": [
+          "independent scoring cases checked",
+          "rounding agreement",
+          "missing-case denominator"
+        ],
+        "stop_rule": "Stop at the task budget; record failures without inventing successful evidence."
+      }
+    },
+    {
+      "id": "JLR-007",
+      "title": "Implement a fail-closed proof-result policy filter",
+      "goal_id": "JLR-G002",
+      "depends_on": [
+        "JLR-002"
+      ],
+      "mode": "router",
+      "resource_class": "cpu-small",
+      "priority": "P0",
+      "initial_status": "pending",
+      "outputs": [
+        "jevops/lra_safety_policy_v1.py"
+      ],
+      "predicted_files": [
+        "jevops/lra_safety_policy_v1.py"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_router_task.py --task-id JLR-007",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-007",
+      "acceptance": "Protected adversarial/random cases require exact statement/type/all-pin/axiom predicates and reject sorry/unsafe/malformed claims. This policy consumes trusted verifier results; it never verifies Lean itself.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 3,
+        "max_output_tokens": 4096
+      },
+      "work_package": {
+        "action": "feature_contract",
+        "hypothesis": "Strict typed predicates can reject malformed or untrusted proof-result summaries before advisory selection.",
+        "inputs": [
+          "implementation_plan/lean_refactor_arena_20261024.objectives.md",
+          "jevops/proof_trust.py"
+        ],
+        "experiment": "Implement pure accept_candidate(row): row must be a dict; statement_preserved,type_preserved,all_pins_verified,axioms_subset must each be literal True; has_sorry,unsafe must each be literal False. Missing or malformed fields and non-dicts return False. Do not mutate inputs. This consumes trusted verifier summaries and never itself proves Lean. Pure module: functions/docstrings and allowed json/hashlib/math imports only; no module-level execution, decorators, default arguments, private attributes, dynamic imports or IO.",
+        "metrics": [
+          "strict Boolean and malformed-input cases",
+          "source-bound route receipt"
+        ],
+        "stop_rule": "Stop at the task budget; record failures without inventing successful evidence.",
+        "contract": "safety_policy_v1",
+        "module": "jevops/lra_safety_policy_v1.py"
+      }
+    },
+    {
+      "id": "JLR-008",
+      "title": "Implement shortest-verified candidate selection",
+      "goal_id": "JLR-G002",
+      "depends_on": [
+        "JLR-002"
+      ],
+      "mode": "router",
+      "resource_class": "cpu-small",
+      "priority": "P0",
+      "initial_status": "pending",
+      "outputs": [
+        "jevops/lra_length_policy_v1.py"
+      ],
+      "predicted_files": [
+        "jevops/lra_length_policy_v1.py"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_router_task.py --task-id JLR-008",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-008",
+      "acceptance": "Protected cases choose min(tokens,heartbeats,id) among genuinely verified axiom-preserving candidates; invalid data fails closed. Official combined score is a separate report.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 3,
+        "max_output_tokens": 4096
+      },
+      "work_package": {
+        "action": "feature_contract",
+        "hypothesis": "Length-first selection can deterministically choose only already-verified, axiom-preserving candidates.",
+        "inputs": [
+          "implementation_plan/lean_refactor_arena_20261024.objectives.md",
+          "jevops/arena.py"
+        ],
+        "experiment": "Implement pure select_candidate(rows)->id or None. Each admissible row is a dict with id:str, tokens:int>=1 excluding bool, heartbeats:int>=0 excluding bool, verified literal True and axioms_preserved literal True. Skip invalid rows. Choose minimum (tokens,heartbeats,id); empty/no admissible rows return None. Do not mutate inputs. This selects already independently verified candidates only. Pure module: functions/docstrings and allowed json/hashlib/math imports only; no module-level execution, decorators, default arguments, private attributes, dynamic imports or IO.",
+        "metrics": [
+          "length-first selection cases",
+          "invalid-row rejection",
+          "tie-break determinism"
+        ],
+        "stop_rule": "Stop at the task budget; record failures without inventing successful evidence.",
+        "contract": "length_policy_v1",
+        "module": "jevops/lra_length_policy_v1.py"
+      }
+    },
+    {
+      "id": "JLR-009",
+      "title": "Implement environment-complete source cache identities",
+      "goal_id": "JLR-G002",
+      "depends_on": [
+        "JLR-002"
+      ],
+      "mode": "router",
+      "resource_class": "cpu-small",
+      "priority": "P0",
+      "initial_status": "pending",
+      "outputs": [
+        "jevops/lra_cache_identity_v1.py"
+      ],
+      "predicted_files": [
+        "jevops/lra_cache_identity_v1.py"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_router_task.py --task-id JLR-009",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-009",
+      "acceptance": "Protected randomized tests show source and every context dimension change the SHA256 cache identity; no source normalization erases meaningful bytes.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 3,
+        "max_output_tokens": 4096
+      },
+      "work_package": {
+        "action": "feature_contract",
+        "hypothesis": "Exact source plus complete environmental context avoids false cache reuse after any pin or source mutation.",
+        "inputs": [
+          "implementation_plan/lean_refactor_arena_20261024.objectives.md"
+        ],
+        "experiment": "Implement pure cache_key(context,source)->SHA256 hex digest of canonical UTF8 JSON {'context':context,'source':source}, ensure_ascii=False, sort_keys=True,separators=(',',':'). Preserve exact source bytes and every context dimension. Do not mutate either input. Pure module: functions/docstrings and allowed json/hashlib/math imports only; no module-level execution, decorators, default arguments, private attributes, dynamic imports or IO.",
+        "metrics": [
+          "canonical digest parity",
+          "source and environment mutation sensitivity"
+        ],
+        "stop_rule": "Stop at the task budget; record failures without inventing successful evidence.",
+        "contract": "cache_identity_v1",
+        "module": "jevops/lra_cache_identity_v1.py"
+      }
+    },
+    {
+      "id": "JLR-010",
+      "title": "Run an actual Lean4.31 kernel smoke on a non-Arena theorem",
+      "goal_id": "JLR-G002",
+      "depends_on": [
+        "JLR-004",
+        "JLR-007"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-lean",
+      "priority": "P0",
+      "initial_status": "pending",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-010.native-smoke.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-010.native-smoke.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-010",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-010",
+      "acceptance": "Actual pinned Lean execution verifies baseline and candidate, exact target and transitive axioms; report explicitly states non-Arena and no official score.",
+      "bounds": {
+        "timeout_seconds": 900,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "native_smoke",
+        "hypothesis": "The available Lean4.31 toolchain can independently check an actual non-Arena theorem and candidate.",
+        "inputs": [],
+        "experiment": "Execute the exact v4.31.0 native smoke argv, parse actual reference/candidate measurements and enforce unchanged theorem/type/axiom evidence; keep official_score null.",
+        "metrics": [
+          "actual compiler identity",
+          "reference and candidate VERIFIED/MEASURED",
+          "type and axiom preservation",
+          "raw heartbeats"
+        ],
+        "stop_rule": "Stop at the task budget; record failures without inventing successful evidence.",
+        "command": [
+          "python3",
+          "-m",
+          "jevops.arena_lean",
+          "--smoke",
+          "--tag",
+          "v4.31.0",
+          "--max-processes",
+          "4",
+          "--timeout",
+          "60"
+        ]
+      }
+    },
+    {
+      "id": "JLR-011",
+      "title": "Design the version-aware retrieval and strategy ablation",
+      "goal_id": "JLR-G004",
+      "depends_on": [
+        "JLR-005",
+        "JLR-008",
+        "JLR-009"
+      ],
+      "mode": "router",
+      "resource_class": "cpu-small",
+      "priority": "P1",
+      "initial_status": "pending",
+      "outputs": [
+        "implementation_plan/proposals/JLR-011.review.json"
+      ],
+      "predicted_files": [
+        "implementation_plan/proposals/JLR-011.review.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_router_task.py --task-id JLR-011",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-011",
+      "acceptance": "Real Grok router receipt and schema-valid advisory review with concrete risks/actions/acceptance boundaries. This task completes a design artifact, not the proposed implementation or an experiment.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 3,
+        "max_output_tokens": 4096
+      },
+      "work_package": {
+        "action": "feature_contract",
+        "hypothesis": "Version-aware retrieval may improve useful suggestions beyond the prior neutral typed-premise pilot.",
+        "inputs": [
+          "implementation_plan/lean_refactor_arena_20261024.objectives.md",
+          "implementation_plan/lean_refactor_arena_20261024.research.md",
+          "data/lean_refactor_campaign_20261024/JLR-005.schedule.json"
+        ],
+        "experiment": "Specify lexical, typed-head and version-filtered controls at equal compiler budgets; use prior neutral typed-premise/depth results and do not repeat them as new wins.",
+        "metrics": [
+          "matched compiler budget",
+          "proposed ablations",
+          "prior neutral control acknowledged"
+        ],
+        "stop_rule": "Stop at the task budget; record failures without inventing successful evidence.",
+        "contract": "proposal_review_v1"
+      }
+    },
+    {
+      "id": "JLR-012",
+      "title": "Design the verified span/autoencoder data adapter",
+      "goal_id": "JLR-G006",
+      "depends_on": [
+        "JLR-002",
+        "JLR-009"
+      ],
+      "mode": "router",
+      "resource_class": "cpu-small",
+      "priority": "P1",
+      "initial_status": "pending",
+      "outputs": [
+        "implementation_plan/proposals/JLR-012.review.json"
+      ],
+      "predicted_files": [
+        "implementation_plan/proposals/JLR-012.review.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_router_task.py --task-id JLR-012",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-012",
+      "acceptance": "Real Grok router receipt and schema-valid advisory review with concrete risks/actions/acceptance boundaries. This task completes a design artifact, not the proposed implementation or an experiment. The inner review must contain exactly the seven required fields from the review-contract input, with no extra keys; all detailed sections belong only in strings in risks/actions/acceptance_boundaries. Replace the entire prior invalid inner JSON instead of preserving unknown fields; at most three concise items per list and 3000 content characters.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 3,
+        "max_output_tokens": 1024
+      },
+      "work_package": {
+        "action": "feature_contract",
+        "hypothesis": "Existing span provenance and lightweight encoder interfaces can transfer to Lean with explicit binder and project identities.",
+        "inputs": [
+          "implementation_plan/lean_refactor_arena_20261024.objectives.md",
+          "implementation_plan/lean_refactor_arena_20261024.research.md",
+          "implementation_plan/lean_refactor_arena_20261024.review-contract.json"
+        ],
+        "experiment": "Map Lean parser/goal/source/pin records to existing CPU sparse encoder and Datasets source-custody interfaces; exclude environment failures and frozen holdout data from training. Follow implementation_plan/lean_refactor_arena_20261024.review-contract.json exactly. Produce ONLY the seven required inner review keys: schema, task_id, risks, actions, acceptance_boundaries, proposal_only, needs_native_verification. No title, hypothesis, scope, record_contract, split_contract, semantics, metrics or stop_rule top-level keys. Carry their substantive details only in strings in the existing three arrays. Replace the whole old inner JSON; keep content below 3000 characters and at most three items per list.",
+        "metrics": [
+          "provenance dimensions",
+          "group split boundaries",
+          "environment-failure exclusion"
+        ],
+        "stop_rule": "Stop at the task budget; record failures without inventing successful evidence.",
+        "contract": "proposal_review_v1"
+      }
+    },
+    {
+      "id": "JLR-013",
+      "title": "Design bounded Leanstral context and iterative repair experiments",
+      "goal_id": "JLR-G005",
+      "depends_on": [
+        "JLR-002",
+        "JLR-007"
+      ],
+      "mode": "router",
+      "resource_class": "cpu-small",
+      "priority": "P1",
+      "initial_status": "pending",
+      "outputs": [
+        "implementation_plan/proposals/JLR-013.review.json"
+      ],
+      "predicted_files": [
+        "implementation_plan/proposals/JLR-013.review.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_router_task.py --task-id JLR-013",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-013",
+      "acceptance": "Real Grok router receipt and schema-valid advisory review with concrete risks/actions/acceptance boundaries. This task completes a design artifact, not the proposed implementation or an experiment. The inner review must contain exactly the seven required fields from the review-contract input, with no extra keys; all detailed sections belong only in strings in risks/actions/acceptance_boundaries. Replace the entire prior invalid inner JSON instead of preserving unknown fields; at most three concise items per list and 3000 content characters.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 3,
+        "max_output_tokens": 1024
+      },
+      "work_package": {
+        "action": "feature_contract",
+        "hypothesis": "Bounded compiler-feedback prompts can be evaluated with frozen quantized Leanstral before any training.",
+        "inputs": [
+          "implementation_plan/lean_refactor_arena_20261024.objectives.md",
+          "implementation_plan/lean_refactor_arena_20261024.research.md",
+          "implementation_plan/lean_refactor_arena_20261024.review-contract.json"
+        ],
+        "experiment": "Use the verified community Q4 artifact and actual localhost endpoint only after resource readiness; compare original-proof, goal-state and retrieved-context prompts, with explicit rfl protocol smoke separate from proof improvement. Follow implementation_plan/lean_refactor_arena_20261024.review-contract.json exactly. Produce ONLY the seven required inner review keys: schema, task_id, risks, actions, acceptance_boundaries, proposal_only, needs_native_verification. No title, hypothesis, scope, record_contract, split_contract, semantics, metrics or stop_rule top-level keys. Carry their substantive details only in strings in the existing three arrays. Replace the whole old inner JSON; keep content below 3000 characters and at most three items per list.",
+        "metrics": [
+          "context tokens",
+          "inference deadline",
+          "native-verifier boundary"
+        ],
+        "stop_rule": "Stop at the task budget; record failures without inventing successful evidence.",
+        "contract": "proposal_review_v1"
+      }
+    },
+    {
+      "id": "JLR-014",
+      "title": "Design the limited-compute training decision",
+      "goal_id": "JLR-G007",
+      "depends_on": [
+        "JLR-002",
+        "JLR-012"
+      ],
+      "mode": "router",
+      "resource_class": "cpu-small",
+      "priority": "P1",
+      "initial_status": "pending",
+      "outputs": [
+        "implementation_plan/proposals/JLR-014.review.json"
+      ],
+      "predicted_files": [
+        "implementation_plan/proposals/JLR-014.review.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_router_task.py --task-id JLR-014",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-014",
+      "acceptance": "Real Grok router receipt and schema-valid advisory review with concrete risks/actions/acceptance boundaries. This task completes a design artifact, not the proposed implementation or an experiment. The inner review must contain exactly the seven required fields from the review-contract input, with no extra keys; all detailed sections belong only in strings in risks/actions/acceptance_boundaries. Replace the entire prior invalid inner JSON instead of preserving unknown fields; at most three concise items per list and 3000 content characters.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 3,
+        "max_output_tokens": 1024
+      },
+      "work_package": {
+        "action": "feature_contract",
+        "hypothesis": "Measured frozen-model and CPU-encoder results can justify or reject later small-model adaptation.",
+        "inputs": [
+          "implementation_plan/lean_refactor_arena_20261024.objectives.md",
+          "implementation_plan/lean_refactor_arena_20261024.research.md",
+          "implementation_plan/proposals/JLR-012.review.json",
+          "implementation_plan/lean_refactor_arena_20261024.review-contract.json"
+        ],
+        "experiment": "Do not full-finetune119B. Specify matched CPU-encoder/lexical baselines and a later small-model LoRA memory/holdout gate; inference GGUF is not automatically a trainable checkpoint. Follow implementation_plan/lean_refactor_arena_20261024.review-contract.json exactly. Produce ONLY the seven required inner review keys: schema, task_id, risks, actions, acceptance_boundaries, proposal_only, needs_native_verification. No title, hypothesis, scope, record_contract, split_contract, semantics, metrics or stop_rule top-level keys. Carry their substantive details only in strings in the existing three arrays. Replace the whole old inner JSON; keep content below 3000 characters and at most three items per list.",
+        "metrics": [
+          "measured memory prerequisite",
+          "holdout gate",
+          "no full119B training"
+        ],
+        "stop_rule": "Stop at the task budget; record failures without inventing successful evidence.",
+        "contract": "proposal_review_v1"
+      }
+    },
+    {
+      "id": "JLR-015",
+      "title": "Review supervisor recovery and campaign activation criteria",
+      "goal_id": "JLR-G008",
+      "depends_on": [
+        "JLR-002",
+        "JLR-010"
+      ],
+      "mode": "router",
+      "resource_class": "cpu-small",
+      "priority": "P1",
+      "initial_status": "pending",
+      "outputs": [
+        "implementation_plan/proposals/JLR-015.review.json"
+      ],
+      "predicted_files": [
+        "implementation_plan/proposals/JLR-015.review.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_router_task.py --task-id JLR-015",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-015",
+      "acceptance": "Real Grok router receipt and schema-valid advisory review with concrete risks/actions/acceptance boundaries. This task completes a design artifact, not the proposed implementation or an experiment. The inner review must contain exactly the seven required fields from the review-contract input, with no extra keys; all detailed sections belong only in strings in risks/actions/acceptance_boundaries. Replace the entire prior invalid inner JSON instead of preserving unknown fields; at most three concise items per list and 3000 content characters.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 3,
+        "max_output_tokens": 1024
+      },
+      "work_package": {
+        "action": "feature_contract",
+        "hypothesis": "Explicit failure bounds and owned-process recovery can prevent silent waiting and false task completion.",
+        "inputs": [
+          "implementation_plan/lean_refactor_arena_20261024.objectives.md",
+          "implementation_plan/lean_refactor_arena_20261024.research.md",
+          "implementation_plan/lean_refactor_arena_20261024.review-contract.json"
+        ],
+        "experiment": "Enumerate bounded failure probes for provider timeout/quota, malformed JSON, changed output inode, missing native environment, occupiedGPU, disk pressure and dead owner; define observable recovery and honest planned-backlog activation. Follow implementation_plan/lean_refactor_arena_20261024.review-contract.json exactly. Produce ONLY the seven required inner review keys: schema, task_id, risks, actions, acceptance_boundaries, proposal_only, needs_native_verification. No title, hypothesis, scope, record_contract, split_contract, semantics, metrics or stop_rule top-level keys. Carry their substantive details only in strings in the existing three arrays. Replace the whole old inner JSON; keep content below 3000 characters and at most three items per list.",
+        "metrics": [
+          "bounded attempts",
+          "observable failure reason",
+          "owned recovery",
+          "honest backlog activation"
+        ],
+        "stop_rule": "Stop at the task budget; record failures without inventing successful evidence.",
+        "contract": "proposal_review_v1"
+      }
+    },
+    {
+      "id": "JLR-016",
+      "title": "Provision exact-pin projects and repair ArkLib/Putnam readiness",
+      "goal_id": "JLR-G003",
+      "depends_on": [
+        "JLR-005",
+        "JLR-010",
+        "JLR-015"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-lean",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-016.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-016.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-016",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-016",
+      "acceptance": "Every corpus/version pair has explicit current-ready or actionable unavailable state; native failures are not negative training examples.",
+      "bounds": {
+        "timeout_seconds": 900,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Provision exact-pin projects and repair ArkLib/Putnam readiness.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-005.schedule.json",
+          "data/lean_refactor_campaign_20261024/JLR-010.native-smoke.json",
+          "implementation_plan/proposals/JLR-015.review.json"
+        ],
+        "experiment": "Create a NEW capped owned project root; fetch exact commits/toolchains; repair source-location and import mismatches without overwriting historical caches.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Perproject exact Lean/Lake/dependency manifest, source-prefix and target-location audit; <=8GiB pilot storage and <=2 compiler processes.",
+        "activation_requires": [
+          "native environment manifest",
+          "reviewed closed provisioning argv"
+        ]
+      }
+    },
+    {
+      "id": "JLR-017",
+      "title": "Recheck all reference proofs and retained incumbents",
+      "goal_id": "JLR-G003",
+      "depends_on": [
+        "JLR-016"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-lean",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-017.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-017.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-017",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-017",
+      "acceptance": "Fresh all-pin target/type/axiom receipts; retain baseline for failed/unavailable cases and never zero-fill missing checks as success.",
+      "bounds": {
+        "timeout_seconds": 900,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Recheck all reference proofs and retained incumbents.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-016.result.json"
+        ],
+        "experiment": "Use the existing NativeLeanVerifier and project bindings; original and incumbent on every required pin.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "<=36 initial launches;60s each; one compiler at a time; complete matrix or explicit partial status.",
+        "activation_requires": [
+          "current all-pin project manifest"
+        ]
+      }
+    },
+    {
+      "id": "JLR-018",
+      "title": "Establish tokenizer and heartbeat worker parity",
+      "goal_id": "JLR-G002",
+      "depends_on": [
+        "JLR-006",
+        "JLR-017"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-lean",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-018.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-018.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-018",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-018",
+      "acceptance": "Report parity proven only for available worker interfaces; distinguish local tokenizer, raw heartbeats and official metrics.",
+      "bounds": {
+        "timeout_seconds": 900,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Establish tokenizer and heartbeat worker parity.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-006.scorer-parity.json",
+          "data/lean_refactor_campaign_20261024/JLR-017.result.json"
+        ],
+        "experiment": "Compare the exact scorer/tokenizer/reference denominators and pinned measurement options against the organizer specification.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Balanced ABBA ordering; matched cold/warm cache labels; at least3 paired repeats for finalists.",
+        "activation_requires": [
+          "fresh baseline",
+          "official metric contract"
+        ]
+      }
+    },
+    {
+      "id": "JLR-019",
+      "title": "Implement profile-guided simplifier support minimization",
+      "goal_id": "JLR-G004",
+      "depends_on": [
+        "JLR-011",
+        "JLR-017"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-lean",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-019.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-019.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-019",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-019",
+      "acceptance": "Actual shorter all-pin-valid body beats freshly rechecked incumbent; no axiom growth or unpaid helper declarations.",
+      "bounds": {
+        "timeout_seconds": 900,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Implement profile-guided simplifier support minimization.",
+        "inputs": [
+          "implementation_plan/proposals/JLR-011.review.json",
+          "data/lean_refactor_campaign_20261024/JLR-017.result.json"
+        ],
+        "experiment": "Reuse existing support/simp-scope/deletion tools; rank expensive spans and minimize simp only support with complete-source replay.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Matched deterministic controls, capped12 candidates and24 verification launches per pilot.",
+        "activation_requires": [
+          "reviewed producer argv and protected native validator"
+        ]
+      }
+    },
+    {
+      "id": "JLR-020",
+      "title": "Implement coupled deletion and induction-context repair",
+      "goal_id": "JLR-G004",
+      "depends_on": [
+        "JLR-011",
+        "JLR-017"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-lean",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-020.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-020.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-020",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-020",
+      "acceptance": "Whole theorem survives all pins and exact target; count all coupled edits and final proof source.",
+      "bounds": {
+        "timeout_seconds": 900,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Implement coupled deletion and induction-context repair.",
+        "inputs": [
+          "implementation_plan/proposals/JLR-011.review.json",
+          "data/lean_refactor_campaign_20261024/JLR-017.result.json"
+        ],
+        "experiment": "Generalize the known Hlen2 plus IH/goal-block repair, tracking binder dependencies and source spans rather than isolated line deletion.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Compare isolated deletion versus coupled repair under identical verification budgets.",
+        "activation_requires": [
+          "parser/goal/dependency bindings",
+          "native baseline"
+        ]
+      }
+    },
+    {
+      "id": "JLR-021",
+      "title": "Implement search-then-extract explicit proof terms",
+      "goal_id": "JLR-G004",
+      "depends_on": [
+        "JLR-017",
+        "JLR-011"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-lean",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-021.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-021.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-021",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-021",
+      "acceptance": "Final emitted proof is independently cold-replayed with export growth bounds; discovery script length is not final length.",
+      "bounds": {
+        "timeout_seconds": 900,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Implement search-then-extract explicit proof terms.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-017.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-019.result.json"
+        ],
+        "experiment": "Allow bounded discovery scripts to be longer, then extract/specialize simp?/aesop?/grind? or explicit terms supported by the actual pin.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Original/native tactics only; no importing unavailable Mathlib into Core; <=12 search branches.",
+        "activation_requires": [
+          "supported tactic capability per pin"
+        ]
+      }
+    },
+    {
+      "id": "JLR-022",
+      "title": "Run a fixed-winner deterministic portfolio comparison",
+      "goal_id": "JLR-G004",
+      "depends_on": [
+        "JLR-018",
+        "JLR-019",
+        "JLR-020",
+        "JLR-021"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-lean",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-022.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-022.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-022",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-022",
+      "acceptance": "All-pin correctness, shortest-verified frontier and separately strict-dual/official-score arms; never global-shortest claims.",
+      "bounds": {
+        "timeout_seconds": 900,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Run a fixed-winner deterministic portfolio comparison.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-018.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-019.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-020.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-021.result.json"
+        ],
+        "experiment": "Freeze winners before a fresh confirmation run; include original and incumbent controls.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Report failed/unavailable cases in whole-corpus denominator and seed/order noise.",
+        "activation_requires": [
+          "frozen candidate/source manifests"
+        ]
+      }
+    },
+    {
+      "id": "JLR-023",
+      "title": "Qualify downloaded Leanstral weights, runtime and resource ownership",
+      "goal_id": "JLR-G005",
+      "depends_on": [
+        "JLR-013",
+        "JLR-015"
+      ],
+      "mode": "deterministic",
+      "resource_class": "gpu-inference",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-023.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-023.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-023",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-023",
+      "acceptance": "Real /health/models plus16-token inference; aliases not proof of official checkpoint ancestry; no old server takeover.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Qualify downloaded Leanstral weights, runtime and resource ownership.",
+        "inputs": [
+          "implementation_plan/proposals/JLR-013.review.json",
+          "implementation_plan/proposals/JLR-015.review.json"
+        ],
+        "experiment": "Verify full artifactSHA, architecture/chat template, CUDA runtime and exactlocalhost model descriptor; acquire only owned GPU resources.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Q4~67.2GiB disk; partial18-layer offload across2x3090; ctx2048;<=20GiB/card, RSS48GiB, hostavailable>=16GiB.",
+        "activation_requires": [
+          "complete download/hash",
+          "local resource lease"
+        ]
+      }
+    },
+    {
+      "id": "JLR-024",
+      "title": "Run bounded frozen-Leanstral iterative shortening",
+      "goal_id": "JLR-G005",
+      "depends_on": [
+        "JLR-017",
+        "JLR-018",
+        "JLR-023"
+      ],
+      "mode": "deterministic",
+      "resource_class": "gpu-inference",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-024.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-024.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-024",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-024",
+      "acceptance": "All-pin Lean acceptance and original-source replacement required; response text and model confidence have zero proof authority.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Run bounded frozen-Leanstral iterative shortening.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-017.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-018.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-023.result.json"
+        ],
+        "experiment": "Feed exact source/goal context and actual compiler diagnostics into a bounded edit loop with an unchanged verified incumbent.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Start2 requests,<=1024 input/256 outputtokens,90s each,<=240s total; record every failed call.",
+        "activation_requires": [
+          "healthy attested inference descriptor",
+          "native project manifest"
+        ]
+      }
+    },
+    {
+      "id": "JLR-025",
+      "title": "Ablate prompt context and retrieval independently",
+      "goal_id": "JLR-G005",
+      "depends_on": [
+        "JLR-011",
+        "JLR-024"
+      ],
+      "mode": "deterministic",
+      "resource_class": "gpu-inference",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-025.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-025.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-025",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-025",
+      "acceptance": "Matched calls/tokens/verification launches, held-fixed source families, actual verified shortest candidates.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Ablate prompt context and retrieval independently.",
+        "inputs": [
+          "implementation_plan/proposals/JLR-011.review.json",
+          "data/lean_refactor_campaign_20261024/JLR-024.result.json"
+        ],
+        "experiment": "Compare source-only, goal-state, version-aware strategy and typed-premise contexts, avoiding already-neutral depth-only rediscovery.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Freeze protocol and seeds before evaluating; keep all negative outcomes.",
+        "activation_requires": [
+          "bounded controlled pilot inputs"
+        ]
+      }
+    },
+    {
+      "id": "JLR-026",
+      "title": "Implement Lean-specific span provenance adapter",
+      "goal_id": "JLR-G006",
+      "depends_on": [
+        "JLR-012",
+        "JLR-017"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-small",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-026.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-026.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-026",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-026",
+      "acceptance": "Original source reconstructs exactly; stale spans/cross-version entries are rejected; legal-domain weights are never relabeled as Lean proof models.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Implement Lean-specific span provenance adapter.",
+        "inputs": [
+          "implementation_plan/proposals/JLR-012.review.json",
+          "data/lean_refactor_campaign_20261024/JLR-017.result.json"
+        ],
+        "experiment": "Adapt Datasets span/cache identity and GTE reuse metadata to Lean binders, dependency graph, source ranges and exact project pins.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Use cached embeddings when authenticated; any native model load separately budgeted.",
+        "activation_requires": [
+          "source-bound span schema and cache negative tests"
+        ]
+      }
+    },
+    {
+      "id": "JLR-027",
+      "title": "Create group-disjoint verified edit training records",
+      "goal_id": "JLR-G006",
+      "depends_on": [
+        "JLR-022",
+        "JLR-024",
+        "JLR-026"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-lean",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-027.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-027.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-027",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-027",
+      "acceptance": "Split by project/theorem/alias/dependency family before training; no canary or holdout exposure; exclude infrastructure failures from semantic labels.",
+      "bounds": {
+        "timeout_seconds": 900,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Create group-disjoint verified edit training records.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-022.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-024.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-026.result.json"
+        ],
+        "experiment": "Collect only genuinely verified original/candidate edit pairs and compiler classifications.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Bounded corpus size and reproducible manifest seeds; public warmup is development data.",
+        "activation_requires": [
+          "verified-pair manifest and leakage audit"
+        ]
+      }
+    },
+    {
+      "id": "JLR-028",
+      "title": "Run CPU sparse-autoencoder and lexical matched controls",
+      "goal_id": "JLR-G006",
+      "depends_on": [
+        "JLR-027"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-lean",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-028.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-028.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-028",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-028",
+      "acceptance": "Frozen holdout verified gain per compiler call/CPUminute exceeds lexical control; CE/cosine/reconstruction losses alone cannot promote.",
+      "bounds": {
+        "timeout_seconds": 900,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Run CPU sparse-autoencoder and lexical matched controls.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-027.result.json"
+        ],
+        "experiment": "Reuse JevOps256-feature/latent16 sparse trainer, operation loss and actual prediction accounting.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "2arms x32updates, batch8,input512tokens,2CPUthreads,RSS4GiB,600s/arm.",
+        "activation_requires": [
+          "protected split manifest",
+          "actual native eval"
+        ]
+      }
+    },
+    {
+      "id": "JLR-029",
+      "title": "Evaluate parser-bound span infilling or edit ranking",
+      "goal_id": "JLR-G006",
+      "depends_on": [
+        "JLR-028"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-lean",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-029.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-029.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-029",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-029",
+      "acceptance": "Actual decoded predictions cold-verify; never substitute a search-selected teacher for model performance.",
+      "bounds": {
+        "timeout_seconds": 900,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Evaluate parser-bound span infilling or edit ranking.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-028.result.json"
+        ],
+        "experiment": "Use BART/T5-style masking as an experimental objective, preserving binders and original-source offsets; compare rank-only and reconstruction paths.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "No large transformer training by default; equal compiler budgets to CPU ranker.",
+        "activation_requires": [
+          "source/parser adapter",
+          "frozen checkpoint"
+        ]
+      }
+    },
+    {
+      "id": "JLR-030",
+      "title": "Decide whether any small-model LoRA is justified",
+      "goal_id": "JLR-G007",
+      "depends_on": [
+        "JLR-014",
+        "JLR-025",
+        "JLR-028",
+        "JLR-029"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-small",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-030.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-030.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-030",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-030",
+      "acceptance": "Continue frozen inference unless validated improvement clears baseline with unchanged correctness and memory guardrails.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Decide whether any small-model LoRA is justified.",
+        "inputs": [
+          "implementation_plan/proposals/JLR-014.review.json",
+          "data/lean_refactor_campaign_20261024/JLR-025.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-028.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-029.result.json"
+        ],
+        "experiment": "Use measured failure modes and gain per compute to decide inference-only versus a small adaptation.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Full119B FT disabled; no direct GGUF-to-QLoRA assumption.",
+        "activation_requires": [
+          "frozen evaluations and measured resource use"
+        ]
+      }
+    },
+    {
+      "id": "JLR-031",
+      "title": "Optionally run a small compatible adapter memory smoke",
+      "goal_id": "JLR-G007",
+      "depends_on": [
+        "JLR-030"
+      ],
+      "mode": "deterministic",
+      "resource_class": "gpu-small",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-031.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-031.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-031",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-031",
+      "acceptance": "10actualsteps stay<=16GiB onONE3090 and preserve host headroom; otherwise stop and retain inference-only strategy.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Optionally run a small compatible adapter memory smoke.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-030.result.json"
+        ],
+        "experiment": "Only if explicitly enabled, use a licensed compatible1–3B base already provisioned and framework-supported.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "LoRA r8/alpha16/dropout.05;seq512;batch1/accum8;<=300s smoke; no119B fullFT.",
+        "activation_requires": [
+          "explicit training opt-in",
+          "trainable checkpoint/backend",
+          "free GPU lease"
+        ]
+      }
+    },
+    {
+      "id": "JLR-032",
+      "title": "Optionally test a frozen adapted proposer on held-out families",
+      "goal_id": "JLR-G007",
+      "depends_on": [
+        "JLR-031"
+      ],
+      "mode": "deterministic",
+      "resource_class": "gpu-small",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-032.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-032.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-032",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-032",
+      "acceptance": "Measured all-pin verified improvement over frozen and retrieval-only controls; no promotion from training loss or selected benchmark examples.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Optionally test a frozen adapted proposer on held-out families.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-031.result.json"
+        ],
+        "experiment": "At most100steps/1800s pilot after memory smoke; freeze checkpoint before one held-out evaluation.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "One adapter arm; preserve unmodified base and rollback descriptor.",
+        "activation_requires": [
+          "training budget and sealed holdout"
+        ]
+      }
+    },
+    {
+      "id": "JLR-033",
+      "title": "Fault-test the running supervisor without corrupting proofs",
+      "goal_id": "JLR-G008",
+      "depends_on": [
+        "JLR-015"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-small",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-033.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-033.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-033",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-033",
+      "acceptance": "Real bounded recovery or explicit triaged blocker; only changed evidence rearms gates; no fabricated heartbeat/completion.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Fault-test the running supervisor without corrupting proofs.",
+        "inputs": [
+          "implementation_plan/proposals/JLR-015.review.json",
+          "data/lean_refactor_campaign_20261024/JLR-022.result.json"
+        ],
+        "experiment": "Use owned fixture jobs for timeout/quota, output CAS, source drift, lost resource lease, disk pressure and dead process.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "3attempts,15min cooldown, source-aware gate limits; never kill unrelated PIDs.",
+        "activation_requires": [
+          "isolated fault fixtures and production service ownership"
+        ]
+      }
+    },
+    {
+      "id": "JLR-034",
+      "title": "Activate measured campaign stages from verified prerequisites",
+      "goal_id": "JLR-G008",
+      "depends_on": [
+        "JLR-017",
+        "JLR-018",
+        "JLR-023",
+        "JLR-033"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-small",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-034.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-034.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-034",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-034",
+      "acceptance": "Unknown action/argv remains nonselectable planned backlog; no file-existence-only feature completion; preserve task history.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Activate measured campaign stages from verified prerequisites.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-017.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-018.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-023.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-033.result.json"
+        ],
+        "experiment": "Materialize exact reviewed producer argv/protected validators for planned research tickets only when their capability gates are satisfied.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "One owner, one GPU job and bounded model calls; source-bound activation receipt.",
+        "activation_requires": [
+          "operator-reviewed activation",
+          "source/env/budget receipts"
+        ]
+      }
+    },
+    {
+      "id": "JLR-035",
+      "title": "Refresh full benchmark inventory at release",
+      "goal_id": "JLR-G009",
+      "depends_on": [
+        "JLR-017"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-lean",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-035.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-035.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-035",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-035",
+      "acceptance": "No unreleased/full benchmark claims; exact corpus/version digest and complete denominators.",
+      "bounds": {
+        "timeout_seconds": 900,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Refresh full benchmark inventory at release.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-017.result.json"
+        ],
+        "experiment": "Read official release metadata on/after November1 and add new cases as a new pinned cohort; preserve old15-case history.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Small metadata requests; no submission or model calls as side effects.",
+        "activation_requires": [
+          "official release availability",
+          "source digest"
+        ]
+      }
+    },
+    {
+      "id": "JLR-036",
+      "title": "Run full budget-accounted final evaluation",
+      "goal_id": "JLR-G009",
+      "depends_on": [
+        "JLR-022",
+        "JLR-024",
+        "JLR-034",
+        "JLR-035"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-lean",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-036.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-036.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-036",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-036",
+      "acceptance": "Hard correctness contract plus official score with exact rounding/denominators and all missing cases; local proxies separately named.",
+      "bounds": {
+        "timeout_seconds": 900,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Run full budget-accounted final evaluation.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-022.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-024.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-034.result.json",
+          "data/lean_refactor_campaign_20261024/JLR-035.result.json"
+        ],
+        "experiment": "Recheck fixed candidates on every required version; retain original fallback; evaluate training arms only if legitimately qualified.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Closed track all model calls via OpenRouter<=US$3/problem; open track public weights and reproducible<=4x80GB A100/48h inference.",
+        "activation_requires": [
+          "track-eligible route and trustworthy price/usage ledger"
+        ]
+      }
+    },
+    {
+      "id": "JLR-037",
+      "title": "Prepare reproducible portfolio and technical report",
+      "goal_id": "JLR-G009",
+      "depends_on": [
+        "JLR-036"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-small",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-037.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-037.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-037",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-037",
+      "acceptance": "All source inside charged proof body; no extra axioms/unpaid helper pollution; all necessary licenses and actual measurements recorded.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Prepare reproducible portfolio and technical report.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-036.result.json"
+        ],
+        "experiment": "Bundle exact proofs, source/weights/config manifests, rejection history and reproduction commands with per-problem budgets.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Report Approach/Models/Budget accounting/Reproduction sections,3–9pages if current rules unchanged.",
+        "activation_requires": [
+          "fresh final verifier receipts"
+        ]
+      }
+    },
+    {
+      "id": "JLR-038",
+      "title": "Review submission eligibility and external publication",
+      "goal_id": "JLR-G009",
+      "depends_on": [
+        "JLR-037"
+      ],
+      "mode": "deterministic",
+      "resource_class": "cpu-small",
+      "priority": "P2",
+      "initial_status": "planned",
+      "outputs": [
+        "data/lean_refactor_campaign_20261024/JLR-038.result.json"
+      ],
+      "predicted_files": [
+        "data/lean_refactor_campaign_20261024/JLR-038.result.json"
+      ],
+      "deterministic_command": "python3 tools/run_lean_refactor_campaign.py --task-id JLR-038",
+      "validation": "python3 tools/check_lean_refactor_plan.py --validate-task JLR-038",
+      "acceptance": "No autonomous account claims, competition submissions or external messages from this development startup; obtain separate release instruction.",
+      "bounds": {
+        "timeout_seconds": 600,
+        "router_calls": 0,
+        "max_output_tokens": 0
+      },
+      "work_package": {
+        "action": "planned_experiment",
+        "hypothesis": "A bounded, controlled implementation of this work package can satisfy its stated acceptance criteria and improve the evidence needed for the parent goal: Review submission eligibility and external publication.",
+        "inputs": [
+          "data/lean_refactor_campaign_20261024/JLR-037.result.json"
+        ],
+        "experiment": "Review organizer rules again and prepare the final upload as an explicit release candidate.",
+        "metrics": [
+          "verified token count",
+          "raw heartbeats by exact pin",
+          "compatibility across required pins",
+          "verified candidate rate",
+          "model calls and token usage",
+          "wall time and peak memory"
+        ],
+        "stop_rule": "Preserve untouched proof portfolio and audit trail.",
+        "activation_requires": [
+          "explicit later submission authorization"
+        ]
+      }
+    }
+  ]
+}

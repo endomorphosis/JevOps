@@ -1,0 +1,21 @@
+{
+  "schema": "jevops.lean-refactor.review.v1",
+  "task_id": "JLR-012",
+  "risks": [
+    "Omitting source sha256, byte range, binders in scope, imports, target identity, or project/toolchain/dependency pins lets a span from one pin be applied to another theorem. Cache identity also includes prefix, measurement options, policy version, and producer/verifier hashes.",
+    "Labeling missing pins, Lake or toolchain mismatches, or memory/swap guards as semantic negatives teaches avoidance of absent projects. Reconstruction loss, embedding similarity, verified=true, or a subprocess exit without proof records is not kernel acceptance.",
+    "Version-near-duplicate proofs, family aliases, or dependency overlap leak sealed holdout labels. Reporting the teacher-selected edit as the encoder prediction fabricates a gain. A span that rewrites an executable definition is outside proof irrelevance."
+  ],
+  "actions": [
+    "Map each span onto Datasets source-custody and the existing CPU sparse encoder only: source sha256, byte offsets, parser category, binders in scope, imports, target identity, elaborated type, goal and hypotheses, premises filtered by imports/version/scope, project_id, toolchain pin, dependency commits, and candidate edit. Bounds stay 256 hashed features, latent 16, input 512, batch 8, two CPU threads. A 768-d cache hit needs authenticated model and source identity; a miss must not load a model. No new model and no 119B fine-tune.",
+    "Partition native outcomes into improving_verified_edit, valid_non_improving_edit, compiler_or_type_error, and environment_or_infrastructure_failure. Fit only the first three. Drop environment failures from semantic negatives and from training. Do not relabel a missing pin as a false proof.",
+    "After deduplicating near-identical proofs across versions, split by theorem family, aliases, dependency closure, and project_id. Keep public warmup in development. Seal the holdout before any fit or hyperparameter choice and never rank, tune, or stop on its labels. Compare a lexical baseline at equal retrieval and compiler budgets and count only the encoder ranking. A later pilot is two arms of 32 updates, at most 600s and 4 GiB RSS each. Stop at the task budget and record failures without inventing a fit or native receipt."
+  ],
+  "acceptance_boundaries": [
+    "Design review only: no adapter implementation, weight load, fit, or Lean check. Mapper unit tests and a fresh native compilation are separate evidence and are not claimed. No training, model promotion, competition submission, or git push is authorized.",
+    "A record is reusable only while source bytes, target and prefix, compiler and dependency commits, imports, required pins, measurement options, policy version, and producer/verifier hashes match. Statement, binders, universes, target identity, imports, namespace, and source prefix stay fixed. Proof irrelevance covers a shorter proof of an unchanged proposition only. An executable-definition change needs a separate proved equivalence plus caller and runtime checks. Reject sorry, admit, new axioms, and Mathlib tactics imported into a Core-only pin.",
+    "Environment failures stay out of training labels. Frozen holdout rows stay sealed. Promotion needs a later held-out verified token reduction or accepted-candidate efficiency at matched budgets across disjoint families, counted from the encoder ranking. A neutral result keeps the lexical or frozen-model ranker. Later metrics are provenance fields on every record, group-split non-overlap, and environment-failure exclusion versus semantic-label counts. Unresolved pins remain in the corpus denominator."
+  ],
+  "proposal_only": true,
+  "needs_native_verification": true
+}
