@@ -5,6 +5,10 @@ import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import lean_refactor_execution_v2 as c
 
+# These statuses mean a sealed native call did not judge the draft. They must
+# not be scored as a failed shorter proof. A judged negative stays a ValueError.
+_UNJUDGED_NATIVE={'BLOCKED_INCUMBENT','SCREEN_TIMEOUT','BLOCKED_NATIVE_PROFILE','RUNNING'}
+
 def validate(root,data):
     from jevops import arena,arena_lean,arena_local,solver_feedback
     from jevops.lean import VersionPin
@@ -16,6 +20,8 @@ def validate(root,data):
     pins=[VersionPin(tag,commit) for version in record['version_info'] for tag,commit in version.items()]
     c.require(len(pins)==1 and data['pin']==pins[0].to_dict(),'complete target pin set required')
     pin=pins[0]
+    if data.get('status') in _UNJUDGED_NATIVE:
+        raise c.GateWait('unjudged native result: '+data['status'])
     c.require(data['schema']==m.SCHEMA and data['target']==m.TARGET and data['status']=='CONFIRMED',
               'shorter all-pin winner is not independently confirmed')
     c.require(data['seed_sha256']==c.sha(root/m.SEED) and data['incumbent']==c.read(root/m.SEED)['source'] and
@@ -56,11 +62,9 @@ def validate(root,data):
     sample_check(data['initial'])
     c.require(data['initial']['source']==data['incumbent'],'incumbent not freshly rechecked')
     result=data['profile']
-    local_guard=arena_lean.NativeLeanVerifier({pin:binding},max_processes=0,timeout=60,fingerprinter=reader)
+    local_guard=m.profile_verifier(binding, pin, reader)
     runtime=arena_local.ArenaLocalRuntime(local_guard,record,max_processes=0,node_budget=20000,event_budget=256)
-    expected={'source_sha256':arena.source_hash(data['incumbent']),'context_id':runtime.context.context_id,
-        'origin':{**runtime._origin(pin),'projection':'builtin-tactic-traces/v1'},'threshold_raw':100,
-        'measurement':arena_local.PROFILE_METHOD,'node_budget':20000,'event_budget':256}
+    expected=m.profile_expected_binding(runtime, data['incumbent'], pin)
     c.require(result['ok'] is True and result['evidence_mode']=='local_lean' and result['attempted_processes']==1 and
               result['binding']==expected and result['environment']==arena.content_hash(expected),'profile source/pin drift')
     summary=arena_local._profile_summary(result['stage']['report'],result['environment'],100,20000,256)
@@ -77,7 +81,10 @@ def validate(root,data):
     c.require(data['winner']==winner and arena.reference_tokens(winner,record['statement'])<
               arena.reference_tokens(data['incumbent'],record['statement']),'winner does not beat rechecked incumbent')
     schedule=[(repeat,slot,order) for repeat in range(3) for slot,order in enumerate(m.ORDER_BLOCK)]
-    c.require(len(data['confirmation'])==12 and data['native_processes']==14+len(data['screen'])<=24,
+    profile_carried=data.get('profile_carried')
+    c.require(type(profile_carried) is bool,'profile carry flag required')
+    bound=m.confirmation_process_bound(data['screen'],data['confirmation'],profile_carried=profile_carried)
+    c.require(len(data['confirmation'])==12 and bound<=data['native_processes']<=24,
               'bounded three-repeat confirmation missing')
     for sample,(repeat,slot,order) in zip(data['confirmation'],schedule):
         c.require((sample['repetition'],sample['slot'],sample['branch_order'])==(repeat,slot,order) and

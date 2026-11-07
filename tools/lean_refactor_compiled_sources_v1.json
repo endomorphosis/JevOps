@@ -6,7 +6,12 @@
     "tools/run_lean_refactor_stage_v2.py",
     "tools/lean_refactor_coupled_pilot.py",
     "tools/validate_lean_refactor_coupled_pilot.py",
-    "tests/test_lean_refactor_source_refresh.py"
+    "tests/test_lean_refactor_source_refresh.py",
+    "tools/lean_refactor_simp_pilot.py",
+    "tests/test_lean_refactor_simp_pilot.py",
+    "tools/validate_lean_refactor_simp_pilot.py",
+    "tools/check_lean_refactor_stage_v2.py",
+    "/home/barberb/lift_coding/external/ipfs_accelerate/ipfs_accelerate_py/llm_router.py"
   ],
   "imports": {
     "__main__": "data/lean_refactor_arena_20261024/execution-v2/maintenance-1640-canonical/prepare_sources.py",
@@ -49,7 +54,7 @@
   "retained": {
     "/home/barberb/lift_coding/external/ipfs_accelerate/ipfs_accelerate_py/agent_supervisor/todo_daemon/budget_policy.py": "ec29bc1067902c3673e37dfb8e1d0a5b941a7da105a878e76506b74c4f729472",
     "/home/barberb/lift_coding/external/ipfs_accelerate/ipfs_accelerate_py/agent_supervisor/todo_daemon/llm.py": "4aadb9d8d88581450ea9c48897d3c673e8af2c52b5bfad4a7b7e80dcb14e6b37",
-    "/home/barberb/lift_coding/external/ipfs_accelerate/ipfs_accelerate_py/llm_router.py": "e9ea23459dd0fda1bb0ac5e0ba187325551aef3b27a5a5a451bd5fa14eac57cc",
+    "/home/barberb/lift_coding/external/ipfs_accelerate/ipfs_accelerate_py/llm_router.py": "9589a91e305260c2734d6b9ea23562b517232d47b112e5f013554f391b30cca6",
     "/home/barberb/lift_coding/external/ipfs_accelerate/test/api/test_agent_supervisor_llm_budget_policy.py": "e61fe40e6aca9267dbafbde33a1043235b345ea8706610f593c7c3d2449d9b97",
     "data/lean_refactor_arena_20261024/execution-v2/maintenance-0232/resume_integration.py": "dbf1618673a47c35853bedf6f2802867c55135ae55eb9c571b42960bf1ae1191",
     "data/lean_refactor_arena_20261024/execution-v2/maintenance-0302/sharded/private/tools/lean_refactor_compiled_frontier.py": "2d74ef48f4d1296eac02c01e40ee1359aa7d2f23ff9a56a9cc89f8258cd66ccf",

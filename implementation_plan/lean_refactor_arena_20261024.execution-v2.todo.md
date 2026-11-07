@@ -584,7 +584,8 @@ Measured fields: verified token count, raw heartbeats by exact pin, compatibilit
 
 ## JLR-019 Implement profile-guided simplifier support minimization
 
-- Status: pending
+- Status: completed
+- Completion: lane_resume deterministic command exit 0 at 2026-11-05T11:32:14Z
 - Priority: P2
 - Track: research
 - Depends on: JLR-011, JLR-017
@@ -612,6 +613,7 @@ Hypothesis: A bounded, controlled implementation of this work package can satisf
 Measured fields: verified token count, raw heartbeats by exact pin, compatibility across required pins, verified candidate rate, model calls and token usage, wall time and peak memory.
 - Execution inputs: config/lean_refactor_arena_20261024_execution_v2.json, data/lean_refactor_arena_20261024/execution-v2/simp-admission-gate.json
 - Retry on changed evidence: true
+- Retry unjudged native: true
 
 
 ## JLR-020 Implement coupled deletion and induction-context repair

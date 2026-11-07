@@ -408,6 +408,11 @@ def main():
     try:
         report=validate(c.ROOT,args.validate_task);print(json.dumps(report,sort_keys=True));return 0
     except GateWait as exc:
+        # Exit 76 is an unjudged native call. Exit 75 remains an admission wait.
+        # Neither one is permission to mark the task complete.
+        if str(exc).startswith('unjudged native result:'):
+            print(json.dumps({'valid':False,'waiting':True,'unjudged_native':True,'reason':str(exc),**c.AUTH}))
+            return 76
         try:refresh_wait_probe(c.ROOT,args.validate_task)
         except (OSError,ValueError,RuntimeError) as probe_error:exc=probe_error
         print(json.dumps({'valid':False,'waiting':True,'reason':str(exc),**c.AUTH}));return 75

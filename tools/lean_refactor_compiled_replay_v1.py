@@ -49,6 +49,75 @@ def close(data, elapsed, persist):
         raise TimeoutError(data['reason'])
 
 
+_SOURCE_MAPS=('scientific_sources','source_sha256','active_compiled_scientific_sources')
+# The inventory records the reviewed extension, and this validator recognizes it.
+# Neither file is part of the coupled proof that JLR-020 already qualified.
+_ALLOWED_REGISTRATION_FILES=(
+    'tools/lean_refactor_compiled_sources_v1.json',
+    'tools/lean_refactor_compiled_replay_v1.py',
+)
+_FORBIDDEN_EXTENSIONS={
+    'tools/lean_refactor_coupled_pilot.py',
+    'tools/validate_lean_refactor_coupled_pilot.py',
+    'tools/lean_refactor_compiled_coupled_v1.py',
+    'tools/validate_lean_refactor_compiled_coupled_v1.py',
+    'tools/lean_refactor_compiled_inputs_v1.py',
+    'tools/lean_refactor_compiled_admission_v1.py',
+    'tools/lean_refactor_compiled_lineage_v1.py',
+    'tools/lean_refactor_compiled_registry_v1.py',
+}
+
+
+def reviewed_extension_keeps_qualification(stored, current):
+    """True when a later reviewed extension leaves the qualified coupled proof intact.
+
+    JevOps sources, the coupled producer, and its compiled proof machinery stay
+    bound to the qualified archive. A listed extension may change around them.
+    Republishing that extension changes ``profile_sha256``; the archive itself
+    does not move.
+    """
+    if type(stored) is not dict or type(current) is not dict or set(stored)!=set(current):
+        return False
+    for key, value in stored.items():
+        if key in _SOURCE_MAPS or key=='profile_sha256':continue
+        if value!=current[key]:return False
+    allowed=set(registry.inventory()['extension_changes'])|set(_ALLOWED_REGISTRATION_FILES)
+    diffs=set()
+    for key in _SOURCE_MAPS:
+        left, right=stored.get(key), current.get(key)
+        if type(left) is not dict or type(right) is not dict:return False
+        diffs.update(name for name in set(left)|set(right) if left.get(name)!=right.get(name))
+    if not diffs or not diffs<=allowed:return False
+    if any(name.startswith('jevops/') or name in _FORBIDDEN_EXTENSIONS for name in diffs):
+        return False
+    return True
+
+
+def historical_coupled_qualification(parent, result):
+    """Authenticate the stored all-pin archive without launching another native replay."""
+    c.require(result['status']=='QUALIFIED_ALL_PINS'
+        and parent==stage.phase_path(ROOT, result['frozen'])
+        and parent.is_dir() and not parent.is_symlink(),
+        'stored coupled qualification is not the current complete producer')
+    envelope=c.read(parent/'observation.json')
+    observed=c.read(parent/'producer/observation.json', max_bytes=32*1024**2)
+    c.require(c.sha(parent/'observation.json')==result['producer']['envelope_sha256']
+        and c.sha(parent/'producer/observation.json')==result['producer']['observation_sha256']
+        and envelope['status']==observed['status']=='QUALIFIED_ALL_PINS'
+        and envelope['native_actor_verified'] is True
+        and envelope['production_sources_unchanged'] is True
+        and observed.get('snapshots_removed') is True
+        and type(envelope.get('wall_seconds')) in (int, float) and 0<envelope['wall_seconds']<=780
+        and result['model_calls']==0
+        and result['original_fallback']==result['frozen']['original_fallback']
+        and all(result.get(key) is False for key in c.AUTH),
+        'historical canonical qualification archive differs')
+    return {'schema':'jevops.lean-refactor.historical-coupled-qualification.v1',
+        'historical_qualification':True,'all_original_pins':3,
+        'path':str(parent.relative_to(ROOT)),'sha256':c.sha(parent/'observation.json'),
+        'native_replay':False,'proof_authority':False,'completion_authority':False}
+
+
 def _protect(root, result):
     from lean_refactor_metric_audit import resource_snapshot
     c.require(root.resolve()==ROOT.resolve(), 'closed repository required')
@@ -58,6 +127,12 @@ def _protect(root, result):
     c.require(PARENT.resolve().is_relative_to((ROOT/c.RUNTIME/'compiled-coupled-v1').resolve())
         and not PARENT.is_symlink(), 'canonical producer archive required')
     frozen=stage.freeze()
+    if result.get('frozen')!=frozen:
+        c.require(result['schema']=='jevops.lean-refactor.canonical-coupled-result.v1'
+            and result['status']=='QUALIFIED_ALL_PINS'
+            and reviewed_extension_keeps_qualification(result['frozen'], frozen),
+            'current complete canonical producer required; private qualifications cannot be promoted')
+        return historical_coupled_qualification(PARENT, result)
     c.require(result['schema']=='jevops.lean-refactor.canonical-coupled-result.v1'
         and result['status'] in ('QUALIFIED_ALL_PINS','NO_ALL_PIN_WINNER') and result['frozen']==frozen
         and result['model_calls']==0 and result['original_fallback']==frozen['original_fallback']

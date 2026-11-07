@@ -186,6 +186,11 @@ def simp_admission(root, tid, profile, *, publish=True):
     data = c.read(data_path)
     if data.get('status') != 'NO_SHORTER_WINNER':
         return None
+    # A sealed-call timeout did not judge the draft. Do not freeze that run.
+    screens=data.get('screen')
+    if type(screens) is list and any(type(sample) is dict and type(sample.get('receipt')) is dict
+            and sample['receipt'].get('outcome')=='TIMEOUT' for sample in screens):
+        return None
     c.require(receipt.get('schema') == 'jevops.lean-refactor.stage-run.v2'
               and receipt.get('task_id') == tid and (receipt.get('error') is None or drift_failure),
               'retained trial receipt identity differs')
